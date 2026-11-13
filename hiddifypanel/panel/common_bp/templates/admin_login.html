@@ -13,6 +13,9 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="color-scheme" content="light dark">
   <title>{{ texts.get('pageTitle', 'Sign in') }} · {{ title }}</title>
+  <!-- The admin panel's own icon in the browser tab -->
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ hutils.flask.app_icon_url('favicon-admin-32.png') }}">
+  <link rel="icon" type="image/png" sizes="256x256" href="{{ hutils.flask.app_icon_url('favicon-admin-256.png') }}">
   <script>
     // Shown inside the dashboard's frame (a classic page whose session ended): open in the whole window,
     // returning to the dashboard page that framed it.

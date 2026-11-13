@@ -123,8 +123,11 @@ def _admin_v2_bootstrap_payload() -> dict:
         "panel_logo_url": _panel_logo_url(proxy_path),
         # The installed-app (PWA) manifest and icon: the frontend adds the <link>s when the page lacks them (the Vite dev
         # server's index.html has none, so without these the browser never offered to install the panel).
-        "pwa_manifest_url": hurl_for("common_bp.LoginView:create_pwa_manifest", secret_uuid=g.account.uuid or ""),
-        "pwa_icon_url": hutils.flask.static_url_for(filename="images/app-icon-apple-180.png"),
+        "pwa_manifest_url": hurl_for("common_bp.LoginView:create_pwa_manifest", secret_uuid=g.account.uuid or "", icon=hutils.flask.admin_icon_color()),
+        "pwa_icon_url": hutils.flask.app_icon_url("app-icon-admin-apple-180.png"),
+        # The same icon cut to its shape: the browser tab icon, and the picture the install guide shows.
+        "app_icon_url": hutils.flask.app_icon_url("favicon-admin-256.png"),
+        "app_icon": hutils.flask.app_icon_info("admin", proxy_path),
         "menu": build_admin_v2_menu(),
         "notices": build_admin_v2_notices(),
         "panel_mode": hutils.node.panel_mode(),
@@ -186,4 +189,5 @@ def register_v2_routes(flask_app, admin_bp):
             needs_quick_setup=_needs_quick_setup(),
             telegram=_telegram_info(),
             passkey_suggestion=_passkey_suggestion(),
+            app_icon=hutils.flask.app_icon_info("admin", proxy_path),
         )

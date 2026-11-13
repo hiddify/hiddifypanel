@@ -12,9 +12,13 @@
     </script>
     <meta name="apple-itunes-app" content="app-id=6596777532, app-argument=hiddify://import/{{ profile_url }}">
     <meta name="google-play-app" content="app-id=app.hiddify.com">
-    <link rel="icon" type="image/x-icon" href="{{ static_url_for(filename='images/favicon.ico') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ static_url_for(filename='images/app-icon-apple-180.png') }}">
-    <link rel="manifest" href="{{ url_for('common_bp.LoginView:create_pwa_manifest', secret_uuid=g.account.uuid or '') }}">
+    <!-- The user page's own icon in the browser tab. The 256 px one is also the picture the install guide shows. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ hutils.flask.app_icon_url('favicon-user-32.png') }}">
+    <link rel="icon" type="image/png" sizes="256x256" href="{{ hutils.flask.app_icon_url('favicon-user-256.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ hutils.flask.app_icon_url('app-icon-user-apple-180.png') }}">
+    <link rel="manifest" href="{{ url_for('common_bp.LoginView:create_pwa_manifest', secret_uuid=g.account.uuid or '', icon=hutils.flask.icon_color('user')) }}">
+    <!-- App Color: what the install guide needs to offer this page's app icon in other colors -->
+    <script>window.__APP_ICON__ = {{ hutils.flask.app_icon_info('user', g.proxy_path) | tojson }};</script>
     <title>Hiddify | Panel</title>
     <script>
       window.appVersion = {{ version | tojson }};

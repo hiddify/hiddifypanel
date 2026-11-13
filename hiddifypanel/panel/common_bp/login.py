@@ -364,8 +364,15 @@ class LoginView(FlaskView):
         account = AdminUser.by_uuid(g.uuid) if admin_call else User.by_uuid(g.uuid)
         name = domain if admin_call else account.name
         start_url = hiddify.get_account_panel_link(account, domain)
-        def icon(name):
-            return hutils.flask.static_url_for(filename=f"images/{name}")
+        # The admin panel and the user page each have their own icon, so both can be installed side by side.
+        icon_set = "admin" if admin_call else "user"
+
+        # The icon in the color chosen with "App Color": the manifest's own URL names it (?icon=RRGGBB),
+        # because a browser fetches the manifest without the page's cookies.
+        color = hutils.app_icon.normalize(request.args.get("icon"))
+
+        def icon(size):
+            return hutils.flask.app_icon_url(f"app-icon-{icon_set}-{size}.png", color)
 
         response = jsonify(
             {
@@ -383,9 +390,9 @@ class LoginView(FlaskView):
                 # "any": rounded corners of its own (computers show it as it is); "maskable": edge to edge, for the
                 # phone to cut to its own shape.
                 "icons": [
-                    {"src": icon("app-icon-192.png"), "sizes": "192x192", "type": "image/png", "purpose": "any"},
-                    {"src": icon("app-icon-512.png"), "sizes": "512x512", "type": "image/png", "purpose": "any"},
-                    {"src": icon("app-icon-maskable-512.png"), "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+                    {"src": icon("192"), "sizes": "192x192", "type": "image/png", "purpose": "any"},
+                    {"src": icon("512"), "sizes": "512x512", "type": "image/png", "purpose": "any"},
+                    {"src": icon("maskable-512"), "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
                 ],
             }
         )
