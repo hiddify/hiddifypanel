@@ -60,7 +60,7 @@ const { layoutConfig, layoutState, hideMobileMenu, toggleMenu } = useLayout()
 const { t } = useI18n()
 
 const wrapper = ref<HTMLElement | null>(null)
-const { dragging, settling, onTabPointerDown, onTabPointerMove, onTabPointerUp, tabClickToggles } = useMenuSwipe({
+const { dragging, settling, swiped, onTabPointerDown, onTabPointerMove, onTabPointerUp, tabClickToggles } = useMenuSwipe({
   wrapper,
   isOpen: () => layoutState.mobileMenuActive,
   setOpen: (open) => (layoutState.mobileMenuActive = open),
@@ -81,6 +81,7 @@ const containerClass = computed(() => ({
   'layout-static-inactive': layoutState.staticMenuInactive,
   'layout-menu-dragging': dragging.value,
   'layout-menu-settling': settling.value,
+  'layout-menu-swiped': swiped.value,
 }))
 </script>
 
