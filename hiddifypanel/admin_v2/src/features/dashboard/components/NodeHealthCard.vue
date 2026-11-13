@@ -73,22 +73,24 @@ const tableRows = computed(() =>
 const canRename = computed(() => isSuperAdmin.value && !isChildPanel.value)
 const renamePop = ref<InstanceType<typeof Popover> | null>(null)
 const renameInput = ref<{ $el: HTMLInputElement } | null>(null)
-const renameTarget = ref<{ id: number; title: string; name: string } | null>(null)
+const renameTarget = ref<{ id: number; title: string; name: string; ok: boolean } | null>(null)
 const renameValue = ref('')
 const renaming = ref(false)
 
-function openRename(event: Event, row: { id: number; title: string; name: string }) {
+/** An offline node can't take a new name (it would only change here): the popover says why instead */
+function openRename(event: Event, row: { id: number; title: string; name: string; ok: boolean }) {
   renameTarget.value = row
   renameValue.value = editableNodeName(row.id, row.name)
   renamePop.value?.show(event)
 }
 function focusRename() {
+  if (!renameTarget.value?.ok) return
   renameInput.value?.$el.focus()
   renameInput.value?.$el.select()
 }
 async function saveRename() {
   const target = renameTarget.value
-  if (!target || renaming.value) return
+  if (!target?.ok || renaming.value) return
   const name = renameValue.value.trim()
   // this server may go back to its default name (empty); a node needs one
   if ((!name && target.id !== 0) || name === editableNodeName(target.id, target.name)) {
@@ -543,7 +545,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       </template>
     </Dialog>
     <Popover ref="renamePop" class="node-rename" @show="focusRename">
-      <form v-if="renameTarget" class="node-rename__form" @submit.prevent="saveRename">
+      <form v-if="renameTarget?.ok" class="node-rename__form" @submit.prevent="saveRename">
         <label class="node-rename__label" for="node-rename-input">{{ t('nodes.rename') }}</label>
         <div class="node-rename__row">
           <InputText
@@ -566,6 +568,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         </div>
         <small v-if="renameTarget.id === 0" class="node-rename__hint">{{ t('dashboard.renameThisServerHint', { name: t('dashboard.thisServer') }) }}</small>
       </form>
+      <div v-else-if="renameTarget" class="node-rename__offline" role="status">
+        <strong class="node-rename__offline-title"><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
+        <p>{{ t('dashboard.renameOffline', { name: renameTarget.title }) }}</p>
+      </div>
     </Popover>
   </DashCard>
 </template>
@@ -788,6 +794,27 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 .node-rename__row :deep(input) {
   flex: 1;
   min-width: 0;
+}
+.node-rename__offline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: min(16rem, 80vw);
+}
+.node-rename__offline-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+.node-rename__offline-title i {
+  color: var(--p-orange-500);
+}
+.node-rename__offline p {
+  margin: 0;
+  color: var(--p-text-muted-color);
+  font-size: 0.8rem;
+  line-height: 1.45;
 }
 .node-rename__hint {
   color: var(--p-text-muted-color);
