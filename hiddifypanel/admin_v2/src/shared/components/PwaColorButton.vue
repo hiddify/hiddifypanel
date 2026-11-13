@@ -100,7 +100,7 @@ function realign() {
 .p-popover.pwa-color-pop.p-anchored-overlay-enter-active {
   transition: none;
   transform-origin: 50% 0;
-  animation: pwa-color-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pwa-color-in 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) both;
 }
 .p-popover.pwa-color-pop.p-anchored-overlay-leave-active {
   transition: none;
