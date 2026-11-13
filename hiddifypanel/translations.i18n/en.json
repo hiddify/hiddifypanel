@@ -178,7 +178,7 @@
   "QR code image copied": "QR code image copied",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "RAM",
-  "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain is not compaitble with Server names!",
+  "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain is not compatible with Server names!",
   "REALITY Fallback domain is not compatible with server names!": "REALITY Fallback domain is not compatible with server names!",
   "Relay domains with non-valid fake mode require an IP address": "Relay domains with non-valid fake mode require an IP address",
   "Release": "✅ Release",
@@ -367,7 +367,7 @@
           "body": "Add a passkey and next time sign in with your fingerprint, face or screen lock: no password to type or forget, on every domain of this panel.",
           "domains": "The panel has {count} domains: you confirm once on each, right here.",
           "later": "Not Now",
-          "never": "Don't ask on this device",
+          "never": "Don't Ask on This Device",
           "title": "Sign in without a password?"
         },
         "title": "Passkeys",
@@ -513,8 +513,8 @@
       "canAddHint": "This admin can create its own sub-admins",
       "canAddShort": "Adds Sub-admins",
       "capability": {
-        "add_extra_sublinks": "Add extra subscription links",
-        "add_sub_admins": "Add sub-admins",
+        "add_extra_sublinks": "Add Extra Subscription Links",
+        "add_sub_admins": "Add Sub-admins",
         "modify_domains": "Manage Domains",
         "modify_free_package": "Define the Free Test",
         "modify_outbounds": "Manage Outbounds",
@@ -779,7 +779,7 @@
       "subtitle": "Put changes into effect, update the server, and see how everything is doing",
       "takes": "About how long it takes",
       "title": "Apply & Status",
-      "watch": "Watch it"
+      "watch": "Watch It"
     },
     "applyNotice": {
       "apply": "Saved. Apply the configs to put the changes into effect.",
@@ -893,7 +893,7 @@
         "removeImage": "Remove the Image",
         "title": "Image and Options",
         "tooBig": "The image is larger than 10 MB.",
-        "usage": "Add each user's usage and buttons",
+        "usage": "Add Each User's Usage and Buttons",
         "usageHint": "Their remaining data and days, with buttons to their usage and panel, after your text."
       },
       "format": {
@@ -1004,9 +1004,9 @@
       "flow1Domain": "Which domain?",
       "flow1DomainHint": "The CDN domain to put the IPs in.",
       "flow1Hint": "The CDN domain to put IPs in, and the operator whose users will get them.",
-      "flow2": "Find IPs that work",
+      "flow2": "Find IPs That Work",
       "flow2Hint": "Tested from this browser, on the internet it is on now: open this page on the operator you picked above, with the VPN off.",
-      "flow3": "Add them to the domain",
+      "flow3": "Add Them to the Domain",
       "flow3On": "on",
       "flow3Scanning": "Scanning… the fastest IPs show up here when it ends.",
       "flow3Sentence": "These {count} IPs go to users of",
@@ -1157,7 +1157,7 @@
       "unknownIspAs": "AS{asn} (an operator Hiddify has no name for)",
       "unsaved": "not saved",
       "uploadSize": "Upload Size",
-      "useThese": "Use these IPs above",
+      "useThese": "Use These IPs Above",
       "viewScript": "View the Script",
       "vpnWarning": "This browser is not in the panel's country: a VPN or proxy is probably on. Turn it off, otherwise you test the VPN, not your ISP.",
       "waiting": "Waiting for a run of the command…",
@@ -1209,7 +1209,7 @@
       "copyName": "Copy Name",
       "delay": "Delay",
       "details": "Details",
-      "editText": "Edit text",
+      "editText": "Edit Text",
       "empty": "(empty)",
       "failed": "Failed",
       "fetchedWith": "Fetched with",
@@ -1227,7 +1227,7 @@
       "history": {
         "again": "Test This One Again",
         "avg": "Average",
-        "header": "Ping history: {name}",
+        "header": "Ping History: {name}",
         "max": "Slowest",
         "min": "Fastest",
         "more": "Test 3 More Times",
@@ -1498,7 +1498,7 @@
       "range": "History Range",
       "refresh": "Refresh Now",
       "resume": "Live",
-      "rollingAverage": "7-day Average",
+      "rollingAverage": "7-Day Average",
       "subtitle": "Traffic, users and server health at a glance",
       "swap": "Swap",
       "thisServer": "This Server",
@@ -1565,7 +1565,7 @@
         "okHint": "Users connect with a real, trusted certificate. It renews by itself.",
         "rateLimited": "Rate limited by the certificate authority",
         "rateLimitedHint": "Let's Encrypt and ZeroSSL refused because too many certificates were asked for recently. A self-signed certificate is used meanwhile; the panel tries again by itself when the limit is over.",
-        "retry": "Try again",
+        "retry": "Try Again",
         "secondsLeft": "about {n}s",
         "steps": {
           "contact": "Contacting Let's Encrypt",
@@ -1590,36 +1590,36 @@
         },
         "caDown": {
           "lead": "Let's Encrypt or ZeroSSL was busy or unreachable just now; nothing is wrong with “{domain}”.",
-          "step1": "Wait a few minutes and press Try again; the panel also retries by itself.",
+          "step1": "Wait a few minutes and press Try Again; the panel also retries by itself.",
           "step2": "If it keeps failing, check that this server can open HTTPS connections to the internet.",
           "title": "The certificate authority did not answer"
         },
         "caa": {
           "lead": "The DNS of “{domain}” has a CAA record that does not allow Let's Encrypt or ZeroSSL.",
           "step1": "At your DNS provider, add a CAA record that allows letsencrypt.org, or remove the CAA records.",
-          "step2": "Wait a few minutes, then press Try again.",
+          "step2": "Wait a few minutes, then press Try Again.",
           "title": "A CAA Record Blocks the Certificate"
         },
         "details": "Technical details",
         "dns": {
           "lead": "The certificate authority looked up “{domain}” and found no address for it, or an address that is not this server.",
           "step1": "At your DNS provider, add an A record (IPv4) or an AAAA record (IPv6) for this name with this server's IP.",
-          "step2": "Wait a few minutes for the change to spread, then press Try again.",
+          "step2": "Wait a few minutes for the change to spread, then press Try Again.",
           "step3": "If a CDN such as Cloudflare is in front of it, set this domain's type to CDN.",
           "title": "The domain does not point to this server"
         },
-        "howToFix": "How to fix it",
+        "howToFix": "How to Fix It",
         "other": {
           "lead": "The certificate authority refused the request for “{domain}”; the technical details below say why.",
           "step1": "Check that the domain points to this server's IP.",
           "step2": "Check that port 80 is open to the internet.",
-          "step3": "Then press Try again; if it still fails, send the technical details to Hiddify support.",
+          "step3": "Then press Try Again; if it still fails, send the technical details to Hiddify support.",
           "title": "The certificate could not be issued"
         },
         "port80": {
           "lead": "The certificate authority could not reach this server on port 80 to check “{domain}”.",
           "step1": "Open port 80 (TCP) in the server's firewall and in your cloud provider's firewall.",
-          "step2": "Then press Try again.",
+          "step2": "Then press Try Again.",
           "title": "Port 80 is not reachable"
         },
         "showLess": "Show less",
@@ -1634,7 +1634,7 @@
       "field": {
         "alias": "Display Name",
         "aliasHint": "Shown in the users' apps instead of the domain.",
-        "cdnIp": "Force configs to use these IPs / domains",
+        "cdnIp": "Force Configs to Use These IPs / Domains",
         "cdnIpHint": "Put these in the users' links instead of the domain's IP, separated by commas or new lines. Operator templates work too.",
         "cdnIpScanner": "Find working IPs with the scanner",
         "cdnIpScannerGo": "Open the Scanner",
@@ -1701,7 +1701,7 @@
       "guide": {
         "dragText": "The rows make room; on a computer you can also focus the handle and press ↑ or ↓.",
         "dragTitle": "Drag it up or down and let go",
-        "gotIt": "Got it",
+        "gotIt": "Got It",
         "grabText": "The ☰ at the start of the row, with the mouse or your finger.",
         "grabTitle": "Take a domain by its handle",
         "lead": "The order matters: configs list your domains in this order, and the first one is used for panel links.",
@@ -1715,7 +1715,7 @@
         "elsewhere": "another server / CDN",
         "none": "No DNS record found for this domain.",
         "thisServer": "this server",
-        "title": "Where it points (DNS)"
+        "title": "Where It Points (DNS)"
       },
       "kind": {
         "cdn": {
@@ -1757,7 +1757,7 @@
         "title": "Domains · {domain}",
         "where": "Details: Domains page."
       },
-      "openPanel": "Open the panel on this domain",
+      "openPanel": "Open the Panel on This Domain",
       "port": {
         "busy": "another program listens on it ({name})",
         "checking": "checking…",
@@ -1934,7 +1934,7 @@
         "checking": "Checking DNS…",
         "continueBackground": "Close (Keeps Going)",
         "dnsHint": "In your DNS, add the record below for this domain (the value is this server's address).",
-        "dnsTitle": "Point it at this server",
+        "dnsTitle": "Point It at This Server",
         "finish": "Done",
         "found": {
           "cdn": "Is behind {cdn}.",
@@ -2001,7 +2001,7 @@
       "excludeBuiltinTemplates": "Exclude built-in templates from export",
       "exportBundle": "Export Bundle",
       "includeTemplate": "Include Template",
-      "insertVariable": "Insert variable",
+      "insertVariable": "Insert Variable",
       "jinjaHint": "JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}",
       "loadFailed": "The editor could not be loaded. Check your connection and reload the page.",
       "loading": "Loading editor…",
@@ -2268,9 +2268,9 @@
         "users": "Users"
       },
       "lastBatch": "Last Change Batch",
-      "lastError": "Last error",
+      "lastError": "Last Error",
       "lastHttpSync": "Last HTTP Fallback Sync",
-      "lastUsage": "Last usage sync (parent time)",
+      "lastUsage": "Last Usage Sync (parent time)",
       "link": "Link to the Parent",
       "listEmpty": "Nothing matches.",
       "listShown": "{n} of {total}",
@@ -2357,7 +2357,7 @@
         "step1": "Open the admin panel of the server you want to add.",
         "step2": "Copy its full address from the browser's address bar.",
         "step3": "Paste it below and press Connect.",
-        "submit": "Connect node",
+        "submit": "Connect Node",
         "success": "Node connected",
         "title": "Add a Node"
       },
@@ -2437,7 +2437,7 @@
         "title": "No nodes yet"
       },
       "errorCopied": "Technical details copied. Send them to support with the registration ID.",
-      "errorCopy": "Copy technical details",
+      "errorCopy": "Copy Technical Details",
       "errorFix": {
         "invalid_link": "Open the node's admin panel, copy the full address from the browser's address bar and paste it here.",
         "node_auth": "The link may be old or another admin's. Copy the node's admin link again (the full address of its admin panel) and paste it here.",
@@ -2553,7 +2553,7 @@
       "subtitle": "Other Hiddify servers connected to this panel. Users and admins are shared with them automatically.",
       "syncFailed": "Could not sync {name}",
       "syncInfo": "Sync details",
-      "syncInfoTitle": "Sync details: {name}",
+      "syncInfoTitle": "Sync Details: {name}",
       "syncInfoUnavailable": "The node could not be asked",
       "syncNow": "Sync Now",
       "synced": "{name} synced",
@@ -2571,7 +2571,7 @@
       "addressCount": "{count} addresses for these operators",
       "asOption": "{code} (by AS number)",
       "asTable": "Edit as Table",
-      "asText": "Edit as text",
+      "asText": "Edit as Text",
       "badAddress": "Not an IP, range or name: {list}",
       "defaults": "Fill the Defaults",
       "defaultsHint": "Each operator without an address gets its ircf.space one",
@@ -2669,7 +2669,7 @@
       "idle": "Not Used",
       "idleHint": "It has no sites, geosites or rule-sets, so nothing goes through it. Edit it to add some, or move it to the end to make it the default.",
       "list": {
-        "browse": "Browse rule-sets",
+        "browse": "Browse Rule-sets",
         "geosites": "Geosites / GeoIPs (Xray)",
         "geositesHint": "One xray entry per line with its prefix: geosite:google or geoip:ir (a bare name means geosite:). An unknown tag stops xray, so use known ones.",
         "geositesPlaceholder": "geosite:google\ngeoip:ir",
@@ -2680,7 +2680,7 @@
         "sitesHint": "One domain per line; subdomains are included.",
         "sitesPlaceholder": "example.com"
       },
-      "makeDefault": "Make default (move to the end)",
+      "makeDefault": "Make Default (move to the end)",
       "mode": {
         "block": "Block",
         "core_endpoint": "hiddify-core (sing-box) endpoint",
@@ -2690,7 +2690,7 @@
         "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
-        "xray_outbound": "xray outbound"
+        "xray_outbound": "Xray Outbound"
       },
       "modeHint": {
         "block": "Dropped",
@@ -2811,7 +2811,7 @@
     },
     "proxy": {
       "addClient": "Add Client",
-      "addClientConfig": "Add config for this core",
+      "addClientConfig": "Add Config for This Core",
       "addCoreConfig": "Add Core Config",
       "allowedProtocols": "Allowed Protocols",
       "alpn": "ALPN",
@@ -2830,7 +2830,7 @@
       "builtinDefaultHint": "Built-in preset synced from catalog. Enable custom content on Server or Client tabs to edit those sides.",
       "builtinReadOnly": "Built-in preset — only name and enabled state can be changed. Duplicate to edit fully.",
       "bundleContextProxyCount": "Enabled proxies",
-      "cannotEnable": "Cannot enable this proxy",
+      "cannotEnable": "Cannot Enable This Proxy",
       "categories": "Categories",
       "categoriesAdd": "Add Category",
       "categoriesAddNew": "Add New",
@@ -2879,7 +2879,7 @@
       "downloadDomainModes": "Download Domain Modes",
       "downloadTcpUdp": "Download TCP or UDP",
       "downloadTlsLayer": "Download TLS Layer",
-      "exampleContext": "Render context",
+      "exampleContext": "Render Context",
       "exampleContextDomain": "Domain",
       "exampleContextIp": "IP",
       "exampleContextProxy": "Proxy ID",
@@ -2966,8 +2966,8 @@
       "renderErrorDetail": "Render error details",
       "renderErrorDetailTitle": "Render error: {label}",
       "renderErrorNoDetail": "No additional context is available for this error.",
-      "renderErrorRenderedSource": "Rendered output",
-      "renderErrorTemplateSource": "Template source",
+      "renderErrorRenderedSource": "Rendered Output",
+      "renderErrorTemplateSource": "Template Source",
       "resetAll": "Reset All to Defaults",
       "resetAllConfirm": "Drop every change you made to the built-in proxies (tag, domain modes, TLS, server and client configs) and restore the catalog defaults? Proxies you created yourself are not touched.",
       "resetAllDone": "{n} proxies reset to defaults",
@@ -2986,11 +2986,11 @@
       },
       "sublinkBase64Detail": "Base64 detail",
       "sublinkFormat": "Link format",
-      "sublinkFormatBase64": "Base64 format",
-      "sublinkFormatDecoded": "Decoded fields",
-      "sublinkFormatRaw": "Rendered link",
-      "sublinkFormatRawLink": "Raw link",
-      "sublinkFormatUri": "URI format",
+      "sublinkFormatBase64": "Base64 Format",
+      "sublinkFormatDecoded": "Decoded Fields",
+      "sublinkFormatRaw": "Rendered Link",
+      "sublinkFormatRawLink": "Raw Link",
+      "sublinkFormatUri": "URI Format",
       "sublinkUri": {
         "fragment": "uri.fragment",
         "host": "uri.host",
@@ -3043,7 +3043,7 @@
     "pwa": {
       "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
       "bannerTitle": "Install the Panel as an App",
-      "gotIt": "Got it",
+      "gotIt": "Got It",
       "guide": {
         "android1": "In Chrome, tap the ⋮ menu at the top",
         "android2": "Choose “Add to home screen” (or “Install app”)",
@@ -3063,7 +3063,7 @@
       },
       "install": "Install",
       "installButton": "Install as an app",
-      "installNow": "Install now",
+      "installNow": "Install Now",
       "iosAdd": "Choose “Add to Home Screen”",
       "iosShare": "Tap the Share button",
       "later": "Not now",
@@ -3176,7 +3176,7 @@
         "recommended": "Highly Recommended",
         "remove": "Remove {name}",
         "required": "Add at least one direct, CDN or subscription-link domain (REALITY and relay domains alone are not enough). This server's IP counts as a direct domain.",
-        "sublink": "Subscription link domain",
+        "sublink": "Subscription Link Domain",
         "sublinkHint": "Only serves subscription links, not proxies. It can point to this server or through a CDN.",
         "sublinkWhy": "Use a different domain for users' subscription links, ideally behind a CDN. If your server or proxy domains are blocked, users can still update their subscription and receive new working configs, so they are not affected.",
         "useIp": "Use this IP as a direct domain"
@@ -3284,7 +3284,7 @@
         "boxMore": "View More",
         "boxParts": "Title and Button",
         "boxTitle": "Support",
-        "buttonText": "Button text",
+        "buttonText": "Button Text",
         "cancel": "Cancel",
         "cleaned": "Clean-up done: {n} removed",
         "close": "Close",
@@ -3316,7 +3316,7 @@
         "loadingSource": "Loading the code editor…",
         "moreLink": "Opens the \"Support Website\" setting",
         "moreText": "Button text",
-        "newTab": "Open in a new tab",
+        "newTab": "Open in a New Tab",
         "ok": "OK",
         "opened": "Opened {name}",
         "path": "Element Path",
@@ -3446,7 +3446,7 @@
           "tableDelete": "Delete Table",
           "tableTools": "Table Tools",
           "templates": "Templates",
-          "textColor": "Text colour",
+          "textColor": "Text Colour",
           "underline": "Underline",
           "undo": "Undo",
           "unlink": "Remove Link"
@@ -3551,7 +3551,7 @@
       "inFolder": "in {path}",
       "keepBoth": "Keep Both",
       "keepEditing": "Keep Editing",
-      "keyChanged": "The server's key has changed",
+      "keyChanged": "The Server's Key Has Changed",
       "keyChangedHint": "This server answered with a different key than the one you trusted before. This happens after a reinstall, but it can also mean someone is in the middle. Only continue if you expect it.",
       "keyName": "Name of This Key",
       "keyNamePlaceholder": "e.g. my laptop key",
@@ -3601,7 +3601,7 @@
       "runOn": "Run on",
       "runOnChosen": "Run on {n} Connection(s)",
       "runOnOpen": "Open Sessions",
-      "runOnSaved": "Saved connections",
+      "runOnSaved": "Saved Connections",
       "runOnce": "Run Without Saving",
       "save": "Save",
       "saveIt": "Save this connection in this browser",
@@ -3622,7 +3622,7 @@
       "truncated": "Only the first 5000 entries are shown.",
       "trust": "Trust and Connect",
       "trustHint": "This is the first connection to {host} from this browser. Check that the key below is your server's (run ssh-keygen -lf on its host key) before sending your password.",
-      "unsaved": "Not saved",
+      "unsaved": "Not Saved",
       "uploadExtract": "Upload & Extract",
       "uploadExtractGo": "Upload & Extract",
       "uploadFiles": "Upload Files",
@@ -3708,7 +3708,7 @@
       "builtinReadOnly": "Built-in template — duplicate to create an editable copy.",
       "category": "Category",
       "clone": "Clone as Custom",
-      "cloneDescription": "Custom description",
+      "cloneDescription": "Custom Description",
       "cloneName": "Custom Name",
       "cloned": "Template Cloned",
       "content": "Content",
@@ -3815,7 +3815,7 @@
         "copy": "Copy All",
         "count": "How Many",
         "countHint": "Between 1 and {max}",
-        "create": "Create {n} user | Create {n} users",
+        "create": "Create {n} User | Create {n} Users",
         "createAtEnd": "Create {n} user at end | Create {n} users at end",
         "domain": "Link Domain",
         "done": "{n} user created | {n} users created",
@@ -3855,7 +3855,7 @@
       },
       "configs": {
         "addOffline": "Add Offline Config",
-        "addSubscription": "Add subscription",
+        "addSubscription": "Add Subscription",
         "badUrl": "A subscription must be an http(s) URL",
         "empty": "Empty: fill it in or remove it",
         "hint": "Extra configs added to this user's subscription: paste one (offline) or give a URL fetched for the user (subscription). Choose which app format it is for, or Auto for all.",
@@ -4000,7 +4000,7 @@
       "guide": {
         "dragText": "Drag a row by its handle, e.g. from row 5 to row 2. Pinned users can be reordered among themselves; the others stay below them.",
         "dragTitle": "Move users between rows",
-        "gotIt": "Got it",
+        "gotIt": "Got It",
         "intro": "Keep the users you need most at hand:",
         "pinText": "Click the tag circle next to a user's name and choose Pin, first in the menu: the user moves to the top rows and stays there. Filter by tag › Pin lists the pinned users.",
         "pinTitle": "Pin Users",
@@ -4085,7 +4085,7 @@
       "emptyLinks": "Paste share links on the left to inspect them here.",
       "encode": "Encode",
       "extraHint": "URL-decoded JSON. Leave empty to omit extra from the link.",
-      "extraJson": "extra (JSON)",
+      "extraJson": "Extra (JSON)",
       "fragment": "Name",
       "input": "Input",
       "links": "Share Links",
@@ -4480,7 +4480,7 @@
       "label": "Additional Configs for Singbox"
     },
     "additional_configs_urls": {
-      "description": "You can add http:// https:// or V2Ray format porxies like vless://",
+      "description": "You can add http:// https:// or V2Ray format proxies like vless://",
       "label": "Additional URLs"
     },
     "additional_configs_xrayjson": {
@@ -5035,7 +5035,7 @@
       "label": "Proxies Settings"
     },
     "proxy_path": {
-      "description": "We use secret proxy path to hide our proxies for the gouvernment",
+      "description": "We use secret proxy path to hide our proxies for the government",
       "label": "ℹ️ Secret Proxy Path"
     },
     "proxy_path_admin": {
@@ -5075,7 +5075,7 @@
       "label": "🔑 Public Key"
     },
     "reality_server_names": {
-      "description": "You can add several Sever Names in comma seperated format",
+      "description": "You can add several Server Names in comma separated format",
       "label": "🌎 Reality Server Names"
     },
     "reality_short_ids": {
@@ -5155,11 +5155,11 @@
       "label": "🚀 Speed Test"
     },
     "splithttp_enable": {
-      "description": "XHTTP allowing seperate download and upload stream and uniforming gRPC, H2, H1 and also support Quic.",
+      "description": "XHTTP allowing separate download and upload stream and uniforming gRPC, H2, H1 and also support Quic.",
       "label": "Enable XHTTP"
     },
     "ssfaketls": {
-      "description": "Shadowsocks FakeTLS is a simple obfusacting tool that encapsulate the date In tls packet",
+      "description": "Shadowsocks FakeTLS is a simple obfuscating tool that encapsulate the date In tls packet",
       "label": "Shadowsocks FakeTLS"
     },
     "ssfaketls_enable": {
@@ -5375,7 +5375,7 @@
       "label": "Unique ID"
     },
     "use_ip_in_config": {
-      "description": "This help to reduce the issue may heppen in resolving server IP. This will use a random IP of the selected domain.",
+      "description": "This help to reduce the issue may happen in resolving server IP. This will use a random IP of the selected domain.",
       "label": "Use IP in configs"
     },
     "user_page_url": {
@@ -5705,7 +5705,7 @@
         "alternative_for_normal_clash": "Alternative link for Clash",
         "foreign_sites": {
           "btn": "Install for Foreign Sites",
-          "description": "Use Proxy for all foreign sites (even not blocked ones).\n<div class='callout callout-warning'>\n\tThis mode is useful in accessing some sanctaioned sites.\n</div>\n",
+          "description": "Use Proxy for all foreign sites (even not blocked ones).\n<div class='callout callout-warning'>\n\tThis mode is useful in accessing some sanctioned sites.\n</div>\n",
           "title": "Foreign Sites Proxy"
         },
         "intro": "Now based on your needs, click on one of the following links.\n<br />",
@@ -5771,7 +5771,7 @@
     "last_reset_time": "Last Usage Date Reset",
     "name": "Name",
     "password": {
-      "description": "The password will be used for extra secutiry. You can only login to the HiddifyManager after entering your password.",
+      "description": "The password will be used for extra security. You can only login to the HiddifyManager after entering your password.",
       "title": "Password",
       "validation-lenght": "Your password must be at least 8 characters long for enhanced security.",
       "validation-required": "Password is required. Please enter your password to continue."
