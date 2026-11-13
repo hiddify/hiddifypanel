@@ -39,12 +39,18 @@ const tip = computed(() => {
   const value = `<div class="kpi-tip__card" style="--tip-accent:${esc(props.accent)}"><div class="kpi-tip__head"><span class="kpi-tip__icon"><i class="${esc(props.icon)}"></i></span>${esc(props.label)}</div><dl class="kpi-tip__rows">${rows}</dl></div>`
   return { value, escape: false, class: 'kpi-tip' }
 })
+
+/** Touch has no hover: a tap sends mouseenter and click together, and the click closes the card at once. There the
+ *  card opens on focus (a tap on the focusable tile) and closes on blur (a tap elsewhere). */
+const touch = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
+const tipArg = { position: 'top', event: touch ? 'focus' : 'hover' }
 </script>
 
 <template>
   <article
-    v-tooltip.top="tip"
+    v-tooltip:[tipArg]="tip"
     class="tile"
+    :tabindex="touch && tip ? 0 : undefined"
     :style="{ '--tile-accent': accent }"
   >
     <div class="tile__top">
@@ -85,6 +91,10 @@ const tip = computed(() => {
     var(--p-content-background);
   box-shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 10px 26px -20px rgb(15 23 42 / 35%);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+/* A tap focuses the tile to open its card: no focus ring for that, only for the keyboard */
+.tile:focus:not(:focus-visible) {
+  outline: none;
 }
 @media (hover: hover) {
   .tile:hover {
