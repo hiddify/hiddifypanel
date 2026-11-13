@@ -343,6 +343,27 @@ async function doInstall() {
   }
 }
 
+/* Small phones: tighter still, so the icon, the scene and the current step all show without scrolling */
+@media (max-height: 560px) {
+  .pwa__body {
+    gap: 0.6rem;
+  }
+  .pwa__hero {
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+  }
+}
+@media (max-height: 480px) {
+  .pwa__app {
+    width: 3.2rem;
+    height: 3.2rem;
+    margin-bottom: 0.2rem;
+  }
+  .pwa__title {
+    font-size: 1.05rem;
+  }
+}
+
 @keyframes pwa-pop {
   from {
     transform: scale(0.7) translateY(6px);

@@ -27,6 +27,12 @@ function tabLabel(p: PwaPlatform): string {
   // On a phone the computer's system is unknown (an iPhone even says "Mac OS X"): just "Computer"
   return t('pwa.guide.tabDesktop', { os: detected === 'desktop' ? desktopOsName() : t('pwa.guide.computer') })
 }
+/** A tab's label as [device, browser]: the text before its last " · ", and the text after it. */
+function tabParts(p: PwaPlatform): [string, string] {
+  const label = tabLabel(p)
+  const at = label.lastIndexOf(' · ')
+  return at < 0 ? [label, ''] : [label.slice(0, at), label.slice(at + 3)]
+}
 </script>
 
 <template>
@@ -42,7 +48,9 @@ function tabLabel(p: PwaPlatform): string {
         :aria-selected="platform === p"
         @click="platform = p"
       >
-        <i :class="['pi', p === 'ios' ? 'pi-apple' : p === 'android' ? 'pi-android' : 'pi-desktop']" />{{ tabLabel(p) }}
+        <i :class="['pi', p === 'ios' ? 'pi-apple' : p === 'android' ? 'pi-android' : 'pi-desktop']" />
+        <!-- "iPhone · Safari": on a phone only the device, on one line (the first step names the browser) -->
+        <span>{{ tabParts(p)[0] }}<span v-if="tabParts(p)[1]" class="guide__tab-app"> · {{ tabParts(p)[1] }}</span></span>
       </button>
     </div>
 
@@ -110,9 +118,14 @@ function tabLabel(p: PwaPlatform): string {
       </div>
     </div>
 
+    <!-- The steps, one at a time: only the step the scene is showing now, so the guide stays short -->
     <ol :key="`s-${platform}`" class="guide__steps" :class="`guide__steps--${steps.length}`">
       <li v-for="(s, i) in steps" :key="i" class="guide__step" :style="{ '--i': i }"><span class="guide__n">{{ i + 1 }}</span>{{ s }}</li>
     </ol>
+    <!-- Which step of how many -->
+    <div :key="`t-${platform}`" class="guide__ticks" :class="`guide__ticks--${steps.length}`" aria-hidden="true">
+      <span v-for="(_, i) in steps" :key="i" class="guide__tick" :style="{ '--i': i }" />
+    </div>
   </div>
 </template>
 
@@ -689,27 +702,35 @@ function tabLabel(p: PwaPlatform): string {
 }
 
 /* --- the steps, lit in time with the scene --- */
+/* One box for all the steps: they lie on top of each other and each shows only during its part of the scene. The
+   box is as tall as the longest step, so nothing moves when the step changes. */
 .guide__steps {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--p-primary-color) 11%, transparent);
+  overflow: hidden;
 }
 .guide__step {
+  grid-area: 1 / 1;
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.4rem 0.55rem;
-  border-radius: 10px;
-  font-size: 0.86rem;
-  animation: step-4 var(--dur) infinite;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.88rem;
+  opacity: 0;
+  animation: step-4 var(--dur) infinite ease-in-out backwards;
   animation-delay: calc(var(--dur) * var(--i) / 4);
 }
 .guide__steps--3 .guide__step {
   animation-name: step-3;
   animation-delay: calc(var(--dur) * var(--i) / 3);
+}
+/* Should the animation not run, the first step is there */
+.guide__step:first-child {
+  opacity: 1;
 }
 .guide__n {
   flex: none;
@@ -723,17 +744,59 @@ function tabLabel(p: PwaPlatform): string {
   color: var(--p-primary-contrast-color);
   background: var(--p-primary-color);
 }
+/* A step comes up into the box as the one before it leaves upward: the two cross for a moment (its own part of the
+   scene is the first quarter, or third, of its timeline). */
 @keyframes step-4 {
-  0%, 25% { background: color-mix(in srgb, var(--p-primary-color) 12%, transparent); color: var(--p-text-color); }
-  26%, 100% { background: transparent; color: var(--p-text-muted-color); }
+  0% { opacity: 0; transform: translateY(0.6rem); }
+  4.5%, 25% { opacity: 1; transform: none; }
+  29.5%, 100% { opacity: 0; transform: translateY(-0.6rem); }
 }
 @keyframes step-3 {
-  0%, 33% { background: color-mix(in srgb, var(--p-primary-color) 12%, transparent); color: var(--p-text-color); }
-  34%, 100% { background: transparent; color: var(--p-text-muted-color); }
+  0% { opacity: 0; transform: translateY(0.6rem); }
+  4.5%, 33.33% { opacity: 1; transform: none; }
+  37.83%, 100% { opacity: 0; transform: translateY(-0.6rem); }
+}
+/* Under the box: a mark for each step, the current one long */
+.guide__ticks {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-top: -0.3rem;
+}
+.guide__tick {
+  width: 0.4rem;
+  height: 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--p-text-color) 16%, transparent);
+  animation: tick-4 var(--dur) infinite ease-in-out backwards;
+  animation-delay: calc(var(--dur) * var(--i) / 4);
+}
+.guide__ticks--3 .guide__tick {
+  animation-name: tick-3;
+  animation-delay: calc(var(--dur) * var(--i) / 3);
+}
+.guide__tick:first-child {
+  width: 1.4rem;
+  background: var(--p-primary-color);
+}
+@keyframes tick-4 {
+  0% { width: 0.4rem; background: color-mix(in srgb, var(--p-text-color) 16%, transparent); }
+  4.5%, 25% { width: 1.4rem; background: var(--p-primary-color); }
+  29.5%, 100% { width: 0.4rem; background: color-mix(in srgb, var(--p-text-color) 16%, transparent); }
+}
+@keyframes tick-3 {
+  0% { width: 0.4rem; background: color-mix(in srgb, var(--p-text-color) 16%, transparent); }
+  4.5%, 33.33% { width: 1.4rem; background: var(--p-primary-color); }
+  37.83%, 100% { width: 0.4rem; background: color-mix(in srgb, var(--p-text-color) 16%, transparent); }
 }
 
-/* No motion: the first frame, every step plain */
-/* Short screens: a smaller scene, so the steps and the dialog's buttons fit */
+/* Phones: each tab names the device only, on one line */
+@media (max-width: 480px) {
+  .guide__tab-app {
+    display: none;
+  }
+}
+/* Short screens: a smaller scene, step by step, so the step and the dialog's buttons fit */
 @media (max-height: 640px) {
   .stage {
     height: 10.4rem;
@@ -742,9 +805,48 @@ function tabLabel(p: PwaPlatform): string {
     zoom: 0.8;
   }
 }
+@media (max-height: 560px) {
+  .guide {
+    gap: 0.5rem;
+  }
+  .guide__ticks {
+    margin-top: -0.15rem;
+  }
+  .stage {
+    height: 9.1rem;
+  }
+  .stage > * {
+    zoom: 0.7;
+  }
+}
+@media (max-height: 480px) {
+  .stage {
+    height: 8rem;
+  }
+  .stage > * {
+    zoom: 0.61;
+  }
+}
+/* No motion: the first frame of the scene, and every step in a plain list */
 @media (prefers-reduced-motion: reduce) {
   .stage *,
   .guide__step {
+    animation: none !important;
+  }
+  .guide__steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    background: none;
+  }
+  .guide__step {
+    padding: 0.4rem 0.55rem;
+    opacity: 1;
+  }
+  .guide__ticks {
+    display: none;
+  }
+  .guide__tick {
     animation: none !important;
   }
   .finger,
