@@ -299,7 +299,10 @@
   <Popover ref="renameBlockedPop" class="card-popover" @show="onBlockedShow" @hide="onBlockedHide">
     <div v-if="renameBlocked" class="card-popover__notice" role="status">
       <strong><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
-      <p>{{ t('dashboard.renameOffline', { name: renameBlocked.name }) }}</p>
+      <p v-if="renameBlocked.block === 'tooOld'">
+        {{ t('dashboard.renameTooOld', { name: renameBlocked.node.name, version: renameBlocked.version, min: `${RENAME_MIN_MAJOR}.0` }) }}
+      </p>
+      <p v-else>{{ t('dashboard.renameOffline', { name: renameBlocked.node.name }) }}</p>
     </div>
   </Popover>
   <Popover ref="osPop" class="node-os-pop">
@@ -339,6 +342,7 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
 import { useCardPopover } from '@/shared/composables/useCardPopover'
+import { RENAME_MIN_MAJOR, nodeRenameBlock, type RenameBlock } from '@/shared/utils/node-rename'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatBytes, formatCount } from '@/shared/utils/format-metrics'
 import AddNodeDialog from '@/features/nodes/components/AddNodeDialog.vue'
@@ -461,10 +465,10 @@ function toggleDomains(id: number) {
 }
 
 /**
- * A new name goes to the node too, so a node this panel can't reach ("Not reachable") is not renamed: its pencil says
- * why instead, in the same small popover as on the dashboard.
+ * A new name goes to the node too, so a node that can't take it now (not reachable, or a panel older than 14.0; see
+ * nodeRenameBlock) is not renamed: its pencil says why instead, in the same small popover as on the dashboard.
  */
-const renameBlocked = ref<PanelNode | null>(null)
+const renameBlocked = ref<{ node: PanelNode; block: RenameBlock; version: string | null } | null>(null)
 const {
   pop: renameBlockedPop,
   open: openBlocked,
@@ -474,8 +478,12 @@ const {
 } = useCardPopover({ card: '.node-card' })
 
 function startRename(node: PanelNode, event?: Event) {
-  if (pings[node.id]?.state === 'fail' && event) {
-    renameBlocked.value = node
+  const ping = pings[node.id]
+  const reachable = ping?.state === 'ok' ? true : ping?.state === 'fail' ? false : null
+  const version = ping?.version ?? null
+  const block = nodeRenameBlock(reachable, version)
+  if (block && event) {
+    renameBlocked.value = { node, block, version }
     // the arrow points at the pencil, not the middle of the name
     openBlocked(event, (event.currentTarget as HTMLElement).querySelector<HTMLElement>('.node-card__name-edit'))
     return

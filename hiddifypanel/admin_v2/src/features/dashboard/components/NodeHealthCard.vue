@@ -25,6 +25,7 @@ import { isChildPanel, isSuperAdmin } from '@/core/panelShell'
 import { nodesApi } from '@/features/nodes/api'
 import { dashboardNodeName, editableNodeName } from '../utils/node-name'
 import { useCardPopover } from '@/shared/composables/useCardPopover'
+import { RENAME_MIN_MAJOR, nodeRenameBlock, type RenameBlock } from '@/shared/utils/node-rename'
 
 const props = defineProps<{
   nodes: DashboardNodeStats[]
@@ -73,30 +74,32 @@ const tableRows = computed(() =>
 /** Renaming from the dashboard: the pencil after a name opens a small popover (super admins, not on a node's panel). */
 const canRename = computed(() => isSuperAdmin.value && !isChildPanel.value)
 const renameInput = ref<{ $el: HTMLInputElement } | null>(null)
-const renameTarget = ref<{ id: number; title: string; name: string; ok: boolean } | null>(null)
+const renameTarget = ref<{ id: number; title: string; name: string; block: RenameBlock | null; version: string | null } | null>(null)
 const renameValue = ref('')
 const renaming = ref(false)
 
-/** An offline node can't take a new name (it would only change here): the popover says why instead */
+/** A node that can't take a new name now (it would only change here, see nodeRenameBlock): the popover says why */
 const { pop: renamePop, open: openPop, hide: hidePop, onShow: onRenameShow, onHide: onRenameHide } = useCardPopover({
   card: '.node-list__item',
   onPlaced: () => focusRename(),
 })
 
-function openRename(event: Event, row: { id: number; title: string; name: string; ok: boolean }) {
-  renameTarget.value = row
+function openRename(event: Event, row: { id: number; title: string; name: string; ok: boolean; panelVersion: string | null }) {
+  // this server is renamed here only: nothing to reach
+  const block = row.id === 0 ? null : nodeRenameBlock(row.ok, row.panelVersion)
+  renameTarget.value = { id: row.id, title: row.title, name: row.name, block, version: row.panelVersion }
   renameValue.value = editableNodeName(row.id, row.name)
   openPop(event)
 }
 
 function focusRename() {
-  if (!renameTarget.value?.ok) return
+  if (!renameTarget.value || renameTarget.value.block) return
   renameInput.value?.$el.focus()
   renameInput.value?.$el.select()
 }
 async function saveRename() {
   const target = renameTarget.value
-  if (!target?.ok || renaming.value) return
+  if (!target || target.block || renaming.value) return
   const name = renameValue.value.trim()
   // this server may go back to its default name (empty); a node needs one
   if ((!name && target.id !== 0) || name === editableNodeName(target.id, target.name)) {
@@ -551,7 +554,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       </template>
     </Dialog>
     <Popover ref="renamePop" class="card-popover node-rename" @show="onRenameShow" @hide="onRenameHide">
-      <form v-if="renameTarget?.ok" class="node-rename__form" @submit.prevent="saveRename">
+      <form v-if="renameTarget && !renameTarget.block" class="node-rename__form" @submit.prevent="saveRename">
         <label class="node-rename__label" for="node-rename-input">{{ t('nodes.rename') }}</label>
         <div class="node-rename__row">
           <InputText
@@ -576,7 +579,8 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       </form>
       <div v-else-if="renameTarget" class="card-popover__notice" role="status">
         <strong><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
-        <p>{{ t('dashboard.renameOffline', { name: renameTarget.title }) }}</p>
+        <p v-if="renameTarget.block === 'tooOld'">{{ t('dashboard.renameTooOld', { name: renameTarget.title, version: renameTarget.version, min: `${RENAME_MIN_MAJOR}.0` }) }}</p>
+        <p v-else>{{ t('dashboard.renameOffline', { name: renameTarget.title }) }}</p>
       </div>
     </Popover>
   </DashCard>
