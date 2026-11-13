@@ -4,10 +4,10 @@
     modal
     :show-header="false"
     :dismissable-mask="true"
-    :position="narrow ? 'bottom' : 'center'"
+    position="center"
     :draggable="false"
-    :style="{ width: 'min(27rem, 100vw)' }"
-    :pt="{ root: { class: ['pwa-dialog', { 'pwa-dialog--sheet': narrow }] }, content: { class: 'pwa-dialog__content' } }"
+    :style="{ width: 'min(27rem, calc(100vw - 1.5rem))' }"
+    :pt="{ root: { class: 'pwa-dialog' }, content: { class: 'pwa-dialog__content' } }"
   >
     <div class="pwa">
       <button type="button" class="pwa__close" :aria-label="t('pwa.later')" @click="close"><i class="pi pi-times" /></button>
@@ -110,10 +110,6 @@ watch(body, (el, old) => {
   }
 })
 
-// Phones: a sheet from the bottom.
-const narrowQuery = window.matchMedia('(max-width: 575px)')
-const narrow = ref(narrowQuery.matches)
-const onNarrow = (e: MediaQueryListEvent) => (narrow.value = e.matches)
 
 /** The app icon the page declares (production template, or added from the bootstrap in dev). */
 function readIcon() {
@@ -142,11 +138,9 @@ function offer() {
 }
 
 onMounted(() => {
-  narrowQuery.addEventListener('change', onNarrow)
   window.setTimeout(offer, 1200) // after the page has drawn (the browser's install event can come a little later too)
 })
 onBeforeUnmount(() => {
-  narrowQuery.removeEventListener('change', onNarrow)
   sizeObserver.disconnect()
 })
 // Opened on another page first: the guide waits for the dashboard.
@@ -397,15 +391,5 @@ async function doInstall() {
   max-height: calc(100dvh - 2rem);
   border-radius: 22px;
   overflow: hidden;
-}
-/* Phones: a sheet from the bottom, round only on top */
-.pwa-dialog.pwa-dialog--sheet {
-  margin: 0;
-  border-radius: 22px 22px 0 0;
-  max-height: 92vh;
-  max-height: 92dvh;
-}
-.pwa-dialog.pwa-dialog--sheet .pwa__actions {
-  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
 }
 </style>
