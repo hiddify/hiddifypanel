@@ -77,7 +77,7 @@
                 <small>{{ t('account.languageHint') }}</small>
               </div>
               <Select
-                :model-value="me.lang"
+                :model-value="me.lang || PANEL_DEFAULT_LANG"
                 :options="languageOptions"
                 option-label="label"
                 option-value="value"
@@ -389,14 +389,18 @@ const aliasError = computed(() => {
 watch(aliasInput, () => (aliasServerError.value = null))
 
 const savingLang = ref(false)
+// The Select treats an empty value as "nothing chosen" (no label, no tick), so the panel's default
+// ("" in the API) gets a value of its own here
+const PANEL_DEFAULT_LANG = '_default'
 const languageOptions = computed(() => [
-  // '' = no flag of its own (the panel's default, an unknown language): a globe icon
-  { value: '', flag: '', label: t('account.languageDefault', { name: LANGUAGE_LOOK[me.value?.default_lang ?? 'en']?.name ?? me.value?.default_lang }) },
+  // flag '' = no flag of its own (the panel's default, an unknown language): a globe icon
+  { value: PANEL_DEFAULT_LANG, flag: '', label: t('account.languageDefault', { name: LANGUAGE_LOOK[me.value?.default_lang ?? 'en']?.name ?? me.value?.default_lang }) },
   ...(me.value?.languages ?? []).map((value) => ({ value, flag: LANGUAGE_LOOK[value]?.flag ?? '', label: LANGUAGE_LOOK[value]?.name ?? value })),
 ])
 const flagOf = (value: string) => languageOptions.value.find((o) => o.value === value)?.flag ?? ''
 const labelOf = (value: string) => languageOptions.value.find((o) => o.value === value)?.label ?? value
-async function saveLanguage(lang: string) {
+async function saveLanguage(choice: string) {
+  const lang = choice === PANEL_DEFAULT_LANG ? '' : choice
   if (!me.value || savingLang.value || lang === me.value.lang) return
   savingLang.value = true
   try {
