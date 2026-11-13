@@ -75,7 +75,7 @@ import ColorPicker from 'primevue/colorpicker'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import InputText from 'primevue/inputtext'
-import { useAppIcon } from '@/shared/composables/useAppIcon'
+import { ICON_PRESETS, useAppIcon } from '@/shared/composables/useAppIcon'
 import { detectPwaPlatform } from '@/shared/composables/usePwaInstall'
 
 /**
@@ -84,14 +84,7 @@ import { detectPwaPlatform } from '@/shared/composables/usePwaInstall'
  * wherever the icon is on the page.
  */
 const emit = defineEmits<{ /** its height changed (the own-color picker opened or closed) */ resize: [] }>()
-// prettier-ignore
-const PRESETS = [
-  // blue (the stock icon), then around the color wheel
-  '0A84FF', '00B0FC', '3CD3FE', '00C3D0', '00C8B3', '34C759', '80CD00', 'FFCC00', 'FF8D28',
-  'FF6B2C', 'FF383C', 'FE007C', 'EF00AC', 'CB30E0', '9C39FF', '6155F5', '4A6AFF', '004896',
-  // dark tones and neutrals: forest, plum, burgundy, brown, chocolate, graphite, black
-  '007B3C', '720087', '9A0021', 'AC7F5E', '784016', '8E8E93', '15181E',
-]
+const PRESETS = ICON_PRESETS
 const HEX = /^[0-9A-F]{6}$/
 
 const { t } = useI18n()

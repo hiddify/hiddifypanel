@@ -76,6 +76,8 @@ def app_icon_info(kind: str, proxy_path: str) -> dict:
     return {
         "enabled": icon.available(),
         "color": icon_color(kind) or icon.DEFAULT,
+        # Picked by hand (also the stock color): the admin panel's icon stops following the theme's color
+        "chosen": icon.normalize(request.cookies.get(ICON_COOKIES[kind])) is not None,
         "default": icon.DEFAULT,
         "cookie": ICON_COOKIES[kind],
         "cookie_path": f"/{proxy_path}/",
