@@ -16,6 +16,8 @@ const detected = detectPwaPlatform()
 const platform = ref<PwaPlatform>(detected)
 
 const PLATFORMS: PwaPlatform[] = ['ios', 'android', 'desktop']
+/** This panel's address: the install prompts show it under the app's name. */
+const host = typeof window === 'undefined' ? '' : window.location.host
 const steps = computed(() => {
   if (platform.value === 'ios') return [t('pwa.guide.ios1'), t('pwa.guide.ios2'), t('pwa.guide.ios3'), t('pwa.guide.ios4')]
   if (platform.value === 'android') return [t('pwa.guide.android1'), t('pwa.guide.android2'), t('pwa.guide.android3')]
@@ -73,7 +75,14 @@ function tabParts(p: PwaPlatform): [string, string] {
         </div>
         <div class="sheet ios-add">
           <div class="ios-add__head"><span>Cancel</span><b>Add to Home Screen</b><span class="ios-add__btn hit-4">Add</span></div>
-          <div class="ios-add__app"><span class="app-icon" /><span class="page__bar" /></div>
+          <div class="ios-add__app"><span class="app-icon" /><span class="app-name"><b>Hiddify</b><small>{{ host }}</small></span></div>
+          <div class="ios-add__opt"><span>Open as Web App</span><i class="ios-add__switch" /></div>
+        </div>
+        <!-- After "Add": the home screen, with the app on it -->
+        <div class="home">
+          <span v-for="n in 5" :key="n" class="home__app" />
+          <span class="home__app home__app--new"><span class="app-icon" /><b>Hiddify</b></span>
+          <span v-for="n in 2" :key="`after-${n}`" class="home__app" />
         </div>
         <i class="pi pi-circle-fill finger finger--ios" />
       </div>
@@ -90,8 +99,14 @@ function tabParts(p: PwaPlatform): [string, string] {
         </div>
         <div class="and-dialog">
           <b>Install app</b>
-          <div class="and-dialog__app"><span class="app-icon" /><span class="page__bar" /></div>
+          <div class="and-dialog__app"><span class="app-icon" /><span class="app-name"><b>Hiddify</b><small>{{ host }}</small></span></div>
           <div class="and-dialog__btns"><span>Cancel</span><span class="and-dialog__ok hit-3">Install</span></div>
+        </div>
+        <!-- After "Install": the home screen, with the app on it -->
+        <div class="home">
+          <span v-for="n in 5" :key="n" class="home__app" />
+          <span class="home__app home__app--new"><span class="app-icon" /><b>Hiddify</b></span>
+          <span v-for="n in 2" :key="`after-${n}`" class="home__app" />
         </div>
         <i class="pi pi-circle-fill finger finger--android" />
       </div>
@@ -107,11 +122,11 @@ function tabParts(p: PwaPlatform): [string, string] {
         <div class="page page--wide"><span class="page__bar page__bar--wide" /><span class="page__card" /><span class="page__bar" /></div>
         <div class="win-pop">
           <b>Install app?</b>
-          <div class="win-pop__app"><span class="app-icon" /><span class="page__bar" /></div>
+          <div class="win-pop__app"><span class="app-icon" /><span class="app-name"><b>Hiddify</b><small>{{ host }}</small></span></div>
           <div class="win-pop__btns"><span class="win-pop__ok hit-2">Install</span><span>Cancel</span></div>
         </div>
         <div class="win-app">
-          <div class="win-app__title"><span class="app-icon app-icon--tiny" /><span class="page__bar" /></div>
+          <div class="win-app__title"><span class="app-icon app-icon--tiny" /><b>Hiddify</b></div>
           <div class="page"><span class="page__bar page__bar--wide" /><span class="page__card" /></div>
         </div>
         <i class="pi pi-arrow-up-left cursor" />
@@ -194,6 +209,7 @@ function tabParts(p: PwaPlatform): [string, string] {
   width: 2.2rem;
   height: 0.5rem;
   border-radius: 999px;
+  z-index: 6; /* over the home screen too */
   background: #1f2937;
   transform: translateX(-50%);
 }
@@ -257,6 +273,93 @@ function tabParts(p: PwaPlatform): [string, string] {
 .hit-3,
 .hit-4 {
   border-radius: 6px;
+}
+
+/* The app in an install prompt: its name and, under it, its address (as the real prompts show) */
+.app-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+.app-name b,
+.app-name small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-name b {
+  font-size: 0.52rem;
+  color: var(--p-text-color);
+}
+.app-name small {
+  font-size: 0.4rem;
+  color: var(--p-text-muted-color);
+}
+/* After the last tap on a phone: the home screen, with the app among the others */
+.home {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-content: start;
+  gap: 0.75rem 0.2rem;
+  padding: 1.3rem 0.45rem 0;
+  background: linear-gradient(165deg, color-mix(in srgb, var(--p-primary-color) 34%, var(--p-content-background)), color-mix(in srgb, var(--p-primary-color) 10%, var(--p-content-background)));
+  opacity: 0;
+  animation: home-4 var(--dur) infinite;
+}
+.stage--android .home {
+  padding-top: 0.7rem;
+  animation-name: home-3;
+}
+.home__app {
+  justify-self: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 0.33rem;
+  background: color-mix(in srgb, var(--p-text-color) 15%, transparent);
+}
+.home__app--new {
+  position: relative;
+  background: none;
+  animation: home-new-4 var(--dur) infinite;
+}
+.stage--android .home__app--new {
+  animation-name: home-new-3;
+}
+.home__app--new .app-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.33rem;
+}
+.home__app--new b {
+  position: absolute;
+  top: calc(100% + 0.1rem);
+  left: 50%;
+  font-size: 0.34rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--p-text-color);
+  transform: translateX(-50%);
+}
+@keyframes home-4 {
+  0%, 91% { opacity: 0; }
+  94%, 100% { opacity: 1; }
+}
+@keyframes home-3 {
+  0%, 88% { opacity: 0; }
+  91%, 100% { opacity: 1; }
+}
+@keyframes home-new-4 {
+  0%, 92% { transform: scale(0.3); }
+  96%, 100% { transform: scale(1); }
+}
+@keyframes home-new-3 {
+  0%, 89% { transform: scale(0.3); }
+  94%, 100% { transform: scale(1); }
 }
 
 /* --- iOS Safari --- */
@@ -369,6 +472,34 @@ function tabParts(p: PwaPlatform): [string, string] {
   gap: 0.4rem;
   padding-top: 0.4rem;
 }
+/* "Open as Web App", on: the sheet's own switch */
+.ios-add__opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.15rem;
+  padding: 0.25rem 0.3rem;
+  border-radius: 6px;
+  background: var(--p-content-hover-background);
+  font-size: 0.42rem;
+}
+.ios-add__switch {
+  position: relative;
+  width: 0.8rem;
+  height: 0.46rem;
+  border-radius: 999px;
+  background: #34c759;
+}
+.ios-add__switch::after {
+  content: '';
+  position: absolute;
+  top: 0.05rem;
+  right: 0.05rem;
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 50%;
+  background: #fff;
+}
 .finger--ios {
   animation: finger-ios var(--dur) infinite ease-in-out;
 }
@@ -383,9 +514,10 @@ function tabParts(p: PwaPlatform): [string, string] {
   63% { left: 55%; top: 87%; transform: scale(1); }
   67% { transform: scale(0.7); }
   72% { left: 55%; top: 87%; transform: scale(1); }
-  88% { left: 84%; top: 13%; transform: scale(1); }
-  92% { transform: scale(0.7); }
-  96%, 100% { left: 84%; top: 13%; transform: scale(1); }
+  84% { left: 84%; top: 13%; transform: scale(1); }
+  87% { transform: scale(0.7); }
+  90% { left: 84%; top: 13%; transform: scale(1); }
+  98%, 100% { left: 70%; top: 60%; transform: scale(1); }
 }
 
 /* --- Android Chrome --- */
@@ -463,7 +595,7 @@ function tabParts(p: PwaPlatform): [string, string] {
   font-size: 0.5rem;
   opacity: 0;
   transform: scale(0.9);
-  animation: pop-3 var(--dur) infinite;
+  animation: pop-3-phone var(--dur) infinite;
 }
 .and-dialog__app {
   display: flex;
@@ -492,9 +624,10 @@ function tabParts(p: PwaPlatform): [string, string] {
   50% { left: 62%; top: 31%; transform: scale(1); }
   56% { transform: scale(0.7); }
   62% { left: 62%; top: 31%; transform: scale(1); }
-  82% { left: 76%; top: 66%; transform: scale(1); }
-  88% { transform: scale(0.7); }
-  93%, 100% { left: 76%; top: 66%; transform: scale(1); }
+  78% { left: 76%; top: 66%; transform: scale(1); }
+  82% { transform: scale(0.7); }
+  86% { left: 76%; top: 66%; transform: scale(1); }
+  97%, 100% { left: 50%; top: 70%; transform: scale(1); }
 }
 
 /* --- Chrome on a computer --- */
@@ -617,6 +750,7 @@ function tabParts(p: PwaPlatform): [string, string] {
   gap: 0.3rem;
   padding: 0.3rem 0.45rem;
   background: color-mix(in srgb, var(--p-primary-color) 18%, var(--p-content-background));
+  font-size: 0.45rem;
 }
 .cursor {
   position: absolute;
@@ -654,9 +788,9 @@ function tabParts(p: PwaPlatform): [string, string] {
   76%, 100% { background: var(--p-content-hover-background); }
 }
 @keyframes lit-4 {
-  0%, 88% { background: transparent; }
-  91%, 98% { background: color-mix(in srgb, var(--hit) 22%, transparent); }
-  100% { background: transparent; }
+  0%, 82% { background: transparent; }
+  85%, 90% { background: color-mix(in srgb, var(--hit) 22%, transparent); }
+  92%, 100% { background: transparent; }
 }
 @keyframes sheet-2 {
   0%, 22% { transform: translateY(110%); }
@@ -668,9 +802,11 @@ function tabParts(p: PwaPlatform): [string, string] {
   52%, 73% { transform: translateY(0); }
   77%, 100% { transform: translateY(110%); }
 }
+/* The last sheet goes once "Add" is tapped: the home screen shows for the rest of the step */
 @keyframes sheet-4 {
   0%, 72% { transform: translateY(110%); }
-  77%, 100% { transform: translateY(0); }
+  77%, 90% { transform: translateY(0); }
+  93%, 100% { transform: translateY(110%); }
 }
 @keyframes pop-2 {
   0%, 28% { opacity: 0; transform: scale(0.85); }
@@ -681,6 +817,12 @@ function tabParts(p: PwaPlatform): [string, string] {
   0%, 62% { opacity: 0; transform: scale(0.9); }
   67%, 96% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(0.9); }
+}
+/* On a phone the install dialog closes after "Install": the home screen shows for the rest of the step */
+@keyframes pop-3-phone {
+  0%, 62% { opacity: 0; transform: scale(0.9); }
+  67%, 87% { opacity: 1; transform: scale(1); }
+  90%, 100% { opacity: 0; transform: scale(0.9); }
 }
 /* Android and desktop step 2/3 rows light in their own windows */
 .stage--android .hit-2,
@@ -696,9 +838,9 @@ function tabParts(p: PwaPlatform): [string, string] {
   62%, 100% { filter: none; outline: 0 solid transparent; }
 }
 @keyframes lit-pop-3 {
-  0%, 80% { outline: 0 solid transparent; }
-  84%, 94% { outline: 3px solid color-mix(in srgb, var(--hit) 35%, transparent); }
-  100% { outline: 0 solid transparent; }
+  0%, 76% { outline: 0 solid transparent; }
+  79%, 86% { outline: 3px solid color-mix(in srgb, var(--hit) 35%, transparent); }
+  88%, 100% { outline: 0 solid transparent; }
 }
 
 /* --- the steps, lit in time with the scene --- */
