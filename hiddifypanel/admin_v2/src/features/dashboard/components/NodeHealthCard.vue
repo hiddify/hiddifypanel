@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { countryFlag, countryName } from '@/shared/utils/country'
-import { computed, nextTick, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
 import Dialog from 'primevue/dialog'
@@ -24,6 +24,7 @@ import { apiErrorMessage } from '@/core/api/client'
 import { isChildPanel, isSuperAdmin } from '@/core/panelShell'
 import { nodesApi } from '@/features/nodes/api'
 import { dashboardNodeName, editableNodeName } from '../utils/node-name'
+import { useCardPopover } from '@/shared/composables/useCardPopover'
 
 const props = defineProps<{
   nodes: DashboardNodeStats[]
@@ -71,90 +72,23 @@ const tableRows = computed(() =>
 
 /** Renaming from the dashboard: the pencil after a name opens a small popover (super admins, not on a node's panel). */
 const canRename = computed(() => isSuperAdmin.value && !isChildPanel.value)
-const renamePop = ref<InstanceType<typeof Popover> | null>(null)
 const renameInput = ref<{ $el: HTMLInputElement } | null>(null)
 const renameTarget = ref<{ id: number; title: string; name: string; ok: boolean } | null>(null)
 const renameValue = ref('')
 const renaming = ref(false)
 
 /** An offline node can't take a new name (it would only change here): the popover says why instead */
-/** The popover's own state: PrimeVue keeps where it points in `target` / `eventTarget` and has no method to move it */
-type PopoverState = { visible: boolean; container: HTMLElement | null; target: Element | null; eventTarget: Element | null; alignOverlay: () => void }
-let moveTimer = 0
+const { pop: renamePop, open: openPop, hide: hidePop, onShow: onRenameShow, onHide: onRenameHide } = useCardPopover({
+  card: '.node-list__item',
+  onPlaced: () => focusRename(),
+})
 
 function openRename(event: Event, row: { id: number; title: string; name: string; ok: boolean }) {
-  const pencil = event.currentTarget as HTMLElement
   renameTarget.value = row
   renameValue.value = editableNodeName(row.id, row.name)
-  const pop = renamePop.value as unknown as PopoverState | null
-  if (!pop) return
-  if (!pop.visible || !pop.container) {
-    renamePop.value?.show(event)
-    return
-  }
-  // Already open on another pencil: glide over to this one (show() alone would keep it where it was)
-  pop.target = pencil
-  pop.eventTarget = pencil
-  const container = pop.container
-  container.classList.add('node-rename--moving')
-  window.clearTimeout(moveTimer)
-  moveTimer = window.setTimeout(() => container.classList.remove('node-rename--moving'), 260)
-  void nextTick(() => {
-    // alignOverlay only ever adds "flipped" (opened above the pencil): start again from below
-    container.classList.remove('p-popover-flipped')
-    container.removeAttribute('data-p-popover-flipped')
-    pop.alignOverlay()
-    centerRename()
-    focusRename()
-  })
+  openPop(event)
 }
 
-/**
- * On a phone the popover sits in the middle of the node's card, its arrow still on the pencil; anywhere it stays fully
- * on screen (PrimeVue lines it up with the pencil's start, so near the end it ran off the screen).
- */
-function centerRename() {
-  const pop = renamePop.value as unknown as PopoverState | null
-  const container = pop?.container
-  const pencil = pop?.target as HTMLElement | null
-  if (!container || !pencil) return
-  const width = container.offsetWidth
-  const pencilBox = pencil.getBoundingClientRect()
-  const card = pencil.closest('.node-list__item')
-  const box = card ? card.getBoundingClientRect() : pencilBox
-  const margin = 8
-  const left = Math.min(Math.max(box.left + (box.width - width) / 2, margin), window.innerWidth - width - margin)
-  container.style.left = `${left + window.scrollX}px`
-  // PrimeVue decides "flipped" (above the pencil) from where the popover is on screen, which is still the old place
-  // while it glides to another pencil: decide from where it is going instead
-  if (parseFloat(container.style.top) > pencilBox.top + window.scrollY) {
-    container.classList.remove('p-popover-flipped')
-    container.removeAttribute('data-p-popover-flipped')
-  }
-  // the arrow: PrimeVue draws it at --p-popover-arrow-offset + --p-popover-arrow-left from the popover's start
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
-  const offset = parseFloat(getComputedStyle(container).getPropertyValue('--p-popover-arrow-offset')) * rem || 0
-  const arrow = Math.min(Math.max(pencilBox.left + pencilBox.width / 2 - left - offset, 0), width - 2 * offset)
-  container.style.setProperty('--p-popover-arrow-left', `${arrow}px`)
-  container.style.setProperty('--node-rename-origin', `${arrow + offset}px`)
-}
-
-/** PrimeVue lines the popover up again whenever its size changes (a ResizeObserver it starts first): centre it after */
-let renameResize: ResizeObserver | null = null
-function onRenameShow() {
-  const container = (renamePop.value as unknown as PopoverState | null)?.container
-  renameResize?.disconnect()
-  if (container) {
-    renameResize = new ResizeObserver(() => centerRename())
-    renameResize.observe(container)
-  }
-  centerRename()
-  focusRename()
-}
-function onRenameHide() {
-  renameResize?.disconnect()
-  renameResize = null
-}
 function focusRename() {
   if (!renameTarget.value?.ok) return
   renameInput.value?.$el.focus()
@@ -166,7 +100,7 @@ async function saveRename() {
   const name = renameValue.value.trim()
   // this server may go back to its default name (empty); a node needs one
   if ((!name && target.id !== 0) || name === editableNodeName(target.id, target.name)) {
-    renamePop.value?.hide()
+    hidePop()
     return
   }
   renaming.value = true
@@ -175,7 +109,7 @@ async function saveRename() {
     const shown = name || t('dashboard.thisServer')
     if (res.synced_to_node) toast.add({ severity: 'success', summary: t('nodes.renamed', { name: shown }), life: 3000 })
     else toast.add({ severity: 'warn', summary: t('nodes.renamedHereOnly', { name: shown }), detail: t('nodes.renamedHereOnlyDetail'), life: 7000 })
-    renamePop.value?.hide()
+    hidePop()
     emit('renamed')
   } catch (err) {
     toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
@@ -616,7 +550,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <p v-else-if="diskDetail.error" class="disk-dialog__error">{{ diskDetail.error }}</p>
       </template>
     </Dialog>
-    <Popover ref="renamePop" class="node-rename" @show="onRenameShow" @hide="onRenameHide">
+    <Popover ref="renamePop" class="card-popover node-rename" @show="onRenameShow" @hide="onRenameHide">
       <form v-if="renameTarget?.ok" class="node-rename__form" @submit.prevent="saveRename">
         <label class="node-rename__label" for="node-rename-input">{{ t('nodes.rename') }}</label>
         <div class="node-rename__row">
@@ -640,8 +574,8 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         </div>
         <small v-if="renameTarget.id === 0" class="node-rename__hint">{{ t('dashboard.renameThisServerHint', { name: t('dashboard.thisServer') }) }}</small>
       </form>
-      <div v-else-if="renameTarget" class="node-rename__offline" role="status">
-        <strong class="node-rename__offline-title"><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
+      <div v-else-if="renameTarget" class="card-popover__notice" role="status">
+        <strong><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
         <p>{{ t('dashboard.renameOffline', { name: renameTarget.title }) }}</p>
       </div>
     </Popover>
@@ -867,27 +801,6 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   flex: 1;
   min-width: 0;
 }
-.node-rename__offline {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  width: min(16rem, 80vw);
-}
-.node-rename__offline-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-}
-.node-rename__offline-title i {
-  color: var(--p-orange-500);
-}
-.node-rename__offline p {
-  margin: 0;
-  color: var(--p-text-muted-color);
-  font-size: 0.8rem;
-  line-height: 1.45;
-}
 .node-rename__hint {
   color: var(--p-text-muted-color);
   font-size: 0.7rem;
@@ -1026,42 +939,3 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 }
 </style>
 
-<style>
-/* The rename popover (teleported to the body, so not scoped): it eases in from its arrow, and glides when it moves
-   to another pencil */
-.p-popover.node-rename {
-  transform-origin: var(--node-rename-origin, 1.25rem) top;
-}
-.p-popover.node-rename.p-anchored-overlay-enter-active {
-  animation: node-rename-in 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
-}
-.p-popover.node-rename.p-anchored-overlay-leave-active {
-  animation: node-rename-out 0.16s ease-in forwards;
-}
-.p-popover.node-rename.node-rename--moving {
-  transition:
-    left 0.24s cubic-bezier(0.2, 0.9, 0.25, 1),
-    top 0.24s cubic-bezier(0.2, 0.9, 0.25, 1);
-}
-@keyframes node-rename-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.94);
-  }
-}
-@keyframes node-rename-out {
-  to {
-    opacity: 0;
-    transform: translateY(-4px) scale(0.97);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .p-popover.node-rename.p-anchored-overlay-enter-active,
-  .p-popover.node-rename.p-anchored-overlay-leave-active {
-    animation-duration: 0.01s;
-  }
-  .p-popover.node-rename.node-rename--moving {
-    transition: none;
-  }
-}
-</style>

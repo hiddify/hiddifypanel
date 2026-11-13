@@ -101,7 +101,7 @@
               <Button type="submit" icon="pi pi-check" size="small" text rounded :loading="renaming" :disabled="!editName.trim()" :aria-label="t('common.save')" />
               <Button type="button" icon="pi pi-times" size="small" text rounded severity="secondary" :disabled="renaming" :aria-label="t('common.cancel')" @click="cancelRename" />
             </form>
-            <button v-else type="button" class="node-card__name" :title="t('nodes.rename')" @click="startRename(node)">
+            <button v-else type="button" class="node-card__name" :title="t('nodes.rename')" @click="startRename(node, $event)">
               <FlagIcon v-if="node.country" class="node-card__flag" :code="node.country" :label="countryName(node.country)" />
               <span class="node-card__name-text">{{ node.name }}</span>
               <i class="pi pi-pencil node-card__name-edit" />
@@ -295,6 +295,13 @@
       <NodeSyncPanel v-if="syncInfoNode" :key="syncInfoNode.id" :loader="syncReportLoader(syncInfoNode.id)" embedded />
     </Dialog>
   </div>
+  <!-- The pencil of a node this panel can't reach: why it can't be renamed now (as on the dashboard) -->
+  <Popover ref="renameBlockedPop" class="card-popover" @show="onBlockedShow" @hide="onBlockedHide">
+    <div v-if="renameBlocked" class="card-popover__notice" role="status">
+      <strong><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
+      <p>{{ t('dashboard.renameOffline', { name: renameBlocked.name }) }}</p>
+    </div>
+  </Popover>
   <Popover ref="osPop" class="node-os-pop">
     <div v-if="osNode" class="node-os" :style="osLogoOf(osNode) ? { '--os-c': osLogoOf(osNode)!.color, '--os-dark': osLogoOf(osNode)!.dark } : undefined">
       <header class="node-os__head">
@@ -331,6 +338,7 @@ import Skeleton from 'primevue/skeleton'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
+import { useCardPopover } from '@/shared/composables/useCardPopover'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatBytes, formatCount } from '@/shared/utils/format-metrics'
 import AddNodeDialog from '@/features/nodes/components/AddNodeDialog.vue'
@@ -452,7 +460,27 @@ function toggleDomains(id: number) {
   expandedDomains.value = next
 }
 
-function startRename(node: PanelNode) {
+/**
+ * A new name goes to the node too, so a node this panel can't reach ("Not reachable") is not renamed: its pencil says
+ * why instead, in the same small popover as on the dashboard.
+ */
+const renameBlocked = ref<PanelNode | null>(null)
+const {
+  pop: renameBlockedPop,
+  open: openBlocked,
+  hide: hideBlocked,
+  onShow: onBlockedShow,
+  onHide: onBlockedHide,
+} = useCardPopover({ card: '.node-card' })
+
+function startRename(node: PanelNode, event?: Event) {
+  if (pings[node.id]?.state === 'fail' && event) {
+    renameBlocked.value = node
+    // the arrow points at the pencil, not the middle of the name
+    openBlocked(event, (event.currentTarget as HTMLElement).querySelector<HTMLElement>('.node-card__name-edit'))
+    return
+  }
+  hideBlocked()
   editing.value = node.id
   editName.value = node.name
 }
