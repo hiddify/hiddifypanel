@@ -8,7 +8,7 @@ export interface TileDetail {
 </script>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount } from 'vue'
 import Sparkline from './Sparkline.vue'
 import TrendChip from './TrendChip.vue'
 
@@ -44,6 +44,21 @@ const tip = computed(() => {
  *  card opens on focus (a tap on the focusable tile) and closes on blur (a tap elsewhere). */
 const touch = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
 const tipArg = { position: 'top', event: touch ? 'focus' : 'hover' }
+
+/** The card sits on <body> and PrimeVue only follows scrolling parents, not the page itself: on touch the open card
+ *  stayed where it was while the tile scrolled away. A scroll now blurs the tile, which closes its card. */
+let focused: HTMLElement | null = null
+const blurOnScroll = () => focused?.blur()
+function onFocus(event: FocusEvent) {
+  if (!touch) return
+  focused = event.currentTarget as HTMLElement
+  document.addEventListener('scroll', blurOnScroll, { capture: true, passive: true })
+}
+function onBlur() {
+  focused = null
+  document.removeEventListener('scroll', blurOnScroll, { capture: true })
+}
+onBeforeUnmount(onBlur)
 </script>
 
 <template>
@@ -51,6 +66,8 @@ const tipArg = { position: 'top', event: touch ? 'focus' : 'hover' }
     v-tooltip:[tipArg]="tip"
     class="tile"
     :tabindex="touch && tip ? 0 : undefined"
+    @focus="onFocus"
+    @blur="onBlur"
     :style="{ '--tile-accent': accent }"
   >
     <div class="tile__top">
