@@ -54,8 +54,15 @@ export function nodeColor(id: number): string {
   return hslToHex(hue, 0.65, index % 2 ? 0.5 : 0.42)
 }
 
+interface TipChart {
+  canvas: HTMLCanvasElement | null
+  width: number
+  tooltip?: { setActiveElements: (active: [], at: { x: number; y: number }) => void }
+  update: (mode?: string) => void
+}
+
 interface ExternalTooltipContext {
-  chart: { canvas: HTMLCanvasElement; width: number }
+  chart: TipChart
   tooltip: {
     opacity: number
     caretX: number
@@ -73,9 +80,30 @@ interface ExternalTooltipContext {
  * Persian and Latin (server names, units) in the wrong order; the browser's own layout of a right-to-left element gets
  * it right, so it is used in every language.
  */
+/** The chart whose card is open. Touch never sends a "pointer left", so Chart.js keeps a tapped chart's card up; a
+ *  finger put on another chart to scroll then opened a second one. One card at a time, and a scroll closes it. */
+let openTipChart: TipChart | null = null
+let scrollWatched = false
+
+function closeTip(chart: TipChart) {
+  if (openTipChart === chart) openTipChart = null
+  const tip = chart.canvas?.parentElement?.querySelector<HTMLDivElement>(':scope > .chart-tip')
+  if (tip) tip.style.opacity = '0'
+  if (!chart.canvas) return // destroyed
+  chart.tooltip?.setActiveElements([], { x: 0, y: 0 })
+  chart.update('none')
+}
+
+function watchScroll() {
+  if (scrollWatched) return
+  scrollWatched = true
+  // Capture: the page may scroll inside a layout element, not the window
+  document.addEventListener('scroll', () => openTipChart && closeTip(openTipChart), { capture: true, passive: true })
+}
+
 function domTooltip(above = false) {
   return ({ chart, tooltip }: ExternalTooltipContext) => {
-    const holder = chart.canvas.parentElement
+    const holder = chart.canvas?.parentElement
     if (!holder) return
     let el = holder.querySelector<HTMLDivElement>(':scope > .chart-tip')
     if (!el) {
@@ -85,8 +113,12 @@ function domTooltip(above = false) {
     }
     if (tooltip.opacity === 0) {
       el.style.opacity = '0'
+      if (openTipChart === chart) openTipChart = null
       return
     }
+    if (openTipChart && openTipChart !== chart) closeTip(openTipChart)
+    openTipChart = chart
+    watchScroll()
     el.dir = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
     el.replaceChildren()
     const part = (tag: string, cls: string, text?: string) => {
