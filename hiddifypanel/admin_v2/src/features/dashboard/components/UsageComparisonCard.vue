@@ -7,6 +7,7 @@ import { SERIES, nodeColor } from '../composables/useChartTheme'
 import DashCard from './DashCard.vue'
 import MetricChart from './MetricChart.vue'
 import TrendChip from './TrendChip.vue'
+import { dashboardNodeName } from '../utils/node-name'
 
 const props = defineProps<{
   usage: DashboardUsage | null
@@ -29,8 +30,9 @@ const labels = computed(() => buckets.value.map((bucket) => t(`dashboard.${bucke
 
 const nodeName = (id: string) => {
   const numeric = Number(id)
-  if (numeric === 0) return t('dashboard.thisServer')
-  return props.nodes.find((node) => node.id === numeric)?.name || `${t('dashboard.node')} ${id}`
+  const node = props.nodes.find((row) => row.id === numeric)
+  if (numeric === 0) return dashboardNodeName(0, node?.name, t('dashboard.thisServer'))
+  return node?.name || `${t('dashboard.node')} ${id}`
 }
 
 /** Per-node average/today/yesterday, derived from the same daily series the trend chart uses. */

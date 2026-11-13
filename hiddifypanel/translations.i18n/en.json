@@ -1502,6 +1502,12 @@
       "subtitle": "Traffic, users and server health at a glance",
       "swap": "Swap",
       "thisServer": "This server",
+      "renameThisServerHint": "Shown on the dashboard. Leave it empty to show “{name}”.",
+      "renameOfflineTitle": "Can't Rename Right Now",
+      "renameOffline": "{name} can't be reached from this panel right now. Its name can be changed once it can be reached again, so the node takes the new name too.",
+      "renameTooOld": "{name} runs panel version {version}, which can't take a new name from this panel. Update its panel to {min} or newer, then rename it.",
+      "renameCheckingTitle": "Checking the Node",
+      "renameChecking": "{name}'s connection is being checked right now. Once it is known, you can rename it.",
       "tip": {
         "dailyAverage": "Daily average",
         "last30Days": "Last 30 days",

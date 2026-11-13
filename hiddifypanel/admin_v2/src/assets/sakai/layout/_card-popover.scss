@@ -1,0 +1,63 @@
+/* The small popover that opens from a button on a card (useCardPopover): it eases in from its arrow and glides when it
+   moves to another card. Plus the note it shows when a node can't be renamed now. */
+.p-popover.card-popover {
+    transform-origin: var(--card-popover-origin, 1.25rem) top;
+
+    &.p-anchored-overlay-enter-active {
+        animation: card-popover-in 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
+    }
+    &.p-anchored-overlay-leave-active {
+        animation: card-popover-out 0.16s ease-in forwards;
+    }
+    &.card-popover--moving {
+        transition:
+            left 0.24s cubic-bezier(0.2, 0.9, 0.25, 1),
+            top 0.24s cubic-bezier(0.2, 0.9, 0.25, 1);
+    }
+}
+@keyframes card-popover-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.94);
+    }
+}
+@keyframes card-popover-out {
+    to {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.97);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .p-popover.card-popover {
+        &.p-anchored-overlay-enter-active,
+        &.p-anchored-overlay-leave-active {
+            animation-duration: 0.01s;
+        }
+        &.card-popover--moving {
+            transition: none;
+        }
+    }
+}
+
+.card-popover__notice {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: min(16rem, 80vw);
+
+    strong {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+    }
+    strong i {
+        color: var(--p-orange-500);
+    }
+    p {
+        margin: 0;
+        color: var(--p-text-muted-color);
+        font-size: 0.8rem;
+        line-height: 1.45;
+    }
+}
