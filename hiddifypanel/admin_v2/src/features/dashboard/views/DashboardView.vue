@@ -84,7 +84,7 @@ const {
     <!-- Every config tested from the server every 6 hours (super admins: it runs cores on the server) -->
     <ConfigHealthCard v-if="isSuperAdmin" />
 
-    <NodeHealthCard :nodes="nodeStats" :history="nodeSamples" :child-id="childId" />
+    <NodeHealthCard :nodes="nodeStats" :history="nodeSamples" :child-id="childId" @renamed="refresh" />
   </div>
 </template>
 

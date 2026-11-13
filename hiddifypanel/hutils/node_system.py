@@ -65,7 +65,9 @@ def _failed_node(node_id: int, name: str, mode: str, error: NodeApiErrorSchema |
 
 
 def _local_node(metrics: MetricsSnapshot) -> DashboardNodeStats:
-    return _node_from_snapshot(0, "this-server", "local", metrics)
+    # The name an admin gave this server on the dashboard ("Root" until then: the dashboard shows "This server")
+    local = Child.query.filter(Child.id == 0).first()
+    return _node_from_snapshot(0, (local.name if local else "") or "this-server", "local", metrics)
 
 
 def _fetch_child(child: Child, process_limit: int, parent_key: str) -> DashboardNodeStats:

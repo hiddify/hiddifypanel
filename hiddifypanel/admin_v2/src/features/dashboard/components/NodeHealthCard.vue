@@ -16,14 +16,24 @@ import { timeLabels } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricBar from './MetricBar.vue'
 import MetricChart from './MetricChart.vue'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import Popover from 'primevue/popover'
+import { useToast } from 'primevue/usetoast'
+import { apiErrorMessage } from '@/core/api/client'
+import { isChildPanel, isSuperAdmin } from '@/core/panelShell'
+import { nodesApi } from '@/features/nodes/api'
+import { dashboardNodeName, editableNodeName } from '../utils/node-name'
 
 const props = defineProps<{
   nodes: DashboardNodeStats[]
   history: Record<number, NodeSample[]>
   childId?: number | null
 }>()
+const emit = defineEmits<{ renamed: [] }>()
 
 const { t, locale } = useI18n()
+const toast = useToast()
 
 /** Only the toolbar's selected node, or every node when nothing is selected. */
 const visibleNodes = computed(() =>
@@ -31,7 +41,7 @@ const visibleNodes = computed(() =>
 )
 const multiNode = computed(() => visibleNodes.value.length > 1)
 
-const nodeTitle = (node: DashboardNodeStats) => (node.id === 0 ? t('dashboard.thisServer') : node.name)
+const nodeTitle = (node: DashboardNodeStats) => dashboardNodeName(node.id, node.name, t('dashboard.thisServer'))
 /** The node's country, by its address: the flag before its name, as on the Nodes page. */
 const nodeFlag = (node: DashboardNodeStats) => countryFlag(node.country)
 const nodeCountry = (node: DashboardNodeStats) => (node.country ? countryName(node.country, locale.value) : '')
@@ -40,6 +50,7 @@ const tableRows = computed(() =>
   visibleNodes.value.map((node) => ({
     id: node.id,
     title: nodeTitle(node),
+    name: node.name,
     flag: nodeFlag(node),
     country: nodeCountry(node),
     color: nodeColor(node.id),
@@ -57,6 +68,47 @@ const tableRows = computed(() =>
     uniqueIps: node.network?.unique_ips ?? null,
   })),
 )
+
+/** Renaming from the dashboard: the pencil after a name opens a small popover (super admins, not on a node's panel). */
+const canRename = computed(() => isSuperAdmin.value && !isChildPanel.value)
+const renamePop = ref<InstanceType<typeof Popover> | null>(null)
+const renameInput = ref<{ $el: HTMLInputElement } | null>(null)
+const renameTarget = ref<{ id: number; title: string; name: string } | null>(null)
+const renameValue = ref('')
+const renaming = ref(false)
+
+function openRename(event: Event, row: { id: number; title: string; name: string }) {
+  renameTarget.value = row
+  renameValue.value = editableNodeName(row.id, row.name)
+  renamePop.value?.show(event)
+}
+function focusRename() {
+  renameInput.value?.$el.focus()
+  renameInput.value?.$el.select()
+}
+async function saveRename() {
+  const target = renameTarget.value
+  if (!target || renaming.value) return
+  const name = renameValue.value.trim()
+  // this server may go back to its default name (empty); a node needs one
+  if ((!name && target.id !== 0) || name === editableNodeName(target.id, target.name)) {
+    renamePop.value?.hide()
+    return
+  }
+  renaming.value = true
+  try {
+    const res = await nodesApi.rename(target.id, name)
+    const shown = name || t('dashboard.thisServer')
+    if (res.synced_to_node) toast.add({ severity: 'success', summary: t('nodes.renamed', { name: shown }), life: 3000 })
+    else toast.add({ severity: 'warn', summary: t('nodes.renamedHereOnly', { name: shown }), detail: t('nodes.renamedHereOnlyDetail'), life: 7000 })
+    renamePop.value?.hide()
+    emit('renamed')
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    renaming.value = false
+  }
+}
 
 const overviewLabels = computed(() => {
   let longest: NodeSample[] = []
@@ -359,6 +411,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }}</strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
+          <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
+            <i class="pi pi-pencil" />
+          </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </template>
       </Column>
@@ -405,6 +460,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }}</strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
+          <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
+            <i class="pi pi-pencil" />
+          </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </div>
         <dl class="node-list__stats">
@@ -484,6 +542,31 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <p v-else-if="diskDetail.error" class="disk-dialog__error">{{ diskDetail.error }}</p>
       </template>
     </Dialog>
+    <Popover ref="renamePop" class="node-rename" @show="focusRename">
+      <form v-if="renameTarget" class="node-rename__form" @submit.prevent="saveRename">
+        <label class="node-rename__label" for="node-rename-input">{{ t('nodes.rename') }}</label>
+        <div class="node-rename__row">
+          <InputText
+            id="node-rename-input"
+            ref="renameInput"
+            v-model="renameValue"
+            size="small"
+            maxlength="100"
+            :placeholder="renameTarget.id === 0 ? t('dashboard.thisServer') : ''"
+            @keydown.esc="renamePop?.hide()"
+          />
+          <Button
+            type="submit"
+            icon="pi pi-check"
+            size="small"
+            :loading="renaming"
+            :disabled="renameTarget.id !== 0 && !renameValue.trim()"
+            :aria-label="t('common.save')"
+          />
+        </div>
+        <small v-if="renameTarget.id === 0" class="node-rename__hint">{{ t('dashboard.renameThisServerHint', { name: t('dashboard.thisServer') }) }}</small>
+      </form>
+    </Popover>
   </DashCard>
 </template>
 
@@ -645,6 +728,71 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   border-radius: 999px;
   margin-inline-end: 0.5rem;
   flex-shrink: 0;
+  /* A slow pulse, like a heartbeat: only its opacity moves, never its size */
+  animation: node-dot-pulse 2.8s ease-in-out infinite;
+}
+@keyframes node-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .node-cell__dot {
+    animation: none;
+  }
+}
+/* The pencil after a name: renames the server or node in a small popover */
+.node-cell__edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-inline-start: 0.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.node-cell__edit i {
+  font-size: 0.7rem;
+}
+.node-cell__edit:hover,
+.node-cell__edit:focus-visible {
+  color: var(--p-primary-color);
+  background: var(--p-content-hover-background);
+}
+.node-rename__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: min(15rem, 80vw);
+}
+.node-rename__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+}
+.node-rename__row {
+  display: flex;
+  gap: 0.4rem;
+}
+.node-rename__row :deep(input) {
+  flex: 1;
+  min-width: 0;
+}
+.node-rename__hint {
+  color: var(--p-text-muted-color);
+  font-size: 0.7rem;
+  line-height: 1.35;
 }
 /* One line: the name, then the machine's host name, small and grey; every row is as tall and the name in its middle */
 .node-cell__title {

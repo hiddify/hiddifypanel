@@ -15,6 +15,7 @@ from flask.views import MethodView
 import hiddifypanel
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
+from hiddifypanel.database import db
 from hiddifypanel.hutils.node import async_job, ws_server
 from hiddifypanel.hutils.node.sync_report import NodeSyncReport
 from hiddifypanel.models import Child, ChildMode, Role
@@ -116,6 +117,10 @@ def _node_row(child: Child) -> dict:
     }
 
 
+# The name init_db gives this server's own child row; the dashboard shows "This server" for it
+LOCAL_DEFAULT_NAME = "Root"
+
+
 def _remote_or_404(node_id: int) -> Child:
     child = Child.query.filter(Child.id == node_id, Child.mode == ChildMode.remote).first()
     return child or abort(404, "Node not found")
@@ -177,10 +182,18 @@ class NodeApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
     def patch(self, node_id: int):
-        """Nodes: Rename a node (`{"name": ...}`), here and on the node"""
+        """Nodes: Rename a node (`{"name": ...}`), here and on the node; id 0 renames this server (empty: back to the default)"""
         _only_on_parent_or_standalone()
-        child = _remote_or_404(node_id)
         name = str((request.get_json(silent=True) or {}).get("name") or "").strip()
+        if node_id == 0:
+            # This server: only the name the dashboard shows, kept on its own child row
+            if len(name) > 100:
+                abort(400, "name must be 0-100 characters")
+            local = Child.query.filter(Child.id == 0).first() or abort(404, "Node not found")
+            local.name = name or LOCAL_DEFAULT_NAME
+            db.session.commit()
+            return {"node": None, "synced_to_node": True}
+        child = _remote_or_404(node_id)
         if not name or len(name) > 100:
             abort(400, "name must be 1-100 characters")
         synced = hutils.node.parent.rename_node(child, name)
