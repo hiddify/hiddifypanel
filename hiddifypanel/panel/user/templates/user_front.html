@@ -16,7 +16,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ hutils.flask.app_icon_url('favicon-user-32.png') }}">
     <link rel="icon" type="image/png" sizes="256x256" href="{{ hutils.flask.app_icon_url('favicon-user-256.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ hutils.flask.app_icon_url('app-icon-user-apple-180.png') }}">
-    <link rel="manifest" href="{{ url_for('common_bp.LoginView:create_pwa_manifest', secret_uuid=g.account.uuid or '') }}">
+    <link rel="manifest" href="{{ url_for('common_bp.LoginView:create_pwa_manifest', secret_uuid=g.account.uuid or '', icon=hutils.flask.icon_color('user')) }}">
+    <!-- App Color: what the install guide needs to offer this page's app icon in other colors -->
+    <script>window.__APP_ICON__ = {{ hutils.flask.app_icon_info('user', g.proxy_path) | tojson }};</script>
     <title>Hiddify | Panel</title>
     <script>
       window.appVersion = {{ version | tojson }};

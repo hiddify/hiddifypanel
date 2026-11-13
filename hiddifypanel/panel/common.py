@@ -172,18 +172,18 @@ def init_app(app: APIFlask):
     @app.route("/<proxy_path>/app-icon/<kind>/<color>/<name>.png")
     @app.doc(hide=True)
     def app_icon(kind, color, name):
-        """The admin app icon in the color a browser chose with "PWA Color" (hutils.app_icon).
+        """An app icon (the admin panel's or the user page's) in the color a browser chose with "App Color" (hutils.app_icon).
 
         Open like the static icons: the phone or the browser fetches it without the admin's session."""
         hutils.flask.proxy_path_validator(g.proxy_path)
         color = hutils.app_icon.normalize(color)
-        if kind != "admin" or not color or name not in hutils.app_icon.NAMES:
+        if kind not in hutils.app_icon.KINDS or not color or name not in hutils.app_icon.NAMES:
             abort(404)
         try:
-            icon = hutils.app_icon.render(color, name)
+            icon = hutils.app_icon.render(color, name, kind)
         except Exception as e:  # no Pillow or a missing part: the stock icon instead
-            logger.warning(f"app icon {name} in #{color} could not be drawn: {e}")
-            return redirect(hutils.flask.static_url_for(filename=f"images/{hutils.app_icon.STOCK[name]}", version=hutils.flask.APP_ICON_VERSION))
+            logger.warning(f"{kind} app icon {name} in #{color} could not be drawn: {e}")
+            return redirect(hutils.flask.static_url_for(filename=f"images/{hutils.app_icon.STOCK[kind][name]}", version=hutils.flask.APP_ICON_VERSION))
         # The URL names the color and the icon version, so the picture behind it never changes.
         return Response(icon, mimetype="image/png", headers={"Cache-Control": "public, max-age=31536000, immutable"})
 

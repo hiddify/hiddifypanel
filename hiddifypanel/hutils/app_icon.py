@@ -1,9 +1,10 @@
-"""The admin panel's app icon in any color.
+"""The panel's app icons in any color (the admin panel's and the user page's).
 
-The icon is a glass tile in the color, with a white glass hexagon in a ring of that color and the logo in that color.
+Each is a glass tile in the color. The admin's has a white glass hexagon on it, in a ring of that color and with the
+logo in that color; the user page's has the white logo.
 Its lighting was measured once from the design and is kept in ``static/images/app-icon-parts`` as grey-level maps:
 here every grey level becomes one color of the color's ramp (a deep shade, the color itself, lighter tints, white).
-The stock icon (``DEFAULT``) is also in ``static/images`` as plain files; this module draws the other colors.
+The stock icons (``DEFAULT``) are also in ``static/images`` as plain files; this module draws the other colors.
 """
 
 from __future__ import annotations
@@ -33,16 +34,21 @@ NAMES: dict[str, tuple[str, int, bool]] = {
     "maskable-512": ("mask", 512, False),  # Android: a full square with a smaller hexagon, launchers cut their own shape
     "tile-256": ("full", 256, True),  # the icon as a home screen shows it: the picture in the panel's own pages
 }
-# The stock icon's file (static/images) for each name. The browser tab's icon is always the stock one.
+KINDS = ("admin", "user")
+# The stock icon's file (static/images) for each kind and name. The browser tab's icon is always the stock one.
 STOCK = {
-    "apple-180": "app-icon-admin-apple-180.png",
-    "192": "app-icon-admin-192.png",
-    "512": "app-icon-admin-512.png",
-    "maskable-512": "app-icon-admin-maskable-512.png",
-    "tile-256": "favicon-admin-256.png",
+    kind: {
+        "apple-180": f"app-icon-{kind}-apple-180.png",
+        "192": f"app-icon-{kind}-192.png",
+        "512": f"app-icon-{kind}-512.png",
+        "maskable-512": f"app-icon-{kind}-maskable-512.png",
+        "tile-256": f"favicon-{kind}-256.png",
+    }
+    for kind in KINDS
 }
 HEXAGON = (240, 242, 246)  # the white glass hexagon, about
 MIN_CONTRAST = 1.9  # of the ring and the logo against the hexagon
+MIN_LOGO_CONTRAST = 1.6  # of the user icon's white logo against its tile
 
 
 def normalize(color: str | None) -> str | None:
@@ -57,7 +63,7 @@ def available() -> bool:
         import PIL  # noqa: F401
     except ImportError:
         return False
-    return (PARTS / "full-tile.png").is_file()
+    return (PARTS / "full-tile.png").is_file() and (PARTS / "user-logo.png").is_file()
 
 
 # --- color maths (OKLCH: lightness, chroma, hue) ---
@@ -178,6 +184,15 @@ def ink(color: str) -> RGB:
     return rgb
 
 
+def logo_ink(color: str) -> RGB:
+    """The color of the user icon's logo: white, or a deep tone of ``color`` when white would not read on it."""
+    rgb = _rgb(color)
+    if 1.05 / (_luminance(rgb) + 0.05) >= MIN_LOGO_CONTRAST:
+        return 255, 255, 255
+    _, C, h = _to_oklch(rgb)
+    return _from_oklch(0.3, min(C, 0.12), h)
+
+
 # --- drawing ---
 
 
@@ -207,12 +222,15 @@ def _tables(color: str) -> list[list[int]]:
     return tables
 
 
-def _compose(parts: str, color: str) -> PILImage.Image:
-    """The tile in ``color`` with the hexagon on it, at the parts' size."""
+def _compose(parts: str, color: str, kind: str) -> PILImage.Image:
+    """The tile in ``color`` with the hexagon (admin) or the logo (user) on it, at the parts' size."""
     from PIL import Image
 
     grey = _part(f"{parts}-tile")
     im = Image.merge("RGB", [grey.point(table) for table in _tables(color)])
+    if kind == "user":
+        im.paste(logo_ink(color), None, _part("user-logo"))
+        return im
     pen = ink(color)
     im.paste(pen, None, _part(f"{parts}-hex-ring"))
     body = _part(f"{parts}-hex-body")
@@ -232,16 +250,16 @@ def _resize(im: PILImage.Image, size: int) -> PILImage.Image:
 
 
 @lru_cache(maxsize=96)
-def render(color: str, name: str) -> bytes:
-    """The PNG of the admin app icon ``name`` (a key of ``NAMES``) in ``color`` (six upper-case hex digits)."""
+def render(color: str, name: str, kind: str = "admin") -> bytes:
+    """The PNG of the app icon ``name`` (a key of ``NAMES``) of ``kind`` in ``color`` (six upper-case hex digits)."""
     parts, size, cut = NAMES[name]
     if parts == "any":
-        tile = _compose("full", color)
+        tile = _compose("full", color, kind)
         tile.putalpha(_part("full-alpha"))
         im = _part("any-shadow").copy()
         im.alpha_composite(_resize(tile, ANY_TILE), ((MASTER - ANY_TILE) // 2,) * 2)
     else:
-        im = _compose(parts, color)
+        im = _compose(parts, color, kind)
         if cut:
             im.putalpha(_part("full-alpha"))
     im = _resize(im, size)

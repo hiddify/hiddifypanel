@@ -29,12 +29,6 @@ function tabLabel(p: PwaPlatform): string {
   // On a phone the computer's system is unknown (an iPhone even says "Mac OS X"): just "Computer"
   return t('pwa.guide.tabDesktop', { os: detected === 'desktop' ? desktopOsName() : t('pwa.guide.computer') })
 }
-/** A tab's label as [device, browser]: the text before its last " · ", and the text after it. */
-function tabParts(p: PwaPlatform): [string, string] {
-  const label = tabLabel(p)
-  const at = label.lastIndexOf(' · ')
-  return at < 0 ? [label, ''] : [label.slice(0, at), label.slice(at + 3)]
-}
 </script>
 
 <template>
@@ -46,13 +40,30 @@ function tabParts(p: PwaPlatform): [string, string] {
         type="button"
         role="tab"
         class="guide__tab"
-        :class="{ 'guide__tab--on': platform === p }"
+        :class="[`guide__tab--${p}`, { 'guide__tab--on': platform === p }]"
         :aria-selected="platform === p"
+        :aria-label="tabLabel(p)"
+        :title="tabLabel(p)"
         @click="platform = p"
       >
-        <i :class="['pi', p === 'ios' ? 'pi-apple' : p === 'android' ? 'pi-android' : 'pi-desktop']" />
-        <!-- "iPhone · Safari": on a phone only the device, on one line (the first step names the browser) -->
-        <span>{{ tabParts(p)[0] }}<span v-if="tabParts(p)[1]" class="guide__tab-app"> · {{ tabParts(p)[1] }}</span></span>
+        <!-- Only the system's logo, in its own colors (the label is read out, and shows as a tooltip) -->
+        <svg v-if="p === 'ios'" class="guide__os" viewBox="4.5 3 15 18" aria-hidden="true">
+          <path fill="currentColor" d="M16.52,12.46a3.31,3.31,0,0,1,1.78-3,3.85,3.85,0,0,0-3-1.6c-1.27-.1-2.65.74-3.16.74s-1.77-.7-2.73-.7c-2,0-4.11,1.59-4.11,4.76a9,9,0,0,0,.51,2.9C6.25,16.84,7.9,20.05,9.62,20c.9,0,1.54-.64,2.71-.64s1.72.64,2.73.64c1.73,0,3.23-2.95,3.66-4.26a3.54,3.54,0,0,1-2.2-3.28Zm-2-5.87A3.37,3.37,0,0,0,15.35,4a3.79,3.79,0,0,0-2.42,1.25A3.41,3.41,0,0,0,12,7.81,3,3,0,0,0,14.5,6.59Z" />
+        </svg>
+        <svg v-else-if="p === 'android'" class="guide__os" viewBox="4 3 16 18" aria-hidden="true">
+          <g fill="#3ddc84">
+            <path d="M18.06,9.33a.94.94,0,0,0-.94.94v4.26a.94.94,0,0,0,1.88,0V10.27A.94.94,0,0,0,18.06,9.33Z" />
+            <path d="M5.94,9.33a.94.94,0,0,0-.94.94v4.26a.94.94,0,0,0,1.88,0V10.27A.94.94,0,0,0,5.94,9.33Z" />
+            <path d="M7.56,9.33v6.4A1.07,1.07,0,0,0,8.63,16.8h.68v2.27a.94.94,0,0,0,1.88,0h0V16.8h1.62v2.27a.94.94,0,0,0,1.88,0h0V16.8h.68a1.07,1.07,0,0,0,1.07-1.07V9.33Z" />
+            <path d="M16.32,8a4.13,4.13,0,0,0-1.83-2.36l-.15-.09-.16-.08.18-.31.53-1A.14.14,0,0,0,14.84,4h0l-.07,0a.17.17,0,0,0-.13.07L14.1,5l-.17.31-.16-.07-.17-.06a4.88,4.88,0,0,0-3.2,0l-.16.06-.17.07L9.9,5l-.54-1a.14.14,0,0,0-.25.14l.53,1,.18.31-.16.08-.15.09A4.07,4.07,0,0,0,7.69,8a3.11,3.11,0,0,0-.13.8h8.88A3.6,3.6,0,0,0,16.32,8ZM10,7.47a.4.4,0,1,1,.4-.4A.4.4,0,0,1,10,7.47Zm4,0a.4.4,0,1,1,.4-.4A.4.4,0,0,1,14,7.47Z" />
+          </g>
+        </svg>
+        <svg v-else class="guide__os" viewBox="0 0 18 18" aria-hidden="true">
+          <rect x="0" y="0" width="8.5" height="8.5" fill="#f25022" />
+          <rect x="9.5" y="0" width="8.5" height="8.5" fill="#7fba00" />
+          <rect x="0" y="9.5" width="8.5" height="8.5" fill="#00a4ef" />
+          <rect x="9.5" y="9.5" width="8.5" height="8.5" fill="#ffb900" />
+        </svg>
       </button>
     </div>
 
@@ -153,31 +164,55 @@ function tabParts(p: PwaPlatform): [string, string] {
 }
 .guide__tabs {
   display: flex;
-  gap: 0.3rem;
-  padding: 0.25rem;
-  border-radius: 12px;
-  background: var(--p-content-hover-background);
+  gap: 0.45rem;
 }
+/* One tab per system: its logo in its own colors, on a very pale tint of its own */
 .guide__tab {
+  --tab: #8e8e93;
   flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  padding: 0.4rem 0.3rem;
+  display: grid;
+  place-items: center;
+  height: 2.5rem;
+  padding: 0;
   border: 0;
-  border-radius: 9px;
-  background: transparent;
-  color: var(--p-text-muted-color);
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 600;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--tab) 11%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tab) 16%, transparent);
+  color: var(--p-text-color);
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
+.guide__tab--ios {
+  --tab: #8e8e93;
+}
+.guide__tab--android {
+  --tab: #3ddc84;
+}
+.guide__tab--desktop {
+  --tab: #00a4ef;
+}
+.guide__os {
+  display: block;
+  height: 1.35rem;
+  width: auto;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+.guide__tab:hover .guide__os,
+.guide__tab--on .guide__os {
+  opacity: 1;
+}
+.guide__tab:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 2px;
+}
+/* The chosen one: a little more of its tint, and a ring in its color */
 .guide__tab--on {
-  background: var(--p-content-background);
-  color: var(--p-primary-color);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+  background: color-mix(in srgb, var(--tab) 20%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--tab) 70%, transparent);
 }
 
 /* --- the stage --- */
@@ -932,12 +967,6 @@ function tabParts(p: PwaPlatform): [string, string] {
   37.83%, 100% { width: 0.4rem; background: color-mix(in srgb, var(--p-text-color) 16%, transparent); }
 }
 
-/* Phones: each tab names the device only, on one line */
-@media (max-width: 480px) {
-  .guide__tab-app {
-    display: none;
-  }
-}
 /* Short screens: a smaller scene, step by step, so the step and the dialog's buttons fit */
 @media (max-height: 640px) {
   .stage {

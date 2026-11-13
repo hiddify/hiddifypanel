@@ -3043,7 +3043,7 @@
     "pwa": {
       "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
       "bannerTitle": "Install the panel as an app",
-      "colorButton": "PWA Color",
+      "colorButton": "App Color",
       "colorHint": "The color of the admin panel's icon when it is installed as an app (PWA).",
       "colorTitle": "PWA app icon color",
       "gotIt": "Got it",
@@ -3080,7 +3080,7 @@
       "perkFresh": "Always the latest version of the panel",
       "perkWindow": "Its own full-screen window, no browser bars",
       "text": "Keep the panel one tap away, like any app on your phone or computer.",
-      "title": "Install the panel as an app"
+      "title": "Install the Panel as an App"
     },
     "qr": {
       "clickToCopy": "Click to copy the image",

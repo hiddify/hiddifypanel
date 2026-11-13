@@ -23,7 +23,7 @@ import PwaIconColors from '@/shared/components/PwaIconColors.vue'
 import { useAppIcon } from '@/shared/composables/useAppIcon'
 
 /**
- * "PWA Color": a button that opens a small window to choose the color of the admin app icon (PwaIconColors). The dot
+ * "App Color": a button that opens a small window to choose the color of the admin app icon (PwaIconColors). The dot
  * on it is the color chosen now. Used in the install dialog (under the icon) and in My account (Settings).
  */
 const props = defineProps<{ /** open the window centred under the button (the install dialog), not at its edge */ center?: boolean }>()
@@ -95,6 +95,43 @@ function realign() {
 .p-popover.pwa-color-pop {
   width: min(21rem, calc(100vw - 1.5rem));
   border-radius: 18px;
+}
+/* It opens softly: it fades in while it comes down a little and grows to its size */
+.p-popover.pwa-color-pop.p-anchored-overlay-enter-active {
+  transition: none;
+  transform-origin: 50% 0;
+  animation: pwa-color-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.p-popover.pwa-color-pop.p-anchored-overlay-leave-active {
+  transition: none;
+  transform-origin: 50% 0;
+  animation: pwa-color-out 0.24s ease both;
+}
+@keyframes pwa-color-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.6rem) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pwa-color-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-0.4rem) scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-popover.pwa-color-pop.p-anchored-overlay-enter-active,
+  .p-popover.pwa-color-pop.p-anchored-overlay-leave-active {
+    animation: none;
+  }
 }
 /* Centred under the button: no arrow (it would point beside the button) */
 .p-popover.pwa-color-pop--center::before,
