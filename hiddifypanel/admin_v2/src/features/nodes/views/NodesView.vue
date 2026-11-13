@@ -296,10 +296,12 @@
     </Dialog>
   </div>
   <!-- The pencil of a node this panel can't reach: why it can't be renamed now (as on the dashboard) -->
-  <Popover ref="renameBlockedPop" class="card-popover" @show="onBlockedShow" @hide="onBlockedHide">
+  <Popover ref="renameBlockedPop" class="card-popover" @show="onBlockedShow" @hide="onBlockedHidden">
     <div v-if="renameBlocked" class="card-popover__notice" role="status">
-      <strong><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
-      <p v-if="renameBlocked.block === 'tooOld'">
+      <strong v-if="renameBlocked.block === 'checking'"><i class="pi pi-spin pi-spinner" />{{ t('dashboard.renameCheckingTitle') }}</strong>
+      <strong v-else><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
+      <p v-if="renameBlocked.block === 'checking'">{{ t('dashboard.renameChecking', { name: renameBlocked.node.name }) }}</p>
+      <p v-else-if="renameBlocked.block === 'tooOld'">
         {{ t('dashboard.renameTooOld', { name: renameBlocked.node.name, version: renameBlocked.version, min: `${RENAME_MIN_MAJOR}.0` }) }}
       </p>
       <p v-else>{{ t('dashboard.renameOffline', { name: renameBlocked.node.name }) }}</p>
@@ -331,7 +333,7 @@
 
 <script setup lang="ts">
 import { countryFlag, countryName as countryNameIn } from '@/shared/utils/country'
-import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -468,7 +470,20 @@ function toggleDomains(id: number) {
  * A new name goes to the node too, so a node that can't take it now (not reachable, or a panel older than 14.0; see
  * nodeRenameBlock) is not renamed: its pencil says why instead, in the same small popover as on the dashboard.
  */
-const renameBlocked = ref<{ node: PanelNode; block: RenameBlock; version: string | null } | null>(null)
+/** The node whose pencil was pressed while it can't be renamed; why follows its connection check as it changes */
+const renameBlockedNode = ref<PanelNode | null>(null)
+function renameBlockOf(node: PanelNode): { block: RenameBlock | null; version: string | null } {
+  const ping = pings[node.id]
+  const reachable = ping?.state === 'ok' ? true : ping?.state === 'fail' ? false : null
+  const version = ping?.version ?? null
+  return { block: nodeRenameBlock(reachable, version), version }
+}
+const renameBlocked = computed(() => {
+  const node = renameBlockedNode.value
+  if (!node) return null
+  const { block, version } = renameBlockOf(node)
+  return block ? { node, block, version } : null
+})
 const {
   pop: renameBlockedPop,
   open: openBlocked,
@@ -478,20 +493,32 @@ const {
 } = useCardPopover({ card: '.node-card' })
 
 function startRename(node: PanelNode, event?: Event) {
-  const ping = pings[node.id]
-  const reachable = ping?.state === 'ok' ? true : ping?.state === 'fail' ? false : null
-  const version = ping?.version ?? null
-  const block = nodeRenameBlock(reachable, version)
+  const { block } = renameBlockOf(node)
   if (block && event) {
-    renameBlocked.value = { node, block, version }
+    renameBlockedNode.value = node
     // the arrow points at the pencil, not the middle of the name
     openBlocked(event, (event.currentTarget as HTMLElement).querySelector<HTMLElement>('.node-card__name-edit'))
     return
   }
   hideBlocked()
+  renameBlockedNode.value = null
   editing.value = node.id
   editName.value = node.name
 }
+
+/** Closed: forget the node (after the popover's fade), so a check that ends later does not open its rename */
+function onBlockedHidden() {
+  onBlockedHide()
+  const node = renameBlockedNode.value
+  window.setTimeout(() => {
+    if (renameBlockedNode.value === node) renameBlockedNode.value = null
+  }, 200)
+}
+// Checked while its popover was open and it turns out it can be renamed: go on to the rename itself
+watch(renameBlocked, (now, before) => {
+  const node = renameBlockedNode.value
+  if (before?.block === 'checking' && !now && node) startRename(node)
+})
 
 function cancelRename() {
   editing.value = null

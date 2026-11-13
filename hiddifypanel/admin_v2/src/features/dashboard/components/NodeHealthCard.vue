@@ -578,8 +578,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <small v-if="renameTarget.id === 0" class="node-rename__hint">{{ t('dashboard.renameThisServerHint', { name: t('dashboard.thisServer') }) }}</small>
       </form>
       <div v-else-if="renameTarget" class="card-popover__notice" role="status">
-        <strong><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
-        <p v-if="renameTarget.block === 'tooOld'">{{ t('dashboard.renameTooOld', { name: renameTarget.title, version: renameTarget.version, min: `${RENAME_MIN_MAJOR}.0` }) }}</p>
+        <strong v-if="renameTarget.block === 'checking'"><i class="pi pi-spin pi-spinner" />{{ t('dashboard.renameCheckingTitle') }}</strong>
+        <strong v-else><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
+        <p v-if="renameTarget.block === 'checking'">{{ t('dashboard.renameChecking', { name: renameTarget.title }) }}</p>
+        <p v-else-if="renameTarget.block === 'tooOld'">{{ t('dashboard.renameTooOld', { name: renameTarget.title, version: renameTarget.version, min: `${RENAME_MIN_MAJOR}.0` }) }}</p>
         <p v-else>{{ t('dashboard.renameOffline', { name: renameTarget.title }) }}</p>
       </div>
     </Popover>

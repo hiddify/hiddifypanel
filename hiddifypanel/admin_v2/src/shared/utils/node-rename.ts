@@ -4,15 +4,16 @@
  * works when:
  * - this panel can reach the node (the Nodes page's "Connection", the dashboard's live stats), and
  * - the node's panel is 14.0 or newer (older ones don't have that API).
- * While either is still unknown (not checked yet) the rename is allowed: a failed send then says "renamed on this
- * panel only".
+ * Until it is known whether this panel can reach the node (the Nodes page checks every node as it opens), the pencil
+ * says the node is being checked; a reachable node whose version is not known is allowed.
  */
-export type RenameBlock = 'unreachable' | 'tooOld'
+export type RenameBlock = 'checking' | 'unreachable' | 'tooOld'
 
 /** The first panel version whose nodes take a new name from their parent */
 export const RENAME_MIN_MAJOR = 14
 
 export function nodeRenameBlock(reachable: boolean | null | undefined, version?: string | null): RenameBlock | null {
+  if (reachable == null) return 'checking'
   if (reachable === false) return 'unreachable'
   const major = Number.parseInt((version ?? '').replace(/^v/i, ''), 10)
   if (reachable && Number.isFinite(major) && major < RENAME_MIN_MAJOR) return 'tooOld'
