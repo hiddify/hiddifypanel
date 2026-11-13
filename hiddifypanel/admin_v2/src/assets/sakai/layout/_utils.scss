@@ -16,10 +16,12 @@
     }
 }
 
+/* Toasts open just below the topbar, never over it or under the phone's status bar (the installed app grows the
+   topbar by --safe-top). PrimeVue puts `top: 20px` inline on the toast, so this needs !important. */
 .p-toast {
     &.p-toast-top-right,
     &.p-toast-top-left,
     &.p-toast-top-center {
-        top: 100px;
+        top: calc(4rem + var(--safe-top, 0px) + 0.75rem) !important;
     }
 }
