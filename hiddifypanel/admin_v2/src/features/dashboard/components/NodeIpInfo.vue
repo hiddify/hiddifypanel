@@ -33,7 +33,7 @@ phone.addEventListener('change', onPhone)
 onBeforeUnmount(() => phone.removeEventListener('change', onPhone))
 
 // --- the answer, kept in this browser until the panel would look it up again ---------------------------------
-const STORE = 'hm.ipinfo.v1.'
+const STORE = 'hm.ipinfo.v2.'
 function stored(id: number): NodeIpInfo | null {
   try {
     const raw = JSON.parse(localStorage.getItem(STORE + id) || 'null') as { until: number; data: NodeIpInfo } | null

@@ -21,6 +21,7 @@ import re
 import socket
 import time
 from concurrent.futures import ThreadPoolExecutor
+from urllib.parse import urljoin
 
 import requests
 from loguru import logger
@@ -28,7 +29,7 @@ from loguru import logger
 TTL = 72 * 3600
 _TIMEOUT = 8
 _UA = {"User-Agent": "HiddifyPanel (node info)", "Accept": "application/rdap+json, application/json"}
-_KEY = "ipdetails:v1"
+_KEY = "ipdetails:v2"
 
 _BOOTSTRAP = {"v4": "https://data.iana.org/rdap/ipv4.json", "v6": "https://data.iana.org/rdap/ipv6.json", "asn": "https://data.iana.org/rdap/asn.json"}
 _TOR_LIST = "https://check.torproject.org/torbulkexitlist"
@@ -204,7 +205,7 @@ def _rdap_asn(asn: str) -> dict:
 
 
 # --- the company's logo ------------------------------------------------------------------------------------------
-_LOGO_MAX = 64 * 1024
+_LOGO_MAX = 96 * 1024
 
 
 def company_domain(*emails: str) -> str:
@@ -216,21 +217,43 @@ def company_domain(*emails: str) -> str:
     return ""
 
 
+_ICON_LINK = re.compile(r"<link\b[^>]*>", re.I)
+
+
+def _icon_links(domain: str) -> list[str]:
+    """The icons the website's home page names (<link rel="icon" / "apple-touch-icon">), the biggest first."""
+    try:
+        res = requests.get(f"https://{domain}/", timeout=6, headers={"User-Agent": "Mozilla/5.0 (HiddifyPanel)"}, stream=True)
+        html = res.raw.read(300_000, decode_content=True).decode(errors="ignore") if res.ok else ""
+    except Exception:
+        return []
+    found: list[tuple[int, str]] = []
+    for tag in _ICON_LINK.findall(html):
+        rel = re.search(r'rel=["\']([^"\']+)', tag, re.I)
+        href = re.search(r'href=["\']([^"\']+)', tag, re.I)
+        if not rel or not href or "icon" not in rel.group(1).lower() or "mask" in rel.group(1).lower():
+            continue
+        sizes = re.search(r'sizes=["\'](\d+)', tag, re.I)
+        size = int(sizes.group(1)) if sizes else (180 if "apple" in rel.group(1).lower() else 32)
+        found.append((size, urljoin(res.url, href.group(1))))
+    return [url for _, url in sorted(found, key=lambda x: -x[0])]
+
+
 def logo(domain: str) -> str:
     """A data: URL of the website's own icon, or "" (the sheet draws the company's initial then)."""
     if not domain:
         return ""
 
     def fetch():
-        for path in ("/apple-touch-icon.png", "/favicon.ico"):
-            for host in (domain, f"www.{domain}"):
-                try:
-                    res = requests.get(f"https://{host}{path}", timeout=5, headers={"User-Agent": _UA["User-Agent"]}, allow_redirects=True)
-                except Exception:
-                    continue
-                kind = res.headers.get("content-type", "").split(";")[0].strip()
-                if res.ok and kind.startswith("image/") and 0 < len(res.content) <= _LOGO_MAX:
-                    return f"data:{kind};base64,{base64.b64encode(res.content).decode()}"
+        candidates = _icon_links(domain) + [f"https://{domain}/apple-touch-icon.png", f"https://{domain}/favicon.ico", f"https://www.{domain}/favicon.ico"]
+        for url in candidates[:6]:
+            try:
+                res = requests.get(url, timeout=5, headers={"User-Agent": "Mozilla/5.0 (HiddifyPanel)"}, allow_redirects=True)
+            except Exception:
+                continue
+            kind = res.headers.get("content-type", "").split(";")[0].strip()
+            if res.ok and kind.startswith("image/") and 0 < len(res.content) <= _LOGO_MAX:
+                return f"data:{kind};base64,{base64.b64encode(res.content).decode()}"
         return ""
 
     return _kept(f"logo:{domain}", fetch)
@@ -244,11 +267,14 @@ def _ptr(ip: str) -> str:
         return ""
 
 
-def _detect(ip: str, asn: str, org: str, rdap: dict) -> dict:
+def _detect(ip: str, asn: str, names: str, domain: str) -> dict:
     addr = ipaddress.ip_address(ip)
-    names = " ".join([org, rdap.get("netname", ""), rdap.get("owner", {}).get("name", "")])
-    listed = asn.removeprefix("AS") in _hosting_asns()
-    datacenter = listed or bool(_HOSTING_WORDS.search(names))
+    hosts = _hosting_asns()
+    listed = asn.removeprefix("AS") in hosts
+    # the company that owns the network is a known host (its AS may be a smaller one that the list does not name)
+    brand = domain.split(".")[0].lower() if domain else ""
+    known_host = len(brand) >= 4 and any(brand in name.lower().replace(" ", "") for name in hosts.values())
+    datacenter = listed or known_host or bool(_HOSTING_WORDS.search(names))
     mobile = not datacenter and bool(_MOBILE_WORDS.search(names))
     return {
         "datacenter": datacenter,
@@ -271,15 +297,16 @@ def _describe(ip: str) -> dict:
     owner = rdap.get("owner", {})
     abuse = rdap.get("abuse", {})
     domain = company_domain(abuse.get("email", ""), owner.get("email", ""))
+    asn_info = _rdap_asn(asn) if asn else {}
     return {
         "ip": ip,
         "version": ipaddress.ip_address(ip).version,
         "ptr": _ptr(ip),
         "geo": geo,
         "network": rdap,
-        "asn": {"asn": asn, "org": geo.get("org", ""), **_rdap_asn(asn)} if asn else {},
+        "asn": {"asn": asn, "org": geo.get("org", ""), **asn_info} if asn else {},
         "company": {"name": owner.get("name") or geo.get("org", ""), "domain": domain, "logo": logo(domain)},
-        "detect": _detect(ip, asn, geo.get("org", ""), rdap),
+        "detect": _detect(ip, asn, " ".join([geo.get("org", ""), asn_info.get("name", ""), rdap.get("netname", ""), owner.get("name", "")]), domain),
         "fetched_at": int(time.time()),
     }
 
