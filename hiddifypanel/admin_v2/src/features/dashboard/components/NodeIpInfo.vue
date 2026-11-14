@@ -1240,68 +1240,29 @@ const sections = computed(() =>
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-/* Desktop: an icon comes alive under the mouse: a springy pop, then its own small motion while hovered */
+/* Desktop: an icon comes alive only while the mouse is on that icon: its glyph moves softly in its own way; the
+   icon's tile itself never grows or moves */
 @media (hover: hover) and (pointer: fine) {
-  .ips__row,
-  .ips__tile {
-    cursor: default;
-    transition: background 0.2s;
+  :is(.ips__row-icon, .ips__tile-icon) i {
+    transition: transform 0.4s ease;
   }
-  .ips__row:hover {
-    background: color-mix(in srgb, var(--p-text-color) 3%, transparent);
+  :is(.ips__row-icon, .ips__tile-icon):hover i {
+    animation: ips-float 1.8s ease-in-out infinite;
   }
-  .ips__tile:hover {
-    transform: translateY(-2px);
+  [data-motion="spin"] :is(.ips__row-icon, .ips__tile-icon):hover i {
+    animation: ips-spin 3s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   }
-  .ips__row:hover .ips__row-icon,
-  .ips__tile:hover .ips__tile-icon {
-    animation: ips-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  [data-motion="bounce"] :is(.ips__row-icon, .ips__tile-icon):hover i {
+    animation: ips-bounce 1.6s cubic-bezier(0.33, 0, 0.3, 1) infinite;
   }
-  .ips__row:hover .ips__row-icon i,
-  .ips__tile:hover .ips__tile-icon i {
-    animation: ips-pulse 1.6s ease-in-out 0.2s infinite;
+  [data-motion="wiggle"] :is(.ips__row-icon, .ips__tile-icon):hover i {
+    animation: ips-wiggle 1.8s ease-in-out infinite;
   }
-  [data-motion="spin"]:hover :is(.ips__row-icon, .ips__tile-icon) i {
-    animation: ips-spin 2.4s cubic-bezier(0.45, 0, 0.55, 1) 0.15s infinite;
+  [data-motion="tick"] :is(.ips__row-icon, .ips__tile-icon):hover i {
+    animation: ips-tick 2.4s ease-in-out infinite;
   }
-  [data-motion="bounce"]:hover :is(.ips__row-icon, .ips__tile-icon) i {
-    animation: ips-bounce 1.3s cubic-bezier(0.33, 0, 0.3, 1) 0.15s infinite;
-  }
-  [data-motion="wiggle"]:hover :is(.ips__row-icon, .ips__tile-icon) i {
-    animation: ips-wiggle 1.5s ease-in-out 0.15s infinite;
-  }
-  [data-motion="tick"]:hover :is(.ips__row-icon, .ips__tile-icon) i {
-    animation: ips-tick 2s steps(1, end) 0.15s infinite;
-  }
-  [data-motion="float"]:hover :is(.ips__row-icon, .ips__tile-icon) i {
-    animation: ips-float 1.8s ease-in-out 0.15s infinite;
-  }
-  [data-motion="slide"]:hover :is(.ips__row-icon, .ips__tile-icon) i {
-    animation: ips-slide 1.4s ease-in-out 0.15s infinite;
-  }
-  .ips__copy:hover i {
-    animation: ips-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .ips__logo {
-    transition:
-      transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 0.4s;
-  }
-  .ips__hero:hover .ips__logo {
-    transform: perspective(400px) rotateX(8deg) rotateY(-12deg) scale(1.06);
-  }
-}
-@keyframes ips-pop {
-  40% {
-    transform: scale(1.22) rotate(-6deg);
-  }
-  70% {
-    transform: scale(0.96);
-  }
-}
-@keyframes ips-pulse {
-  50% {
-    transform: scale(1.18);
+  [data-motion="slide"] :is(.ips__row-icon, .ips__tile-icon):hover i {
+    animation: ips-slide 1.8s ease-in-out infinite;
   }
 }
 @keyframes ips-spin {
@@ -1311,15 +1272,15 @@ const sections = computed(() =>
 }
 @keyframes ips-bounce {
   0%,
-  60%,
+  55%,
   100% {
     transform: translateY(0);
   }
   25% {
-    transform: translateY(-4px);
+    transform: translateY(-2.5px);
   }
-  45% {
-    transform: translateY(-1.5px);
+  40% {
+    transform: translateY(-0.8px);
   }
 }
 @keyframes ips-wiggle {
@@ -1328,40 +1289,33 @@ const sections = computed(() =>
   100% {
     transform: rotate(0);
   }
-  10%,
-  30% {
-    transform: rotate(-14deg);
+  15% {
+    transform: rotate(-10deg);
   }
-  20%,
-  40% {
-    transform: rotate(14deg);
+  35% {
+    transform: rotate(8deg);
   }
 }
 @keyframes ips-tick {
-  0% {
+  0%,
+  100% {
     transform: rotate(0);
   }
-  25% {
-    transform: rotate(15deg);
-  }
   50% {
-    transform: rotate(30deg);
-  }
-  75% {
-    transform: rotate(15deg);
+    transform: rotate(20deg);
   }
 }
 @keyframes ips-float {
   50% {
-    transform: translateY(-2.5px);
+    transform: translateY(-2px);
   }
 }
 @keyframes ips-slide {
   25% {
-    transform: translateX(-2.5px);
+    transform: translateX(-2px);
   }
   75% {
-    transform: translateX(2.5px);
+    transform: translateX(2px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1371,9 +1325,6 @@ const sections = computed(() =>
   .ips__row-icon i,
   .ips__tile-icon i {
     animation: none !important;
-  }
-  .ips__logo {
-    transform: none !important;
   }
 }
 </style>
