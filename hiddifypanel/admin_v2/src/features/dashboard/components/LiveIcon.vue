@@ -294,15 +294,16 @@ const uid = `li-${useId()}`
 
     <!-- the email: the envelope opens, a letter rises out of it and goes back in -->
     <template v-else-if="name === 'pi-envelope'">
-      <clipPath :id="`${uid}-c`"><rect x="0" y="-8" width="24" height="14.4" /></clipPath>
+      <rect x="3" y="6" width="18" height="13" rx="2.2" />
+      <!-- the flap is drawn first: open, it stands behind the letter; closed, the letter is still inside -->
+      <path class="p-flap" d="M3.6 6.6L12 13l8.4-6.4" />
+      <clipPath :id="`${uid}-c`"><rect x="0" y="-10" width="24" height="16.4" /></clipPath>
       <g :clip-path="`url(#${uid}-c)`">
         <g class="p-letter">
           <rect x="6.5" y="7.5" width="11" height="9" rx="1" />
           <path d="M8.8 10h6.4" stroke-width="1.3" />
         </g>
       </g>
-      <rect x="3" y="6" width="18" height="13" rx="2.2" />
-      <path class="p-flap" d="M3.6 6.6L12 13l8.4-6.4" />
     </template>
 
     <!-- the phone number: the handset rings and the sound comes out -->
@@ -1225,7 +1226,7 @@ const uid = `li-${useId()}`
   }
   40%,
   58% {
-    transform: translateY(-5.5px);
+    transform: translateY(-7px);
   }
   72%,
   100% {
