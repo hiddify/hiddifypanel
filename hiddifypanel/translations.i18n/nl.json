@@ -4459,7 +4459,7 @@
       "label": "🔂 Configuraties de volgende IP's/domeinen laten gebruiken"
     },
     "cloudflare": {
-      "description": "Volg <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>de instructie</a> en plak de Cloudflare API-sleutel",
+      "description": "Volg <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>de instructie</a> en plak de Cloudflare API-sleutel",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT-resolvers"
     },
     "domain_fronting": {
-      "description": "Wordt gebruikt om in de SNI een andere website na te bootsen in plaats van uw website. Daardoor kan de GFW uw domein niet filteren\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Handleiding</a>. ⚠️Cloudflare ondersteunt Domain Fronting niet.",
+      "description": "Wordt gebruikt om in de SNI een andere website na te bootsen in plaats van uw website. Daardoor kan de GFW uw domein niet filteren\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Handleiding</a>. ⚠️Cloudflare ondersteunt Domain Fronting niet.",
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "Een SNI-gateway kan niet samen met andere proxy's voor één domein worden geselecteerd",
       "sni_single_only": "Er kan maar één SNI-gateway voor een domein worden geselecteerd"
     },
-    "description": "Vul dit veld zorgvuldig en correct in. Anders krijgen de proxy's problemen. Bezoek <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Help</a> om te leren hoe u een subdomein maakt.",
+    "description": "Vul dit veld zorgvuldig en correct in. Anders krijgen de proxy's problemen. Bezoek <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Help</a> om te leren hoe u een subdomein maakt.",
     "domain": "Domein",
     "domain_fronting": {
-      "description": "Wordt gebruikt om in de SNI een andere website na te bootsen in plaats van uw website. Daardoor kan de GFW uw domein niet filteren\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Handleiding</a>. ⚠️Cloudflare ondersteunt Domain Fronting niet.",
+      "description": "Wordt gebruikt om in de SNI een andere website na te bootsen in plaats van uw website. Daardoor kan de GFW uw domein niet filteren\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Handleiding</a>. ⚠️Cloudflare ondersteunt Domain Fronting niet.",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {

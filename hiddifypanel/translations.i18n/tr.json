@@ -4459,7 +4459,7 @@
       "label": "🔂 Yapılandırmayı Aşağıdaki IP'leri/Alan Adlarını Kullanmaya Zorla"
     },
     "cloudflare": {
-      "description": "Lütfen <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>talimatları</a> izleyin ve Cloudflare API Anahtarını yapıştırın",
+      "description": "Lütfen <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>talimatları</a> izleyin ve Cloudflare API Anahtarını yapıştırın",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT Çözümleyicileri"
     },
     "domain_fronting": {
-      "description": "SNI'de web sitenizin yerine başka bir web sitesini taklit etmek için kullanılır. Böylece GFW alan adınızı filtreleyemez\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Kılavuz</a>. ⚠️CloudFlare Alan Adı Fronting'i desteklemez.",
+      "description": "SNI'de web sitenizin yerine başka bir web sitesini taklit etmek için kullanılır. Böylece GFW alan adınızı filtreleyemez\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Kılavuz</a>. ⚠️CloudFlare Alan Adı Fronting'i desteklemez.",
       "label": "🔒 TLS Alan Adı Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "Bir SNI ağ geçidi, bir alan adı için diğer proxy'lerle birlikte seçilemez",
       "sni_single_only": "Bir alan adı için yalnızca bir SNI ağ geçidi seçilebilir"
     },
-    "description": "Lütfen bu alanı dikkatli ve doğru doldurun. Aksi halde proxy'ler sorun yaşar. Alt alan adı oluşturmayı öğrenmek için lütfen <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Yardım</a> sayfasını ziyaret edin.",
+    "description": "Lütfen bu alanı dikkatli ve doğru doldurun. Aksi halde proxy'ler sorun yaşar. Alt alan adı oluşturmayı öğrenmek için lütfen <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Yardım</a> sayfasını ziyaret edin.",
     "domain": "Alan Adı",
     "domain_fronting": {
-      "description": "SNI'de web sitenizin yerine başka bir web sitesini taklit etmek için kullanılır. Böylece GFW alan adınızı filtreleyemez\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Kılavuz</a>. ⚠️CloudFlare Alan Adı Fronting'i desteklemez.",
+      "description": "SNI'de web sitenizin yerine başka bir web sitesini taklit etmek için kullanılır. Böylece GFW alan adınızı filtreleyemez\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Kılavuz</a>. ⚠️CloudFlare Alan Adı Fronting'i desteklemez.",
       "label": "🔒 TLS Alan Adı Fronting"
     },
     "ech": {

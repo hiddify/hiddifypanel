@@ -3073,7 +3073,7 @@
       "label": "🔂 强制配置使用以下 IP"
     },
     "cloudflare": {
-      "description": "请按照<a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>说明</a>并粘贴 Cloudflare API 密钥",
+      "description": "请按照<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>说明</a>并粘贴 Cloudflare API 密钥",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -3144,7 +3144,7 @@
       "label": "DNSTT 解析器"
     },
     "domain_fronting": {
-      "description": "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87- %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>指南</a>。 ⚠️CloudFlare 不支持域前置。",
+      "description": "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/ %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>指南</a>。 ⚠️CloudFlare 不支持域前置。",
       "label": "🔒 启用 TLS 域前置"
     },
     "domain_fronting_domain": {
@@ -3976,10 +3976,10 @@
       "sni_l7_mutex": "同一个域名不能同时选择 SNI 网关和 L7 网关",
       "sni_single_only": "一个域名只能选择一个 SNI 网关"
     },
-    "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-config/wiki/??????-??????-??-??????-??????-??????#??????-??????????????????>帮助</a>了解如何创建子域。",
+    "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/>帮助</a>了解如何创建子域。",
     "domain": "领域",
     "domain_fronting": {
-      "description": "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>指南</a>。 ⚠️CloudFlare 不支持域前置。",
+      "description": "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>指南</a>。 ⚠️CloudFlare 不支持域前置。",
       "label": "🔒 TLS 的域前端"
     },
     "ech": {

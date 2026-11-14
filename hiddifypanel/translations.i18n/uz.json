@@ -4459,7 +4459,7 @@
       "label": "🔂 Konfiguratsiya quyidagi IP lar/domenlardan foydalansin"
     },
     "cloudflare": {
-      "description": "Iltimos, <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>yoʻriqnomaga</a> amal qiling va Cloudflare API kalitini joylang",
+      "description": "Iltimos, <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>yoʻriqnomaga</a> amal qiling va Cloudflare API kalitini joylang",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT resolverlari"
     },
     "domain_fronting": {
-      "description": "SNI da saytingiz oʻrniga boshqa veb-saytni taqlid qilish uchun ishlatiladi. Shuning uchun GFW domeningizni filtrlay olmaydi\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Qoʻllanma</a>. ⚠️CloudFlare Domain Fronting ni qoʻllab-quvvatlamaydi.",
+      "description": "SNI da saytingiz oʻrniga boshqa veb-saytni taqlid qilish uchun ishlatiladi. Shuning uchun GFW domeningizni filtrlay olmaydi\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Qoʻllanma</a>. ⚠️CloudFlare Domain Fronting ni qoʻllab-quvvatlamaydi.",
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "SNI shlyuzini bitta domen uchun boshqa proksilar bilan birga tanlab boʻlmaydi",
       "sni_single_only": "Domen uchun faqat bitta SNI shlyuzini tanlash mumkin"
     },
-    "description": "Iltimos, bu maydonni diqqat bilan va toʻgʻri toʻldiring. Aks holda proksilarda muammolar yuzaga keladi. Subdomen yaratishni oʻrganish uchun <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Yordam</a> sahifasiga kiring.",
+    "description": "Iltimos, bu maydonni diqqat bilan va toʻgʻri toʻldiring. Aks holda proksilarda muammolar yuzaga keladi. Subdomen yaratishni oʻrganish uchun <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Yordam</a> sahifasiga kiring.",
     "domain": "Domen",
     "domain_fronting": {
-      "description": "SNI da saytingiz oʻrniga boshqa veb-saytni taqlid qilish uchun ishlatiladi. Shuning uchun GFW domeningizni filtrlay olmaydi\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Qoʻllanma</a>. ⚠️CloudFlare Domain Fronting ni qoʻllab-quvvatlamaydi.",
+      "description": "SNI da saytingiz oʻrniga boshqa veb-saytni taqlid qilish uchun ishlatiladi. Shuning uchun GFW domeningizni filtrlay olmaydi\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Qoʻllanma</a>. ⚠️CloudFlare Domain Fronting ni qoʻllab-quvvatlamaydi.",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {

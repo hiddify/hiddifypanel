@@ -37,9 +37,10 @@ def _donation_item() -> dict:
 
 
 def _wiki_support_url() -> str:
+    """The tutorials and videos of Hiddify Manager on hiddify.com (the old GitHub wiki is no longer kept up to date)."""
     if get_locale() == "fa":
-        return "https://github.com/hiddify/hiddify-manager/wiki/%D9%87%D9%85%D9%87-%D8%A2%D9%85%D9%88%D8%B2%D8%B4%E2%80%8C%D9%87%D8%A7-%D9%88-%D9%88%DB%8C%D8%AF%D8%A6%D9%88%D9%87%D8%A7"
-    return "https://github.com/hiddify/hiddify-manager/wiki/All-tutorials-and-videos"
+        return "https://hiddify.com/fa/manager/"
+    return "https://hiddify.com/manager/"
 
 
 # The shell shows exactly three groups, in this order. The frontend adds its own

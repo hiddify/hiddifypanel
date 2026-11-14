@@ -4459,7 +4459,7 @@
       "label": "🔂 Konfigurationen zwingen, folgende IPs/Domains zu verwenden"
     },
     "cloudflare": {
-      "description": "Bitte folgen Sie <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>der Anleitung</a> und fügen Sie den Cloudflare-API-Schlüssel ein",
+      "description": "Bitte folgen Sie <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>der Anleitung</a> und fügen Sie den Cloudflare-API-Schlüssel ein",
       "label": "🔑 Cloudflare-API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT-Resolver"
     },
     "domain_fronting": {
-      "description": "Wird verwendet, um im SNI eine andere Website statt Ihrer Website vorzutäuschen. Dadurch kann die GFW Ihre Domain nicht filtern\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Anleitung</a>. ⚠️CloudFlare unterstützt kein Domain-Fronting.",
+      "description": "Wird verwendet, um im SNI eine andere Website statt Ihrer Website vorzutäuschen. Dadurch kann die GFW Ihre Domain nicht filtern\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Anleitung</a>. ⚠️CloudFlare unterstützt kein Domain-Fronting.",
       "label": "🔒 TLS-Domain-Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "Ein SNI-Gateway kann für eine Domain nicht zusammen mit anderen Proxys ausgewählt werden",
       "sni_single_only": "Für eine Domain kann nur ein SNI-Gateway ausgewählt werden"
     },
-    "description": "Bitte füllen Sie dieses Feld sorgfältig und korrekt aus. Andernfalls gibt es Probleme mit den Proxys. Besuchen Sie die <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Hilfe</a>, um zu erfahren, wie Sie eine Subdomain erstellen.",
+    "description": "Bitte füllen Sie dieses Feld sorgfältig und korrekt aus. Andernfalls gibt es Probleme mit den Proxys. Besuchen Sie die <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Hilfe</a>, um zu erfahren, wie Sie eine Subdomain erstellen.",
     "domain": "Domain",
     "domain_fronting": {
-      "description": "Wird verwendet, um im SNI eine andere Website statt Ihrer Website vorzutäuschen. Dadurch kann die GFW Ihre Domain nicht filtern\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Anleitung</a>. ⚠️CloudFlare unterstützt kein Domain-Fronting.",
+      "description": "Wird verwendet, um im SNI eine andere Website statt Ihrer Website vorzutäuschen. Dadurch kann die GFW Ihre Domain nicht filtern\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Anleitung</a>. ⚠️CloudFlare unterstützt kein Domain-Fronting.",
       "label": "🔒 TLS-Domain-Fronting"
     },
     "ech": {

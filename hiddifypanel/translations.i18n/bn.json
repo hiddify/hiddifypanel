@@ -4459,7 +4459,7 @@
       "label": "🔂 কনফিগকে নিচের IP/ডোমেইন ব্যবহার করতে বাধ্য করুন"
     },
     "cloudflare": {
-      "description": "অনুগ্রহ করে <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>নির্দেশনা</a> অনুসরণ করে Cloudflare API Key পেস্ট করুন",
+      "description": "অনুগ্রহ করে <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>নির্দেশনা</a> অনুসরণ করে Cloudflare API Key পেস্ট করুন",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT রিজলভার"
     },
     "domain_fronting": {
-      "description": "এটি SNI-তে আপনার ওয়েবসাইটের বদলে অন্য একটি ওয়েবসাইটের নকল করতে ব্যবহার হয়। ফলে GFW আপনার ডোমেইন ফিল্টার করতে পারে না\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>গাইড</a>। ⚠️CloudFlare ডোমেইন ফ্রন্টিং সমর্থন করে না।",
+      "description": "এটি SNI-তে আপনার ওয়েবসাইটের বদলে অন্য একটি ওয়েবসাইটের নকল করতে ব্যবহার হয়। ফলে GFW আপনার ডোমেইন ফিল্টার করতে পারে না\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>গাইড</a>। ⚠️CloudFlare ডোমেইন ফ্রন্টিং সমর্থন করে না।",
       "label": "🔒 TLS ডোমেইন ফ্রন্টিং"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "একটি ডোমেইনের জন্য একটি SNI গেটওয়ে অন্য প্রক্সির সঙ্গে একসঙ্গে বেছে নেওয়া যায় না",
       "sni_single_only": "একটি ডোমেইনের জন্য শুধু একটি SNI গেটওয়ে বেছে নেওয়া যায়"
     },
-    "description": "অনুগ্রহ করে এই ঘরটি সতর্কতার সঙ্গে ও সঠিকভাবে পূরণ করুন। নইলে প্রক্সিতে সমস্যা হবে। সাবডোমেইন কীভাবে তৈরি করবেন তা জানতে অনুগ্রহ করে <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> সাহায্য</a> দেখুন।",
+    "description": "অনুগ্রহ করে এই ঘরটি সতর্কতার সঙ্গে ও সঠিকভাবে পূরণ করুন। নইলে প্রক্সিতে সমস্যা হবে। সাবডোমেইন কীভাবে তৈরি করবেন তা জানতে অনুগ্রহ করে <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> সাহায্য</a> দেখুন।",
     "domain": "ডোমেইন",
     "domain_fronting": {
-      "description": "এটি SNI-তে আপনার ওয়েবসাইটের বদলে অন্য একটি ওয়েবসাইটের নকল করতে ব্যবহার হয়। ফলে GFW আপনার ডোমেইন ফিল্টার করতে পারে না\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>গাইড</a>। ⚠️CloudFlare ডোমেইন ফ্রন্টিং সমর্থন করে না।",
+      "description": "এটি SNI-তে আপনার ওয়েবসাইটের বদলে অন্য একটি ওয়েবসাইটের নকল করতে ব্যবহার হয়। ফলে GFW আপনার ডোমেইন ফিল্টার করতে পারে না\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>গাইড</a>। ⚠️CloudFlare ডোমেইন ফ্রন্টিং সমর্থন করে না।",
       "label": "🔒 TLS ডোমেইন ফ্রন্টিং"
     },
     "ech": {
