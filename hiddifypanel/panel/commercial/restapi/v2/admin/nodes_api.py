@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ipaddress
+import socket
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -259,6 +260,56 @@ class NodeOsApi(MethodView):
     def get(self, node_id: int):
         """Nodes: The node's operating system (for its logo and details on the card)"""
         return node_os(_remote_or_404(node_id))
+
+
+def _node_ips(node_id: int) -> list[str]:
+    """The public addresses of this server (0) or a node: the ones the panel keeps for it, and what its host is."""
+    from hiddifypanel.models import ServerIp
+
+    found: list[str] = []
+    for row in ServerIp.query.filter(ServerIp.child_id == node_id, ServerIp.enabled.is_(True)).all():
+        found.append(row.address)
+    if node_id == 0:
+        found += [str(ip) for ip in hutils.network.get_ips_lazy()]
+    else:
+        base = (_remote_or_404(node_id).node_base_url or "").strip()
+        host = base.split("://", 1)[-1].split("/", 1)[0]
+        name = host[1:].split("]", 1)[0] if host.startswith("[") else host.split(":", 1)[0] if host.count(":") == 1 else host
+        try:
+            found += [info[4][0] for info in socket.getaddrinfo(name, None)] if name else []
+        except OSError:
+            pass
+    out: list[str] = []
+    for value in found:
+        try:
+            ip = ipaddress.ip_address(str(value).strip())
+        except ValueError:
+            continue
+        if ip.is_global and str(ip) not in out:
+            out.append(str(ip))
+    # IPv4 first, at most two of each
+    v4 = [ip for ip in out if ":" not in ip][:2]
+    v6 = [ip for ip in out if ":" in ip][:2]
+    return v4 + v6
+
+
+class NodeIpInfoApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self, node_id: int):
+        """Nodes: What is known about this server's (0) or a node's IP addresses, from open sources, kept 72 hours"""
+        from hiddifypanel.hutils.network import ip_details
+        from hiddifypanel.models import Domain
+
+        if node_id != 0:
+            _only_on_parent_or_standalone()
+            _remote_or_404(node_id)
+        ips = _node_ips(node_id)
+        refresh = request.args.get("refresh") == "1"
+        details = ip_details.describe_all(ips, refresh=refresh)
+        domains = sorted({d.domain for d in Domain.query.filter(Domain.child_id == node_id).all() if d.domain})
+        left = min((ip_details.ttl_left(ip) for ip in ips), default=0)
+        return {"node_id": node_id, "ips": details, "domains": domains, "refresh_in": left, "ttl": ip_details.TTL}
 
 
 class NodePingApi(MethodView):

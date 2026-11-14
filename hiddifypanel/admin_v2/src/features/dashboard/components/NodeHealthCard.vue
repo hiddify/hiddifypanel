@@ -17,6 +17,8 @@ import { timeLabels } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricBar from './MetricBar.vue'
 import MetricChart from './MetricChart.vue'
+import NodeIpInfo from './NodeIpInfo.vue'
+import { isSuperAdmin } from '@/core/panelShell'
 
 const props = defineProps<{
   nodes: DashboardNodeStats[]
@@ -58,6 +60,14 @@ const tableRows = computed(() =>
     uniqueIps: node.network?.unique_ips ?? null,
   })),
 )
+
+/** The (i) after a name: everything known about the server's IP addresses, in a sheet (super admins) */
+const ipInfoNode = ref<{ id: number; title: string } | null>(null)
+const ipInfoOpen = ref(false)
+function openIpInfo(row: { id: number; title: string }) {
+  ipInfoNode.value = { id: row.id, title: row.title }
+  ipInfoOpen.value = true
+}
 
 const overviewLabels = computed(() => {
   let longest: NodeSample[] = []
@@ -360,6 +370,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <strong><FlagIcon v-if="data.flag" class="node-flag" :code="data.flag" :label="data.country" waving />{{ data.title }}</strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
+          <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
+            <i class="pi pi-info-circle" />
+          </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </template>
       </Column>
@@ -406,6 +419,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <strong><FlagIcon v-if="data.flag" class="node-flag" :code="data.flag" :label="data.country" waving />{{ data.title }}</strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
+          <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
+            <i class="pi pi-info-circle" />
+          </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </div>
         <dl class="node-list__stats">
@@ -485,6 +501,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <p v-else-if="diskDetail.error" class="disk-dialog__error">{{ diskDetail.error }}</p>
       </template>
     </Dialog>
+    <NodeIpInfo v-model:visible="ipInfoOpen" :node="ipInfoNode" />
   </DashCard>
 </template>
 
@@ -635,6 +652,31 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 }
 .proc-name {
   color: var(--p-text-color);
+}
+/* The (i) after a name: the server's IP details */
+.node-cell__info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-inline-start: 0.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.node-cell__info i {
+  font-size: 0.8rem;
+}
+.node-cell__info:hover,
+.node-cell__info:focus-visible {
+  color: var(--p-primary-color);
+  background: var(--p-content-hover-background);
 }
 .node-cell__dot {
   display: inline-block;
