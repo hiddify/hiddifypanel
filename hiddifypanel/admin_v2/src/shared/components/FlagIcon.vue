@@ -2,7 +2,7 @@
 /**
  * A country's flag (SVG), e.g. a node's location or a language; nothing when the code is unknown.
  * `waving`: the flag flies like cloth in the wind (a node's location on the dashboard and the Nodes page): it falls
- * away from the pole, flaps at its flying end and is pulled flat by a gust once a loop (shared/utils/flag-wind.ts).
+ * away from the pole and ripples softly to its flying end, as the wind rises and falls (shared/utils/flag-wind.ts).
  *
  * It is painted on a canvas at twice the screen's resolution: the flag's picture goes on in slices one canvas pixel
  * wide (half a screen pixel), each slanted and squeezed onto the cloth's shape, then one soft gradient of light and
@@ -12,11 +12,9 @@
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { flagBitmap, flagUrl } from '@/shared/utils/flags'
-import { FLAG_H, FLAG_W, REST, blow, gust, steady, windAllowed, type Column } from '@/shared/utils/flag-wind'
+import { FLAG_H, FLAG_W, REST, blow, cloth, windAllowed, type Column } from '@/shared/utils/flag-wind'
 
-/** `wind`: how a waving flag flies: with a gust that pulls it flat once a loop (the default), or in a steady wind, with
- *  a sheen that runs over the cloth (the large flag of the IP sheet) */
-const props = defineProps<{ code: string | null | undefined; label?: string; waving?: boolean; wind?: 'gust' | 'steady' }>()
+const props = defineProps<{ code: string | null | undefined; label?: string; waving?: boolean }>()
 const url = computed(() => flagUrl(props.code))
 
 /** Room around the flag's box for the falling end and the outline, in flag heights (the styles below use the same) */
@@ -40,10 +38,13 @@ let line = 1
 const cols: Column[] = []
 const light: Column = { xt: 0, xb: 0, top: 0, bottom: 0, shade: 0 }
 
-function draw(t: number) {
+/** Each flag starts at its own moment, so flags next to each other never move as one */
+const since = Math.random() * 600
+
+function draw(now: number) {
   if (!ctx || !bitmap) return
   const c = ctx
-  const cloth = props.wind === 'steady' ? steady : gust
+  const t = now + since
   const kx = w / FLAG_W
   const ky = h / FLAG_H
   for (let i = 0; i <= w; i++) cloth(i / w, t, (cols[i] ??= { xt: 0, xb: 0, top: 0, bottom: 0, shade: 0 }))
@@ -64,13 +65,12 @@ function draw(t: number) {
     c.drawImage(bitmap, i, 0, cut, h, i, 0, cut, h)
   }
   c.setTransform(1, 0, 0, 1, 0, 0)
-  // light and shade, only on the cloth. In a steady wind the folds lie aslant, so the bands run aslant too, and a
-  // narrow sheen travels over them
+  // light and shade, only on the cloth: the folds lie aslant, so the bands run aslant too, and now and then a soft
+  // sheen travels over them
   c.globalCompositeOperation = 'source-atop'
   const last = cols[w]!
   const end = Math.max(last.xt, last.xb) * kx
-  const aslant = props.wind === 'steady'
-  const shade = c.createLinearGradient(ox, oy, ox + end, oy + (aslant ? 0.55 * h : 0))
+  const shade = c.createLinearGradient(ox, oy, ox + end, oy + 0.55 * h)
   for (let j = 0; j < STOPS; j++) {
     const u = j / (STOPS - 1)
     const s = cloth(u, t, light).shade
@@ -78,13 +78,14 @@ function draw(t: number) {
   }
   c.fillStyle = shade
   c.fillRect(0, 0, c.canvas.width, c.canvas.height)
-  if (aslant) {
-    const at = ((t / 1.6) % 1) * 1.3 - 0.15
+  // it crosses in 2.6 s and then stays away for a while (a 6.1 s round)
+  const at = (((t / 6.1) % 1) / 0.43) * 1.3 - 0.15
+  if (at < 1.15) {
     const sheen = c.createLinearGradient(ox, oy, ox + end, oy + 0.55 * h)
     const stopAt = (v: number) => Math.min(1, Math.max(0, v))
-    sheen.addColorStop(stopAt(at - 0.09), 'rgba(255,255,255,0)')
-    sheen.addColorStop(stopAt(at), 'rgba(255,255,255,0.3)')
-    sheen.addColorStop(stopAt(at + 0.09), 'rgba(255,255,255,0)')
+    sheen.addColorStop(stopAt(at - 0.12), 'rgba(255,255,255,0)')
+    sheen.addColorStop(stopAt(at), 'rgba(255,255,255,0.22)')
+    sheen.addColorStop(stopAt(at + 0.12), 'rgba(255,255,255,0)')
     c.fillStyle = sheen
     c.fillRect(0, 0, c.canvas.width, c.canvas.height)
   }
@@ -132,7 +133,7 @@ async function setup() {
   }
   if (url.value !== source || !root.value || !ctx) return
   if (!windAllowed()) {
-    draw(REST)
+    draw(REST - since)
     return
   }
   draw(performance.now() / 1000)
@@ -153,7 +154,7 @@ function teardown() {
 }
 onMounted(setup)
 watch(
-  () => [props.waving, props.wind, url.value],
+  () => [props.waving, url.value],
   () => requestAnimationFrame(setup),
 )
 onBeforeUnmount(teardown)
