@@ -25,3 +25,40 @@ export function flagCodeOfEmoji(emoji: string): string {
   const letters = [...emoji].map((ch) => ch.codePointAt(0)! - 0x1f1e6)
   return letters.length === 2 && letters.every((n) => n >= 0 && n < 26) ? String.fromCharCode(...letters.map((n) => 97 + n)) : ''
 }
+
+const BITMAPS = new Map<string, Promise<string>>()
+
+/**
+ * The flag drawn once as a picture `scale` times finer than the screen needs (a data: URL), for a flag that is bent
+ * and moved afterwards (FlagIcon `waving`): every browser then starts from the same smooth, oversampled picture, also
+ * when zoomed in a little. Falls back to the SVG itself when it cannot be drawn.
+ */
+export function flagBitmap(url: string, cssWidth: number, scale = 2): Promise<string> {
+  const width = Math.min(1600, Math.max(160, Math.ceil((cssWidth * (window.devicePixelRatio || 1) * scale) / 40) * 40))
+  const key = `${url}@${width}`
+  let made = BITMAPS.get(key)
+  if (!made) {
+    made = new Promise<string>((resolve) => {
+      const img = new Image()
+      img.decoding = 'async'
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = width
+          canvas.height = Math.round((width * 3) / 4)
+          const ctx = canvas.getContext('2d')!
+          ctx.imageSmoothingEnabled = true
+          ctx.imageSmoothingQuality = 'high'
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+          resolve(canvas.toDataURL('image/png'))
+        } catch {
+          resolve(url)
+        }
+      }
+      img.onerror = () => resolve(url)
+      img.src = url
+    })
+    BITMAPS.set(key, made)
+  }
+  return made
+}
