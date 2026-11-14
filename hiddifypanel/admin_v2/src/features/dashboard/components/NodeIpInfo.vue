@@ -513,7 +513,7 @@ const sections = computed(() =>
             <p v-if="company" class="ips__company">{{ company }}</p>
             <p v-if="place" class="ips__place"><i class="pi pi-map-marker" />{{ place }}</p>
           </div>
-          <FlagIcon v-if="countryCode" class="ips__flag" :code="countryCode" :label="country" waving wind="steady" />
+          <FlagIcon v-if="countryCode" class="ips__flag" :code="countryCode" :label="country" waving />
         </header>
 
         <div class="ips__body">
