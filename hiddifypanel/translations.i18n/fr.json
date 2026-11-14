@@ -4459,7 +4459,7 @@
       "label": "🔂 Forcer les configurations à utiliser les IP/domaines suivants"
     },
     "cloudflare": {
-      "description": "Veuillez suivre <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>les instructions</a> et coller la clé API Cloudflare",
+      "description": "Veuillez suivre <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>les instructions</a> et coller la clé API Cloudflare",
       "label": "🔑 API Cloudflare"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "Résolveurs DNSTT"
     },
     "domain_fronting": {
-      "description": "Sert à simuler un autre site web à la place du vôtre dans le SNI. Ainsi, le GFW ne peut pas filtrer votre domaine\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Guide</a>. ⚠️CloudFlare ne prend pas en charge le Domain Fronting.",
+      "description": "Sert à simuler un autre site web à la place du vôtre dans le SNI. Ainsi, le GFW ne peut pas filtrer votre domaine\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Guide</a>. ⚠️CloudFlare ne prend pas en charge le Domain Fronting.",
       "label": "🔒 Domain Fronting TLS"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "Une passerelle SNI ne peut pas être sélectionnée avec d'autres proxys pour un même domaine",
       "sni_single_only": "Une seule passerelle SNI peut être sélectionnée pour un domaine"
     },
-    "description": "Veuillez remplir ce champ avec soin et correctement. Sinon, les proxys rencontreront des problèmes. Consultez l'<a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Aide</a> pour apprendre à créer un sous-domaine.",
+    "description": "Veuillez remplir ce champ avec soin et correctement. Sinon, les proxys rencontreront des problèmes. Consultez l'<a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Aide</a> pour apprendre à créer un sous-domaine.",
     "domain": "Domaine",
     "domain_fronting": {
-      "description": "Sert à simuler un autre site web à la place du vôtre dans le SNI. Ainsi, le GFW ne peut pas filtrer votre domaine\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Guide</a>. ⚠️CloudFlare ne prend pas en charge le Domain Fronting.",
+      "description": "Sert à simuler un autre site web à la place du vôtre dans le SNI. Ainsi, le GFW ne peut pas filtrer votre domaine\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Guide</a>. ⚠️CloudFlare ne prend pas en charge le Domain Fronting.",
       "label": "🔒 Domain Fronting TLS"
     },
     "ech": {

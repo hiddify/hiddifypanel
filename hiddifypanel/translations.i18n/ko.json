@@ -4459,7 +4459,7 @@
       "label": "🔂 구성이 다음 IP/도메인을 사용하도록 강제"
     },
     "cloudflare": {
-      "description": "<a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>안내</a>를 따라 Cloudflare API 키를 붙여넣으세요",
+      "description": "<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>안내</a>를 따라 Cloudflare API 키를 붙여넣으세요",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT 리졸버"
     },
     "domain_fronting": {
-      "description": "SNI에서 내 웹사이트 대신 다른 웹사이트를 흉내 내는 데 사용합니다. 그래서 GFW가 내 도메인을 필터링할 수 없습니다\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>가이드</a>. ⚠️Cloudflare는 도메인 프런팅을 지원하지 않습니다.",
+      "description": "SNI에서 내 웹사이트 대신 다른 웹사이트를 흉내 내는 데 사용합니다. 그래서 GFW가 내 도메인을 필터링할 수 없습니다\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>가이드</a>. ⚠️Cloudflare는 도메인 프런팅을 지원하지 않습니다.",
       "label": "🔒 TLS 도메인 프런팅"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "SNI 게이트웨이는 한 도메인에서 다른 프록시와 함께 선택할 수 없습니다",
       "sni_single_only": "도메인 하나에는 SNI 게이트웨이를 하나만 선택할 수 있습니다"
     },
-    "description": "이 항목을 정확하게 입력해 주세요. 그렇지 않으면 프록시에 문제가 생깁니다. 서브도메인을 만드는 방법은 <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> 도움말</a>을 참고하세요.",
+    "description": "이 항목을 정확하게 입력해 주세요. 그렇지 않으면 프록시에 문제가 생깁니다. 서브도메인을 만드는 방법은 <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> 도움말</a>을 참고하세요.",
     "domain": "도메인",
     "domain_fronting": {
-      "description": "SNI에서 내 웹사이트 대신 다른 웹사이트로 위장하는 데 사용합니다. 그래서 GFW가 도메인을 필터링할 수 없습니다\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>안내</a>. ⚠️Cloudflare는 도메인 프론팅을 지원하지 않습니다.",
+      "description": "SNI에서 내 웹사이트 대신 다른 웹사이트로 위장하는 데 사용합니다. 그래서 GFW가 도메인을 필터링할 수 없습니다\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>안내</a>. ⚠️Cloudflare는 도메인 프론팅을 지원하지 않습니다.",
       "label": "🔒 TLS 도메인 프론팅"
     },
     "ech": {

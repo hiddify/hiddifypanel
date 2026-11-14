@@ -3075,7 +3075,7 @@
       "label": "🔂 Принудительная настройка для использования следующих IP-адресов"
     },
     "cloudflare": {
-      "description": "Следуйте <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>инструкции</a> и вставьте ключ API Cloudflare.",
+      "description": "Следуйте <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>инструкции</a> и вставьте ключ API Cloudflare.",
       "label": "🔑 API Cloudflare"
     },
     "common_proxy_core": {
@@ -3146,7 +3146,7 @@
       "label": "Резолверы DNSTT"
     },
     "domain_fronting": {
-      "description": "Это используется для имитации другого веб-сайта вместо вашего в SNI. поэтому GTW не может фильтровать ваш домен\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87- %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>Руководство</a>. ⚠️CloudFlare не поддерживает фронтирование домена.",
+      "description": "Это используется для имитации другого веб-сайта вместо вашего в SNI. поэтому GTW не может фильтровать ваш домен\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/ %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>Руководство</a>. ⚠️CloudFlare не поддерживает фронтирование домена.",
       "label": "🔒 Включение TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -3978,7 +3978,7 @@
       "sni_l7_mutex": "SNI-шлюз и L7-шлюз нельзя выбрать вместе для одного домена",
       "sni_single_only": "Для домена можно выбрать только один SNI-шлюз"
     },
-    "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردام نه'> Помогите</a> Узнайте, как создать subdomain.",
+    "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/ نه'> Помогите</a> Узнайте, как создать subdomain.",
     "domain": "Домен",
     "domain_fronting": {
       "description": "Он используется для имитации другого веб-сайта вместо вашего веб-сайта в SNI следовательно, GTW не может отфильтровать ваш домен\n<<a href='https://github.com/hibbity/hibbity-config/wiki/Guide-for-domain-fronting '>Руководство</a>. ⚠CloudFlare не поддерживает подключение к домену.",

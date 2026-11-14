@@ -4459,7 +4459,7 @@
       "label": "🔂 Конфигурацияларды мына IP-лерді/домендерді қолдануға мәжбүрлеу"
     },
     "cloudflare": {
-      "description": "<a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>Нұсқауды</a> орындап, Cloudflare API кілтін қойыңыз",
+      "description": "<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>Нұсқауды</a> орындап, Cloudflare API кілтін қойыңыз",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT резолверлері"
     },
     "domain_fronting": {
-      "description": "SNI-де сіздің сайтыңыздың орнына басқа сайтты имитациялау үшін қолданылады. Сондықтан GFW доменіңізді сүзе алмайды\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Нұсқаулық</a>. ⚠️CloudFlare Domain Fronting қолдамайды.",
+      "description": "SNI-де сіздің сайтыңыздың орнына басқа сайтты имитациялау үшін қолданылады. Сондықтан GFW доменіңізді сүзе алмайды\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Нұсқаулық</a>. ⚠️CloudFlare Domain Fronting қолдамайды.",
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "SNI шлюзін бір доменге басқа проксилермен бірге таңдауға болмайды",
       "sni_single_only": "Домен үшін тек бір SNI шлюзін таңдауға болады"
     },
-    "description": "Бұл өрісті мұқият және дұрыс толтырыңыз. Әйтпесе, проксилерде мәселелер туындайды. Қосалқы домен жасауды үйрену үшін <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Көмек</a> бетіне өтіңіз.",
+    "description": "Бұл өрісті мұқият және дұрыс толтырыңыз. Әйтпесе, проксилерде мәселелер туындайды. Қосалқы домен жасауды үйрену үшін <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Көмек</a> бетіне өтіңіз.",
     "domain": "Домен",
     "domain_fronting": {
-      "description": "SNI-де сіздің сайтыңыздың орнына басқа сайтты имитациялау үшін қолданылады. Сондықтан GFW доменіңізді сүзе алмайды\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Нұсқаулық</a>. ⚠️CloudFlare Domain Fronting қолдамайды.",
+      "description": "SNI-де сіздің сайтыңыздың орнына басқа сайтты имитациялау үшін қолданылады. Сондықтан GFW доменіңізді сүзе алмайды\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Нұсқаулық</a>. ⚠️CloudFlare Domain Fronting қолдамайды.",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {

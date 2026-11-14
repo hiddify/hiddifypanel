@@ -4459,7 +4459,7 @@
       "label": "🔂 Змусити конфігурації використовувати такі IP/домени"
     },
     "cloudflare": {
-      "description": "Будь ласка, дотримуйтесь <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>інструкції</a> і вставте ключ API Cloudflare",
+      "description": "Будь ласка, дотримуйтесь <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>інструкції</a> і вставте ключ API Cloudflare",
       "label": "🔑 API Cloudflare"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "Резолвери DNSTT"
     },
     "domain_fronting": {
-      "description": "Використовується для імітації іншого вебсайту замість вашого в SNI. Тому GFW не може відфільтрувати ваш домен\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Посібник</a>. ⚠️CloudFlare не підтримує Domain Fronting.",
+      "description": "Використовується для імітації іншого вебсайту замість вашого в SNI. Тому GFW не може відфільтрувати ваш домен\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Посібник</a>. ⚠️CloudFlare не підтримує Domain Fronting.",
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "Шлюз SNI не можна вибирати разом з іншими проксі для одного домену",
       "sni_single_only": "Для домену можна вибрати лише один шлюз SNI"
     },
-    "description": "Будь ласка, заповнюйте це поле уважно й правильно. Інакше в проксі виникнуть проблеми. Відвідайте <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> довідку</a>, щоб дізнатися, як створити піддомен.",
+    "description": "Будь ласка, заповнюйте це поле уважно й правильно. Інакше в проксі виникнуть проблеми. Відвідайте <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> довідку</a>, щоб дізнатися, як створити піддомен.",
     "domain": "Домен",
     "domain_fronting": {
-      "description": "Використовується для імітації іншого вебсайту замість вашого в SNI. Тому GFW не може відфільтрувати ваш домен\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Посібник</a>. ⚠️CloudFlare не підтримує Domain Fronting.",
+      "description": "Використовується для імітації іншого вебсайту замість вашого в SNI. Тому GFW не може відфільтрувати ваш домен\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Посібник</a>. ⚠️CloudFlare не підтримує Domain Fronting.",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {

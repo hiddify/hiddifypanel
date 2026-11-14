@@ -4459,7 +4459,7 @@
       "label": "🔂 کانفیګ اړ کړئ چې دا IPs/ډومېنونه وکاروي"
     },
     "cloudflare": {
-      "description": "مهرباني وکړئ <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>لارښوونې</a> تعقیب کړئ او د Cloudflare API کلیدي پیسټ کړئ",
+      "description": "مهرباني وکړئ <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>لارښوونې</a> تعقیب کړئ او د Cloudflare API کلیدي پیسټ کړئ",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "د DNSTT حل کوونکي"
     },
     "domain_fronting": {
-      "description": "دا د ستاسو د وېبسایټ پر ځای په SNI کې د بل وېبسایټ تقلید لپاره کارول کیږي. نو GFW نشي کولای ستاسو ډومېن فلټر کړي\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>لارښود</a>. ⚠️CloudFlare د ډومېن فرنټینګ ملاتړ نه کوي.",
+      "description": "دا د ستاسو د وېبسایټ پر ځای په SNI کې د بل وېبسایټ تقلید لپاره کارول کیږي. نو GFW نشي کولای ستاسو ډومېن فلټر کړي\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>لارښود</a>. ⚠️CloudFlare د ډومېن فرنټینګ ملاتړ نه کوي.",
       "label": "🔒 TLS د ډومېن فرنټینګ"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "SNI ګیټوی د یو ډومېن لپاره د نورو پراکسیو سره یوځای نشي ټاکل کیدی",
       "sni_single_only": "د یو ډومېن لپاره یوازې یو SNI ګیټوی ټاکل کیدی شي"
     },
-    "description": "مهرباني وکړئ دا ډګر په پاملرنې او سم ډول ډک کړئ. نه نو پراکسي به ستونزو سره مخ شي. د فرعي ډومېن د جوړولو زده کړې لپاره مهرباني وکړئ <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> مرستې</a> ته ورشئ.",
+    "description": "مهرباني وکړئ دا ډګر په پاملرنې او سم ډول ډک کړئ. نه نو پراکسي به ستونزو سره مخ شي. د فرعي ډومېن د جوړولو زده کړې لپاره مهرباني وکړئ <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> مرستې</a> ته ورشئ.",
     "domain": "ډومېن",
     "domain_fronting": {
-      "description": "دا د ستاسو د وېبسایټ پر ځای په SNI کې د بل وېبسایټ تقلید لپاره کارول کیږي. نو GFW نشي کولای ستاسو ډومېن فلټر کړي\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>لارښود</a>. ⚠️CloudFlare د ډومېن فرنټینګ ملاتړ نه کوي.",
+      "description": "دا د ستاسو د وېبسایټ پر ځای په SNI کې د بل وېبسایټ تقلید لپاره کارول کیږي. نو GFW نشي کولای ستاسو ډومېن فلټر کړي\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>لارښود</a>. ⚠️CloudFlare د ډومېن فرنټینګ ملاتړ نه کوي.",
       "label": "🔒 TLS د ډومېن فرنټینګ"
     },
     "ech": {

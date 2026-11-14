@@ -4459,7 +4459,7 @@
       "label": "🔂 Forzar a las configuraciones a usar las siguientes IP/dominios"
     },
     "cloudflare": {
-      "description": "Siga <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>las instrucciones</a> y pegue la clave de la API de Cloudflare",
+      "description": "Siga <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>las instrucciones</a> y pegue la clave de la API de Cloudflare",
       "label": "🔑 API de Cloudflare"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "Resolutores de DNSTT"
     },
     "domain_fronting": {
-      "description": "Se usa para simular otro sitio web en lugar del suyo en el SNI. Así, el GFW no puede filtrar su dominio\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Guía</a>. ⚠️Cloudflare no admite Domain Fronting.",
+      "description": "Se usa para simular otro sitio web en lugar del suyo en el SNI. Así, el GFW no puede filtrar su dominio\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Guía</a>. ⚠️Cloudflare no admite Domain Fronting.",
       "label": "🔒 Domain Fronting de TLS"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "Una puerta de enlace SNI no se puede seleccionar junto con otros proxies para un mismo dominio",
       "sni_single_only": "Solo se puede seleccionar una puerta de enlace SNI para un dominio"
     },
-    "description": "Complete este campo con cuidado y de forma correcta. De lo contrario, los proxies tendrán problemas. Visite la <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> ayuda</a> para aprender a crear un subdominio.",
+    "description": "Complete este campo con cuidado y de forma correcta. De lo contrario, los proxies tendrán problemas. Visite la <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> ayuda</a> para aprender a crear un subdominio.",
     "domain": "Dominio",
     "domain_fronting": {
-      "description": "Se usa para simular otro sitio web en lugar del suyo en el SNI. Así, el GFW no puede filtrar su dominio\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Guía</a>. ⚠️Cloudflare no admite Domain Fronting.",
+      "description": "Se usa para simular otro sitio web en lugar del suyo en el SNI. Así, el GFW no puede filtrar su dominio\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Guía</a>. ⚠️Cloudflare no admite Domain Fronting.",
       "label": "🔒 Domain Fronting de TLS"
     },
     "ech": {

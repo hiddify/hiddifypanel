@@ -3066,7 +3066,7 @@
       "label": "🔂 အောက်ပါ အိုင်ပီများကို အသုံးပြုရန် Config ကို အတင်းအကျပ်လုပ်ပါ။"
     },
     "cloudflare": {
-      "description": "<a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>ညွှန်ကြားချက်ကို</a> လိုက်နာပြီး Cloudflare API Key ကို ကူးထည့်ပါ။",
+      "description": "<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>ညွှန်ကြားချက်ကို</a> လိုက်နာပြီး Cloudflare API Key ကို ကူးထည့်ပါ။",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -3137,7 +3137,7 @@
       "label": "DNSTT Resolver များ"
     },
     "domain_fronting": {
-      "description": "SNI တွင် သင့်ဝဘ်ဆိုဒ်အစား အခြားဝဘ်ဆိုဒ်ကို အတုယူရန် ၎င်းကို အသုံးပြုသည်။ ထို့ကြောင့်၊ GFW သည် သင့် ဒိုမိန်းကို စစ်ထုတ်၍မရပါ။\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>လမ်းညွှန်</a> ။ ⚠️CloudFlare သည် Domain Fronting ကို မပံ့ပိုးပါ။",
+      "description": "SNI တွင် သင့်ဝဘ်ဆိုဒ်အစား အခြားဝဘ်ဆိုဒ်ကို အတုယူရန် ၎င်းကို အသုံးပြုသည်။ ထို့ကြောင့်၊ GFW သည် သင့် ဒိုမိန်းကို စစ်ထုတ်၍မရပါ။\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>လမ်းညွှန်</a> ။ ⚠️CloudFlare သည် Domain Fronting ကို မပံ့ပိုးပါ။",
       "label": "🔒 TLS ဒိုမိန်း Fronting"
     },
     "domain_fronting_domain": {
@@ -3969,10 +3969,10 @@
       "sni_l7_mutex": "ဒိုမိန်းတစ်ခုအတွက် SNI gateway နှင့် L7 gateway ကို အတူရွေး၍ မရပါ",
       "sni_single_only": "ဒိုမိန်းတစ်ခုအတွက် SNI gateway တစ်ခုသာ ရွေးနိုင်သည်"
     },
-    "description": "ကျေးဇူးပြု၍ ဤအကွက်ကို သေသေချာချာ မှန်မှန်ကန်ကန်ဖြည့်ပါ။ မဟုတ်ပါက ပရောက်စီများသည် ပြဿနာများ ကြုံတွေ့ရလိမ့်မည်။ ဒိုမိန်းခွဲတစ်ခုကို ဖန်တီးနည်းကို လေ့လာရန် <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'>အကူအညီ</a> သို့ သွားရောက်ပါ။",
+    "description": "ကျေးဇူးပြု၍ ဤအကွက်ကို သေသေချာချာ မှန်မှန်ကန်ကန်ဖြည့်ပါ။ မဟုတ်ပါက ပရောက်စီများသည် ပြဿနာများ ကြုံတွေ့ရလိမ့်မည်။ ဒိုမိန်းခွဲတစ်ခုကို ဖန်တီးနည်းကို လေ့လာရန် <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'>အကူအညီ</a> သို့ သွားရောက်ပါ။",
     "domain": "ဒိုမိန်း",
     "domain_fronting": {
-      "description": "SNI တွင် သင့်ဝဘ်ဆိုဒ်အစား အခြားဝဘ်ဆိုဒ်ကို အတုယူရန် ၎င်းကို အသုံးပြုသည်။ ထို့ကြောင့်၊ GFW သည် သင့် ဒိုမိန်းကို စစ်ထုတ်၍မရပါ။\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>လမ်းညွှန်</a> ။ ⚠️CloudFlare သည် Domain Fronting ကို မပံ့ပိုးပါ။",
+      "description": "SNI တွင် သင့်ဝဘ်ဆိုဒ်အစား အခြားဝဘ်ဆိုဒ်ကို အတုယူရန် ၎င်းကို အသုံးပြုသည်။ ထို့ကြောင့်၊ GFW သည် သင့် ဒိုမိန်းကို စစ်ထုတ်၍မရပါ။\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>လမ်းညွှန်</a> ။ ⚠️CloudFlare သည် Domain Fronting ကို မပံ့ပိုးပါ။",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {

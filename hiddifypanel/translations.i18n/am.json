@@ -4459,7 +4459,7 @@
       "label": "🔂 ኮንፊግ የሚከተሉትን IPs/ዶሜይኖች እንዲጠቀም አስገድድ"
     },
     "cloudflare": {
-      "description": "እባክዎ <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>መመሪያውን</a> ይከተሉ እና የCloudflare API ቁልፍን ይለጥፉ",
+      "description": "እባክዎ <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>መመሪያውን</a> ይከተሉ እና የCloudflare API ቁልፍን ይለጥፉ",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT Resolvers"
     },
     "domain_fronting": {
-      "description": "በSNI ውስጥ ከድር ጣቢያዎ ይልቅ ሌላ ድር ጣቢያን ለማስመሰል ያገለግላል። ስለዚህ GFW ዶሜይንዎን ማጣራት አይችልም\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>መመሪያ</a>። ⚠️Cloudflare Domain Fronting አይደግፍም።",
+      "description": "በSNI ውስጥ ከድር ጣቢያዎ ይልቅ ሌላ ድር ጣቢያን ለማስመሰል ያገለግላል። ስለዚህ GFW ዶሜይንዎን ማጣራት አይችልም\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>መመሪያ</a>። ⚠️Cloudflare Domain Fronting አይደግፍም።",
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "SNI ጌትዌይ ለአንድ ዶሜይን ከሌሎች ፕሮክሲዎች ጋር አብሮ ሊመረጥ አይችልም",
       "sni_single_only": "ለአንድ ዶሜይን አንድ SNI ጌትዌይ ብቻ መመረጥ ይችላል"
     },
-    "description": "ይህን መስክ በጥንቃቄና በትክክል ይሙሉ። አለበለዚያ ፕሮክሲዎች ችግር ያጋጥማቸዋል። ንዑስ ዶሜይን እንዴት እንደሚፈጠር ለማወቅ እባክዎ <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> እገዛን</a> ይመልከቱ።",
+    "description": "ይህን መስክ በጥንቃቄና በትክክል ይሙሉ። አለበለዚያ ፕሮክሲዎች ችግር ያጋጥማቸዋል። ንዑስ ዶሜይን እንዴት እንደሚፈጠር ለማወቅ እባክዎ <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> እገዛን</a> ይመልከቱ።",
     "domain": "ዶሜይን",
     "domain_fronting": {
-      "description": "በSNI ውስጥ ከድር ጣቢያዎ ይልቅ ሌላ ድር ጣቢያ ለማስመሰል ያገለግላል። ስለዚህ GFW ዶሜይንዎን ማጣራት አይችልም\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>መመሪያ</a>። ⚠️CloudFlare Domain Frontingን አይደግፍም።",
+      "description": "በSNI ውስጥ ከድር ጣቢያዎ ይልቅ ሌላ ድር ጣቢያ ለማስመሰል ያገለግላል። ስለዚህ GFW ዶሜይንዎን ማጣራት አይችልም\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>መመሪያ</a>። ⚠️CloudFlare Domain Frontingን አይደግፍም።",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {

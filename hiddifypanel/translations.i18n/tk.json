@@ -4459,7 +4459,7 @@
       "label": "🔂 Konfigleri şu IP-leri/domenleri ulanmaga mejbur et"
     },
     "cloudflare": {
-      "description": "<a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>Görkezmäni</a> ýerine ýetiriň we Cloudflare API açaryny ýelmäň",
+      "description": "<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>Görkezmäni</a> ýerine ýetiriň we Cloudflare API açaryny ýelmäň",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT çözüjiler"
     },
     "domain_fronting": {
-      "description": "SNI-de web sahypaňyzyň ýerine başga web sahypany ýasamak üçin ulanylýar. Şonuň üçin GFW domeniňizi süzüp bilmeýär\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Gollanma</a>. ⚠️CloudFlare Domain Fronting-i goldamaýar.",
+      "description": "SNI-de web sahypaňyzyň ýerine başga web sahypany ýasamak üçin ulanylýar. Şonuň üçin GFW domeniňizi süzüp bilmeýär\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Gollanma</a>. ⚠️CloudFlare Domain Fronting-i goldamaýar.",
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "SNI gateway bir domen üçin beýleki proksiler bilen bilelikde saýlanyp bilinmeýär",
       "sni_single_only": "Bir domen üçin diňe bir SNI gateway saýlanyp bilner"
     },
-    "description": "Bu meýdany üns bilen we dogry dolduryň. Ýogsam proksilerde problemalar bolar. Subdomen döretmegi öwrenmek üçin <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Kömege</a> giriň.",
+    "description": "Bu meýdany üns bilen we dogry dolduryň. Ýogsam proksilerde problemalar bolar. Subdomen döretmegi öwrenmek üçin <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Kömege</a> giriň.",
     "domain": "Domen",
     "domain_fronting": {
-      "description": "SNI-de web sahypaňyzyň ýerine başga web sahypany ýasamak üçin ulanylýar. Şonuň üçin GFW domeniňizi süzüp bilmeýär\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Gollanma</a>. ⚠️CloudFlare Domain Fronting-i goldamaýar.",
+      "description": "SNI-de web sahypaňyzyň ýerine başga web sahypany ýasamak üçin ulanylýar. Şonuň üçin GFW domeniňizi süzüp bilmeýär\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Gollanma</a>. ⚠️CloudFlare Domain Fronting-i goldamaýar.",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {

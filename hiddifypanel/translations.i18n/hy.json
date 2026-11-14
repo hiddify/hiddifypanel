@@ -4459,7 +4459,7 @@
       "label": "🔂 Ստիպել կոնֆիգին օգտագործել հետևյալ IP-ները/դոմենները"
     },
     "cloudflare": {
-      "description": "Խնդրում ենք հետևել <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>հրահանգին</a> և տեղադրել Cloudflare API բանալին",
+      "description": "Խնդրում ենք հետևել <a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Get-Cloudflare-API/' target='_blank'>հրահանգին</a> և տեղադրել Cloudflare API բանալին",
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
@@ -4526,7 +4526,7 @@
       "label": "DNSTT resolver-ներ"
     },
     "domain_fronting": {
-      "description": "Օգտագործվում է SNI-ում ձեր կայքի փոխարեն մեկ այլ կայք նմանակելու համար։ Ուստի GFW-ն չի կարող զտել ձեր դոմենը\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Ուղեցույց</a>։ ⚠️CloudFlare-ը չի աջակցում Domain Fronting-ին։",
+      "description": "Օգտագործվում է SNI-ում ձեր կայքի փոխարեն մեկ այլ կայք նմանակելու համար։ Ուստի GFW-ն չի կարող զտել ձեր դոմենը\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Ուղեցույց</a>։ ⚠️CloudFlare-ը չի աջակցում Domain Fronting-ին։",
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_fronting_domain": {
@@ -5339,10 +5339,10 @@
       "sni_l7_mutex": "SNI gateway-ը չի կարող ընտրվել մեկ դոմենի համար այլ պրոքսիների հետ միասին",
       "sni_single_only": "Մեկ դոմենի համար կարելի է ընտրել միայն մեկ SNI gateway"
     },
-    "description": "Խնդրում ենք այս դաշտը լրացնել ուշադիր և ճիշտ։ Հակառակ դեպքում պրոքսիները խնդիրների կբախվեն։ Ենթադոմեն ստեղծելու եղանակը իմանալու համար այցելեք <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Օգնություն</a>։",
+    "description": "Խնդրում ենք այս դաշտը լրացնել ուշադիր և ճիշտ։ Հակառակ դեպքում պրոքսիները խնդիրների կբախվեն։ Ենթադոմեն ստեղծելու եղանակը իմանալու համար այցելեք <a href='https://hiddify.com/manager/installation-and-setup/Guide-for-setting-up-the-domain-and-finalizing-the-installation/'> Օգնություն</a>։",
     "domain": "Դոմեն",
     "domain_fronting": {
-      "description": "Օգտագործվում է SNI-ում ձեր կայքի փոխարեն մեկ այլ կայք նմանակելու համար։ Ուստի GFW-ն չի կարող զտել ձեր դոմենը\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Ուղեցույց</a>։ ⚠️CloudFlare-ը չի աջակցում Domain Fronting-ին։",
+      "description": "Օգտագործվում է SNI-ում ձեր կայքի փոխարեն մեկ այլ կայք նմանակելու համար։ Ուստի GFW-ն չի կարող զտել ձեր դոմենը\n<a href='https://hiddify.com/manager/domain-worker-cdn-and-tunneling/Guide-for-domain-fronting/'>Ուղեցույց</a>։ ⚠️CloudFlare-ը չի աջակցում Domain Fronting-ին։",
       "label": "🔒 TLS Domain Fronting"
     },
     "ech": {
