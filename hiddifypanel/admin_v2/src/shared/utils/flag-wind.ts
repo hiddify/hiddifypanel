@@ -13,7 +13,9 @@
 export const FLAG_W = 400
 export const FLAG_H = 300
 /** Seconds: the loop, and one flap of the flying end (two a loop, so the loop closes) */
-const LOOP = 3
+export const LOOP = 3
+/** The moment in the loop when the gust holds the cloth flat: how a flag that does not move is drawn */
+export const REST = LOOP / 2
 const FLAP = LOOP / 2
 const TAU = Math.PI * 2
 

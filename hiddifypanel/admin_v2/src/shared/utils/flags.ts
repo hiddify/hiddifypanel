@@ -26,38 +26,35 @@ export function flagCodeOfEmoji(emoji: string): string {
   return letters.length === 2 && letters.every((n) => n >= 0 && n < 26) ? String.fromCharCode(...letters.map((n) => 97 + n)) : ''
 }
 
-const BITMAPS = new Map<string, Promise<string>>()
+const BITMAPS = new Map<string, Promise<HTMLCanvasElement>>()
 
 /**
- * The flag drawn once as a picture `scale` times finer than the screen needs (a data: URL), for a flag that is bent
- * and moved afterwards (FlagIcon `waving`): every browser then starts from the same smooth, oversampled picture, also
- * when zoomed in a little. Falls back to the SVG itself when it cannot be drawn.
+ * The flag drawn once as a picture of exactly `width` x `height` pixels, for a flag that is bent and moved afterwards
+ * (FlagIcon `waving` draws thin slices of it every frame; drawing the SVG itself that often would be slow, and each
+ * browser would smooth it differently). Rejects when the picture cannot be drawn.
  */
-export function flagBitmap(url: string, cssWidth: number, scale = 2): Promise<string> {
-  const width = Math.min(1600, Math.max(160, Math.ceil((cssWidth * (window.devicePixelRatio || 1) * scale) / 40) * 40))
-  const key = `${url}@${width}`
+export function flagBitmap(url: string, width: number, height: number): Promise<HTMLCanvasElement> {
+  const key = `${url}@${width}x${height}`
   let made = BITMAPS.get(key)
   if (!made) {
-    made = new Promise<string>((resolve) => {
+    made = new Promise<HTMLCanvasElement>((resolve, reject) => {
       const img = new Image()
       img.decoding = 'async'
       img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas')
-          canvas.width = width
-          canvas.height = Math.round((width * 3) / 4)
-          const ctx = canvas.getContext('2d')!
-          ctx.imageSmoothingEnabled = true
-          ctx.imageSmoothingQuality = 'high'
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-          resolve(canvas.toDataURL('image/png'))
-        } catch {
-          resolve(url)
-        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return reject(new Error('no canvas'))
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = 'high'
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas)
       }
-      img.onerror = () => resolve(url)
+      img.onerror = () => reject(new Error('flag image failed'))
       img.src = url
     })
+    made.catch(() => BITMAPS.delete(key))
     BITMAPS.set(key, made)
   }
   return made
