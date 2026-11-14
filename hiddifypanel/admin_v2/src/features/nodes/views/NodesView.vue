@@ -102,7 +102,7 @@
               <Button type="button" icon="pi pi-times" size="small" text rounded severity="secondary" :disabled="renaming" :aria-label="t('common.cancel')" @click="cancelRename" />
             </form>
             <button v-else type="button" class="node-card__name" :title="t('nodes.rename')" @click="startRename(node)">
-              <FlagIcon v-if="node.country" class="node-card__flag" :code="node.country" :label="countryName(node.country)" />
+              <FlagIcon v-if="node.country" class="node-card__flag" :code="node.country" :label="countryName(node.country)" waving />
               <span class="node-card__name-text">{{ node.name }}</span>
               <i class="pi pi-pencil node-card__name-edit" />
             </button>
