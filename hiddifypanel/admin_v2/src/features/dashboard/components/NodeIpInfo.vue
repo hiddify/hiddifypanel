@@ -10,6 +10,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
+import LiveIcon from './LiveIcon.vue'
 import { countryName } from '@/shared/utils/country'
 import { apiErrorMessage } from '@/core/api/client'
 import { nodesApi, type IpDetails, type NodeIpInfo } from '@/features/nodes/api'
@@ -169,57 +170,26 @@ watch(visible, (open) => {
   })
 })
 
-/** How each icon comes alive under the mouse (desktop) */
-const MOTIONS: Record<string, string> = {
-  'pi-globe': 'spin',
-  'pi-compass': 'spin',
-  'pi-history': 'spin',
-  'pi-refresh': 'spin',
-  'pi-map-marker': 'bounce',
-  'pi-home': 'bounce',
-  'pi-building': 'bounce',
-  'pi-flag': 'bounce',
-  'pi-flag-fill': 'bounce',
-  'pi-user': 'bounce',
-  'pi-map': 'bounce',
-  'pi-phone': 'wiggle',
-  'pi-envelope': 'wiggle',
-  'pi-shield': 'wiggle',
-  'pi-tag': 'wiggle',
-  'pi-eye-slash': 'wiggle',
-  'pi-mobile': 'wiggle',
-  'pi-briefcase': 'wiggle',
-  'pi-id-card': 'wiggle',
-  'pi-wallet': 'wiggle',
-  'pi-clock': 'tick',
-  'pi-calendar': 'tick',
-  'pi-calendar-plus': 'tick',
-  'pi-server': 'float',
-  'pi-database': 'float',
-  'pi-th-large': 'float',
-  'pi-sitemap': 'float',
-  'pi-link': 'float',
-  'pi-language': 'float',
-  'pi-arrows-h': 'slide',
-}
-const motionOf = (icon: string) => MOTIONS[icon] ?? 'float'
-
 /**
- * Touch screens have no hover: a tap on an icon brings its glyph alive for a few seconds (the same motion as under the
- * mouse), then it settles by itself. Only the glyph moves; the icon's tile keeps its size.
+ * The icons come alive (LiveIcon): on a desktop while the mouse is on that icon; on a touch screen a tap plays it once
+ * through (about 2.6 s) and it ends where it started. Only the icon's parts move, never its size.
  */
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
-const ALIVE = 'ips-alive'
+const ICON = '.ips__row-icon, .ips__tile-icon'
+const iconOf = (target: EventTarget | null) => (target instanceof Element ? target.closest<HTMLElement>(ICON) : null)
+function onIconOver(e: MouseEvent) {
+  if (finePointer.matches) iconOf(e.target)?.classList.add('is-live')
+}
+function onIconOut(e: MouseEvent) {
+  const icon = iconOf(e.target)
+  if (finePointer.matches && icon && !icon.contains(e.relatedTarget as Node | null)) icon.classList.remove('is-live')
+}
 function onIconTap(e: MouseEvent) {
   if (finePointer.matches) return
-  const icon = (e.target as Element | null)?.closest<HTMLElement>('.ips__row-icon, .ips__tile-icon')
-  if (!icon || icon.classList.contains(ALIVE)) return
-  icon.classList.add(ALIVE)
-  // the animation's own end takes the class off; the timer is for "reduce motion", where nothing plays
-  window.setTimeout(() => icon.classList.remove(ALIVE), 3200)
-}
-function onIconSettled(e: AnimationEvent) {
-  ;(e.target as Element | null)?.closest('.' + ALIVE)?.classList.remove(ALIVE)
+  const icon = iconOf(e.target)
+  if (!icon || icon.classList.contains('is-live')) return
+  icon.classList.add('is-live', 'is-tap')
+  window.setTimeout(() => icon.classList.remove('is-live', 'is-tap'), 2800)
 }
 
 function copy(value: string) {
@@ -513,7 +483,18 @@ const sections = computed(() =>
 <template>
   <Dialog v-model:visible="visible" modal dismissable-mask :draggable="false" :position="isPhone ? 'bottom' : 'center'" class="ip-sheet" :class="{ 'ip-sheet--phone': isPhone }">
     <template #container="{ closeCallback }">
-      <div ref="sheet" class="ips" role="document" @touchstart.passive="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @touchcancel="onTouchEnd" @click="onIconTap" @animationend="onIconSettled">
+      <div
+        ref="sheet"
+        class="ips"
+        role="document"
+        @touchstart.passive="onTouchStart"
+        @touchmove="onTouchMove"
+        @touchend="onTouchEnd"
+        @touchcancel="onTouchEnd"
+        @click="onIconTap"
+        @mouseover="onIconOver"
+        @mouseout="onIconOut"
+      >
         <!-- a phone: the handle to pull the sheet down; elsewhere the close button -->
         <span v-if="isPhone" class="ips__grabber" aria-hidden="true" />
         <button v-else type="button" class="ips__close" :aria-label="t('common.close')" @click="closeCallback">
@@ -580,8 +561,8 @@ const sections = computed(() =>
             <!-- what kind of network -->
             <h3 class="ips__heading">{{ t('dashboard.ipInfo.detection') }}</h3>
             <div class="ips__tiles">
-              <div v-for="d in detections" :key="d.key" class="ips__tile" :class="{ 'ips__tile--on': d.on }" :style="{ '--c': d.color }" :data-motion="motionOf(d.icon)">
-                <span class="ips__tile-icon"><i class="pi" :class="d.icon" /></span>
+              <div v-for="d in detections" :key="d.key" class="ips__tile" :class="{ 'ips__tile--on': d.on }" :style="{ '--c': d.color }">
+                <span class="ips__tile-icon"><LiveIcon :name="d.icon" /></span>
                 <span class="ips__tile-label">{{ t(`dashboard.ipInfo.det.${d.key}`) }}</span>
                 <span class="ips__tile-value">{{ d.value }}</span>
               </div>
@@ -592,8 +573,8 @@ const sections = computed(() =>
             <template v-for="section in sections" :key="section.key">
               <h3 class="ips__heading">{{ section.title }}</h3>
               <ul class="ips__group">
-                <li v-for="row in section.rows" :key="row.label" class="ips__row" :data-motion="motionOf(row.icon)">
-                  <span class="ips__row-icon" :style="{ background: row.color }"><i class="pi" :class="row.icon" /></span>
+                <li v-for="row in section.rows" :key="row.label" class="ips__row">
+                  <span class="ips__row-icon" :style="{ background: row.color }"><LiveIcon :name="row.icon" /></span>
                   <span class="ips__row-label">{{ row.label }}</span>
                   <a v-if="row.href" class="ips__row-value ips__row-value--link" :class="{ ips__mono: row.mono }" :href="row.href" target="_blank" rel="noopener" dir="ltr">
                     {{ row.value }} <i class="pi pi-external-link" />
@@ -889,6 +870,10 @@ const sections = computed(() =>
 .ips__tile-icon i {
   font-size: 0.9rem;
 }
+/* the drawn icons fill a little more of their tile, so their moving parts can be seen */
+.ips__tile-icon .li {
+  font-size: 1.15rem;
+}
 .ips__tile-label {
   color: var(--ips-muted);
   font-size: 0.75rem;
@@ -940,6 +925,9 @@ const sections = computed(() =>
 }
 .ips__row-icon i {
   font-size: 0.8rem;
+}
+.ips__row-icon .li {
+  font-size: 1.05rem;
 }
 .ips__row-label {
   flex: none;
@@ -1072,116 +1060,8 @@ const sections = computed(() =>
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-/* Desktop: an icon comes alive only while the mouse is on that icon: its glyph moves softly in its own way; the
-   icon's tile itself never grows or moves */
-@media (hover: hover) and (pointer: fine) {
-  :is(.ips__row-icon, .ips__tile-icon) i {
-    transition: transform 0.4s ease;
-  }
-  :is(.ips__row-icon, .ips__tile-icon):hover i {
-    animation: ips-float 1.8s ease-in-out infinite;
-  }
-  [data-motion='spin'] :is(.ips__row-icon, .ips__tile-icon):hover i {
-    animation: ips-spin 3s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  }
-  [data-motion='bounce'] :is(.ips__row-icon, .ips__tile-icon):hover i {
-    animation: ips-bounce 1.6s cubic-bezier(0.33, 0, 0.3, 1) infinite;
-  }
-  [data-motion='wiggle'] :is(.ips__row-icon, .ips__tile-icon):hover i {
-    animation: ips-wiggle 1.8s ease-in-out infinite;
-  }
-  [data-motion='tick'] :is(.ips__row-icon, .ips__tile-icon):hover i {
-    animation: ips-tick 2.4s ease-in-out infinite;
-  }
-  [data-motion='slide'] :is(.ips__row-icon, .ips__tile-icon):hover i {
-    animation: ips-slide 1.8s ease-in-out infinite;
-  }
-}
-/* A touch screen: a tap on an icon plays the same motion for about 2.6 seconds, then it ends by itself */
-:is(.ips__row-icon, .ips__tile-icon).ips-alive i {
-  animation: ips-float 1.3s ease-in-out 2;
-}
-[data-motion='spin'] :is(.ips__row-icon, .ips__tile-icon).ips-alive i {
-  animation: ips-spin 2.6s cubic-bezier(0.45, 0, 0.55, 1) 1;
-}
-[data-motion='bounce'] :is(.ips__row-icon, .ips__tile-icon).ips-alive i {
-  animation: ips-bounce 1.3s cubic-bezier(0.33, 0, 0.3, 1) 2;
-}
-[data-motion='wiggle'] :is(.ips__row-icon, .ips__tile-icon).ips-alive i {
-  animation: ips-wiggle 1.3s ease-in-out 2;
-}
-[data-motion='tick'] :is(.ips__row-icon, .ips__tile-icon).ips-alive i {
-  animation: ips-tick 1.3s ease-in-out 2;
-}
-[data-motion='slide'] :is(.ips__row-icon, .ips__tile-icon).ips-alive i {
-  animation: ips-slide 1.3s ease-in-out 2;
-}
-@media (hover: none), (pointer: coarse) {
-  .ips__row-icon,
-  .ips__tile-icon {
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-}
-@keyframes ips-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes ips-bounce {
-  0%,
-  55%,
-  100% {
-    transform: translateY(0);
-  }
-  25% {
-    transform: translateY(-2.5px);
-  }
-  40% {
-    transform: translateY(-0.8px);
-  }
-}
-@keyframes ips-wiggle {
-  0%,
-  50%,
-  100% {
-    transform: rotate(0);
-  }
-  15% {
-    transform: rotate(-10deg);
-  }
-  35% {
-    transform: rotate(8deg);
-  }
-}
-@keyframes ips-tick {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  50% {
-    transform: rotate(20deg);
-  }
-}
-@keyframes ips-float {
-  50% {
-    transform: translateY(-2px);
-  }
-}
-@keyframes ips-slide {
-  25% {
-    transform: translateX(-2px);
-  }
-  75% {
-    transform: translateX(2px);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .ips__shimmer,
-  .ips__row-icon,
-  .ips__tile-icon,
-  .ips__row-icon i,
-  .ips__tile-icon i {
+  .ips__shimmer {
     animation: none !important;
   }
 }
