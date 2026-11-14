@@ -287,7 +287,7 @@
                   :disabled="isBuiltin"
                 />
               </HorizontalField>
-              <HorizontalField v-if="showDomains && showDomainModes" :label="t('proxy.domainModes')" input-id="proxy-modes">
+              <HorizontalField v-if="showDomainModes" :label="t('proxy.domainModes')" input-id="proxy-modes">
                 <InputGroup class="w-full">
                   <MultiSelect
                     id="proxy-modes"
@@ -931,8 +931,14 @@ function isCdnCapableTransport(transport: string | undefined | null): boolean {
   return CDN_CAPABLE_TRANSPORTS.has(String(transport || '').toLowerCase())
 }
 
+// IP-based proxies connect by address, so the domain's own TLS does not matter: they fit valid and fake direct domains and valid relay ones.
+const IP_BASED_DOMAIN_MODES = ['direct-valid', 'direct-fake', 'relay-valid']
+
 const domainModeOptions = computed(() => {
   let modes = [...(meta.value?.domain_modes?.length ? meta.value.domain_modes : ALL_DOMAIN_MODES)]
+  if (isIpBased.value) {
+    modes = modes.filter((mode) => IP_BASED_DOMAIN_MODES.includes(mode))
+  }
   if (!isCdnCapableTransport(form.transport)) {
     modes = modes.filter((mode) => mode !== 'cdn')
   }
@@ -1101,8 +1107,9 @@ const showCustomPath = computed(() => isL7Gateway.value)
 
 const showDomainModes = computed(
   () =>
-    showDomains.value &&
-    (isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value),
+    isIpBased.value ||
+    (showDomains.value &&
+      (isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value)),
 )
 
 const modeOptions = computed(() =>
