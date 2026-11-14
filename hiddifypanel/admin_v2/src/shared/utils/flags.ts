@@ -25,3 +25,37 @@ export function flagCodeOfEmoji(emoji: string): string {
   const letters = [...emoji].map((ch) => ch.codePointAt(0)! - 0x1f1e6)
   return letters.length === 2 && letters.every((n) => n >= 0 && n < 26) ? String.fromCharCode(...letters.map((n) => 97 + n)) : ''
 }
+
+const BITMAPS = new Map<string, Promise<HTMLCanvasElement>>()
+
+/**
+ * The flag drawn once as a picture of exactly `width` x `height` pixels, for a flag that is bent and moved afterwards
+ * (FlagIcon `waving` draws thin slices of it every frame; drawing the SVG itself that often would be slow, and each
+ * browser would smooth it differently). Rejects when the picture cannot be drawn.
+ */
+export function flagBitmap(url: string, width: number, height: number): Promise<HTMLCanvasElement> {
+  const key = `${url}@${width}x${height}`
+  let made = BITMAPS.get(key)
+  if (!made) {
+    made = new Promise<HTMLCanvasElement>((resolve, reject) => {
+      const img = new Image()
+      img.decoding = 'async'
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return reject(new Error('no canvas'))
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = 'high'
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas)
+      }
+      img.onerror = () => reject(new Error('flag image failed'))
+      img.src = url
+    })
+    made.catch(() => BITMAPS.delete(key))
+    BITMAPS.set(key, made)
+  }
+  return made
+}

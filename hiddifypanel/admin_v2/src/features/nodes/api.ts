@@ -99,6 +99,62 @@ function registerFailure(data: NodeRegisterError): RegisterFailure {
   return new RegisterFailure(data)
 }
 
+
+/** One IP address of a server, from open sources (GeoLite2, RDAP, Tor Project, bad-asn-list), kept 72 hours */
+export interface IpContact {
+  name?: string
+  email?: string
+  phone?: string
+  address?: string
+}
+export interface IpDetails {
+  ip: string
+  version: 4 | 6
+  ptr: string
+  geo: {
+    city: string
+    region: string
+    region_code: string
+    country_name: string
+    country_code: string
+    continent_code: string
+    latitude: number | null
+    longitude: number | null
+    timezone: string
+    utc_offset: string
+    currency: string
+    currency_name: string
+    languages: string
+    asn: string
+    org: string
+  }
+  network: {
+    netname?: string
+    handle?: string
+    range?: string
+    cidr?: string
+    type?: string
+    country?: string
+    rir?: string
+    registered?: string
+    updated?: string
+    owner?: IpContact
+    abuse?: IpContact
+  }
+  asn: { asn?: string; org?: string; name?: string; country?: string; registered?: string; updated?: string }
+  company: { name: string; domain: string; logo: string }
+  detect: { datacenter: boolean; datacenter_listed: boolean; vpn_likely: boolean; tor: boolean; mobile: boolean; residential: boolean; bogon: boolean }
+  fetched_at: number
+}
+export interface NodeIpInfo {
+  node_id: number
+  ips: IpDetails[]
+  domains: string[]
+  /** Seconds until the panel looks the addresses up again */
+  refresh_in: number
+  ttl: number
+}
+
 export const nodesApi = {
   async list(): Promise<{ nodes: PanelNode[]; panel_version: string }> {
     const { data } = await getHttp().get<{ nodes: PanelNode[]; panel_version: string }>('nodes/')
@@ -143,6 +199,11 @@ export const nodesApi = {
     if (state.state === 'failed') throw registerFailure({ code: 'rejected', message: state.error?.message ?? '' })
     if (state.result?.ok) return state.result.node ?? null
     throw registerFailure(state.result?.error ?? { code: 'rejected', message: '' })
+  },
+  /** What is known about the IP addresses of this server (0) or a node; the panel keeps it 72 hours */
+  async ipInfo(id: number, refresh = false): Promise<NodeIpInfo> {
+    const { data } = await getHttp().get<NodeIpInfo>(`nodes/${id}/ip-info/`, { params: refresh ? { refresh: 1 } : undefined, timeout: 60_000 })
+    return data
   },
   async rename(id: number, name: string): Promise<{ node: PanelNode; synced_to_node: boolean }> {
     const { data } = await getHttp().patch<{ node: PanelNode; synced_to_node: boolean }>(`nodes/${id}/`, { name }, { timeout: 30_000 })
