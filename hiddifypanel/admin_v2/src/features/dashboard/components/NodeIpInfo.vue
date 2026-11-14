@@ -574,7 +574,7 @@ const sections = computed(() =>
               <h3 class="ips__heading">{{ section.title }}</h3>
               <ul class="ips__group">
                 <li v-for="row in section.rows" :key="row.label" class="ips__row">
-                  <span class="ips__row-icon" :style="{ background: row.color }"><LiveIcon :name="row.icon" /></span>
+                  <span class="ips__row-icon" :style="{ background: row.color, '--li-ink': row.color }"><LiveIcon :name="row.icon" /></span>
                   <span class="ips__row-label">{{ row.label }}</span>
                   <a v-if="row.href" class="ips__row-value ips__row-value--link" :class="{ ips__mono: row.mono }" :href="row.href" target="_blank" rel="noopener" dir="ltr">
                     {{ row.value }} <i class="pi pi-external-link" />

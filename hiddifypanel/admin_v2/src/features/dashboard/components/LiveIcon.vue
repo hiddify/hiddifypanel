@@ -294,14 +294,15 @@ const uid = `li-${useId()}`
 
     <!-- the email: the envelope opens, a letter rises out of it and goes back in -->
     <template v-else-if="name === 'pi-envelope'">
-      <rect x="3" y="6" width="18" height="13" rx="2.2" />
+      <rect x="3" y="8" width="18" height="12" rx="2.2" />
       <!-- the flap is drawn first: open, it stands behind the letter; closed, the letter is still inside -->
-      <path class="p-flap" d="M3.6 6.6L12 13l8.4-6.4" />
-      <clipPath :id="`${uid}-c`"><rect x="0" y="-10" width="24" height="16.4" /></clipPath>
+      <path class="p-flap" d="M3.6 8.6L12 14.6l8.4-6" />
+      <clipPath :id="`${uid}-c`"><rect x="0" y="-10" width="24" height="18.4" /></clipPath>
       <g :clip-path="`url(#${uid}-c)`">
+        <!-- the letter: a white card with two lines in the icon's colour -->
         <g class="p-letter">
-          <rect x="6.5" y="7.5" width="11" height="9" rx="1" />
-          <path d="M8.8 10h6.4" stroke-width="1.3" />
+          <rect x="6.5" y="9.5" width="11" height="9" rx="1" fill="currentColor" stroke="none" />
+          <path d="M8.6 11.8h6.8M8.6 14.2h4.6" stroke="var(--li-ink, #007aff)" stroke-width="1.3" />
         </g>
       </g>
     </template>
@@ -401,7 +402,7 @@ const uid = `li-${useId()}`
   transform-origin: 15px 12px;
 }
 .p-flap {
-  transform-origin: 12px 6.6px;
+  transform-origin: 12px 8.6px;
 }
 .p-arm {
   transform-origin: 15.5px 15px;
@@ -1226,7 +1227,7 @@ const uid = `li-${useId()}`
   }
   40%,
   58% {
-    transform: translateY(-7px);
+    transform: translateY(-8px);
   }
   72%,
   100% {
