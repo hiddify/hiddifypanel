@@ -1424,6 +1424,14 @@ html.app-dark .ips__flag-state--likely {
     transform: translateY(100%);
   }
 }
+/* Smart Caddy: its page colour is a thin glass (half white), which over the dimmed page read grey; the sheet takes the
+   theme's strong glass, bright as in the Liquid theme */
+html.theme-caddy .p-dialog.ip-sheet .ips {
+  --ips-bg: var(--caddy-glass-strong);
+  --ips-group: color-mix(in srgb, var(--p-text-color) 5%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+}
 html.theme-liquid .p-dialog.ip-sheet .ips {
   --ips-bg: rgb(var(--lg-tint) / 0.72);
   --ips-group: rgb(var(--lg-tint) / 0.55);
