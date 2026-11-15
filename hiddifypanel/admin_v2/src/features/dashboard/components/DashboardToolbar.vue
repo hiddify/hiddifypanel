@@ -7,6 +7,7 @@ import SelectButton from 'primevue/selectbutton'
 import type { DashboardNode } from '@/core/api/generated'
 import { formatClock } from '@/shared/utils/format-metrics'
 import { RANGE_OPTIONS } from '../composables/useDashboard'
+import { dashboardNodeName } from '../utils/node-name'
 
 const ALL_NODES = -1
 
@@ -36,7 +37,7 @@ const rangeItems = computed(() =>
 const nodeOptions = computed(() => [
   { label: t('dashboard.allNodes'), value: ALL_NODES },
   ...props.nodes.map((node) => ({
-    label: node.id === 0 ? t('dashboard.thisServer') : node.name,
+    label: dashboardNodeName(node.id, node.name, t('dashboard.thisServer')),
     value: node.id,
   })),
 ])

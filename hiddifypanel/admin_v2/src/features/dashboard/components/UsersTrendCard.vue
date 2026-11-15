@@ -8,6 +8,7 @@ import { rollingAverage } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricChart from './MetricChart.vue'
 import MiniStat from './MiniStat.vue'
+import { dashboardNodeName } from '../utils/node-name'
 
 const props = defineProps<{
   series: DashboardDailyPoint[]
@@ -24,8 +25,9 @@ const values = computed(() => props.series.map((point) => point.online))
 
 const nodeName = (id: string) => {
   const numeric = Number(id)
-  if (numeric === 0) return t('dashboard.thisServer')
-  return props.nodes.find((node) => node.id === numeric)?.name || `${t('dashboard.node')} ${id}`
+  const node = props.nodes.find((row) => row.id === numeric)
+  if (numeric === 0) return dashboardNodeName(0, node?.name, t('dashboard.thisServer'))
+  return node?.name || `${t('dashboard.node')} ${id}`
 }
 
 const stackedSeries = computed(() => {

@@ -101,7 +101,7 @@
               <Button type="submit" icon="pi pi-check" size="small" text rounded :loading="renaming" :disabled="!editName.trim()" :aria-label="t('common.save')" />
               <Button type="button" icon="pi pi-times" size="small" text rounded severity="secondary" :disabled="renaming" :aria-label="t('common.cancel')" @click="cancelRename" />
             </form>
-            <button v-else type="button" class="node-card__name" :title="t('nodes.rename')" @click="startRename(node)">
+            <button v-else type="button" class="node-card__name" :title="t('nodes.rename')" @click="startRename(node, $event)">
               <FlagIcon v-if="node.country" class="node-card__flag" :code="node.country" :label="countryName(node.country)" />
               <span class="node-card__name-text">{{ node.name }}</span>
               <i class="pi pi-pencil node-card__name-edit" />
@@ -295,6 +295,18 @@
       <NodeSyncPanel v-if="syncInfoNode" :key="syncInfoNode.id" :loader="syncReportLoader(syncInfoNode.id)" embedded />
     </Dialog>
   </div>
+  <!-- The pencil of a node this panel can't reach: why it can't be renamed now (as on the dashboard) -->
+  <Popover ref="renameBlockedPop" class="card-popover" @show="onBlockedShow" @hide="onBlockedHidden">
+    <div v-if="renameBlocked" class="card-popover__notice" role="status">
+      <strong v-if="renameBlocked.block === 'checking'"><i class="pi pi-spin pi-spinner" />{{ t('dashboard.renameCheckingTitle') }}</strong>
+      <strong v-else><i class="pi pi-info-circle" />{{ t('dashboard.renameOfflineTitle') }}</strong>
+      <p v-if="renameBlocked.block === 'checking'">{{ t('dashboard.renameChecking', { name: renameBlocked.node.name }) }}</p>
+      <p v-else-if="renameBlocked.block === 'tooOld'">
+        {{ t('dashboard.renameTooOld', { name: renameBlocked.node.name, version: renameBlocked.version, min: `${RENAME_MIN_MAJOR}.0` }) }}
+      </p>
+      <p v-else>{{ t('dashboard.renameOffline', { name: renameBlocked.node.name }) }}</p>
+    </div>
+  </Popover>
   <Popover ref="osPop" class="node-os-pop">
     <div v-if="osNode" class="node-os" :style="osLogoOf(osNode) ? { '--os-c': osLogoOf(osNode)!.color, '--os-dark': osLogoOf(osNode)!.dark } : undefined">
       <header class="node-os__head">
@@ -321,7 +333,7 @@
 
 <script setup lang="ts">
 import { countryFlag, countryName as countryNameIn } from '@/shared/utils/country'
-import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -331,6 +343,8 @@ import Skeleton from 'primevue/skeleton'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
+import { useCardPopover } from '@/shared/composables/useCardPopover'
+import { RENAME_MIN_MAJOR, nodeRenameBlock, type RenameBlock } from '@/shared/utils/node-rename'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatBytes, formatCount } from '@/shared/utils/format-metrics'
 import AddNodeDialog from '@/features/nodes/components/AddNodeDialog.vue'
@@ -452,10 +466,59 @@ function toggleDomains(id: number) {
   expandedDomains.value = next
 }
 
-function startRename(node: PanelNode) {
+/**
+ * A new name goes to the node too, so a node that can't take it now (not reachable, or a panel older than 14.0; see
+ * nodeRenameBlock) is not renamed: its pencil says why instead, in the same small popover as on the dashboard.
+ */
+/** The node whose pencil was pressed while it can't be renamed; why follows its connection check as it changes */
+const renameBlockedNode = ref<PanelNode | null>(null)
+function renameBlockOf(node: PanelNode): { block: RenameBlock | null; version: string | null } {
+  const ping = pings[node.id]
+  const reachable = ping?.state === 'ok' ? true : ping?.state === 'fail' ? false : null
+  const version = ping?.version ?? null
+  return { block: nodeRenameBlock(reachable, version), version }
+}
+const renameBlocked = computed(() => {
+  const node = renameBlockedNode.value
+  if (!node) return null
+  const { block, version } = renameBlockOf(node)
+  return block ? { node, block, version } : null
+})
+const {
+  pop: renameBlockedPop,
+  open: openBlocked,
+  hide: hideBlocked,
+  onShow: onBlockedShow,
+  onHide: onBlockedHide,
+} = useCardPopover({ card: '.node-card' })
+
+function startRename(node: PanelNode, event?: Event) {
+  const { block } = renameBlockOf(node)
+  if (block && event) {
+    renameBlockedNode.value = node
+    // the arrow points at the pencil, not the middle of the name
+    openBlocked(event, (event.currentTarget as HTMLElement).querySelector<HTMLElement>('.node-card__name-edit'))
+    return
+  }
+  hideBlocked()
+  renameBlockedNode.value = null
   editing.value = node.id
   editName.value = node.name
 }
+
+/** Closed: forget the node (after the popover's fade), so a check that ends later does not open its rename */
+function onBlockedHidden() {
+  onBlockedHide()
+  const node = renameBlockedNode.value
+  window.setTimeout(() => {
+    if (renameBlockedNode.value === node) renameBlockedNode.value = null
+  }, 200)
+}
+// Checked while its popover was open and it turns out it can be renamed: go on to the rename itself
+watch(renameBlocked, (now, before) => {
+  const node = renameBlockedNode.value
+  if (before?.block === 'checking' && !now && node) startRename(node)
+})
 
 function cancelRename() {
   editing.value = null
