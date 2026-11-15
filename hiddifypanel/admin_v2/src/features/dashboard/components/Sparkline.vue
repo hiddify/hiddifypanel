@@ -71,8 +71,16 @@ const tipStyle = computed(() => {
 
 let hideTimer: ReturnType<typeof setTimeout> | undefined
 
+/** The tip sits fixed on the screen: a scroll would leave it behind, so a scroll closes it */
+function hideNow() {
+  clearTimeout(hideTimer)
+  hover.value = null
+  document.removeEventListener('scroll', hideNow, { capture: true })
+}
+
 function onMove(event: PointerEvent) {
   clearTimeout(hideTimer)
+  if (!hover.value) document.addEventListener('scroll', hideNow, { capture: true, passive: true })
   if (props.values.length === 0) return
   const rect = (event.currentTarget as SVGElement).getBoundingClientRect()
   const ratio = rect.width ? (event.clientX - rect.left) / rect.width : 0
@@ -83,18 +91,18 @@ function onMove(event: PointerEvent) {
 function onLeave(event: PointerEvent) {
   // Touch fires pointerleave on lift; keep the value readable for a moment.
   if (event.pointerType === 'mouse') {
-    hover.value = null
+    hideNow()
     return
   }
-  hideTimer = setTimeout(() => (hover.value = null), 1500)
+  hideTimer = setTimeout(hideNow, 1500)
 }
 
-onBeforeUnmount(() => clearTimeout(hideTimer))
+onBeforeUnmount(hideNow)
 </script>
 
 <template>
   <div class="sparkline-wrap">
-    <svg class="sparkline" :viewBox="`0 0 ${WIDTH} ${height}`" :style="{ height: `${height}px`, color }" preserveAspectRatio="none" role="img" @pointerdown="onMove" @pointermove="onMove" @pointerleave="onLeave">
+    <svg class="sparkline" :viewBox="`0 0 ${WIDTH} ${height}`" :style="{ height: `${height}px`, color }" preserveAspectRatio="none" role="img" @pointerdown="onMove" @pointermove="onMove" @pointerleave="onLeave" @pointercancel="hideNow">
       <defs>
         <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="currentColor" stop-opacity="0.35" />
