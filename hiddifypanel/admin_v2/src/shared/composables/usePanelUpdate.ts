@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { getHttp } from '@/core/api/client'
 
 /** The panel's version against the latest release (the server asks GitHub at most once a day, or on "Check now") */
@@ -29,4 +29,18 @@ export function loadPanelUpdate(force = false): Promise<PanelUpdateStatus | null
     })
   pending = run
   return run
+}
+
+/** The Update card's check, shared by its button (beside Update) and its version box */
+export const panelCheck = reactive({ checking: false, asked: false, failed: false })
+
+export async function checkPanelUpdate() {
+  if (panelCheck.checking) return
+  panelCheck.checking = true
+  panelCheck.failed = false
+  // at least a beat of the turning arrows: an answer from cache is instant
+  const [answer] = await Promise.all([loadPanelUpdate(true), new Promise((done) => setTimeout(done, 700))])
+  panelCheck.failed = !answer
+  panelCheck.asked = true
+  panelCheck.checking = false
 }

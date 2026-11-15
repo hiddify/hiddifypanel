@@ -788,16 +788,20 @@
         "check": "Check for Updates",
         "checking": "Checking…",
         "newAvailable": "A new version is available",
-        "newHint": "Update the panel with the button below.",
+        "newHint": "Update the panel with the Update button below.",
         "latest": "Your panel is on the latest version",
         "latestHint": "{version} is the newest release.",
         "failed": "Couldn't check for updates",
         "failedHint": "GitHub could not be reached from the server. Try again later.",
-        "checkedAgo": "Last checked {when}. The panel checks by itself once a day.",
         "channel": {
           "release": "Release",
           "beta": "Beta"
-        }
+        },
+        "app": "Hiddify Panel",
+        "newTitle": "New version",
+        "newBadge": "New",
+        "daily": "The panel checks by itself once a day",
+        "lastChecked": "last checked {when}"
       }
     },
     "applyNotice": {
