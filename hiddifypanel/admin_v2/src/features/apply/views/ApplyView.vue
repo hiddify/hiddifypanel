@@ -43,7 +43,8 @@
             <!-- beside Update: is there a newer panel? -->
             <Button
               v-if="a.key === 'update'"
-              :label="panelCheck.checking ? t('apply.version.checking') : t('apply.version.check')"
+              :label="panelCheck.checking ? t('apply.version.checkingShort') : t('apply.version.checkShort')"
+              v-tooltip.top="t('apply.version.check')"
               outlined
               class="ap-card__btn ap-card__btn--check"
               :disabled="panelCheck.checking"
@@ -477,8 +478,17 @@ onBeforeUnmount(() => feed?.stop())
   flex-wrap: wrap;
   gap: 0.6rem;
 }
+/* Update and Check side by side, half each, on every screen */
+.ap-card__btns--pair {
+  flex-wrap: nowrap;
+}
+.ap-card__btns--pair > .ap-card__btn {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+}
 .ap-card__btn--check {
-  gap: 0.5rem;
+  gap: 0.45rem;
   color: var(--p-primary-color);
   border-color: color-mix(in srgb, var(--p-primary-color) 35%, transparent);
 }
@@ -638,11 +648,7 @@ onBeforeUnmount(() => feed?.stop())
   .ap-card__btns > .ap-card__btn {
     flex: 1 1 100%;
   }
-  /* Update and Check side by side, half each */
-  .ap-card__btns--pair > .ap-card__btn {
-    flex: 1 1 0;
-    min-width: 0;
-  }
+
   .ap-files {
     grid-template-columns: minmax(0, 1fr);
   }

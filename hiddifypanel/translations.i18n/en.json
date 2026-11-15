@@ -801,7 +801,9 @@
         "newTitle": "New version",
         "newBadge": "New",
         "daily": "The panel checks by itself once a day",
-        "lastChecked": "last checked {when}"
+        "lastChecked": "last checked {when}",
+        "checkShort": "Check Now",
+        "checkingShort": "Checking…"
       }
     },
     "applyNotice": {

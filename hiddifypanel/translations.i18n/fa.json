@@ -801,7 +801,9 @@
         "newTitle": "نسخه‌ی جدید",
         "newBadge": "جدید",
         "daily": "پنل خودش روزی یک بار بررسی می‌کند",
-        "lastChecked": "آخرین بررسی {when}"
+        "lastChecked": "آخرین بررسی {when}",
+        "checkShort": "بررسی نسخه",
+        "checkingShort": "در حال بررسی…"
       }
     },
     "applyNotice": {
