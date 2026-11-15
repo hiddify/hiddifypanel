@@ -30,7 +30,8 @@
       <i class="pi pi-chevron-right" />
     </button>
   </div>
-  <Toast />
+  <!-- top centre, like an iOS banner (styles: _toast.scss) -->
+  <Toast position="top-center" />
   <ConfirmDialog />
   <PasskeySuggest />
   <DonationDialog />
