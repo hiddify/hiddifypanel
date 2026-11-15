@@ -1568,6 +1568,7 @@
         "updatedAgo": "Looked up {when} · again {next}",
         "sources": "From GeoLite2, the regional internet registries (RDAP), the Tor Project and bad-asn-list.",
         "notChecked": "Not checked",
+        "defaultCert": "The server's default certificate",
         "expiredOn": "expired {date}",
         "validUntil": "valid until {date}",
         "relayName": "Relay “{name}”",

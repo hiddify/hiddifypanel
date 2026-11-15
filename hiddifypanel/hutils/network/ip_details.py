@@ -29,7 +29,7 @@ from loguru import logger
 TTL = 7 * 24 * 3600
 _TIMEOUT = 8
 _UA = {"User-Agent": "HiddifyPanel (node info)", "Accept": "application/rdap+json, application/json"}
-_KEY = "ipdetails:v3"
+_KEY = "ipdetails:v4"
 
 _BOOTSTRAP = {"v4": "https://data.iana.org/rdap/ipv4.json", "v6": "https://data.iana.org/rdap/ipv6.json", "asn": "https://data.iana.org/rdap/asn.json"}
 _TOR_LIST = "https://check.torproject.org/torbulkexitlist"

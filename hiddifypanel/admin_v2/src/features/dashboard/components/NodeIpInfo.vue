@@ -35,7 +35,7 @@ phone.addEventListener('change', onPhone)
 onBeforeUnmount(() => phone.removeEventListener('change', onPhone))
 
 // --- the answer, kept in this browser until the panel would look it up again ---------------------------------
-const STORE = 'hm.ipinfo.v3.'
+const STORE = 'hm.ipinfo.v4.'
 function stored(id: number): NodeIpInfo | null {
   try {
     const raw = JSON.parse(localStorage.getItem(STORE + id) || 'null') as {
@@ -287,7 +287,8 @@ function stateOf(def: FlagDef): { label: string; kind: 'yes' | 'bad' | 'likely' 
 function detailOf(def: FlagDef): string[] {
   const c = current.value?.complete
   if (!c) return []
-  if (def.key === 'expired_certificate') return c.certificates.map((x) => `${x.name} · ${x.expired ? t('dashboard.ipInfo.expiredOn', { date: x.not_after }) : t('dashboard.ipInfo.validUntil', { date: x.not_after })}`)
+  if (def.key === 'expired_certificate')
+    return c.certificates.map((x) => `${x.name || t('dashboard.ipInfo.defaultCert')} · ${x.expired ? t('dashboard.ipInfo.expiredOn', { date: x.not_after }) : t('dashboard.ipInfo.validUntil', { date: x.not_after })}`)
   if ((def.key === 'tor' || def.key === 'active_tor') && c.tor_relay.nickname) return [t('dashboard.ipInfo.relayName', { name: c.tor_relay.nickname })]
   if (def.key === 'crawler' && c.crawler) return [c.crawler]
   return []
@@ -678,7 +679,7 @@ const sections = computed(() =>
                           <span v-for="line in detailOf(def)" :key="line" class="ips__flag-detail" dir="ltr">{{ line }}</span>
                           <span class="ips__flag-source">{{ t(`dashboard.ipInfo.src.${def.source}`) }}</span>
                         </span>
-                        <span class="ips__state" :class="`ips__state--${stateOf(def).kind}`">{{ stateOf(def).label }}</span>
+                        <span class="ips__flag-state" :class="`ips__flag-state--${stateOf(def).kind}`">{{ stateOf(def).label }}</span>
                       </li>
                     </ul>
                   </template>
@@ -1190,7 +1191,7 @@ const sections = computed(() =>
   color: color-mix(in srgb, var(--ips-muted) 75%, transparent);
   font-size: 0.68rem;
 }
-.ips__state {
+.ips__flag-state {
   flex: none;
   align-self: center;
   padding: 0.18rem 0.55rem;
@@ -1199,30 +1200,30 @@ const sections = computed(() =>
   font-weight: 650;
   white-space: nowrap;
 }
-.ips__state--yes {
+.ips__flag-state--yes {
   background: color-mix(in srgb, #007aff 14%, transparent);
   color: #007aff;
 }
-.ips__state--bad {
+.ips__flag-state--bad {
   background: color-mix(in srgb, #ff3b30 14%, transparent);
   color: #ff3b30;
 }
-.ips__state--likely {
+.ips__flag-state--likely {
   background: color-mix(in srgb, #ff9500 16%, transparent);
   color: #e08600;
 }
-.ips__state--no {
+.ips__flag-state--no {
   background: color-mix(in srgb, #34c759 14%, transparent);
   color: #248a3d;
 }
-.ips__state--unknown {
+.ips__flag-state--unknown {
   background: color-mix(in srgb, var(--p-text-color) 8%, transparent);
   color: var(--ips-muted);
 }
-html.app-dark .ips__state--no {
+html.app-dark .ips__flag-state--no {
   color: #30d158;
 }
-html.app-dark .ips__state--likely {
+html.app-dark .ips__flag-state--likely {
   color: #ff9f0a;
 }
 

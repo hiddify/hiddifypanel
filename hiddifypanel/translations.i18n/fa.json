@@ -1567,6 +1567,7 @@
         "updatedAgo": "بررسی‌شده {when} · بررسی دوباره {next}",
         "sources": "از GeoLite2، رجیستری‌های منطقه‌ای اینترنت (RDAP)، Tor Project و bad-asn-list.",
         "notChecked": "بررسی نشد",
+        "defaultCert": "گواهی پیش‌فرض سرور",
         "expiredOn": "منقضی‌شده در {date}",
         "validUntil": "معتبر تا {date}",
         "relayName": "رله «{name}»",

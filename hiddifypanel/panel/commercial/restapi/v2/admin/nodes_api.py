@@ -299,15 +299,18 @@ class NodeIpInfoApi(MethodView):
     def get(self, node_id: int):
         """Nodes: What is known about this server's (0) or a node's IP addresses, from open sources, kept 7 days"""
         from hiddifypanel.hutils.network import ip_details
-        from hiddifypanel.models import Domain
+        from hiddifypanel.models import Domain, FakeMode
 
         if node_id != 0:
             _only_on_parent_or_standalone()
             _remote_or_404(node_id)
         ips = _node_ips(node_id)
         refresh = request.args.get("refresh") == "1"
-        domains = sorted({d.domain for d in Domain.query.filter(Domain.child_id == node_id).all() if d.domain})
-        details = ip_details.describe_all(ips, refresh=refresh, domains=domains)
+        rows = [d for d in Domain.query.filter(Domain.child_id == node_id).all() if d.domain]
+        domains = sorted({d.domain for d in rows})
+        # the certificates checked are the server's own: not a Reality or fake domain, whose certificate is another site's
+        own = sorted({d.domain for d in rows if d.fake_mode in (None, FakeMode.valid) and "*" not in d.domain})
+        details = ip_details.describe_all(ips, refresh=refresh, domains=own)
         left = min((ip_details.ttl_left(ip) for ip in ips), default=0)
         return {"node_id": node_id, "ips": details, "domains": domains, "refresh_in": left, "ttl": ip_details.TTL}
 
