@@ -14,9 +14,10 @@
  *
  * While dragging, the wrapper gets `layout-menu-dragging` and `--menu-drag` (0 closed … 1 open), which the layout's
  * styles use instead of their transitions; on release the class goes and the normal open / closed transition finishes
- * the move from where the finger left it.
+ * the move from where the finger left it. A menu opened that way keeps `layout-menu-swiped` until it closes: the mask
+ * already shows, so its fade-in must not play again when `layout-menu-settling` goes (the page would blink).
  */
-import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
 
 const PHONE_QUERY = '(max-width: 991px)'
 /** Movement before the gesture is decided (a tap below it) */
@@ -60,6 +61,11 @@ export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen
   /** Just released: the mask eases from where the finger left it (its fade-in animation would start over) */
   const settling = ref(false)
   let settleTimer = 0
+  /** Opened by a drag: the mask must not fade in again once settled */
+  const swiped = ref(false)
+  watch(options.isOpen, (open) => {
+    if (!open) swiped.value = false
+  })
   const progress = ref(0)
   let drag: Drag | null = null
   let tabDragged = false
@@ -99,6 +105,7 @@ export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen
     // the mask starts the ease at the opacity the finger left it at
     options.wrapper.value?.style.setProperty('--menu-drag', p.toFixed(4))
     settling.value = true
+    swiped.value = open
     dragging.value = false
     options.setOpen(open)
     requestAnimationFrame(() => options.wrapper.value?.style.setProperty('--menu-drag', open ? '1' : '0'))
@@ -227,5 +234,5 @@ export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen
     document.removeEventListener('touchcancel', onTouchEnd)
   })
 
-  return { dragging, settling, progress, onTabPointerDown, onTabPointerMove, onTabPointerUp, tabClickToggles }
+  return { dragging, settling, swiped, progress, onTabPointerDown, onTabPointerMove, onTabPointerUp, tabClickToggles }
 }

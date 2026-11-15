@@ -133,6 +133,11 @@
             animation: none;
             transition: opacity 0.35s ease;
         }
+
+        // Opened with a finger: the mask is already shown, so its fade-in must not start over once settled
+        &.layout-menu-swiped .layout-mask {
+            animation: none;
+        }
     }
 
     // The browser's own sideways swipe (back / forward) would fight the menu swipe
