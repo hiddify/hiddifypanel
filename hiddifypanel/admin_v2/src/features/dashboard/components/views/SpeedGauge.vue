@@ -31,12 +31,11 @@ const ticks = Array.from({ length: 21 }, (_, i) => {
   const b = point(i / 20, R - (major ? 22 : 18))
   return { a, b, major }
 })
-const scale = computed(() =>
-  [0, 0.5, 1].map((fraction) => {
-    const at = point(fraction, R - 33)
-    return { ...at, text: props.format(props.max * fraction).replace(/\.0(?=\s)/, ''), anchor: fraction === 0 ? 'start' : fraction === 1 ? 'end' : 'middle' }
-  }),
-)
+/** Zero under the dial's left end and the scale's top under its right end, clear of the needle */
+const scale = computed(() => [
+  { x: CX - R, y: CY + 16, text: '0', anchor: 'middle' },
+  { x: CX + R, y: CY + 16, text: props.format(props.max).replace(/\.0+(?=\s)/, ''), anchor: 'middle' },
+])
 const peakMark = computed(() => {
   if (!props.peak || !props.max) return null
   const f = Math.min(1, props.peak / props.max)
@@ -65,7 +64,7 @@ const parts = computed(() => {
       <path :d="arc" class="sg__glow" :stroke="color" :stroke-dasharray="`${half * share} ${half}`" :filter="`url(#${uid}-glow)`" />
       <path :d="arc" class="sg__value" :stroke="`url(#${uid}-arc)`" :stroke-dasharray="`${half * share} ${half}`" />
       <line v-for="(tick, i) in ticks" :key="i" :x1="tick.a.x" :y1="tick.a.y" :x2="tick.b.x" :y2="tick.b.y" class="sg__tick" :class="{ 'sg__tick--major': tick.major }" />
-      <text v-for="(s, i) in scale" :key="`s${i}`" :x="s.x" :y="s.y + 3" :text-anchor="s.anchor" class="sg__scale">{{ s.text }}</text>
+      <text v-for="(s, i) in scale" :key="`s${i}`" :x="s.x" :y="s.y" :text-anchor="s.anchor" class="sg__scale">{{ s.text }}</text>
       <line v-if="peakMark" :x1="peakMark.a.x" :y1="peakMark.a.y" :x2="peakMark.b.x" :y2="peakMark.b.y" class="sg__peak" />
       <g class="sg__needle" :style="{ transform: `rotate(${angle}deg)` }">
         <path :d="`M${CX - 3},${CY} L${CX},${CY - R + 12} L${CX + 3},${CY} Z`" />
