@@ -2,7 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { dashboardApi, type DashboardNode, type DashboardNodeStats, type DashboardSnapshot } from '@/core/api/generated'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { useMetricHistory } from './useMetricHistory'
-import { QUICK_PRESETS, apiDaysFor, presetRange, type CustomRange } from '../utils/date-range'
+import { API_DAYS, MAX_DAYS, QUICK_PRESETS, addDays, daysBetween, fromIso, iso, presetRange, today, type CustomRange } from '../utils/date-range'
 
 /** Ranges the dashboard API accepts for the usage/users history charts. */
 export const RANGE_OPTIONS = [7, 30, 90, 180] as const
@@ -61,7 +61,18 @@ export function useDashboard(locale = 'en') {
   const childId = ref<number | null>(storedNode())
   /** A period picked in the period window (null: the toolbar's last N days) */
   const customRange = ref<CustomRange | null>(storedCustom(locale))
-  const fetchDays = computed(() => (customRange.value ? apiDaysFor(customRange.value) : rangeDays.value))
+  /** The shown period, and the one of the same length just before it (for the tiles' change against it) */
+  const period = computed(() => customRange.value ?? { start: iso(addDays(today(), 1 - rangeDays.value)), end: iso(today()) })
+  const previousPeriod = computed(() => {
+    const length = daysBetween(period.value.start, period.value.end)
+    const start = fromIso(period.value.start)
+    return { start: iso(addDays(start, -length)), end: iso(addDays(start, -1)) }
+  })
+  /** Enough days for both periods (the API keeps a year: a longer reach has no previous period) */
+  const fetchDays = computed(() => {
+    const back = daysBetween(previousPeriod.value.start, iso(today()))
+    return API_DAYS.find((days) => days >= back) ?? MAX_DAYS
+  })
   const live = ref(true)
   const loading = ref(true)
   const refreshing = ref(false)
@@ -166,11 +177,16 @@ export function useDashboard(locale = 'en') {
   const nodes = computed<DashboardNode[]>(() => analytics.value?.nodes ?? [])
 
   return {
-    // a picked period: the days the API sent, cut to it
+    // the days the API sent, cut to the period (it sends the previous period too)
     series: computed(() => {
-      const all = analytics.value?.series ?? []
-      const range = customRange.value
-      return range ? all.filter((point) => point.date >= range.start && point.date <= range.end) : all
+      const { start, end } = period.value
+      return (analytics.value?.series ?? []).filter((point) => point.date >= start && point.date <= end)
+    }),
+    /** The period of the same length before it; null when the API's year does not reach all of it */
+    previousSeries: computed(() => {
+      const { start, end } = previousPeriod.value
+      const days = (analytics.value?.series ?? []).filter((point) => point.date >= start && point.date <= end)
+      return days.length === daysBetween(start, end) ? days : null
     }),
     usage: computed(() => analytics.value?.usage ?? null),
     users: computed(() => analytics.value?.users ?? null),

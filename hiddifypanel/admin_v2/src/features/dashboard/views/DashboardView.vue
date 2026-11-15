@@ -19,7 +19,7 @@ import { daysBetween, shortDay } from '../utils/date-range'
 
 const { t, locale } = useI18n()
 
-const { series, usage, users, nodeSamples, rangeDays, customRange, childId, nodes, nodeStats, live, loading, refreshing, failed, updatedAt, refresh } = useDashboard(locale.value)
+const { series, previousSeries, usage, users, nodeSamples, rangeDays, customRange, childId, nodes, nodeStats, live, loading, refreshing, failed, updatedAt, refresh } = useDashboard(locale.value)
 
 /** The period in days and in words, for the charts' ticks and subtitles */
 const periodDays = computed(() => (customRange.value ? daysBetween(customRange.value.start, customRange.value.end) : rangeDays.value))
@@ -55,7 +55,7 @@ const periodLabel = computed(() => {
   </Message>
 
   <div class="dashboard">
-    <KpiTiles :usage="usage" :users="users" :series="series" />
+    <KpiTiles :users="users" :series="series" :previous-series="previousSeries" :period-label="periodLabel" />
 
     <div class="dashboard__split">
       <UsageTrendCard :series="series" :usage="usage" :range-days="periodDays" :period-label="periodLabel" :nodes="nodes" :stacked="childId === null" />

@@ -35,6 +35,9 @@ const props = withDefaults(
     sparkFormatter?: (value: number) => string
     /** The face: a small chart (area, line, column, step, dots), a ring, or the bar pair against the previous period */
     kind?: string
+    /** What the tile covers ("Last 30 Days"); ``live``: a pulsing dot, the tile is live */
+    scope?: string
+    live?: boolean
     comparison?: TileComparison
   }>(),
   { trend: undefined, details: () => [], sparkline: () => [], sparkLabels: () => [] },
@@ -86,6 +89,12 @@ onBeforeUnmount(onBlur)
     <div class="tile__top">
       <div class="min-w-0">
         <p class="tile__label">{{ label }}</p>
+        <p v-if="scope" class="tile__scope" :class="{ 'tile__scope--live': live }">
+          <span v-if="live" class="tile__live-dot" /><i v-else class="pi pi-calendar" />
+          <Transition name="tile-face" mode="out-in"
+            ><span :key="scope">{{ scope }}</span></Transition
+          >
+        </p>
         <p class="tile__value">{{ value }}</p>
       </div>
       <div class="tile__aside">
@@ -197,6 +206,45 @@ onBeforeUnmount(onBlur)
   color: #fff;
   background: linear-gradient(135deg, var(--tile-accent), color-mix(in srgb, var(--tile-accent) 60%, #000));
   box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--tile-accent) 70%, transparent);
+}
+.tile__scope {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.2rem 0 0;
+  overflow: hidden;
+  font-size: 0.68rem;
+  font-weight: 550;
+  color: var(--p-text-muted-color);
+  white-space: nowrap;
+}
+.tile__scope span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tile__scope i {
+  font-size: 0.62rem;
+  color: var(--tile-accent);
+}
+.tile__scope--live {
+  color: color-mix(in srgb, #22c55e 75%, var(--p-text-color));
+}
+.tile__live-dot {
+  flex: none;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: #22c55e;
+  animation: tile-live 2s infinite;
+}
+@keyframes tile-live {
+  0% {
+    box-shadow: 0 0 0 0 rgb(34 197 94 / 55%);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.35rem rgb(34 197 94 / 0%);
+  }
 }
 .tile__aside {
   display: flex;

@@ -1758,7 +1758,14 @@
         "ofLastWeek": "نسبت به ۷ روز قبل",
         "thisMonth": "۳۰ روز",
         "lastMonth": "قبلی",
-        "ofLastMonth": "نسبت به ۳۰ روز قبل"
+        "ofLastMonth": "نسبت به ۳۰ روز قبل",
+        "period": "بازه",
+        "before": "قبلی",
+        "ofPrevious": "نسبت به بازه‌ی قبل",
+        "lastDay": "روز آخر",
+        "average": "میانگین",
+        "ofAverage": "نسبت به میانگین روزانه",
+        "peak": "بیشترین"
       },
       "period": {
         "title": "بازه‌ی زمانی",
@@ -1782,6 +1789,21 @@
           "last180": "۱۸۰ روز گذشته",
           "last365": "۳۶۵ روز گذشته"
         }
+      },
+      "kpi": {
+        "live": "زنده",
+        "usage": "مصرف",
+        "dailyAverage": "میانگین روزانه",
+        "busiestDay": "پرمصرف‌ترین روز",
+        "vsPreviousPeriod": "نسبت به بازه‌ی قبل",
+        "lastDayVsAverage": "روز آخر نسبت به میانگین",
+        "noPrevious": "داده‌ای برای بازه‌ی قبل نیست",
+        "thisPeriod": "این بازه",
+        "previousPeriod": "بازه‌ی قبل",
+        "days": "روزها",
+        "lastDay": "روز آخر",
+        "on": "تاریخ",
+        "onlineAverage": "میانگین روزانه · {period}"
       }
     },
     "domain": {

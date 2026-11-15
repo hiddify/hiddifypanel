@@ -79,14 +79,10 @@ const chartSeries = computed(() => {
   return [{ label: t('dashboard.dailyUsage'), values: values.value, color: SERIES.usage, type: 'bar' as const }]
 })
 
-const peakLabel = computed(() => {
-  const peak = props.usage?.peak
-  return peak ? formatBytes(peak.usage) : t('dashboard.noData')
-})
-const peakDay = computed(() => {
-  const peak = props.usage?.peak
-  return peak ? formatDayLabel(peak.date, locale.value) : undefined
-})
+/** The busiest day of the shown period (the API's own peak covers the days it sent, more than the period) */
+const peakPoint = computed(() => props.series.reduce<DashboardDailyPoint | undefined>((best, point) => (!best || point.usage > best.usage ? point : best), undefined))
+const peakLabel = computed(() => (peakPoint.value && peakPoint.value.usage > 0 ? formatBytes(peakPoint.value.usage) : t('dashboard.noData')))
+const peakDay = computed(() => (peakPoint.value && peakPoint.value.usage > 0 ? formatDayLabel(peakPoint.value.date, locale.value) : undefined))
 </script>
 
 <template>

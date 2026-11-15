@@ -73,12 +73,6 @@ export function presetRange(preset: QuickPreset, locale: string): CustomRange {
   }
 }
 
-/** The days to ask the API for: the shortest range reaching back to the period's first day */
-export function apiDaysFor(range: CustomRange): number {
-  const back = daysBetween(range.start, iso(today()))
-  return API_DAYS.find((days) => days >= back) ?? MAX_DAYS
-}
-
 export interface MonthGrid {
   title: string
   /** Weekday initials, in the week's order (Saturday first in Persian, Monday elsewhere) */

@@ -1757,7 +1757,14 @@
         "ofLastWeek": "of the previous 7 days",
         "thisMonth": "30 days",
         "lastMonth": "Before",
-        "ofLastMonth": "of the previous 30 days"
+        "ofLastMonth": "of the previous 30 days",
+        "period": "Period",
+        "before": "Before",
+        "ofPrevious": "of the period before",
+        "lastDay": "Last day",
+        "average": "Average",
+        "ofAverage": "of the daily average",
+        "peak": "Busiest"
       },
       "period": {
         "title": "Time Period",
@@ -1781,6 +1788,21 @@
           "last180": "Last 180 Days",
           "last365": "Last 365 Days"
         }
+      },
+      "kpi": {
+        "live": "Live",
+        "usage": "Usage",
+        "dailyAverage": "Daily Average",
+        "busiestDay": "Busiest Day",
+        "vsPreviousPeriod": "vs previous period",
+        "lastDayVsAverage": "last day vs average",
+        "noPrevious": "No data for the period before",
+        "thisPeriod": "This period",
+        "previousPeriod": "Period before",
+        "days": "Days",
+        "lastDay": "Last day",
+        "on": "On",
+        "onlineAverage": "Daily average · {period}"
       }
     },
     "domain": {
