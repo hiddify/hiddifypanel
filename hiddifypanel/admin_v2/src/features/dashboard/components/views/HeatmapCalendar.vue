@@ -3,7 +3,7 @@
  * A calendar heatmap (like the activity grid of a fitness app): a column per week, a row per weekday, one rounded
  * square per day, darker for more. One hue, five steps (none + four quartiles of the days that had any). The readout
  * line names the day under the finger or the mouse, and the busiest day otherwise. It never grows wider than its
- * tile: the squares shrink to fit, and stay at most 22 px.
+ * tile: the squares shrink to fit, and grow to at most about 28 px, centred.
  */
 import { computed, ref } from 'vue'
 
@@ -79,7 +79,7 @@ const readout = computed(() => {
 <template>
   <div class="hm">
     <p class="hm__readout" aria-live="polite">{{ readout }}</p>
-    <svg class="hm__grid" :viewBox="`0 0 ${width} ${height}`" :style="{ maxWidth: `${width * 1.7}px` }" role="img" :aria-label="readout" @mouseleave="picked = null">
+    <svg class="hm__grid" :viewBox="`0 0 ${width} ${height}`" :style="{ maxWidth: `${width * 2.2}px` }" role="img" :aria-label="readout" @mouseleave="picked = null">
       <text v-for="m in grid.months" :key="`m${m.x}`" :x="m.x" y="10" class="hm__label">{{ m.label }}</text>
       <text v-for="w in weekdays" :key="`w${w.y}`" x="0" :y="w.y" class="hm__label">{{ w.label }}</text>
       <rect
@@ -124,6 +124,8 @@ const readout = computed(() => {
 .hm__grid {
   display: block;
   width: 100%;
+  /* a short range (a few weeks) stays in the middle of the tile, its squares at most about 28 px */
+  margin-inline: auto;
   height: auto;
   overflow: visible;
 }

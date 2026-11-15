@@ -424,8 +424,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       <div class="node-health__overview-chart node-health__overview-chart--static">
         <p class="node-health__heading">{{ t('dashboard.network') }}</p>
         <div class="node-health__net">
-          <span class="node-health__net-side node-health__net-side--up"><i class="pi pi-arrow-up" />{{ t('dashboard.upload') }}</span>
-          <span class="node-health__net-side node-health__net-side--down"><i class="pi pi-arrow-down" />{{ t('dashboard.download') }}</span>
+          <template v-if="overviewView !== 'gauges'">
+            <span class="node-health__net-side node-health__net-side--up"><i class="pi pi-arrow-up" />{{ t('dashboard.upload') }}</span>
+            <span class="node-health__net-side node-health__net-side--down"><i class="pi pi-arrow-down" />{{ t('dashboard.download') }}</span>
+          </template>
           <div v-if="overviewView === 'gauges'" class="node-health__meters">
             <div v-for="n in networkLegend" :key="n.id" class="node-health__meter">
               <span v-if="multiNode" class="node-health__gauge-name">{{ n.title }}</span>
@@ -457,7 +459,8 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             :max-x-ticks="6"
           />
         </div>
-        <ul class="node-health__net-legend">
+        <!-- the meters already name each server with its rates -->
+        <ul v-if="overviewView !== 'gauges'" class="node-health__net-legend">
           <li v-for="n in networkLegend" :key="n.id">
             <span class="node-health__net-dot" :style="{ background: n.color }" />
             <span class="node-health__net-name">{{ n.title }}</span>
