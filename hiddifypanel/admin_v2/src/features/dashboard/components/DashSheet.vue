@@ -248,6 +248,15 @@ html.app-dark .p-dialog.dash-sheet .dsh--sheet {
     transform: translateY(-6px) scale(0.94);
   }
 }
+/* Smart Caddy: its page colour is a thin glass (half white), so the window takes the theme's strong glass, bright
+   like the Liquid theme's, not a grey see-through of the dimmed page */
+html.theme-caddy .dash-pop.p-popover,
+html.theme-caddy .p-dialog.dash-sheet .dsh--sheet {
+  background: var(--caddy-glass-strong);
+}
+html.theme-caddy .dsh .cs__type--on {
+  background: var(--caddy-glass-strong);
+}
 html.theme-liquid .dash-pop.p-popover,
 html.theme-liquid .p-dialog.dash-sheet .dsh {
   background: rgb(var(--lg-tint) / 0.74);
