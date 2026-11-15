@@ -96,6 +96,15 @@
                 <template #dropdownicon><i class="pi pi-language" /></template>
               </Select>
             </div>
+            <!-- The color of the app icon (the admin panel installed as an app) -->
+            <div v-if="appIcon.enabled.value" class="account-row">
+              <img :src="appIcon.iconUrl('tile-256')" alt="" class="account-row__app" />
+              <div class="account-row__text">
+                <b>{{ t('pwa.colorTitle') }}</b>
+                <small>{{ t('pwa.colorHint') }}</small>
+              </div>
+              <PwaColorButton />
+            </div>
             <div class="account-row">
               <span class="account-row__icon"><i class="pi pi-key" /></span>
               <div class="account-row__text">
@@ -247,7 +256,9 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import PwaColorButton from '@/shared/components/PwaColorButton.vue'
 import PwaInstallDialog from '@/shared/components/PwaInstallDialog.vue'
+import { useAppIcon } from '@/shared/composables/useAppIcon'
 import { usePwaInstall } from '@/shared/composables/usePwaInstall'
 import Message from 'primevue/message'
 import Password from 'primevue/password'
@@ -274,6 +285,8 @@ import FlagIcon from '@/shared/components/FlagIcon.vue'
 
 const { t } = useI18n()
 const pwa = usePwaInstall()
+/** The admin app icon in the color chosen with "PWA Color" (a row of Settings) */
+const appIcon = useAppIcon()
 const pwaVisible = ref(false)
 const pwaBusy = ref(false)
 /** The browser's own install dialog when it allows one (Chrome, Edge, Android); else our dialog with the steps. */
@@ -644,6 +657,12 @@ onMounted(load)
   place-items: center;
   color: var(--p-amber-600, #d97706);
   background: color-mix(in srgb, var(--p-amber-500, #f59e0b) 14%, transparent);
+}
+/* The app icon itself, in place of a row's icon */
+.account-row__app {
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
 }
 .account-row__icon--sky {
   color: var(--p-sky-500, #0ea5e9);

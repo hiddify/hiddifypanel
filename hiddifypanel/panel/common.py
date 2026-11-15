@@ -1,7 +1,7 @@
 import traceback
 
 from apiflask import APIFlask, HTTPError, abort
-from flask import jsonify, render_template, request, send_from_directory, session
+from flask import Response, jsonify, redirect, render_template, request, send_from_directory, session
 from loguru import logger
 
 import hiddifypanel
@@ -169,6 +169,24 @@ def init_app(app: APIFlask):
         print("file", file, app.config["HIDDIFY_CONFIG_PATH"] + "/services/panel/videos/" + file)
         return send_from_directory(app.config["HIDDIFY_CONFIG_PATH"] + "/services/panel/videos/", file)
 
+    @app.route("/<proxy_path>/app-icon/<kind>/<color>/<name>.png")
+    @app.doc(hide=True)
+    def app_icon(kind, color, name):
+        """An app icon (the admin panel's or the user page's) in the color a browser chose with "App Color" (hutils.app_icon).
+
+        Open like the static icons: the phone or the browser fetches it without the admin's session."""
+        hutils.flask.proxy_path_validator(g.proxy_path)
+        color = hutils.app_icon.normalize(color)
+        if kind not in hutils.app_icon.KINDS or not color or name not in hutils.app_icon.NAMES:
+            abort(404)
+        try:
+            icon = hutils.app_icon.render(color, name, kind)
+        except Exception as e:  # no Pillow or a missing part: the stock icon instead
+            logger.warning(f"{kind} app icon {name} in #{color} could not be drawn: {e}")
+            return redirect(hutils.flask.static_url_for(filename=f"images/{hutils.app_icon.STOCK[kind][name]}", version=hutils.flask.APP_ICON_VERSION))
+        # The URL names the color and the icon version, so the picture behind it never changes.
+        return Response(icon, mimetype="image/png", headers={"Cache-Control": "public, max-age=31536000, immutable"})
+
     @app.url_value_preprocessor
     def pull_default(endpoint, values):
         g.__child_id = 0
@@ -193,7 +211,7 @@ def init_app(app: APIFlask):
 
         if "generate_204" in request.path:
             return "", 204
-        if request.endpoint == "static" or request.endpoint == "videos":
+        if request.endpoint in ("static", "videos", "app_icon"):
             return
 
         if g.user_agent["is_bot"]:
