@@ -23,7 +23,42 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 208
+MAX_DB_VERSION = 209
+
+
+def _v209(child_id):
+    """Shadowsocks 2022 keeps the port it had in v12. The upgrade had given the proxy a generated port and left the
+    old one reserved, so a domain could not use it and the proxy port could not be put back."""
+    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
+    from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import is_field_overridden
+    from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
+        _stable_public_port,
+        ip_mode_public_port,
+        shadowsocks_ports_from_v12,
+    )
+
+    for row in CustomProxy.query.filter(CustomProxy.child_id == child_id, CustomProxy.mode == CustomProxyMode.ip).all():
+        proto = row.proto.value if hasattr(row.proto, "value") else str(row.proto or "")
+        if proto not in ("shadowsocks", "ss"):
+            continue
+        overridden = is_field_overridden(row, "server_inbound_tcp_ports") or is_field_overridden(row, "server_inbound_udp_ports")
+        legacy = ip_mode_public_port(proto, "shadowsocks", wireguard_endpoint=False, slug=row.slug or "", child_id=child_id)
+        ports = shadowsocks_ports_from_v12(
+            list(row.server_inbound_tcp_ports or []),
+            list(row.server_inbound_udp_ports or []),
+            generated=_stable_public_port(row.slug or ""),
+            legacy=legacy,
+            overridden=overridden,
+        )
+        if ports is None:
+            continue
+        tcp, udp = ports
+        row.server_inbound_tcp_ports = tcp
+        row.server_inbound_udp_ports = udp
+        builtin = dict(row.builtin or {})
+        builtin["server_inbound_tcp_ports"] = tcp
+        builtin["server_inbound_udp_ports"] = udp
+        row.builtin = builtin
 
 
 def _v208(child_id):

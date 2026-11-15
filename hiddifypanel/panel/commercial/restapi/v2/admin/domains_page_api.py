@@ -68,11 +68,12 @@ def is_host(name: str) -> bool:
 # A domain's own TLS / HTTP port is not served by anything: the firewall redirects it to 443 / 80
 # (services/firewall). So no process may listen on it, not even haproxy or rpxy-l4.
 #: Settings whose ports belong to other services (a domain gateway port must not take them).
+# Shadowsocks 2022 is a custom proxy: its port is reserved with the proxy (below), not this old setting.
+# Keeping the setting here locked the v12 port after the proxy had moved to another one.
 OTHER_SERVICE_PORTS = (
     ConfigEnum.wireguard_port,
     ConfigEnum.reality_port,
     ConfigEnum.special_port,
-    ConfigEnum.shadowsocks2022_port,
     ConfigEnum.naive_port,
     ConfigEnum.mieru_tcp_ports,
     ConfigEnum.kcp_ports,

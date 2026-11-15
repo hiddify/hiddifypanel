@@ -236,20 +236,40 @@
                 </HorizontalField>
                 
               </div>
-              <div :class="{ 'builtin-locked': serverLocked }">
-                <HorizontalField v-if="showStaticPorts" :label="t('proxy.inboundTcpPorts')" input-id="proxy-tcp-ports" :hint="t('proxy.inboundTcpPortsHint')">
-                  <InputGroup>
-                    <InputGroupAddon><i class="pi pi-hashtag" /></InputGroupAddon>
-                    <InputText id="proxy-tcp-ports" v-model="tcpPortsText" class="w-full" placeholder="2080,2081" />
-                  </InputGroup>
-                </HorizontalField>
-                <HorizontalField v-if="showStaticPorts" :label="t('proxy.inboundUdpPorts')" input-id="proxy-udp-ports" :hint="t('proxy.inboundUdpPortsHint')">
-                  <InputGroup>
-                    <InputGroupAddon><i class="pi pi-hashtag" /></InputGroupAddon>
-                    <InputText id="proxy-udp-ports" v-model="udpPortsText" class="w-full" placeholder="2080,2081" />
-                  </InputGroup>
-                </HorizontalField>
-              </div>
+              <HorizontalField v-if="showStaticPorts" :label="t('proxy.inboundTcpPorts')" input-id="proxy-tcp-ports" :hint="t('proxy.inboundTcpPortsHint')">
+                <InputGroup>
+                  <InputGroupAddon><i class="pi pi-hashtag" /></InputGroupAddon>
+                  <InputText id="proxy-tcp-ports" v-model="tcpPortsText" class="w-full" placeholder="2080,2081" :disabled="portFieldLocked('server_inbound_tcp_ports')" />
+                  <InputGroupAddon v-if="isBuiltin">
+                    <div class="flex items-center gap-1 whitespace-nowrap px-1">
+                      <Checkbox
+                        input-id="override-tcp-ports"
+                        :model-value="isFieldOverridden('server_inbound_tcp_ports')"
+                        binary
+                        @update:model-value="setFieldOverride('server_inbound_tcp_ports', $event)"
+                      />
+                      <label for="override-tcp-ports" class="text-sm">{{ t('proxy.fieldOverride') }}</label>
+                    </div>
+                  </InputGroupAddon>
+                </InputGroup>
+              </HorizontalField>
+              <HorizontalField v-if="showStaticPorts" :label="t('proxy.inboundUdpPorts')" input-id="proxy-udp-ports" :hint="t('proxy.inboundUdpPortsHint')">
+                <InputGroup>
+                  <InputGroupAddon><i class="pi pi-hashtag" /></InputGroupAddon>
+                  <InputText id="proxy-udp-ports" v-model="udpPortsText" class="w-full" placeholder="2080,2081" :disabled="portFieldLocked('server_inbound_udp_ports')" />
+                  <InputGroupAddon v-if="isBuiltin">
+                    <div class="flex items-center gap-1 whitespace-nowrap px-1">
+                      <Checkbox
+                        input-id="override-udp-ports"
+                        :model-value="isFieldOverridden('server_inbound_udp_ports')"
+                        binary
+                        @update:model-value="setFieldOverride('server_inbound_udp_ports', $event)"
+                      />
+                      <label for="override-udp-ports" class="text-sm">{{ t('proxy.fieldOverride') }}</label>
+                    </div>
+                  </InputGroupAddon>
+                </InputGroup>
+              </HorizontalField>
               <HorizontalField v-if="showAutoPortsHint" :label="t('proxy.inboundPort')" input-id="proxy-auto-ports">
                 <Message severity="info" :closable="false" class="w-full m-0">
                   {{ t('proxy.inboundPortAutoCalculated') }}
@@ -782,6 +802,10 @@ function snapshotBuiltinField(key: string) {
     form.builtin![key] = [...(form.download_domain_modes ?? [])]
   } else if (key === 'l7_reverse_proto') {
     form.builtin![key] = form.l7_reverse_proto ?? null
+  } else if (key === 'server_inbound_tcp_ports') {
+    form.builtin![key] = [...(form.server_config?.inbound_tcp_ports ?? [])]
+  } else if (key === 'server_inbound_udp_ports') {
+    form.builtin![key] = [...(form.server_config?.inbound_udp_ports ?? [])]
   } else if (key.startsWith('client:')) {
     const core = key.split(':', 2)[1]
     const cc = form.client_config?.core_configs?.find((row) => row.core === core)
@@ -810,6 +834,10 @@ function resetFieldFromBuiltin(key: string) {
     form.download_domain_modes = [...builtin]
   } else if (key === 'l7_reverse_proto') {
     form.l7_reverse_proto = (builtin as CustomProxy['l7_reverse_proto']) ?? form.l7_reverse_proto
+  } else if (key === 'server_inbound_tcp_ports' && form.server_config) {
+    form.server_config.inbound_tcp_ports = portList(builtin)
+  } else if (key === 'server_inbound_udp_ports' && form.server_config) {
+    form.server_config.inbound_udp_ports = portList(builtin)
   } else if (key.startsWith('client:')) {
     const core = key.split(':', 2)[1]
     const cc = form.client_config?.core_configs?.find((row) => row.core === core)
@@ -1068,6 +1096,14 @@ const l7ReverseProtoOptions = computed(() =>
     label: p.toUpperCase(),
   })),
 )
+
+function portFieldLocked(key: string): boolean {
+  return isBuiltin.value && !isFieldOverridden(key)
+}
+
+function portList(value: unknown): number[] {
+  return Array.isArray(value) ? value.map((port) => Number(port)).filter((port) => Number.isInteger(port) && port > 0) : []
+}
 
 function parsePortList(text: string): number[] {
   return text
@@ -1839,6 +1875,11 @@ function buildBuiltinPatch(): Partial<CustomProxy> {
   if (isFieldOverridden('l7_reverse_proto')) patch.l7_reverse_proto = form.l7_reverse_proto
   if (isFieldOverridden('server_config')) {
     patch.server_config = form.server_config
+  } else if (isFieldOverridden('server_inbound_tcp_ports') || isFieldOverridden('server_inbound_udp_ports')) {
+    patch.server_config = {
+      inbound_tcp_ports: [...(form.server_config?.inbound_tcp_ports ?? [])],
+      inbound_udp_ports: [...(form.server_config?.inbound_udp_ports ?? [])],
+    }
   }
   // Always send client cores with explicit override flags so revert clears the badge.
   const clientConfigs = (form.client_config?.core_configs ?? []).map((cc) => ({

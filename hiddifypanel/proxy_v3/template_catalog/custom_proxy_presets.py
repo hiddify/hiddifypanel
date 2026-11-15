@@ -468,6 +468,43 @@ def _stable_public_port(slug: str) -> int:
     return 10_000 + mixed
 
 
+def ip_mode_public_port(proto: str, raw_transport: str, *, wireguard_endpoint: bool, slug: str, child_id: int) -> int:
+    """The public port of an IP-mode preset.
+
+    WireGuard and Shadowsocks 2022 already had a port setting in v12. The preset keeps that port, so an upgrade
+    does not move the service and leave the old port reserved. Anything else gets a stable port from its slug.
+    """
+    if proto == "wireguard" and not wireguard_endpoint:
+        return _hconfig_port(ConfigEnum.wireguard_port, child_id, fallback_slug=slug)
+    if proto in ("shadowsocks", "ss") and raw_transport not in ("shadowtls", "faketls"):
+        return _hconfig_port(ConfigEnum.shadowsocks2022_port, child_id, fallback_slug=slug)
+    return _stable_public_port(slug)
+
+
+def shadowsocks_ports_from_v12(
+    tcp_ports: list[int],
+    udp_ports: list[int],
+    *,
+    generated: int,
+    legacy: int,
+    overridden: bool,
+) -> tuple[list[int], list[int]] | None:
+    """Ports to store on an upgraded Shadowsocks row, or None when the row already has the right ones.
+
+    The generated slug port is replaced by the v12 setting. A port an admin chose, or a row already on that
+    setting, is left alone.
+    """
+    if overridden or not 1 <= legacy <= 65535:
+        return None
+    tcp = [port for port in tcp_ports if port]
+    udp = [port for port in udp_ports if port]
+    if tcp not in ([], [generated]) or udp not in ([], [generated]):
+        return None
+    if tcp == [legacy] and udp == [legacy]:
+        return None
+    return [legacy], [legacy]
+
+
 def _hconfig_port(key: ConfigEnum, child_id: int = 0, *, fallback_slug: str) -> int:
     """Port owned by an external service (WireGuard manager, SSH daemon, …).
 
@@ -632,11 +669,13 @@ def _build_preset(
     inbound_tcp_ports: tuple[int, ...] = ()
     inbound_udp_ports: tuple[int, ...] = ()
     if mode == CustomProxyMode.ip:
-        if proto == "wireguard" and not is_wireguard_endpoint(primary):
-            # WireGuard listens on hconfig.wireguard_port (wg-quick / firewall), not a slug port.
-            public_port = _hconfig_port(ConfigEnum.wireguard_port, child_id, fallback_slug=slug)
-        else:
-            public_port = _stable_public_port(slug)
+        public_port = ip_mode_public_port(
+            proto,
+            raw_transport,
+            wireguard_endpoint=is_wireguard_endpoint(primary),
+            slug=slug,
+            child_id=child_id,
+        )
         if tcp_udp != InboundTcpUdp.udp:
             inbound_tcp_ports = (public_port,)
         if tcp_udp != InboundTcpUdp.tcp:

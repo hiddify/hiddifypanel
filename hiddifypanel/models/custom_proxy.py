@@ -787,8 +787,12 @@ class CustomProxy(db.Model):  # type: ignore
         if data.tls_layer is not None:
             dbproxy.tls_layer = data.tls_layer
         apply_server = bool(data.override_requested("server_config") or data.server_override or dbproxy.server_override or dbproxy.id is None)
+        port_override = data.override_requested("server_inbound_tcp_ports") or data.override_requested("server_inbound_udp_ports")
         if data.server_config is not None and apply_server:
             cls._apply_server_config(dbproxy, data)
+        elif data.server_config is not None and port_override:
+            # The listen ports can be changed on their own; the inbound template stays the catalog's.
+            _apply_server_ports(dbproxy, data.server_config.provided())
         if data.client_config is not None and dbproxy.id is not None:
             cls._sync_builtin_client_overrides(dbproxy, data.client_config)
         general_keys = tuple(GENERAL_OVERRIDE_FIELDS)
