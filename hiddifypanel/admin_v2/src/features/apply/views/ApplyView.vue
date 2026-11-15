@@ -27,6 +27,7 @@
             <span class="ap-card__time" v-tooltip.top="t('apply.takes')"><i class="pi pi-stopwatch" />{{ t('apply.minutes', { n: a.meta.minutes }) }}</span>
           </header>
           <p class="ap-card__desc">{{ t(`apply.action.${a.key}.desc`) }}</p>
+          <PanelVersionBox v-if="a.key === 'update'" />
           <p v-if="a.when" class="ap-card__last"><i class="pi" :class="a.last?.finished ? 'pi-check-circle ap-ok' : 'pi-info-circle'" />{{ t('apply.lastRun', { when: a.when }) }}</p>
           <Button
             :label="t(`apply.action.${a.key}.button`)"
@@ -109,6 +110,7 @@ import LogViewerDialog from '@/features/apply/components/LogViewerDialog.vue'
 import RunPanel from '@/features/apply/components/RunPanel.vue'
 import PublicPortsDialog from '@/features/actions/components/PublicPortsDialog.vue'
 import WsTestDialog from '@/features/apply/components/WsTestDialog.vue'
+import PanelVersionBox from '@/features/apply/components/PanelVersionBox.vue'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { ACTIONS, ACTION_LOG, ACTION_META, LOG_ICON, applyApi, formatSize, preferredAdminRedirect, type ApplyAction, type ApplyState, type LogFile, type StartedRun } from '@/features/apply/api'
 

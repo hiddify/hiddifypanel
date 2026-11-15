@@ -22,6 +22,9 @@ def init_app(app):
         bp.add_url_rule("/server_status/", view_func=AdminServerStatusApi)
         bp.add_url_rule("/dashboard/", view_func=AdminDashboardApi)
         bp.add_url_rule("/dashboard/disk/", view_func=AdminDashboardDiskApi)
+        from .panel_version_api import PanelVersionApi
+
+        bp.add_url_rule("/panel-version/", view_func=PanelVersionApi)
         bp.add_url_rule("/admin_user/<uuid:uuid>/", view_func=AdminUserApi)
         bp.add_url_rule("/admin_user/", view_func=AdminUsersApi)
 

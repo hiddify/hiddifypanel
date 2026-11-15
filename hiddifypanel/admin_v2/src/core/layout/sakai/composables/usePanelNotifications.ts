@@ -5,6 +5,7 @@ import { hasCapability, isChildPanel, isSuperAdmin, panelNotices, type PanelNoti
 import { domainProblems, domainSaveWarnings, loadDomainProblems } from '@/shared/composables/useDomainNotices'
 import { configHealthProblems, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
 import { loadNodeProblems, nodeProblems } from '@/shared/composables/useNodeNotices'
+import { loadPanelUpdate, panelUpdate } from '@/shared/composables/usePanelUpdate'
 
 export type PanelNoticeSeverity = PanelNotice['severity']
 
@@ -105,9 +106,24 @@ export function usePanelNotifications() {
       }
     }),
   )
+  /** A newer panel release (the server looks once a day): which version, against this one */
+  const updateNotices = computed<PanelNotice[]>(() => {
+    const status = panelUpdate.value
+    if (!status?.outdated || !status.latest) return []
+    return [
+      {
+        // the version in the id: the next release is news again
+        id: `panel-update:${status.latest}`,
+        severity: 'update',
+        summary: escapeHtml(t('notifications.update.title', { version: status.latest })),
+        detail: escapeHtml(t('notifications.update.current', { version: status.current })),
+        version: { latest: status.latest, current: status.current },
+      },
+    ]
+  })
   const extra = computed(() => [...healthNotices.value, ...domainNotices.value, ...nodeNotices.value])
-  // Errors first: a config or a certificate that does not work matters more than the panel's advice
-  const notices = computed(() => [...extra.value.filter((n) => n.severity === 'error'), ...panelNotices.value, ...extra.value.filter((n) => n.severity !== 'error')])
+  // A new version on top, then errors: a config or a certificate that does not work matters more than the panel's advice
+  const notices = computed(() => [...updateNotices.value, ...extra.value.filter((n) => n.severity === 'error'), ...panelNotices.value, ...extra.value.filter((n) => n.severity !== 'error')])
   let healthTimer = 0
   function refreshHealth() {
     // Config health is the super admin's, and a node's configs are tested by its parent panel; every admin has Domains
@@ -115,6 +131,8 @@ export function usePanelNotifications() {
       void loadConfigHealth()
       void loadNodeProblems()
     }
+    // the server answers from its daily look, so this asks GitHub at most once a day
+    if (isSuperAdmin.value) void loadPanelUpdate()
     if (hasCapability('modify_domains')) void loadDomainProblems()
     healthTimer = window.setTimeout(refreshHealth, HEALTH_REFRESH_MS)
   }
@@ -132,6 +150,9 @@ export function usePanelNotifications() {
   /** Not yet seen in the notification list: they light the red dot. A notice whose text changes is new again. */
   const unseenNotices = computed(() => visibleNotices.value.filter((n) => !seen.value.has(noticeKey(n))))
   const unseenCount = computed(() => unseenNotices.value.length)
+  /** The bell's two dots: green for an unseen new version, red for anything else unseen */
+  const unseenUpdate = computed(() => unseenNotices.value.some((n) => n.severity === 'update'))
+  const unseenOther = computed(() => unseenNotices.value.some((n) => n.severity !== 'update'))
 
   function markAllSeen() {
     const next = new Set(seen.value)
@@ -147,7 +168,7 @@ export function usePanelNotifications() {
       if (toasted.value.has(key)) continue
       toasted.value = new Set(toasted.value).add(key)
       toast.add({
-        severity: notice.severity,
+        severity: notice.severity === 'update' ? 'success' : notice.severity,
         summary: notice.summary.replace(/<[^>]+>/g, ''),
         detail: notice.detail?.replace(/<[^>]+>/g, ''),
         life: 8000,
@@ -165,5 +186,5 @@ export function usePanelNotifications() {
     showToasts(items)
   })
 
-  return { notices, visibleNotices, unseenNotices, unseenCount, dismiss, markAllSeen, showToasts }
+  return { notices, visibleNotices, unseenNotices, unseenCount, unseenUpdate, unseenOther, dismiss, markAllSeen, showToasts }
 }

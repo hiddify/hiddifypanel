@@ -782,7 +782,23 @@
       "subtitle": "Put changes into effect, update the server, and see how everything is doing",
       "takes": "About how long it takes",
       "title": "Apply & Status",
-      "watch": "Watch It"
+      "watch": "Watch It",
+      "version": {
+        "current": "Current version",
+        "check": "Check for Updates",
+        "checking": "Checking…",
+        "newAvailable": "A new version is available",
+        "newHint": "Update the panel with the button below.",
+        "latest": "Your panel is on the latest version",
+        "latestHint": "{version} is the newest release.",
+        "failed": "Couldn't check for updates",
+        "failedHint": "GitHub could not be reached from the server. Try again later.",
+        "checkedAgo": "Last checked {when}. The panel checks by itself once a day.",
+        "channel": {
+          "release": "Release",
+          "beta": "Beta"
+        }
+      }
     },
     "applyNotice": {
       "apply": "Saved. Apply the configs to put the changes into effect.",
@@ -2692,7 +2708,13 @@
       "dismiss": "Dismiss",
       "new": "New",
       "title": "Notifications",
-      "unread": "{n} new notification | {n} new notifications"
+      "unread": "{n} new notification | {n} new notifications",
+      "update": {
+        "title": "New panel version {version}",
+        "current": "You have {version}.",
+        "heading": "New panel version",
+        "cta": "Go to Update"
+      }
     },
     "operatorIps": {
       "add": "Add",
