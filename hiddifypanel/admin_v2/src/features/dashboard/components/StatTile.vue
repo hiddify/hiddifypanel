@@ -49,14 +49,21 @@ const tipArg = { position: 'top', event: touch ? 'focus' : 'hover' }
  *  stayed where it was while the tile scrolled away. A scroll now blurs the tile, which closes its card. */
 let focused: HTMLElement | null = null
 const blurOnScroll = () => focused?.blur()
+/** A tap anywhere else closes the card too: the menu button and many others take no focus on iOS, so the tile kept
+ *  its focus (and its card stayed over the opened menu) */
+const blurOnTapOutside = (event: PointerEvent) => {
+  if (focused && !focused.contains(event.target as Node)) focused.blur()
+}
 function onFocus(event: FocusEvent) {
   if (!touch) return
   focused = event.currentTarget as HTMLElement
   document.addEventListener('scroll', blurOnScroll, { capture: true, passive: true })
+  document.addEventListener('pointerdown', blurOnTapOutside, { capture: true })
 }
 function onBlur() {
   focused = null
   document.removeEventListener('scroll', blurOnScroll, { capture: true })
+  document.removeEventListener('pointerdown', blurOnTapOutside, { capture: true })
 }
 onBeforeUnmount(onBlur)
 </script>
