@@ -4360,7 +4360,7 @@
     "hiddify": {
       "next": {
         "description": "Description HiddifyApp",
-        "title": "HiddifyApp"
+        "title": "Hiddify"
       }
     },
     "hiddifyn": {
@@ -4385,7 +4385,7 @@
     },
     "singbox": {
       "description": "Sing-box app is the official app for Sing-box protocol.",
-      "title": "Sing-box app"
+      "title": "Sing-box"
     },
     "stash": {
       "description": "Stash Description",

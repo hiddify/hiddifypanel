@@ -48,6 +48,7 @@ class AppSchema(ApiModel):
     guide_url: str = Field(default="", description="The guide url of the app")
     deeplink: str = Field(default="", description="The deeplink of the app to imoprt configs")
     install: list[AppInstall] = Field(default_factory=list, description="The install url of the app")
+    recommended: bool = Field(default=False, description="The app we advise users to pick first")
 
 
 # this class is not a Data Transfer Object, It's just an enum
@@ -301,6 +302,7 @@ class AppAPI(MethodView):
     def __get_streisand_app_dto(self):
         dto = AppSchema()
         dto.title = _("app.streisand.title")
+        dto.recommended = True
         dto.description = _("app.streisand.description")
         dto.icon_url = self.__get_app_icon_url(_("app.streisand.title"))
         dto.guide_url = "https://www.youtube.com/watch?v=jaMkZTLH2QY"
@@ -502,6 +504,7 @@ class AppAPI(MethodView):
     def __get_hiddify_next_app_dto(self):
         dto = AppSchema()
         dto.title = _("app.hiddify.next.title")
+        dto.recommended = True
         dto.description = _("app.hiddify.next.description")
         dto.icon_url = self.__get_app_icon_url(_("app.hiddify.next.title"))
         dto.guide_url = "https://www.youtube.com/watch?v=vUaA1AEUy1s"
