@@ -312,6 +312,8 @@ export function useChartTheme() {
             font: { size: 11 },
             maxRotation: 0,
             autoSkip: true,
+            // at least this much space between two labels: they are skipped rather than run into each other
+            autoSkipPadding: 18,
             maxTicksLimit: options.maxXTicks ?? 8,
           },
         },

@@ -107,7 +107,7 @@ const options = computed(() =>
     yMax: props.yMax,
     yMin: props.yMin,
     pageTooltip: props.pageTooltip,
-    maxXTicks: isPhone.value ? Math.min(props.maxXTicks ?? 8, 5) : props.maxXTicks,
+    maxXTicks: isPhone.value ? Math.min(props.maxXTicks ?? 8, 4) : props.maxXTicks,
     tooltipExtra: props.tooltipExtra,
     tooltipLabel: props.tooltipLabel,
     stackTotalLabel: props.stackTotalLabel,
