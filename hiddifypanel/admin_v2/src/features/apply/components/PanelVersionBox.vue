@@ -7,6 +7,7 @@
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UpdateGlyph from '@/shared/components/UpdateGlyph.vue'
+import appIcon from '@/assets/images/hiddify-hexagon-blue.svg?url'
 import { loadPanelUpdate, panelCheck, panelUpdate } from '@/shared/composables/usePanelUpdate'
 
 const { t, locale } = useI18n()
@@ -42,13 +43,8 @@ onMounted(() => void loadPanelUpdate())
   <section class="pv" :class="state ? `pv--${state}` : ''">
     <div class="pv__group">
       <div class="pv__app">
-        <span class="pv__icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32">
-            <rect x="7" y="17" width="4.4" height="8" rx="2.2" fill="#fff" fill-opacity="0.75" />
-            <rect x="13.8" y="12" width="4.4" height="13" rx="2.2" fill="#fff" fill-opacity="0.88" />
-            <rect x="20.6" y="7" width="4.4" height="18" rx="2.2" fill="#fff" />
-          </svg>
-        </span>
+        <!-- the panel's own app icon: the blue hexagon (white glass, blue ring and logo) -->
+        <img class="pv__icon" :src="appIcon" alt="" aria-hidden="true" width="44" height="44" />
         <div class="pv__app-text">
           <b>{{ t('apply.version.app') }}</b>
           <span
@@ -126,32 +122,13 @@ html.app-dark .pv__group {
   gap: 0.75rem;
   padding: 0.75rem 0.85rem;
 }
-/* the panel as an app: a squircle with its bars, lit from above */
+/* the panel as an app: its own icon, a hexagon that carries its own glass and outline */
 .pv__icon {
-  position: relative;
-  display: grid;
-  place-items: center;
+  display: block;
   flex: none;
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: 28%;
-  background: linear-gradient(160deg, #60a5fa 0%, #3b5bdb 55%, #4338ca 100%);
-  box-shadow:
-    0 6px 14px -6px rgb(59 91 219 / 0.6),
-    inset 0 0 0 0.5px rgb(0 0 0 / 0.12);
-  overflow: hidden;
-}
-.pv__icon::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.35), transparent 50%);
-}
-.pv__icon svg {
-  position: relative;
-  z-index: 1;
-  width: 1.75rem;
-  height: 1.75rem;
+  filter: drop-shadow(0 4px 8px rgb(10 132 255 / 0.28));
 }
 .pv__app-text {
   display: flex;
