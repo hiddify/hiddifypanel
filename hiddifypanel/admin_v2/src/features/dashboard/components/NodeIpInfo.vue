@@ -24,6 +24,7 @@ const info = ref<NodeIpInfo | null>(null)
 const loading = ref(false)
 const error = ref('')
 const selected = ref(0)
+const completeOpen = ref(false)
 const copied = ref('')
 let copiedTimer = 0
 
@@ -81,6 +82,8 @@ watch(
   ([open, id]) => {
     if (open && id != null) {
       selected.value = 0
+      // Complete IP Info starts closed each time the sheet opens
+      completeOpen.value = false
       void load(id)
     }
   },
@@ -270,7 +273,6 @@ const FLAG_GROUPS: { key: string; color: string; flags: FlagDef[] }[] = [
   },
 ]
 const ICON_COLORS = ['#007aff', '#5856d6', '#af52de', '#ff9500', '#30b0c7', '#34c759', '#ff2d55', '#5ac8fa']
-const completeOpen = ref(false)
 watch(selected, () => (completeOpen.value = completeOpen.value && !!current.value?.complete))
 
 /** A flag's state for the badge: yes / likely / no / not checked */
