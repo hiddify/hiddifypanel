@@ -27,6 +27,7 @@ import { nodesApi } from '@/features/nodes/api'
 import { dashboardNodeName, editableNodeName } from '../utils/node-name'
 import { useCardPopover } from '@/shared/composables/useCardPopover'
 import { RENAME_MIN_MAJOR, nodeRenameBlock, type RenameBlock } from '@/shared/utils/node-rename'
+import NodeIpInfo from './NodeIpInfo.vue'
 
 const props = defineProps<{
   nodes: DashboardNodeStats[]
@@ -120,6 +121,14 @@ async function saveRename() {
   } finally {
     renaming.value = false
   }
+}
+
+/** The (i) after a name: everything known about the server's IP addresses, in a sheet (super admins) */
+const ipInfoNode = ref<{ id: number; title: string } | null>(null)
+const ipInfoOpen = ref(false)
+function openIpInfo(row: { id: number; title: string }) {
+  ipInfoNode.value = { id: row.id, title: row.title }
+  ipInfoOpen.value = true
 }
 
 const overviewLabels = computed(() => {
@@ -426,6 +435,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
             <i class="pi pi-pencil" />
           </button>
+          <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
+            <i class="pi pi-info-circle" />
+          </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </template>
       </Column>
@@ -474,6 +486,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
           </div>
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
             <i class="pi pi-pencil" />
+          </button>
+          <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
+            <i class="pi pi-info-circle" />
           </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </div>
@@ -586,6 +601,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <p v-else>{{ t('dashboard.renameOffline', { name: renameTarget.title }) }}</p>
       </div>
     </Popover>
+    <NodeIpInfo v-model:visible="ipInfoOpen" :node="ipInfoNode" />
   </DashCard>
 </template>
 
@@ -736,6 +752,31 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 }
 .proc-name {
   color: var(--p-text-color);
+}
+/* The (i) after a name: the server's IP details */
+.node-cell__info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-inline-start: 0.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.node-cell__info i {
+  font-size: 0.8rem;
+}
+.node-cell__info:hover,
+.node-cell__info:focus-visible {
+  color: var(--p-primary-color);
+  background: var(--p-content-hover-background);
 }
 .node-cell__dot {
   display: inline-block;
