@@ -248,7 +248,8 @@ class AppAPI(MethodView):
         dto.deeplink = f"clash://install-config?url={self.user_panel_encoded_url}"
 
         latest_url, version = get_latest_release_url("https://github.com/MatsuriDayo/NekoBoxForAndroid")
-        ins_url = latest_url.split("releases/")[0] + f"releases/download/{version}/NB4A-{version}-x86_64.apk"
+        # 1.4 renamed NB4A-*-x86_64.apk (an emulator build) to NekoBox-*-arm64-v8a.apk, the phone build.
+        ins_url = latest_url.split("releases/")[0] + f"releases/download/{version}/NekoBox-{version}-arm64-v8a.apk"
         dto.install = [self.__get_app_install_dto(AppInstallType.apk, ins_url)]
         return dto
 
