@@ -1737,7 +1737,8 @@
           "forest": "Forest",
           "grape": "Grape",
           "graphite": "Graphite"
-        }
+        },
+        "type": "Chart Type"
       },
       "netStats": {
         "now": "Now",

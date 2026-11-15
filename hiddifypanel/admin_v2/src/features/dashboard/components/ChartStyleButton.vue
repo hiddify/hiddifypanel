@@ -52,6 +52,8 @@ const swatch = (id: string) => {
     c[0],
   ].join(', ')
 }
+/** Every type in one grid, in the groups' order (the preview names the group) */
+const flatTypes = computed(() => groups.value.flatMap((group) => group.types))
 /** The chosen type and the group it sits in, for the live preview */
 const chosenGroup = computed(() => groups.value.find((group) => group.types.includes(style.value.type))?.key)
 
@@ -86,10 +88,10 @@ const set = (patch: Partial<ChartStyle>) => (style.value = { ...style.value, ...
         </Transition>
       </div>
 
-      <section v-for="group in groups" :key="group.key" class="cs__group">
-        <h4 class="cs__label">{{ t(`dashboard.chartStyle.groups.${group.key}`) }}</h4>
+      <section v-if="flatTypes.length" class="cs__group">
+        <h4 class="cs__label">{{ t('dashboard.chartStyle.type') }}</h4>
         <div class="cs__types">
-          <button v-for="type in group.types" :key="type" type="button" class="cs__type" :class="{ 'cs__type--on': style.type === type }" :aria-pressed="style.type === type" @click="set({ type })">
+          <button v-for="type in flatTypes" :key="type" type="button" class="cs__type" :class="{ 'cs__type--on': style.type === type }" :aria-pressed="style.type === type" @click="set({ type })">
             <span class="cs__preview"><ChartTypeIcon :type="type" :color="previewColor" :live="style.type === type" /></span>
             <span class="cs__name">{{ t(`dashboard.chartStyle.types.${type}`) }}</span>
           </button>
