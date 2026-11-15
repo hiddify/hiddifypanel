@@ -9,7 +9,9 @@ export function rollingAverage(values: number[], window: number): number[] {
 
 /** Clock labels (`HH:MM:SS`) for live samples. */
 export function timeLabels(timestamps: number[], locale?: string): string[] {
+  // A 24-hour clock: "18:19:02" is three letters shorter than "06:19:02 PM", so the live charts' time axis has room on
+  // a phone (it spans a minute or two, so the seconds stay)
   return timestamps.map((at) =>
-    new Date(at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    new Date(at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }),
   )
 }
