@@ -795,7 +795,8 @@
         "failedHint": "GitHub could not be reached from the server. Try again later.",
         "channel": {
           "release": "Release",
-          "beta": "Beta"
+          "beta": "Beta",
+          "develop": "Develop"
         },
         "app": "Hiddify Panel",
         "newTitle": "New version",

@@ -1,8 +1,8 @@
 """Is there a newer panel? The latest hiddifypanel release on GitHub against this panel's version.
 
 The answer is kept 24 hours (so the panel asks GitHub at most once a day, whoever opens it); ``?force=1`` (the
-"Check for updates" button) asks again at once. A release install looks only at releases; a beta install also at
-pre-releases.
+"Check for updates" button) asks again at once. A release install looks only at releases; a beta or develop install also
+at pre-releases.
 """
 
 from __future__ import annotations
@@ -38,7 +38,9 @@ def _version(text: str) -> Version | None:
 
 
 def _channel() -> str:
-    return "release" if (hconfig(ConfigEnum.package_mode) or "release") == "release" else "beta"
+    """The package mode: ``release`` (releases only), ``beta`` or ``develop`` (pre-releases too)"""
+    mode = hconfig(ConfigEnum.package_mode) or "release"
+    return mode if mode in ("release", "beta", "develop") else "release"
 
 
 def _fetch_latest(channel: str) -> str:

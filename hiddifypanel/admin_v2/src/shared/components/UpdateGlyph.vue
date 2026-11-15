@@ -3,7 +3,8 @@
  * The panel update's vector icons, each alive in its own way: ``new`` an arrow rising out of a green disc with
  * sparkles, ``ok`` a check drawn into a disc, ``check`` two arrows that turn while ``spinning``, ``warn`` a triangle.
  */
-withDefaults(defineProps<{ kind: 'new' | 'ok' | 'check' | 'warn'; spinning?: boolean; size?: string }>(), { spinning: false, size: '1.5rem' })
+/** ``tint``: the ``ok`` disc's colour (a CSS colour or var), lit from above; none: blue */
+withDefaults(defineProps<{ kind: 'new' | 'ok' | 'check' | 'warn'; spinning?: boolean; size?: string; tint?: string }>(), { spinning: false, size: '1.5rem', tint: undefined })
 const uid = `ug-${Math.random().toString(36).slice(2, 8)}`
 </script>
 
@@ -21,6 +22,12 @@ const uid = `ug-${Math.random().toString(36).slice(2, 8)}`
       <linearGradient :id="`${uid}-w`" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#fbbf24" />
         <stop offset="100%" stop-color="#f59e0b" />
+      </linearGradient>
+      <!-- light from above over a tinted disc -->
+      <linearGradient :id="`${uid}-l`" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0.32" />
+        <stop offset="55%" stop-color="#fff" stop-opacity="0" />
+        <stop offset="100%" stop-color="#000" stop-opacity="0.12" />
       </linearGradient>
       <clipPath :id="`${uid}-c`"><circle cx="16" cy="16" r="13" /></clipPath>
     </defs>
@@ -40,7 +47,8 @@ const uid = `ug-${Math.random().toString(36).slice(2, 8)}`
 
     <!-- up to date: the check draws itself into the disc -->
     <g v-else-if="kind === 'ok'">
-      <circle cx="16" cy="16" r="13" :fill="`url(#${uid}-b)`" />
+      <circle v-if="tint" cx="16" cy="16" r="13" :style="{ fill: tint }" />
+      <circle cx="16" cy="16" r="13" :fill="tint ? `url(#${uid}-l)` : `url(#${uid}-b)`" />
       <path class="ug__draw" d="M10 16.4l4 4 8-8.4" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" pathLength="1" />
     </g>
 

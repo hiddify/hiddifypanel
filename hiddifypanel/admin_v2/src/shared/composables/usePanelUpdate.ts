@@ -6,7 +6,7 @@ export interface PanelUpdateStatus {
   current: string
   latest: string | null
   outdated: boolean
-  channel: 'release' | 'beta'
+  channel: 'release' | 'beta' | 'develop'
   /** unix seconds of the server's last look */
   checked_at: number | null
   error: string | null

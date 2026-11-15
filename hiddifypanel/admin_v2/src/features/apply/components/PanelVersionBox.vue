@@ -9,10 +9,13 @@ import { useI18n } from 'vue-i18n'
 import UpdateGlyph from '@/shared/components/UpdateGlyph.vue'
 import appIcon from '@/assets/images/hiddify-hexagon-blue.svg?url'
 import { loadPanelUpdate, panelCheck, panelUpdate } from '@/shared/composables/usePanelUpdate'
+import { optionIcon } from '@/features/settings/option-icons'
 
 const { t, locale } = useI18n()
 
 const status = computed(() => panelUpdate.value)
+/** The channel in Settings' own colour and icon (Package Update Mode: release green, beta amber, develop red) */
+const channelLook = computed(() => optionIcon('package_mode', status.value?.channel ?? 'release') ?? { icon: 'pi pi-verified', color: 'var(--p-green-500)' })
 /** "Up to date" only after the admin asked; a new version whenever it is known */
 const state = computed<'checking' | 'new' | 'ok' | 'warn' | null>(() => {
   if (panelCheck.checking) return 'checking'
@@ -40,7 +43,7 @@ onMounted(() => void loadPanelUpdate())
 </script>
 
 <template>
-  <section class="pv" :class="state ? `pv--${state}` : ''">
+  <section class="pv" :class="state ? `pv--${state}` : ''" :style="{ '--pv-channel': channelLook.color }">
     <div class="pv__group">
       <div class="pv__app">
         <!-- the panel's own app icon: the blue hexagon (white glass, blue ring and logo) -->
@@ -51,14 +54,14 @@ onMounted(() => void loadPanelUpdate())
             >{{ t('apply.version.current') }} <bdi class="pv__number" dir="ltr">{{ status?.current ?? '—' }}</bdi></span
           >
         </div>
-        <span v-if="status" class="pv__channel" :class="`pv__channel--${status.channel}`">{{ t(`apply.version.channel.${status.channel}`) }}</span>
+        <span v-if="status" class="pv__channel"><i :class="channelLook.icon" aria-hidden="true" />{{ t(`apply.version.channel.${status.channel}`) }}</span>
       </div>
 
       <Transition name="pv-row">
         <div v-if="state" :key="state" class="pv__status">
           <span class="pv__glyph">
             <UpdateGlyph v-if="state === 'checking'" kind="check" spinning size="1.35rem" class="pv__spin" />
-            <UpdateGlyph v-else :kind="state" size="1.9rem" />
+            <UpdateGlyph v-else :kind="state" size="1.9rem" :tint="state === 'ok' ? 'var(--pv-channel)' : undefined" />
           </span>
           <div class="pv__status-text">
             <template v-if="state === 'checking'">
@@ -152,17 +155,20 @@ html.app-dark .pv__group {
   font-variant-numeric: tabular-nums;
 }
 .pv__channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   flex: none;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 650;
-  color: #0a84ff;
-  background: color-mix(in srgb, #0a84ff 13%, transparent);
+  color: var(--pv-channel);
+  background: color-mix(in srgb, var(--pv-channel) 14%, transparent);
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--pv-channel) 30%, transparent);
 }
-.pv__channel--beta {
-  color: #ff9f0a;
-  background: color-mix(in srgb, #ff9f0a 15%, transparent);
+.pv__channel i {
+  font-size: 0.62rem;
 }
 /* the check's answer, under an inset hairline (from the text on, as iOS draws it) */
 .pv__status {
