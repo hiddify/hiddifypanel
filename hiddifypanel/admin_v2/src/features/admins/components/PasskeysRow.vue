@@ -24,8 +24,20 @@
       </div>
     </Message>
     <Message v-else-if="!supported" severity="secondary" size="small" :closable="false">{{ t('account.passkeys.unsupported') }}</Message>
-    <!-- On the IP: no passkey can be made or used on this page (WebAuthn needs a domain name) -->
-    <Message v-else-if="onIp" severity="info" size="small" :closable="false" icon="pi pi-info-circle">{{ onIp }}</Message>
+    <!-- On the IP: no passkey can be made or used on this page (WebAuthn needs a domain name): say why in a line, and
+         offer this same page on one of the panel's domains -->
+    <div v-else-if="ipDomain" class="pk-ip" role="note">
+      <span class="pk-ip__icon" aria-hidden="true"><i class="pi pi-globe" /></span>
+      <div class="pk-ip__text">
+        <b>{{ t('account.passkeys.ipTitle') }}</b>
+        <span>{{ t('account.passkeys.ipBody') }}</span>
+        <code class="pk-ip__host" dir="ltr">{{ host }}</code>
+      </div>
+      <a class="pk-ip__open" :href="ipLink">
+        <span dir="ltr">{{ t('account.passkeys.ipOpen', { domain: ipDomain }) }}</span>
+        <i class="pi pi-arrow-up-right" aria-hidden="true" />
+      </a>
+    </div>
 
     <ul v-if="info?.passkeys.length" class="pk__list">
       <li v-for="p in info.passkeys" :key="p.id" class="pk__item">
@@ -81,10 +93,11 @@ const hint = computed(() => {
 })
 
 /** Why this page itself gets no passkey: it is open on an IP address. */
-const onIp = computed(() => {
-  const domain = info.value && !info.value.domain ? (info.value.passkeys[0]?.domain ?? info.value.missing[0]) : null
-  return domain ? t('account.passkeys.onIp', { host: window.location.hostname, domain }) : ''
-})
+/** On the IP: the panel's domain to use passkeys on instead (WebAuthn needs a domain name), else '' */
+const ipDomain = computed(() => (info.value && !info.value.domain ? (info.value.passkeys[0]?.domain ?? info.value.missing[0] ?? '') : ''))
+const host = window.location.hostname
+/** This same page on that domain (the panel answers on all of its domains) */
+const ipLink = computed(() => (ipDomain.value ? `https://${ipDomain.value}${window.location.pathname}${window.location.search}${window.location.hash}` : ''))
 
 function usedText(p: Passkey): string {
   const added = t('account.passkeys.added', { date: longDate(p.created_at, locale.value) })
@@ -221,5 +234,79 @@ onMounted(load)
 .pk__domain--here {
   color: var(--p-primary-color);
   font-weight: 600;
+}
+
+/* On the IP: a soft note with the reason in a line, the address it is open on, and this page on a domain */
+.pk-ip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.6rem 0.75rem;
+  align-items: start;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--p-primary-color) 22%, transparent);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--p-primary-color) 7%, var(--p-content-background));
+}
+.pk-ip__icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--p-primary-color) 15%, transparent);
+  color: var(--p-primary-color);
+}
+.pk-ip__icon i {
+  font-size: 0.95rem;
+}
+.pk-ip__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  min-width: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--p-text-muted-color);
+}
+.pk-ip__text b {
+  color: var(--p-text-color);
+  font-size: 0.9rem;
+}
+.pk-ip__host {
+  max-width: 100%;
+  margin-top: 0.15rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 0.4rem;
+  background: color-mix(in srgb, var(--p-text-color) 6%, transparent);
+  color: var(--p-text-color);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.pk-ip__open {
+  grid-column: 2;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: filter 0.2s;
+}
+.pk-ip__open:hover {
+  filter: brightness(1.08);
+}
+.pk-ip__open i {
+  font-size: 0.7rem;
+}
+html[dir='rtl'] .pk-ip__open i {
+  transform: scaleX(-1);
 }
 </style>
