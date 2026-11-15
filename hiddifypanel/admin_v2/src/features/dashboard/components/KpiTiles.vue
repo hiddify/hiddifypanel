@@ -57,7 +57,7 @@ const pair = (current: [string, number, string], previous: [string, number, stri
   previous: { label: previous[0], amount: previous[1], text: previous[2] },
   caption,
 })
-const change = (now: number, before: number) => (before > 0 ? ((now - before) / before) * 100 : null)
+const change = (now: number, before: number) => (before > 0 ? Math.round(((now - before) / before) * 1000) / 10 : null)
 const bytes = (value: number) => formatBytes(value)
 
 const usageSpark = computed(() => props.series.map((point) => point.usage))
