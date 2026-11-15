@@ -99,8 +99,7 @@ function registerFailure(data: NodeRegisterError): RegisterFailure {
   return new RegisterFailure(data)
 }
 
-
-/** One IP address of a server, from open sources (GeoLite2, RDAP, Tor Project, bad-asn-list), kept 72 hours */
+/** One IP address of a server, from open sources (GeoLite2, RDAP, Tor Project, bad-asn-list, …), kept 7 days */
 export interface IpContact {
   name?: string
   email?: string
@@ -144,6 +143,13 @@ export interface IpDetails {
   asn: { asn?: string; org?: string; name?: string; country?: string; registered?: string; updated?: string }
   company: { name: string; domain: string; logo: string }
   detect: { datacenter: boolean; datacenter_listed: boolean; vpn_likely: boolean; tor: boolean; mobile: boolean; residential: boolean; bogon: boolean }
+  /** The Complete IP Info section: each flag true / false, or null when it could not be checked */
+  complete?: {
+    flags: Record<string, boolean | null>
+    certificates: { name: string; not_after: string; expired: boolean }[]
+    tor_relay: { nickname?: string; running?: boolean; exit?: boolean }
+    crawler: string
+  }
   fetched_at: number
 }
 export interface NodeIpInfo {

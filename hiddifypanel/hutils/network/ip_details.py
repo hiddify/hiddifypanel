@@ -8,7 +8,7 @@
 - hosting / datacenter networks: brianhama/bad-asn-list (MIT), plus the AS name;
 - the company's logo: the favicon of the company's own website.
 
-An address's answer is kept 72 hours (``TTL``), so opening the sheet again does not ask anyone; the lists and the
+An address's answer is kept 7 days (``TTL``), so opening the sheet again does not ask anyone; the lists and the
 registries' bootstrap files are kept as long.
 """
 
@@ -26,10 +26,10 @@ from urllib.parse import urljoin
 import requests
 from loguru import logger
 
-TTL = 72 * 3600
+TTL = 7 * 24 * 3600
 _TIMEOUT = 8
 _UA = {"User-Agent": "HiddifyPanel (node info)", "Accept": "application/rdap+json, application/json"}
-_KEY = "ipdetails:v2"
+_KEY = "ipdetails:v3"
 
 _BOOTSTRAP = {"v4": "https://data.iana.org/rdap/ipv4.json", "v6": "https://data.iana.org/rdap/ipv6.json", "asn": "https://data.iana.org/rdap/asn.json"}
 _TOR_LIST = "https://check.torproject.org/torbulkexitlist"
@@ -288,8 +288,8 @@ def _detect(ip: str, asn: str, names: str, domain: str) -> dict:
     }
 
 
-def _describe(ip: str) -> dict:
-    from hiddifypanel.hutils.network import ip_lookup
+def _describe(ip: str, domains: list[str]) -> dict:
+    from hiddifypanel.hutils.network import ip_flags, ip_lookup
 
     geo = ip_lookup.lookup(ip)
     rdap = _rdap_ip(ip) if ipaddress.ip_address(ip).is_global else {}
@@ -298,32 +298,37 @@ def _describe(ip: str) -> dict:
     abuse = rdap.get("abuse", {})
     domain = company_domain(abuse.get("email", ""), owner.get("email", ""))
     asn_info = _rdap_asn(asn) if asn else {}
+    ptr = _ptr(ip)
+    names = " ".join([geo.get("org", ""), asn_info.get("name", ""), rdap.get("netname", ""), owner.get("name", "")])
+    detect = _detect(ip, asn, names, domain)
     return {
         "ip": ip,
         "version": ipaddress.ip_address(ip).version,
-        "ptr": _ptr(ip),
+        "ptr": ptr,
         "geo": geo,
         "network": rdap,
         "asn": {"asn": asn, "org": geo.get("org", ""), **asn_info} if asn else {},
         "company": {"name": owner.get("name") or geo.get("org", ""), "domain": domain, "logo": logo(domain)},
-        "detect": _detect(ip, asn, " ".join([geo.get("org", ""), asn_info.get("name", ""), rdap.get("netname", ""), owner.get("name", "")]), domain),
+        "detect": detect,
+        # the "Complete IP Info" section
+        "complete": ip_flags.check(ip, asn=asn, names=names, ptr=ptr, datacenter=detect["datacenter"], mobile=detect["mobile"], tor_exit=detect["tor"], domains=domains),
         "fetched_at": int(time.time()),
     }
 
 
-def describe(ip: str, refresh: bool = False) -> dict:
-    """What is known about ``ip``, kept ``TTL`` (72 hours)."""
+def describe(ip: str, refresh: bool = False, domains: list[str] | None = None) -> dict:
+    """What is known about ``ip``, kept ``TTL`` (7 days); ``domains``: the server's, for its certificates."""
     key = f"{_KEY}:ip:{ip}"
     if not refresh:
         cached = _redis().get(key)
         if cached is not None:
             return json.loads(cached)
-    info = _describe(ip)
+    info = _describe(ip, domains or [])
     _redis().set(key, json.dumps(info), ex=TTL)
     return info
 
 
-def describe_all(ips: list[str], refresh: bool = False) -> list[dict]:
+def describe_all(ips: list[str], refresh: bool = False, domains: list[str] | None = None) -> list[dict]:
     """Several addresses at once (each one's lookups run side by side, in the app's context for its cache)."""
     from flask import current_app
 
@@ -333,7 +338,7 @@ def describe_all(ips: list[str], refresh: bool = False) -> list[dict]:
 
     def one(ip: str) -> dict:
         with app.app_context():
-            return describe(ip, refresh)
+            return describe(ip, refresh, domains)
 
     with ThreadPoolExecutor(max_workers=min(4, len(ips))) as pool:
         return list(pool.map(one, ips))

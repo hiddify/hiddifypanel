@@ -2,8 +2,8 @@
 /**
  * A server's or node's IP addresses in one sheet, in the style of iOS: the company's logo and the country's waving
  * flag, each address, what kind of network it is, who runs it, where it is, the abuse contact and the server's
- * domains. The panel looks the addresses up in open sources and keeps the answer 72 hours; this browser keeps it as
- * long, so opening the sheet again asks nobody.
+ * domains, and under "Complete IP Info" the flags of each address, by category. The panel looks the addresses up in
+ * open sources and keeps the answer 7 days; this browser keeps it as long, so opening the sheet again asks nobody.
  * A bottom sheet on a phone, a card in the middle elsewhere.
  */
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
@@ -34,7 +34,7 @@ phone.addEventListener('change', onPhone)
 onBeforeUnmount(() => phone.removeEventListener('change', onPhone))
 
 // --- the answer, kept in this browser until the panel would look it up again ---------------------------------
-const STORE = 'hm.ipinfo.v2.'
+const STORE = 'hm.ipinfo.v3.'
 function stored(id: number): NodeIpInfo | null {
   try {
     const raw = JSON.parse(localStorage.getItem(STORE + id) || 'null') as {
@@ -206,12 +206,94 @@ function ago(seconds: number): string {
   if (Math.abs(diff) < 86400) return rtf.format(Math.round(diff / 3600), 'hour')
   return rtf.format(Math.round(diff / 86400), 'day')
 }
-const nextLookup = computed(() => {
-  if (!info.value) return 0
-  const kept = info.value.refresh_in > 0 ? info.value.refresh_in : info.value.ttl
-  const fetched = current.value?.fetched_at ?? Date.now() / 1000
-  return Math.max(1, Math.round((fetched + kept - Date.now() / 1000) / 3600))
-})
+/** When the panel looks the address up again: a week after it last did */
+const nextLookup = computed(() => (info.value && current.value ? ago(current.value.fetched_at + info.value.ttl) : ''))
+
+// --- Complete IP Info: the flags of the address, by category -------------------------------------------------------
+type Tone = 'neutral' | 'bad'
+interface FlagDef {
+  key: string
+  /** The flag's own name, the same in every language */
+  name: string
+  icon: string
+  /** read from names and numbers, so a yes is only a "likely" */
+  likely?: boolean
+  /** a yes is a problem (red), else it is just a fact (blue) */
+  tone?: Tone
+  source: string
+}
+const FLAG_GROUPS: { key: string; color: string; flags: FlagDef[] }[] = [
+  {
+    key: 'network',
+    color: '#007aff',
+    flags: [
+      { key: 'bogon', name: 'Bogon', icon: 'x-bogon', tone: 'bad', source: 'local' },
+      { key: 'datacenter', name: 'Datacenter / Hosting', icon: 'pi-server', source: 'hosting' },
+      { key: 'mobile', name: 'Mobile', icon: 'pi-mobile', likely: true, source: 'asName' },
+      { key: 'satellite', name: 'Satellite', icon: 'x-satellite', likely: true, source: 'asName' },
+      { key: 'anycast', name: 'Anycast', icon: 'x-anycast', likely: true, source: 'asName' },
+      { key: 'dsl_dynamic', name: 'DSL Dynamic', icon: 'x-dsl', likely: true, source: 'ptr' },
+      { key: 'ipfs', name: 'IPFS Node', icon: 'x-ipfs', source: 'port' },
+    ],
+  },
+  {
+    key: 'anonymity',
+    color: '#af52de',
+    flags: [
+      { key: 'proxy', name: 'Proxy', icon: 'x-proxy', likely: true, source: 'datacenter' },
+      { key: 'vpn', name: 'VPN', icon: 'pi-shield', likely: true, source: 'datacenter' },
+      { key: 'tor', name: 'Tor', icon: 'x-onion', source: 'tor' },
+      { key: 'relay', name: 'Relay / iCloud Relay', icon: 'x-relay', source: 'apple' },
+      { key: 'anonymous', name: 'Anonymous', icon: 'x-mask', source: 'anonymous' },
+      { key: 'active_tor', name: 'Active Tor', icon: 'x-active-tor', source: 'onionoo' },
+    ],
+  },
+  {
+    key: 'threats',
+    color: '#ff3b30',
+    flags: [
+      { key: 'crawler', name: 'Crawler', icon: 'x-spider', source: 'crawlers' },
+      { key: 'abuser', name: 'Abuser', icon: 'x-warning', tone: 'bad', source: 'blocklists' },
+      { key: 'known_abuser', name: 'Known Abuser', icon: 'x-blocked', tone: 'bad', source: 'spamhaus' },
+      { key: 'threat', name: 'Threat', icon: 'x-bug', tone: 'bad', source: 'abusech' },
+      { key: 'security_scanner', name: 'Security Scanner', icon: 'x-radar', likely: true, source: 'ptrAs' },
+    ],
+  },
+  {
+    key: 'web',
+    color: '#34c759',
+    flags: [
+      { key: 'tor_exit', name: 'Tor Exit Node', icon: 'x-exit', source: 'tor' },
+      { key: 'open_directory', name: 'Open Directory', icon: 'x-folder', tone: 'bad', source: 'webRoot' },
+      { key: 'expired_certificate', name: 'Expired Certificate', icon: 'x-cert', tone: 'bad', source: 'tls' },
+    ],
+  },
+]
+const ICON_COLORS = ['#007aff', '#5856d6', '#af52de', '#ff9500', '#30b0c7', '#34c759', '#ff2d55', '#5ac8fa']
+const completeOpen = ref(false)
+watch(selected, () => (completeOpen.value = completeOpen.value && !!current.value?.complete))
+
+/** A flag's state for the badge: yes / likely / no / not checked */
+function stateOf(def: FlagDef): { label: string; kind: 'yes' | 'bad' | 'likely' | 'no' | 'unknown' } {
+  const value = current.value?.complete?.flags[def.key]
+  if (value == null) return { label: t('dashboard.ipInfo.notChecked'), kind: 'unknown' }
+  if (!value) return { label: t('dashboard.ipInfo.no'), kind: 'no' }
+  if (def.likely) return { label: t('dashboard.ipInfo.likely'), kind: 'likely' }
+  return { label: t('dashboard.ipInfo.yes'), kind: def.tone === 'bad' ? 'bad' : 'yes' }
+}
+/** The detail under a flag, when there is one: the certificates, the Tor relay's name, the crawler's owner */
+function detailOf(def: FlagDef): string[] {
+  const c = current.value?.complete
+  if (!c) return []
+  if (def.key === 'expired_certificate') return c.certificates.map((x) => `${x.name} · ${x.expired ? t('dashboard.ipInfo.expiredOn', { date: x.not_after }) : t('dashboard.ipInfo.validUntil', { date: x.not_after })}`)
+  if ((def.key === 'tor' || def.key === 'active_tor') && c.tor_relay.nickname) return [t('dashboard.ipInfo.relayName', { name: c.tor_relay.nickname })]
+  if (def.key === 'crawler' && c.crawler) return [c.crawler]
+  return []
+}
+/** How many flags of a group are up (a problem first), for the group's header */
+function upCount(flags: FlagDef[]): number {
+  return flags.filter((f) => current.value?.complete?.flags[f.key]).length
+}
 
 /** The kinds of network, each a coloured tile */
 const detections = computed(() => {
@@ -569,6 +651,39 @@ const sections = computed(() =>
             </div>
             <p v-if="current.detect.vpn_likely" class="ips__note"><i class="pi pi-info-circle" />{{ t('dashboard.ipInfo.vpnHint') }}</p>
 
+            <!-- Complete IP Info: every flag of the address, opened in place -->
+            <template v-if="current.complete">
+              <button type="button" class="ips__more" :class="{ 'ips__more--open': completeOpen }" :aria-expanded="completeOpen" @click="completeOpen = !completeOpen">
+                <span>Complete IP Info</span>
+                <i class="pi pi-chevron-down" />
+              </button>
+              <div class="ips__complete" :class="{ 'ips__complete--open': completeOpen }">
+                <div class="ips__complete-inner">
+                  <template v-for="group in FLAG_GROUPS" :key="group.key">
+                    <h3 class="ips__heading ips__heading--group">
+                      <span class="ips__group-dot" :style="{ background: group.color }" />
+                      {{ t(`dashboard.ipInfo.groups.${group.key}`) }}
+                      <span v-if="upCount(group.flags)" class="ips__group-count">{{ upCount(group.flags) }}</span>
+                    </h3>
+                    <ul class="ips__group">
+                      <li v-for="(def, i) in group.flags" :key="def.key" class="ips__flag-row">
+                        <span class="ips__row-icon" :style="{ background: ICON_COLORS[(i + group.key.length) % ICON_COLORS.length], '--li-ink': ICON_COLORS[(i + group.key.length) % ICON_COLORS.length] }"
+                          ><LiveIcon :name="def.icon"
+                        /></span>
+                        <span class="ips__flag-text">
+                          <span class="ips__flag-name">{{ def.name }}</span>
+                          <span class="ips__flag-desc">{{ t(`dashboard.ipInfo.flags.${def.key}`) }}</span>
+                          <span v-for="line in detailOf(def)" :key="line" class="ips__flag-detail" dir="ltr">{{ line }}</span>
+                          <span class="ips__flag-source">{{ t(`dashboard.ipInfo.src.${def.source}`) }}</span>
+                        </span>
+                        <span class="ips__state" :class="`ips__state--${stateOf(def).kind}`">{{ stateOf(def).label }}</span>
+                      </li>
+                    </ul>
+                  </template>
+                </div>
+              </div>
+            </template>
+
             <!-- grouped lists, as in iOS Settings -->
             <template v-for="section in sections" :key="section.key">
               <h3 class="ips__heading">{{ section.title }}</h3>
@@ -599,7 +714,7 @@ const sections = computed(() =>
                 ><i class="pi pi-refresh" />{{
                   t('dashboard.ipInfo.updatedAgo', {
                     when: ago(current.fetched_at),
-                    hours: nextLookup,
+                    next: nextLookup,
                   })
                 }}</span
               >
@@ -972,6 +1087,141 @@ const sections = computed(() =>
 }
 .ips__domain i {
   font-size: 0.65rem;
+}
+
+/* Complete IP Info: the button, and the flags it opens in place */
+.ips__more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--p-primary-color) 11%, var(--ips-group));
+  color: var(--p-primary-color);
+  font-size: 0.95rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.ips__more:hover {
+  background: color-mix(in srgb, var(--p-primary-color) 17%, var(--ips-group));
+}
+.ips__more i {
+  font-size: 0.8rem;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.ips__more--open i {
+  transform: rotate(180deg);
+}
+.ips__complete {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.45s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.3s ease;
+}
+.ips__complete--open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.ips__complete-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+.ips__heading--group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.ips__group-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+}
+.ips__group-count {
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--p-text-color) 10%, transparent);
+  color: var(--p-text-color);
+  font-size: 0.7rem;
+  letter-spacing: 0;
+}
+.ips__flag-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.65rem 0.85rem;
+}
+.ips__flag-row + .ips__flag-row {
+  box-shadow: inset 0 0.5px 0 var(--ips-line);
+}
+.ips__flag-row .ips__row-icon {
+  margin-top: 0.1rem;
+}
+.ips__flag-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+.ips__flag-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+.ips__flag-desc {
+  color: var(--ips-muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.ips__flag-detail {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.74rem;
+  overflow-wrap: anywhere;
+}
+.ips__flag-source {
+  color: color-mix(in srgb, var(--ips-muted) 75%, transparent);
+  font-size: 0.68rem;
+}
+.ips__state {
+  flex: none;
+  align-self: center;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.ips__state--yes {
+  background: color-mix(in srgb, #007aff 14%, transparent);
+  color: #007aff;
+}
+.ips__state--bad {
+  background: color-mix(in srgb, #ff3b30 14%, transparent);
+  color: #ff3b30;
+}
+.ips__state--likely {
+  background: color-mix(in srgb, #ff9500 16%, transparent);
+  color: #e08600;
+}
+.ips__state--no {
+  background: color-mix(in srgb, #34c759 14%, transparent);
+  color: #248a3d;
+}
+.ips__state--unknown {
+  background: color-mix(in srgb, var(--p-text-color) 8%, transparent);
+  color: var(--ips-muted);
+}
+html.app-dark .ips__state--no {
+  color: #30d158;
+}
+html.app-dark .ips__state--likely {
+  color: #ff9f0a;
 }
 
 .ips__footer {

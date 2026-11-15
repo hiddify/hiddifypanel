@@ -297,7 +297,7 @@ class NodeIpInfoApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
     def get(self, node_id: int):
-        """Nodes: What is known about this server's (0) or a node's IP addresses, from open sources, kept 72 hours"""
+        """Nodes: What is known about this server's (0) or a node's IP addresses, from open sources, kept 7 days"""
         from hiddifypanel.hutils.network import ip_details
         from hiddifypanel.models import Domain
 
@@ -306,8 +306,8 @@ class NodeIpInfoApi(MethodView):
             _remote_or_404(node_id)
         ips = _node_ips(node_id)
         refresh = request.args.get("refresh") == "1"
-        details = ip_details.describe_all(ips, refresh=refresh)
         domains = sorted({d.domain for d in Domain.query.filter(Domain.child_id == node_id).all() if d.domain})
+        details = ip_details.describe_all(ips, refresh=refresh, domains=domains)
         left = min((ip_details.ttl_left(ip) for ip in ips), default=0)
         return {"node_id": node_id, "ips": details, "domains": domains, "refresh_in": left, "ttl": ip_details.TTL}
 
