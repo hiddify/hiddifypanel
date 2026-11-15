@@ -4,7 +4,9 @@ import { useI18n } from 'vue-i18n'
 import type { DashboardDailyPoint, DashboardUsage, DashboardUsers } from '@/core/api/generated'
 import { formatBytes, formatCount, formatDayLabel } from '@/shared/utils/format-metrics'
 import { SERIES } from '../composables/useChartTheme'
-import StatTile, { type TileDetail } from './StatTile.vue'
+import StatTile, { type TileComparison, type TileDetail } from './StatTile.vue'
+import ChartStyleButton from './ChartStyleButton.vue'
+import { TILE_TYPES, themed, useChartStyle } from '../composables/useChartStyle'
 
 const props = defineProps<{
   usage: DashboardUsage | null
@@ -15,6 +17,8 @@ const props = defineProps<{
 const { t, locale } = useI18n()
 
 interface Tile {
+  key: 'online' | 'today' | 'week' | 'month'
+  comparison: TileComparison
   label: string
   value: string
   icon: string
@@ -29,12 +33,31 @@ interface Tile {
   sparkFormatter: (value: number) => string
 }
 
+/** Each tile's face (a small chart, a ring or a bar pair) and colour, chosen from its own small window */
+const styles = {
+  online: useChartStyle('kpi-online', { type: 'area' }, TILE_TYPES),
+  today: useChartStyle('kpi-today', { type: 'area' }, TILE_TYPES),
+  week: useChartStyle('kpi-week', { type: 'area' }, TILE_TYPES),
+  month: useChartStyle('kpi-month', { type: 'area' }, TILE_TYPES),
+}
+const pair = (current: [string, number, string], previous: [string, number, string], caption: string): TileComparison => ({
+  current: { label: current[0], amount: current[1], text: current[2] },
+  previous: { label: previous[0], amount: previous[1], text: previous[2] },
+  caption,
+})
+
 const usageSpark = computed(() => props.series.map((point) => point.usage))
 const onlineSpark = computed(() => props.series.map((point) => point.online))
 const sparkLabels = computed(() => props.series.map((point) => formatDayLabel(point.date, locale.value)))
 
 const tiles = computed<Tile[]>(() => [
   {
+    key: 'online',
+    comparison: pair(
+      [t('dashboard.face.now'), props.users?.online.m5 ?? 0, formatCount(props.users?.online.m5 ?? 0)],
+      [t('dashboard.face.active'), props.users?.active ?? 0, formatCount(props.users?.active ?? 0)],
+      t('dashboard.face.ofActive'),
+    ),
     label: t('dashboard.onlineUsers'),
     value: `${props.users?.online.m5 ?? 0} / ${props.users?.active ?? 0}`,
     icon: 'pi pi-users',
@@ -52,6 +75,12 @@ const tiles = computed<Tile[]>(() => [
     sparkFormatter: (value: number) => String(Math.round(value)),
   },
   {
+    key: 'today',
+    comparison: pair(
+      [t('dashboard.today'), props.usage?.totals.today ?? 0, formatBytes(props.usage?.totals.today ?? 0)],
+      [t('dashboard.yesterday'), props.usage?.totals.yesterday ?? 0, formatBytes(props.usage?.totals.yesterday ?? 0)],
+      t('dashboard.face.ofYesterday'),
+    ),
     label: t('dashboard.todayUsage'),
     value: formatBytes(props.usage?.totals.today ?? 0),
     icon: 'pi pi-calendar',
@@ -69,6 +98,12 @@ const tiles = computed<Tile[]>(() => [
     sparkFormatter: (value: number) => formatBytes(value),
   },
   {
+    key: 'week',
+    comparison: pair(
+      [t('dashboard.face.thisWeek'), props.usage?.totals.week ?? 0, formatBytes(props.usage?.totals.week ?? 0)],
+      [t('dashboard.face.lastWeek'), props.usage?.previous.week ?? 0, formatBytes(props.usage?.previous.week ?? 0)],
+      t('dashboard.face.ofLastWeek'),
+    ),
     label: t('dashboard.weekUsage'),
     value: formatBytes(props.usage?.totals.week ?? 0),
     icon: 'pi pi-calendar-clock',
@@ -86,6 +121,12 @@ const tiles = computed<Tile[]>(() => [
     sparkFormatter: (value: number) => formatBytes(value),
   },
   {
+    key: 'month',
+    comparison: pair(
+      [t('dashboard.face.thisMonth'), props.usage?.totals.month ?? 0, formatBytes(props.usage?.totals.month ?? 0)],
+      [t('dashboard.face.lastMonth'), props.usage?.previous.month ?? 0, formatBytes(props.usage?.previous.month ?? 0)],
+      t('dashboard.face.ofLastMonth'),
+    ),
     label: t('dashboard.monthUsage'),
     value: formatBytes(props.usage?.totals.month ?? 0),
     icon: 'pi pi-calendar-plus',
@@ -101,7 +142,7 @@ const tiles = computed<Tile[]>(() => [
     sparkline: usageSpark.value.slice(-30),
     sparkLabels: sparkLabels.value.slice(-30),
     sparkFormatter: (value: number) => formatBytes(value),
-  }
+  },
 ])
 </script>
 
@@ -113,7 +154,9 @@ const tiles = computed<Tile[]>(() => [
       :label="tile.label"
       :value="tile.value"
       :icon="tile.icon"
-      :accent="tile.accent"
+      :accent="themed(styles[tile.key].value, 0, tile.accent)"
+      :kind="styles[tile.key].value.type"
+      :comparison="tile.comparison"
       :caption="tile.caption"
       :trend="tile.trend"
       :trend-label="tile.trendLabel"
@@ -121,7 +164,11 @@ const tiles = computed<Tile[]>(() => [
       :sparkline="tile.sparkline"
       :spark-labels="tile.sparkLabels"
       :spark-formatter="tile.sparkFormatter"
-    />
+    >
+      <template #tools>
+        <ChartStyleButton v-model="styles[tile.key].value" :types="TILE_TYPES" :toggles="[]" :accent="tile.accent" size="small" @reset="styles[tile.key].reset()" />
+      </template>
+    </StatTile>
   </div>
 </template>
 

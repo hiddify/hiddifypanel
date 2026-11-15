@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { dashboardApi, type DashboardNode, type DashboardNodeStats, type DashboardSnapshot } from '@/core/api/generated'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { useMetricHistory } from './useMetricHistory'
+import { QUICK_PRESETS, apiDaysFor, presetRange, type CustomRange } from '../utils/date-range'
 
 /** Ranges the dashboard API accepts for the usage/users history charts. */
 export const RANGE_OPTIONS = [7, 30, 90, 180] as const
@@ -12,6 +13,20 @@ export const ANALYTICS_REFRESH_MS = 60000
 
 const RANGE_STORAGE_KEY = 'admin_v2_dashboard_range'
 const NODE_STORAGE_KEY = 'admin_v2_dashboard_node'
+const CUSTOM_STORAGE_KEY = 'admin_v2_dashboard_custom_range'
+const DAY = /^\d{4}-\d{2}-\d{2}$/
+
+/** A picked period kept from the last visit: a preset is worked out again for today, fixed days stay as they were */
+function storedCustom(locale: string): CustomRange | null {
+  try {
+    const raw = JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY) ?? 'null') as CustomRange | null
+    if (!raw) return null
+    if (raw.preset && (QUICK_PRESETS as readonly string[]).includes(raw.preset)) return presetRange(raw.preset, locale)
+    return DAY.test(raw.start) && DAY.test(raw.end) && raw.start <= raw.end ? { start: raw.start, end: raw.end } : null
+  } catch {
+    return null
+  }
+}
 
 function storedRange(): number {
   const stored = Number(localStorage.getItem(RANGE_STORAGE_KEY))
@@ -35,7 +50,7 @@ function storedNode(): number | null {
  * interval, usage/user aggregates slowly and whenever users or nodes change; both pause while the
  * browser tab is hidden.
  */
-export function useDashboard() {
+export function useDashboard(locale = 'en') {
   const analytics = ref<DashboardSnapshot | null>(null)
   const system = ref<DashboardSnapshot['system'] | null>(null)
   const processes = ref<DashboardSnapshot['processes'] | null>(null)
@@ -44,6 +59,9 @@ export function useDashboard() {
 
   const rangeDays = ref(storedRange())
   const childId = ref<number | null>(storedNode())
+  /** A period picked in the period window (null: the toolbar's last N days) */
+  const customRange = ref<CustomRange | null>(storedCustom(locale))
+  const fetchDays = computed(() => (customRange.value ? apiDaysFor(customRange.value) : rangeDays.value))
   const live = ref(true)
   const loading = ref(true)
   const refreshing = ref(false)
@@ -56,7 +74,7 @@ export function useDashboard() {
 
   const debug = debugNodes()
   const query = () => ({
-    days: rangeDays.value,
+    days: fetchDays.value,
     ...(childId.value === null ? {} : { child_id: childId.value }),
     ...(debug ? { debug_node: 1 as const } : {}),
   })
@@ -128,10 +146,12 @@ export function useDashboard() {
 
   watch(live, startFeeds)
 
-  watch(rangeDays, (days) => {
-    localStorage.setItem(RANGE_STORAGE_KEY, String(days))
-    analyticsFeed?.restart()
+  watch(rangeDays, (days) => localStorage.setItem(RANGE_STORAGE_KEY, String(days)))
+  watch(customRange, (range) => {
+    if (range) localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(range.preset ? { preset: range.preset } : range))
+    else localStorage.removeItem(CUSTOM_STORAGE_KEY)
   })
+  watch(fetchDays, () => analyticsFeed?.restart())
 
   watch(childId, (id) => {
     localStorage.setItem(NODE_STORAGE_KEY, id === null ? 'all' : String(id))
@@ -146,7 +166,12 @@ export function useDashboard() {
   const nodes = computed<DashboardNode[]>(() => analytics.value?.nodes ?? [])
 
   return {
-    series: computed(() => analytics.value?.series ?? []),
+    // a picked period: the days the API sent, cut to it
+    series: computed(() => {
+      const all = analytics.value?.series ?? []
+      const range = customRange.value
+      return range ? all.filter((point) => point.date >= range.start && point.date <= range.end) : all
+    }),
     usage: computed(() => analytics.value?.usage ?? null),
     users: computed(() => analytics.value?.users ?? null),
     system: computed(() => system.value),
@@ -157,6 +182,7 @@ export function useDashboard() {
     samples: history.samples,
     nodeSamples: history.nodeSamples,
     rangeDays,
+    customRange,
     live,
     loading,
     refreshing,

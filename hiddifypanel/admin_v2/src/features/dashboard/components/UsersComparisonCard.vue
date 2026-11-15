@@ -12,6 +12,8 @@ import ChartViewSwitch from './ChartViewSwitch.vue'
 import ActivityRings from './views/ActivityRings.vue'
 import RankedBars from './views/RankedBars.vue'
 import { useChartView } from '../composables/useChartView'
+import ChartStyleButton from './ChartStyleButton.vue'
+import { BAR_TYPES, themed, useChartStyle } from '../composables/useChartStyle'
 
 const props = defineProps<{
   users: DashboardUsers | null
@@ -112,6 +114,9 @@ const chartSeries = computed(() => {
 /** How the readings are shown: bars, activity rings, or ranked bars (the reading itself is chosen with the mode) */
 const VIEWS = ['bars', 'rings', 'ranked'] as const
 const view = useChartView('users-comparison', VIEWS)
+/** The bars as columns, lollipops or dots, in the chosen colours (the rings and ranked bars take the colours too) */
+const style = useChartStyle('users-comparison', { type: 'column' }, BAR_TYPES)
+const resetStyle = style.reset
 const viewOptions = computed(() => [
   { value: 'bars', icon: 'pi pi-chart-bar', label: t('dashboard.views.bars') },
   { value: 'rings', icon: 'pi pi-circle', label: t('dashboard.views.rings') },
@@ -123,7 +128,7 @@ const readings = computed(() =>
   labels.value
     .map((label, i) => ({ label, value: chartSeries.value.reduce((sum, s) => sum + (s.values[i] ?? 0), 0) }))
     .reverse()
-    .map((reading, i) => ({ ...reading, color: READING_COLORS[i % READING_COLORS.length]! })),
+    .map((reading, i) => ({ ...reading, color: themed(style.value, i, READING_COLORS[i % READING_COLORS.length]!) })),
 )
 
 /** Averages can be fractional: show 1.4, not a rounded 1 next to a taller bar. */
@@ -142,6 +147,7 @@ const onlineShare = computed(() => {
   <DashCard :title="t('dashboard.usersComparison')" :subtitle="modeHint" icon="pi pi-user-plus" :accent="SERIES.online" padded>
     <template #actions>
       <ChartViewSwitch v-model="view" :options="viewOptions" :label="t('dashboard.views.switch')" />
+      <ChartStyleButton v-model="style" :types="view === 'bars' ? BAR_TYPES : []" :toggles="view === 'bars' ? ['grid'] : []" :accent="SERIES.online" @reset="resetStyle" />
       <SelectButton v-model="mode" :options="modeOptions" option-label="label" option-value="value" :allow-empty="false" size="small" :aria-label="t('dashboard.usersComparison')">
         <template #option="{ option }">
           <span class="users-mode"><i :class="option.icon" />{{ option.label }}</span>
@@ -152,19 +158,12 @@ const onlineShare = computed(() => {
     <div class="users-compare-wrap">
       <div class="users-compare">
         <div class="users-compare__gauge">
-          <ResourceGauge
-            :percent="onlineShare"
-            :color="SERIES.online"
-            :value="`${users?.online.m5 ?? 0}/${users?.active ?? 0}`"
-            :caption="t('dashboard.onlineNow')"
-            :auto-color="false"
-            :size="110"
-          />
+          <ResourceGauge :percent="onlineShare" :color="SERIES.online" :value="`${users?.online.m5 ?? 0}/${users?.active ?? 0}`" :caption="t('dashboard.onlineNow')" :auto-color="false" :size="110" />
           <p class="users-compare__hint">{{ t('dashboard.inFiveMinutes') }}</p>
         </div>
         <Transition name="cv" mode="out-in">
           <ActivityRings v-if="view === 'rings'" key="rings" class="users-compare__chart" :items="readings" :format="countText" />
-          <RankedBars v-else-if="view === 'ranked'" key="ranked" class="users-compare__chart" :items="readings" :color="SERIES.online" :format="countText" />
+          <RankedBars v-else-if="view === 'ranked'" key="ranked" class="users-compare__chart" :items="readings" :color="themed(style, 0, SERIES.online)" :format="countText" />
           <MetricChart
             v-else
             key="bars"
@@ -172,6 +171,7 @@ const onlineShare = computed(() => {
             :labels="labels"
             :series="chartSeries"
             type="bar"
+            :chart-style="style"
             :stacked="perNode"
             :stack-total-label="t('dashboard.onlineUsers')"
             :value-formatter="countText"
@@ -183,8 +183,12 @@ const onlineShare = computed(() => {
       </div>
       <!-- Distinct users behind the week and month, whichever reading is shown -->
       <div class="users-compare__totals">
-        <span class="users-compare__total"><i class="pi pi-calendar" />{{ t('dashboard.uniqueWeek') }}<b>{{ users?.online.week ?? 0 }}</b></span>
-        <span class="users-compare__total"><i class="pi pi-calendar-plus" />{{ t('dashboard.uniqueMonth') }}<b>{{ users?.online.month ?? 0 }}</b></span>
+        <span class="users-compare__total"
+          ><i class="pi pi-calendar" />{{ t('dashboard.uniqueWeek') }}<b>{{ users?.online.week ?? 0 }}</b></span
+        >
+        <span class="users-compare__total"
+          ><i class="pi pi-calendar-plus" />{{ t('dashboard.uniqueMonth') }}<b>{{ users?.online.month ?? 0 }}</b></span
+        >
       </div>
     </div>
   </DashCard>

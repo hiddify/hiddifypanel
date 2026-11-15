@@ -8,11 +8,14 @@ import type { DashboardNode } from '@/core/api/generated'
 import { formatClock } from '@/shared/utils/format-metrics'
 import { RANGE_OPTIONS } from '../composables/useDashboard'
 import { dashboardNodeName } from '../utils/node-name'
+import DateRangeButton from './DateRangeButton.vue'
+import type { CustomRange } from '../utils/date-range'
 
 const ALL_NODES = -1
 
 const props = defineProps<{
   rangeDays: number
+  customRange: CustomRange | null
   childId: number | null
   nodes: DashboardNode[]
   live: boolean
@@ -23,6 +26,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:rangeDays': [value: number]
+  'update:customRange': [value: CustomRange | null]
   'update:childId': [value: number | null]
   'update:live': [value: boolean]
   refresh: []
@@ -30,9 +34,7 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n()
 
-const rangeItems = computed(() =>
-  RANGE_OPTIONS.map((days) => ({ label: t('dashboard.nDays', { days }), value: days })),
-)
+const rangeItems = computed(() => RANGE_OPTIONS.map((days) => ({ label: t('dashboard.nDays', { days }), value: days })))
 
 const nodeOptions = computed(() => [
   { label: t('dashboard.allNodes'), value: ALL_NODES },
@@ -46,6 +48,11 @@ const selectedNode = computed({
   get: () => (props.childId === null ? ALL_NODES : props.childId),
   set: (value: number) => emit('update:childId', value === ALL_NODES ? null : value),
 })
+
+function pickDays(days: number) {
+  emit('update:customRange', null)
+  emit('update:rangeDays', days)
+}
 
 const status = computed(() => {
   if (props.failed) return { text: t('dashboard.loadFailed'), tone: 'error' }
@@ -61,44 +68,23 @@ const status = computed(() => {
       {{ status.text }}
     </span>
     <div class="toolbar__controls">
-      <Select
-        v-model="selectedNode"
-        :options="nodeOptions"
-        option-label="label"
-        option-value="value"
-        size="small"
-        class="toolbar__node"
-        :aria-label="t('dashboard.node')"
-      />
-      <SelectButton
-        :model-value="rangeDays"
-        :options="rangeItems"
-        option-label="label"
-        option-value="value"
-        :allow-empty="false"
-        size="small"
-        class="toolbar__range"
-        :aria-label="t('dashboard.range')"
-        @update:model-value="(value: number) => emit('update:rangeDays', value)"
-      />
-      <Button
-        :icon="live ? 'pi pi-pause' : 'pi pi-play'"
-        :label="live ? t('dashboard.pause') : t('dashboard.resume')"
-        severity="secondary"
-        size="small"
-        outlined
-        @click="emit('update:live', !live)"
-      />
-      <Button
-        icon="pi pi-refresh"
-        :loading="refreshing"
-        :aria-label="t('dashboard.refresh')"
-        severity="secondary"
-        size="small"
-        text
-        rounded
-        @click="emit('refresh')"
-      />
+      <Select v-model="selectedNode" :options="nodeOptions" option-label="label" option-value="value" size="small" class="toolbar__node" :aria-label="t('dashboard.node')" />
+      <div class="toolbar__range-group">
+        <SelectButton
+          :model-value="customRange ? null : rangeDays"
+          :options="rangeItems"
+          option-label="label"
+          option-value="value"
+          :allow-empty="false"
+          size="small"
+          class="toolbar__range"
+          :aria-label="t('dashboard.range')"
+          @update:model-value="pickDays"
+        />
+        <DateRangeButton :range-days="rangeDays" :custom-range="customRange" :toolbar-days="RANGE_OPTIONS" @pick-days="pickDays" @pick-range="(range: CustomRange) => emit('update:customRange', range)" />
+      </div>
+      <Button :icon="live ? 'pi pi-pause' : 'pi pi-play'" :label="live ? t('dashboard.pause') : t('dashboard.resume')" severity="secondary" size="small" outlined @click="emit('update:live', !live)" />
+      <Button icon="pi pi-refresh" :loading="refreshing" :aria-label="t('dashboard.refresh')" severity="secondary" size="small" text rounded @click="emit('refresh')" />
     </div>
   </div>
 </template>
@@ -119,6 +105,12 @@ const status = computed(() => {
 }
 .toolbar__node {
   min-width: 11rem;
+}
+.toolbar__range-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
 }
 .status {
   display: inline-flex;
@@ -165,8 +157,12 @@ const status = computed(() => {
     flex: 1 1 100%;
     min-width: 0;
   }
-  .toolbar__range {
+  .toolbar__range-group {
     flex: 1 1 100%;
+  }
+  .toolbar__range {
+    flex: 1 1 auto;
+    min-width: 0;
   }
   .toolbar__range :deep(.p-selectbutton) {
     width: 100%;

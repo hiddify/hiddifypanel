@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Chart from 'chart.js/auto'
-import { useChartTheme, alpha } from '../composables/useChartTheme'
+import { useChartTheme } from '../composables/useChartTheme'
+import type { ChartStyle } from '../composables/useChartStyle'
+import { buildChart, type MetricSeries } from '../utils/chart-datasets'
 
-export interface MetricSeries {
-  label: string
-  values: number[]
-  color: string
-  /** Overrides the chart type for this series (mixed bar + line charts). */
-  type?: 'line' | 'bar'
-  area?: boolean
-  dashed?: boolean
-}
+export type { MetricSeries }
 
 const props = withDefaults(
   defineProps<{
@@ -30,10 +25,16 @@ const props = withDefaults(
     tooltipLabel?: (datasetIndex: number, dataIndex: number, formatted: string) => string | undefined
     stackTotalLabel?: string
     mirror?: boolean
+    /** The look chosen in the tile's style sheet (type, colours, grid, average); none: the card's own look */
+    chartStyle?: ChartStyle
+    /** Points in the average line's window (7 days; a few live samples) */
+    averageWindow?: number
+    averageLabel?: string
   }>(),
-  { type: 'line', height: 260, legend: true, stacked: false },
+  { type: 'line', height: 260, legend: true, stacked: false, averageWindow: 7 },
 )
 
+const { t } = useI18n()
 const { colors, baseOptions, areaFill } = useChartTheme()
 
 /** Phones get shorter charts with fewer x labels so they stay readable. */
@@ -45,73 +46,45 @@ onBeforeUnmount(() => phoneQuery.removeEventListener('change', onPhoneChange))
 
 const chartHeight = computed(() => (isPhone.value && props.height > 180 ? Math.round(props.height * 0.8) : props.height))
 
-const stackedAreas = computed(() => props.stacked && props.series.filter((series) => series.area).length > 1)
-
-const isNegative = (series: MetricSeries) => series.values.some((value) => value < 0)
-
-/**
- * Stacked areas fill down to the previous area of the same sign (upload and
- * download stack separately in mirror charts), so each band keeps its own
- * color instead of every area filling to the origin and blending together.
- */
-function fillTarget(index: number): number | string | boolean {
-  const series = props.series[index]!
-  if (!series.area) return false
-  if (!stackedAreas.value) return true
-  const negative = isNegative(series)
-  for (let prev = index - 1; prev >= 0; prev--) {
-    const candidate = props.series[prev]!
-    if ((candidate.type ?? props.type) === 'line' && candidate.area && isNegative(candidate) === negative) return prev
-  }
-  return 'origin'
-}
-
-const data = computed(() => ({
-  labels: props.labels,
-  datasets: props.series.map((series, index) => {
-    const isBar = (series.type ?? props.type) === 'bar'
-    const stackedArea = stackedAreas.value && !isBar && series.area
-    return {
-      type: series.type ?? props.type,
-      label: series.label,
-      data: series.values,
-      borderColor: series.color,
-      backgroundColor: isBar
-        ? alpha(series.color, colors.value.dark ? 0.75 : 0.85)
-        : stackedArea
-          ? alpha(series.color, colors.value.dark ? 0.45 : 0.35)
-          : series.area
-            ? areaFill(series.color)
-            : 'transparent',
-      fill: isBar ? false : fillTarget(index),
-      borderWidth: isBar ? 0 : 2,
-      borderDash: series.dashed ? [5, 4] : undefined,
-      borderRadius: isBar ? 6 : undefined,
-      maxBarThickness: isBar ? 34 : undefined,
-      tension: 0.35,
-      pointRadius: 0,
-      pointHoverRadius: 5,
-      pointHitRadius: 12,
-      pointHoverBorderWidth: 2,
-      pointHoverBackgroundColor: series.color,
-      order: isBar ? 2 : 1,
-    }
+const built = computed(() =>
+  buildChart(props.labels, props.series, props.chartStyle, {
+    type: props.type,
+    stacked: props.stacked,
+    dark: colors.value.dark,
+    surface: colors.value.surface,
+    areaFill: areaFill as (color: string) => unknown,
+    averageWindow: props.averageWindow,
+    averageLabel: props.averageLabel ?? t('dashboard.rollingAverage'),
+    totalLabel: props.stackTotalLabel ?? t('dashboard.chartStyle.total'),
   }),
-}))
+)
+
+/** Bars underneath: the chart's base type (a mixed chart takes each dataset's own) */
+const baseType = computed<'line' | 'bar'>(() => (built.value.datasets.some((dataset) => dataset.type === 'bar') ? 'bar' : props.type))
+
+const data = computed(() => ({ labels: built.value.labels, datasets: built.value.datasets }))
 
 const options = computed(() =>
   baseOptions({
     valueFormatter: props.valueFormatter,
-    legend: props.legend && props.series.length > 1,
-    stacked: props.stacked,
+    legend: props.legend && built.value.datasets.filter((dataset) => !dataset.noTip).length > 1,
+    stacked: built.value.stacked,
     yMax: props.yMax,
     yMin: props.yMin,
     pageTooltip: props.pageTooltip,
     maxXTicks: isPhone.value ? Math.min(props.maxXTicks ?? 8, 4) : props.maxXTicks,
-    tooltipExtra: props.tooltipExtra,
-    tooltipLabel: props.tooltipLabel,
+    tooltipExtra: built.value.remapped ? undefined : props.tooltipExtra,
+    tooltipLabel: built.value.remapped ? undefined : props.tooltipLabel,
     stackTotalLabel: props.stackTotalLabel,
     mirror: props.mirror,
+    noGrid: props.chartStyle ? !props.chartStyle.grid : false,
+    freeY: !built.value.zeroBased && props.yMin === undefined,
+    ohlcNames: {
+      open: t('dashboard.chartStyle.open'),
+      high: t('dashboard.chartStyle.high'),
+      low: t('dashboard.chartStyle.low'),
+      close: t('dashboard.chartStyle.close'),
+    },
   }),
 )
 
@@ -133,7 +106,10 @@ const signature = (value: unknown) => JSON.stringify(value, (_key, v) => (typeof
 function applyPageFont() {
   const family = getComputedStyle(document.body).fontFamily
   if (family) Chart.defaults.font.family = family
-  const primary = family.split(',').map((f) => f.trim()).find((f) => !f.includes('Twemoji'))
+  const primary = family
+    .split(',')
+    .map((f) => f.trim())
+    .find((f) => !f.includes('Twemoji'))
   if (primary && document.fonts) {
     void Promise.all([document.fonts.load(`400 11px ${primary}`, 'آب 01'), document.fonts.load(`500 11px ${primary}`, 'آب 01')])
       .then(() => chart.value?.update('none'))
@@ -149,7 +125,7 @@ function createChart() {
   if (!canvas.value) return
   applyPageFont()
   chart.value = new Chart(canvas.value, {
-    type: props.type,
+    type: baseType.value,
     data: data.value,
     options: options.value,
   } as never)
@@ -187,7 +163,8 @@ function syncChart() {
 }
 
 onMounted(createChart)
-watch(() => props.type, createChart)
+// A new chart type is drawn afresh (it grows in again), not morphed from the old shapes
+watch([baseType, () => props.chartStyle?.type], createChart)
 watch([data, options], syncChart)
 onBeforeUnmount(() => {
   chart.value?.destroy()

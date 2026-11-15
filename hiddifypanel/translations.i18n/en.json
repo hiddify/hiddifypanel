@@ -1520,7 +1520,12 @@
         "busiestWeekday": "Busiest weekday",
         "average": "Average",
         "less": "Less",
-        "more": "More"
+        "more": "More",
+        "trend": "Trend",
+        "mirror": "Mirror",
+        "overlay": "Overlay",
+        "speed": "Speedometer",
+        "stats": "Numbers"
       },
       "renameThisServerHint": "Shown on the dashboard. Leave it empty to show “{name}”.",
       "renameOfflineTitle": "Can't Rename Right Now",
@@ -1686,7 +1691,96 @@
       "weekUsers": "Week",
       "weeklyAverage": "Weekly Average",
       "weeklyOnline": "Weekly Online",
-      "yesterday": "Yesterday"
+      "yesterday": "Yesterday",
+      "chartStyle": {
+        "title": "Chart Style",
+        "done": "Done",
+        "colors": "Colors",
+        "grid": "Grid Lines",
+        "average": "Average Line",
+        "reset": "Reset to Default",
+        "total": "Total",
+        "movingAverage": "Moving Average",
+        "open": "Open",
+        "high": "High",
+        "low": "Low",
+        "close": "Close",
+        "groups": {
+          "lines": "Lines",
+          "fills": "Fills",
+          "bars": "Bars",
+          "ranges": "Candles & Ranges",
+          "faces": "Against the Previous Period"
+        },
+        "types": {
+          "line": "Line",
+          "smooth": "Smooth",
+          "step": "Step",
+          "markers": "Markers",
+          "area": "Area",
+          "baseline": "Baseline",
+          "column": "Column",
+          "lollipop": "Lollipop",
+          "dots": "Dots",
+          "candles": "Candles",
+          "hollow": "Hollow",
+          "heikin": "Heikin Ashi",
+          "highlow": "High-Low",
+          "ring": "Ring",
+          "compare": "Compare"
+        },
+        "palettes": {
+          "auto": "Default",
+          "ios": "iOS",
+          "ocean": "Ocean",
+          "sunset": "Sunset",
+          "forest": "Forest",
+          "grape": "Grape",
+          "graphite": "Graphite"
+        }
+      },
+      "netStats": {
+        "now": "Now",
+        "average": "Average",
+        "peak": "Peak",
+        "p95": "95th Percentile",
+        "moved": "Transferred"
+      },
+      "face": {
+        "now": "Now",
+        "active": "Active",
+        "ofActive": "of active users",
+        "ofYesterday": "of yesterday",
+        "thisWeek": "7 days",
+        "lastWeek": "Before",
+        "ofLastWeek": "of the previous 7 days",
+        "thisMonth": "30 days",
+        "lastMonth": "Before",
+        "ofLastMonth": "of the previous 30 days"
+      },
+      "period": {
+        "title": "Time Period",
+        "from": "From",
+        "to": "To",
+        "pickStart": "Pick the first day",
+        "pickEnd": "Pick the last day",
+        "apply": "Apply",
+        "previousMonth": "Previous month",
+        "nextMonth": "Next month",
+        "dailyNote": "Usage is recorded per day, so the shortest period is one day. You can go back up to 365 days.",
+        "presets": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "last7": "Last 7 Days",
+          "last14": "Last 14 Days",
+          "last30": "Last 30 Days",
+          "thisMonth": "This Month",
+          "lastMonth": "Last Month",
+          "last90": "Last 90 Days",
+          "last180": "Last 180 Days",
+          "last365": "Last 365 Days"
+        }
+      }
     },
     "domain": {
       "addFailed": "Could not add domain",

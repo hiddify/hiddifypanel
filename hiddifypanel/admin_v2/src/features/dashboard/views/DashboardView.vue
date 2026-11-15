@@ -14,25 +14,22 @@ import UsageTrendCard from '../components/UsageTrendCard.vue'
 import UsersComparisonCard from '../components/UsersComparisonCard.vue'
 import UsersTrendCard from '../components/UsersTrendCard.vue'
 import { useDashboard } from '../composables/useDashboard'
+import { computed } from 'vue'
+import { daysBetween, shortDay } from '../utils/date-range'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-const {
-  series,
-  usage,
-  users,
-  nodeSamples,
-  rangeDays,
-  childId,
-  nodes,
-  nodeStats,
-  live,
-  loading,
-  refreshing,
-  failed,
-  updatedAt,
-  refresh,
-} = useDashboard()
+const { series, usage, users, nodeSamples, rangeDays, customRange, childId, nodes, nodeStats, live, loading, refreshing, failed, updatedAt, refresh } = useDashboard(locale.value)
+
+/** The period in days and in words, for the charts' ticks and subtitles */
+const periodDays = computed(() => (customRange.value ? daysBetween(customRange.value.start, customRange.value.end) : rangeDays.value))
+const periodLabel = computed(() => {
+  const range = customRange.value
+  if (!range) return t('dashboard.lastNDays', { days: rangeDays.value })
+  if (range.preset) return t(`dashboard.period.presets.${range.preset}`)
+  const days = t('dashboard.nDays', { days: periodDays.value })
+  return range.start === range.end ? shortDay(range.start, locale.value) : `${shortDay(range.start, locale.value)} – ${shortDay(range.end, locale.value)} · ${days}`
+})
 </script>
 
 <template>
@@ -41,6 +38,7 @@ const {
 
   <DashboardToolbar
     v-model:range-days="rangeDays"
+    v-model:custom-range="customRange"
     v-model:child-id="childId"
     v-model:live="live"
     :nodes="nodes"
@@ -60,24 +58,12 @@ const {
     <KpiTiles :usage="usage" :users="users" :series="series" />
 
     <div class="dashboard__split">
-      <UsageTrendCard
-        :series="series"
-        :usage="usage"
-        :range-days="rangeDays"
-        :nodes="nodes"
-        :stacked="childId === null"
-      />
+      <UsageTrendCard :series="series" :usage="usage" :range-days="periodDays" :period-label="periodLabel" :nodes="nodes" :stacked="childId === null" />
       <UsageComparisonCard :usage="usage" :series="series" :nodes="nodes" :stacked="childId === null" />
     </div>
 
     <div class="dashboard__split">
-      <UsersTrendCard
-        :series="series"
-        :users="users"
-        :range-days="rangeDays"
-        :nodes="nodes"
-        :stacked="childId === null"
-      />
+      <UsersTrendCard :series="series" :users="users" :range-days="periodDays" :period-label="periodLabel" :nodes="nodes" :stacked="childId === null" />
       <UsersComparisonCard :users="users" :series="series" :nodes="nodes" :stacked="childId === null" />
     </div>
 

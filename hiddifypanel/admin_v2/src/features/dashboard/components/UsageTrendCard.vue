@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n'
 import type { DashboardDailyPoint, DashboardNode, DashboardUsage } from '@/core/api/generated'
 import { formatBytes, formatDayLabel } from '@/shared/utils/format-metrics'
 import { SERIES, nodeColor } from '../composables/useChartTheme'
-import { rollingAverage } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricChart from './MetricChart.vue'
 import MiniStat from './MiniStat.vue'
@@ -13,11 +12,15 @@ import ChartViewSwitch from './ChartViewSwitch.vue'
 import HeatmapCalendar from './views/HeatmapCalendar.vue'
 import WeekdayRhythm from './views/WeekdayRhythm.vue'
 import { useChartView } from '../composables/useChartView'
+import ChartStyleButton from './ChartStyleButton.vue'
+import { CHART_TYPES, themed, useChartStyle } from '../composables/useChartStyle'
 
 const props = defineProps<{
   series: DashboardDailyPoint[]
   usage: DashboardUsage | null
   rangeDays: number
+  /** The chosen period in words ("Last 30 days", "Nov 10 – Nov 12") */
+  periodLabel?: string
   nodes: DashboardNode[]
   stacked: boolean
 }>()
@@ -49,17 +52,20 @@ const stackedSeries = computed(() => {
   }))
 })
 
-/** How the trend is shown: daily bars (with the 7-day average), smooth areas, the running total, a calendar, or the
- *  week's rhythm */
-const VIEWS = ['bars', 'area', 'cumulative', 'calendar', 'rhythm'] as const
+/** What is shown: the daily trend, the running total, a calendar, or the week's rhythm; how the trend and the total
+ *  are drawn (columns, lines, candles…) is the style sheet's choice */
+const VIEWS = ['trend', 'cumulative', 'calendar', 'rhythm'] as const
 const view = useChartView('usage-trend', VIEWS)
 const viewOptions = computed(() => [
-  { value: 'bars', icon: 'pi pi-chart-bar', label: t('dashboard.views.bars') },
-  { value: 'area', icon: 'pi pi-wave-pulse', label: t('dashboard.views.area') },
+  { value: 'trend', icon: 'pi pi-chart-bar', label: t('dashboard.views.trend') },
   { value: 'cumulative', icon: 'pi pi-chart-line', label: t('dashboard.views.cumulative') },
   { value: 'calendar', icon: 'pi pi-calendar', label: t('dashboard.views.calendar') },
   { value: 'rhythm', icon: 'pi pi-clock', label: t('dashboard.views.rhythm') },
 ])
+const style = useChartStyle('usage-trend', { type: 'column', average: true })
+const resetStyle = style.reset
+const charted = computed(() => view.value === 'trend' || view.value === 'cumulative')
+const color = computed(() => themed(style.value, 0, SERIES.usage))
 const perNode = computed(() => props.stacked && stackedSeries.value.length > 1)
 const points = computed(() => props.series.map((point) => ({ date: point.date, value: point.usage })))
 const cumulative = computed(() => {
@@ -69,22 +75,8 @@ const cumulative = computed(() => {
 
 const chartSeries = computed(() => {
   if (view.value === 'cumulative') return [{ label: t('dashboard.views.cumulative'), values: cumulative.value, color: SERIES.usage, type: 'line' as const, area: true }]
-  if (perNode.value) return stackedSeries.value.map((s) => (view.value === 'bars' ? { ...s, type: 'bar' as const, area: false } : s))
-  if (view.value === 'area')
-    return [
-      { label: t('dashboard.dailyUsage'), values: values.value, color: SERIES.usage, type: 'line' as const, area: true },
-      { label: t('dashboard.rollingAverage'), values: rollingAverage(values.value, 7), color: SERIES.usageAvg, type: 'line' as const, dashed: true },
-    ]
-  return [
-    { label: t('dashboard.dailyUsage'), values: values.value, color: SERIES.usage, type: 'bar' as const },
-    {
-      label: t('dashboard.rollingAverage'),
-      values: rollingAverage(values.value, 7),
-      color: SERIES.usageAvg,
-      type: 'line' as const,
-      dashed: true,
-    },
-  ]
+  if (perNode.value) return stackedSeries.value
+  return [{ label: t('dashboard.dailyUsage'), values: values.value, color: SERIES.usage, type: 'bar' as const }]
 })
 
 const peakLabel = computed(() => {
@@ -100,20 +92,21 @@ const peakDay = computed(() => {
 <template>
   <DashCard
     :title="t('dashboard.usageTrend')"
-    :subtitle="perNode && view !== 'cumulative' && view !== 'calendar' && view !== 'rhythm' ? t('dashboard.usageStackedHint') : t('dashboard.lastNDays', { days: rangeDays })"
+    :subtitle="perNode && view === 'trend' ? t('dashboard.usageStackedHint') : (periodLabel ?? t('dashboard.lastNDays', { days: rangeDays }))"
     icon="pi pi-chart-bar"
     :accent="SERIES.usage"
     padded
   >
     <template #actions>
       <ChartViewSwitch v-model="view" :options="viewOptions" :label="t('dashboard.views.switch')" />
+      <ChartStyleButton v-model="style" :types="charted ? CHART_TYPES : []" :toggles="charted ? ['grid', 'average'] : []" :accent="SERIES.usage" @reset="resetStyle" />
     </template>
     <Transition name="cv" mode="out-in">
       <HeatmapCalendar
         v-if="view === 'calendar'"
         key="calendar"
         :points="points"
-        :color="SERIES.usage"
+        :color="color"
         :format="(value: number) => formatBytes(value, 1)"
         :locale="locale"
         :peak-label="t('dashboard.views.busiestDay')"
@@ -124,7 +117,7 @@ const peakDay = computed(() => {
         v-else-if="view === 'rhythm'"
         key="rhythm"
         :points="points"
-        :color="SERIES.usage"
+        :color="color"
         :format="(value: number) => formatBytes(value, 1)"
         :locale="locale"
         :busiest-label="t('dashboard.views.busiestWeekday')"
@@ -135,17 +128,19 @@ const peakDay = computed(() => {
         :key="view"
         :labels="labels"
         :series="chartSeries"
-        :type="view === 'bars' ? 'bar' : 'line'"
+        :chart-style="style"
         :stacked="perNode && view !== 'cumulative'"
         :value-formatter="(value: number) => formatBytes(value, 0)"
         :height="280"
         :max-x-ticks="rangeDays > 60 ? 8 : 12"
         :stack-total-label="t('dashboard.totalUsage')"
-        :tooltip-extra="(index: number) => {
-          const point = series[index]
-          if (!point) return []
-          return [t('dashboard.onlineOnDay', { count: point.online })]
-        }"
+        :tooltip-extra="
+          (index: number) => {
+            const point = series[index]
+            if (!point) return []
+            return [t('dashboard.onlineOnDay', { count: point.online })]
+          }
+        "
       />
     </Transition>
     <template #footer>

@@ -12,6 +12,8 @@ import ChartViewSwitch from './ChartViewSwitch.vue'
 import ActivityRings from './views/ActivityRings.vue'
 import RankedBars from './views/RankedBars.vue'
 import { useChartView } from '../composables/useChartView'
+import ChartStyleButton from './ChartStyleButton.vue'
+import { BAR_TYPES, themed, useChartStyle } from '../composables/useChartStyle'
 
 const props = defineProps<{
   usage: DashboardUsage | null
@@ -52,7 +54,10 @@ const stackedSeries = computed(() => {
   const average = (id: string, days: number) => {
     const from = Math.max(0, points.length - days)
     // Only the days this server had traffic: idle days do not pull the average down
-    const used = points.slice(from).map((point) => point.by_child?.[id]?.usage ?? 0).filter((usage) => usage > 0)
+    const used = points
+      .slice(from)
+      .map((point) => point.by_child?.[id]?.usage ?? 0)
+      .filter((usage) => usage > 0)
     return used.length ? used.reduce((sum, usage) => sum + usage, 0) / used.length : 0
   }
   return ordered.map((id) => ({
@@ -66,6 +71,9 @@ const stackedSeries = computed(() => {
 /** How the four readings are shown: bars, activity rings, or ranked bars */
 const VIEWS = ['bars', 'rings', 'ranked'] as const
 const view = useChartView('usage-comparison', VIEWS)
+/** The bars as columns, lollipops or dots, in the chosen colours (the rings and ranked bars take the colours too) */
+const style = useChartStyle('usage-comparison', { type: 'column' }, BAR_TYPES)
+const resetStyle = style.reset
 const viewOptions = computed(() => [
   { value: 'bars', icon: 'pi pi-chart-bar', label: t('dashboard.views.bars') },
   { value: 'rings', icon: 'pi pi-circle', label: t('dashboard.views.rings') },
@@ -73,9 +81,7 @@ const viewOptions = computed(() => [
 ])
 /** Today outermost: the reading the eye goes to first */
 const RING_COLORS: Record<string, string> = { today: SERIES.usage, yesterday: SERIES.download, weeklyAverage: SERIES.usageAvg, monthlyAverage: SERIES.online }
-const readings = computed(() =>
-  [...buckets.value].reverse().map((bucket) => ({ label: t(`dashboard.${bucket.key}`), value: bucket.value, color: RING_COLORS[bucket.key]! })),
-)
+const readings = computed(() => [...buckets.value].reverse().map((bucket, i) => ({ label: t(`dashboard.${bucket.key}`), value: bucket.value, color: themed(style.value, i, RING_COLORS[bucket.key]!) })))
 const bytes = (value: number) => formatBytes(value, 1)
 
 const chartSeries = computed(() => {
@@ -92,25 +98,21 @@ const chartSeries = computed(() => {
 </script>
 
 <template>
-  <DashCard
-    :title="t('dashboard.usageComparison')"
-    :subtitle="t('dashboard.usageComparisonHint')"
-    icon="pi pi-chart-line"
-    :accent="SERIES.usageAvg"
-    padded
-  >
+  <DashCard :title="t('dashboard.usageComparison')" :subtitle="t('dashboard.usageComparisonHint')" icon="pi pi-chart-line" :accent="SERIES.usageAvg" padded>
     <template #actions>
       <ChartViewSwitch v-model="view" :options="viewOptions" :label="t('dashboard.views.switch')" />
+      <ChartStyleButton v-model="style" :types="view === 'bars' ? BAR_TYPES : []" :toggles="view === 'bars' ? ['grid'] : []" :accent="SERIES.usage" @reset="resetStyle" />
     </template>
     <Transition name="cv" mode="out-in">
       <ActivityRings v-if="view === 'rings'" key="rings" :items="readings" :format="bytes" />
-      <RankedBars v-else-if="view === 'ranked'" key="ranked" :items="readings" :color="SERIES.usage" :format="bytes" />
+      <RankedBars v-else-if="view === 'ranked'" key="ranked" :items="readings" :color="themed(style, 0, SERIES.usage)" :format="bytes" />
       <MetricChart
         v-else
         key="bars"
         :labels="labels"
         :series="chartSeries"
         type="bar"
+        :chart-style="style"
         :stacked="stacked && stackedSeries.length > 1"
         :value-formatter="(value: number) => formatBytes(value, 0)"
         :height="216"

@@ -9,6 +9,8 @@ const props = withDefaults(
     filled?: boolean
     labels?: string[]
     formatter?: (value: number) => string
+    /** How the points are drawn: a filled line, a bare line, columns, steps or dots */
+    kind?: 'area' | 'line' | 'column' | 'step' | 'dots'
   }>(),
   { color: 'var(--p-primary-color)', height: 40, filled: true, labels: () => [], formatter: (value: number) => String(value) },
 )
@@ -34,6 +36,15 @@ const points = computed(() => {
 
 const line = computed(() => points.value.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' '))
 
+const stepped = computed(() => points.value.map((p, i) => (i ? `H${((points.value[i - 1]!.x + p.x) / 2).toFixed(2)} V${p.y.toFixed(2)} H${p.x.toFixed(2)}` : `M${p.x.toFixed(2)},${p.y.toFixed(2)}`)).join(' '))
+/** A dot is a zero-length round-capped stroke: it stays round in the stretched viewBox */
+const dots = computed(() => points.value.map((p) => `M${p.x.toFixed(2)},${p.y.toFixed(2)} l0,0`).join(' '))
+const columns = computed(() => {
+  const n = points.value.length
+  const slot = WIDTH / Math.max(1, n)
+  return points.value.map((p, i) => ({ x: i * slot + slot * 0.18, w: slot * 0.64, y: p.y, h: Math.max(1, props.height - p.y) }))
+})
+
 const area = computed(() => {
   if (points.value.length < 2) return ''
   const first = points.value[0]!
@@ -55,9 +66,7 @@ const tipStyle = computed(() => {
   const { clientX, clientY } = hover.value
   // Under the pointer: above it the tip would cover the tile's big number
   const top = `${Math.min(window.innerHeight - 40, clientY + 18)}px`
-  return clientX > window.innerWidth / 2
-    ? { right: `${window.innerWidth - clientX + 12}px`, top }
-    : { left: `${clientX + 12}px`, top }
+  return clientX > window.innerWidth / 2 ? { right: `${window.innerWidth - clientX + 12}px`, top } : { left: `${clientX + 12}px`, top }
 })
 
 let hideTimer: ReturnType<typeof setTimeout> | undefined
@@ -85,33 +94,25 @@ onBeforeUnmount(() => clearTimeout(hideTimer))
 
 <template>
   <div class="sparkline-wrap">
-    <svg
-      class="sparkline"
-      :viewBox="`0 0 ${WIDTH} ${height}`"
-      :style="{ height: `${height}px`, color }"
-      preserveAspectRatio="none"
-      role="img"
-      @pointerdown="onMove"
-      @pointermove="onMove"
-      @pointerleave="onLeave"
-    >
+    <svg class="sparkline" :viewBox="`0 0 ${WIDTH} ${height}`" :style="{ height: `${height}px`, color }" preserveAspectRatio="none" role="img" @pointerdown="onMove" @pointermove="onMove" @pointerleave="onLeave">
       <defs>
         <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="currentColor" stop-opacity="0.35" />
           <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
         </linearGradient>
       </defs>
-      <path v-if="filled && area" :d="area" :fill="`url(#${gradientId})`" stroke="none" />
-      <path
-        v-if="line"
-        :d="line"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.75"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        vector-effect="non-scaling-stroke"
-      />
+      <Transition name="spark" mode="out-in">
+        <g v-if="kind === 'column'" key="column" class="sparkline__shape">
+          <rect v-for="(c, i) in columns" :key="i" :x="c.x" :y="c.y" :width="c.w" :height="c.h" rx="0.8" fill="currentColor" :fill-opacity="i === columns.length - 1 ? 1 : 0.55" />
+        </g>
+        <g v-else-if="kind === 'dots'" key="dots" class="sparkline__shape">
+          <path :d="dots" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+        </g>
+        <g v-else :key="kind ?? 'area'" class="sparkline__shape">
+          <path v-if="filled && area && (kind ?? 'area') === 'area'" :d="area" :fill="`url(#${gradientId})`" stroke="none" />
+          <path v-if="line" :d="kind === 'step' ? stepped : line" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+        </g>
+      </Transition>
     </svg>
     <!-- In <body>: the tile lifts on hover (a transform), which would place a fixed tip from the tile, not the screen,
          and under the cards below it -->
@@ -132,6 +133,25 @@ onBeforeUnmount(() => clearTimeout(hideTimer))
 .sparkline {
   display: block;
   width: 100%;
+}
+.sparkline__shape {
+  transform-box: view-box;
+  transform-origin: 50% 100%;
+}
+.spark-enter-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.spark-leave-active {
+  transition: opacity 0.12s ease;
+}
+.spark-enter-from {
+  opacity: 0;
+  transform: scaleY(0.4);
+}
+.spark-leave-to {
+  opacity: 0;
 }
 .sparkline-tip {
   position: fixed;

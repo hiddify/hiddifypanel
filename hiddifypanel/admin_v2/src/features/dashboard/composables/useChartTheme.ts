@@ -184,6 +184,12 @@ export interface BaseOptions {
   stackTotalLabel?: string
   /** Lets the y-axis range below zero (e.g. upload above / download below a mirrored stacked area). */
   mirror?: boolean
+  /** No grid lines (the style sheet's switch) */
+  noGrid?: boolean
+  /** The y axis follows the data's range instead of starting at zero (candles, baselines) */
+  freeY?: boolean
+  /** Names of a candle's four values in its tooltip */
+  ohlcNames?: { open: string; high: string; low: string; close: string }
 }
 
 function cssVar(name: string, fallback: string): string {
@@ -250,6 +256,8 @@ export function useChartTheme() {
           align: 'end',
           rtl,
           labels: {
+            // a candle's wick and a lollipop's stem have no entry of their own
+            filter: (item: { datasetIndex: number }, data: { datasets: { noTip?: boolean }[] }) => !data.datasets[item.datasetIndex]?.noTip,
             color: muted,
             usePointStyle: true,
             pointStyle: 'circle',
@@ -277,9 +285,20 @@ export function useChartTheme() {
           usePointStyle: true,
           titleMarginBottom: 8,
           footerMarginTop: 8,
+          // a candle's wick and a lollipop's stem repeat their body's value
+          filter: (item: TooltipItem) => !(item.dataset as { noTip?: boolean }).noTip,
           callbacks: {
             title: (items: TooltipItem[]) => items[0]?.label ?? '',
             label: (item: TooltipItem) => {
+              const candle = (item.dataset as { ohlc?: { o: number; h: number; l: number; c: number }[] }).ohlc?.[item.dataIndex]
+              const names = options.ohlcNames
+              if (candle && names)
+                return [
+                  `${names.open}: ${format(candle.o)}`,
+                  `${names.high}: ${format(candle.h)}`,
+                  `${names.low}: ${format(candle.l)}`,
+                  `${names.close}: ${format(candle.c)}`,
+                ]
               const formatted = format(item.parsed.y)
               const custom = options.tooltipLabel?.(item.datasetIndex, item.dataIndex, formatted)
               if (custom) return custom
@@ -305,7 +324,7 @@ export function useChartTheme() {
       scales: {
         x: {
           stacked: options.stacked ?? false,
-          grid: { display: !options.hideXGrid, color: grid, drawBorder: false },
+          grid: { display: !options.hideXGrid && !options.noGrid, color: grid, drawBorder: false },
           border: { display: false },
           ticks: {
             color: muted,
@@ -319,10 +338,10 @@ export function useChartTheme() {
         },
         y: {
           stacked: options.stacked ?? false,
-          beginAtZero: !options.mirror,
+          beginAtZero: !options.mirror && !options.freeY,
           max: options.yMax,
           min: options.yMin,
-          grid: { color: grid, drawBorder: false },
+          grid: { display: !options.noGrid, color: grid, drawBorder: false },
           border: { display: false },
           title: options.yTitle ? { display: true, text: options.yTitle, color: muted } : undefined,
           ticks: {

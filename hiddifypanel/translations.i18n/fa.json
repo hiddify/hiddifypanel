@@ -1519,7 +1519,12 @@
         "busiestWeekday": "پرکارترین روز هفته",
         "average": "میانگین",
         "less": "کمتر",
-        "more": "بیشتر"
+        "more": "بیشتر",
+        "trend": "روند",
+        "mirror": "آینه‌ای",
+        "overlay": "روی هم",
+        "speed": "سرعت‌سنج",
+        "stats": "آمار"
       },
       "renameThisServerHint": "روی داشبورد نمایش داده می‌شود. برای نمایش «{name}» خالی بگذارید.",
       "renameOfflineTitle": "فعلاً نمی‌شود نام را تغییر داد",
@@ -1687,7 +1692,96 @@
       "weeklyAverage": "میانگین هفتگی",
       "weeklyOnline": "آنلاین هفتگی",
       "welcomePanel": "خوش آمدید",
-      "yesterday": "دیروز"
+      "yesterday": "دیروز",
+      "chartStyle": {
+        "title": "سبک نمودار",
+        "done": "تمام",
+        "colors": "رنگ‌ها",
+        "grid": "خطوط راهنما",
+        "average": "خط میانگین",
+        "reset": "بازگشت به پیش‌فرض",
+        "total": "جمع",
+        "movingAverage": "میانگین متحرک",
+        "open": "شروع",
+        "high": "بیشترین",
+        "low": "کمترین",
+        "close": "پایان",
+        "groups": {
+          "lines": "خطی",
+          "fills": "سطحی",
+          "bars": "ستونی",
+          "ranges": "شمعی و بازه‌ای",
+          "faces": "در برابر دوره‌ی قبل"
+        },
+        "types": {
+          "line": "خط",
+          "smooth": "منحنی",
+          "step": "پله‌ای",
+          "markers": "نقطه‌دار",
+          "area": "سطح",
+          "baseline": "خط مبنا",
+          "column": "ستون",
+          "lollipop": "آب‌نباتی",
+          "dots": "نقطه‌ای",
+          "candles": "شمعی",
+          "hollow": "شمع توخالی",
+          "heikin": "هیکن‌آشی",
+          "highlow": "بالا-پایین",
+          "ring": "حلقه",
+          "compare": "مقایسه"
+        },
+        "palettes": {
+          "auto": "پیش‌فرض",
+          "ios": "iOS",
+          "ocean": "اقیانوس",
+          "sunset": "غروب",
+          "forest": "جنگل",
+          "grape": "انگور",
+          "graphite": "گرافیت"
+        }
+      },
+      "netStats": {
+        "now": "الان",
+        "average": "میانگین",
+        "peak": "اوج",
+        "p95": "صدک ۹۵",
+        "moved": "حجم منتقل‌شده"
+      },
+      "face": {
+        "now": "الان",
+        "active": "فعال",
+        "ofActive": "از کاربران فعال",
+        "ofYesterday": "نسبت به دیروز",
+        "thisWeek": "۷ روز",
+        "lastWeek": "قبلی",
+        "ofLastWeek": "نسبت به ۷ روز قبل",
+        "thisMonth": "۳۰ روز",
+        "lastMonth": "قبلی",
+        "ofLastMonth": "نسبت به ۳۰ روز قبل"
+      },
+      "period": {
+        "title": "بازه‌ی زمانی",
+        "from": "از",
+        "to": "تا",
+        "pickStart": "روز اول را انتخاب کنید",
+        "pickEnd": "روز آخر را انتخاب کنید",
+        "apply": "اعمال",
+        "previousMonth": "ماه قبل",
+        "nextMonth": "ماه بعد",
+        "dailyNote": "مصرف به‌صورت روزانه ثبت می‌شود، پس کوتاه‌ترین بازه یک روز است. تا ۳۶۵ روز گذشته را می‌توانید ببینید.",
+        "presets": {
+          "today": "امروز",
+          "yesterday": "دیروز",
+          "last7": "۷ روز گذشته",
+          "last14": "۱۴ روز گذشته",
+          "last30": "۳۰ روز گذشته",
+          "thisMonth": "این ماه",
+          "lastMonth": "ماه گذشته",
+          "last90": "۹۰ روز گذشته",
+          "last180": "۱۸۰ روز گذشته",
+          "last365": "۳۶۵ روز گذشته"
+        }
+      }
     },
     "domain": {
       "addFailed": "افزودن دامنه ناموفق بود",
