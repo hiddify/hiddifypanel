@@ -85,9 +85,11 @@ function onTouchEnd() {
       <div ref="sheet" class="dsh dsh--sheet" role="document" @touchstart.passive="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @touchcancel="onTouchEnd">
         <span class="dsh__grabber" aria-hidden="true" />
         <header class="dsh__head">
-          <span v-if="icon" class="dsh__icon"><i :class="icon" /></span>
+          <span class="dsh__side"><slot name="lead" /></span>
           <h3 class="dsh__title">{{ title }}</h3>
-          <button type="button" class="dsh__done" @click="closeCallback">{{ t('dashboard.chartStyle.done') }}</button>
+          <span class="dsh__side dsh__side--end">
+            <button type="button" class="dsh__round dsh__done" :aria-label="t('dashboard.chartStyle.done')" @click="closeCallback"><i class="pi pi-times" /></button>
+          </span>
         </header>
         <div class="dsh__body"><slot :close="close" /></div>
       </div>
@@ -96,8 +98,11 @@ function onTouchEnd() {
   <Popover v-else ref="pop" class="dash-pop" @hide="emit('hide')">
     <div class="dsh" role="dialog" :aria-label="title">
       <header class="dsh__head">
-        <span v-if="icon" class="dsh__icon"><i :class="icon" /></span>
+        <span class="dsh__side"><slot name="lead" /></span>
         <h3 class="dsh__title">{{ title }}</h3>
+        <span class="dsh__side dsh__side--end">
+          <button type="button" class="dsh__round dsh__done" :aria-label="t('dashboard.chartStyle.done')" @click="close"><i class="pi pi-times" /></button>
+        </span>
       </header>
       <div class="dsh__body"><slot :close="close" /></div>
     </div>
@@ -105,86 +110,122 @@ function onTouchEnd() {
 </template>
 
 <style scoped>
+/* iOS 27: a sheet of glass that floats a little off the edges, a centred title between two round glass buttons */
 .dsh {
-  --dsh-bg: var(--p-content-background);
-  --dsh-group: color-mix(in srgb, var(--p-text-color) 4.5%, var(--p-content-background));
+  --dsh-group: color-mix(in srgb, var(--p-text-color) 5%, transparent);
+  --dsh-hair: color-mix(in srgb, var(--p-text-color) 10%, transparent);
   display: flex;
   flex-direction: column;
-  width: min(23.5rem, calc(100vw - 2rem));
-  max-height: min(36rem, calc(100vh - 7rem));
+  width: min(24rem, calc(100vw - 2rem));
+  max-height: min(38rem, calc(100vh - 7rem));
   color: var(--p-text-color);
 }
 .dsh--sheet {
-  width: 100vw;
-  max-height: 86vh;
-  padding-bottom: env(safe-area-inset-bottom);
-  border-radius: 1.4rem 1.4rem 0 0;
-  background: var(--dsh-bg);
-  box-shadow: 0 -10px 40px -12px rgb(0 0 0 / 0.3);
+  width: calc(100vw - 1rem);
+  max-height: calc(92vh - env(safe-area-inset-bottom));
+  margin: 0 0.5rem calc(0.5rem + env(safe-area-inset-bottom));
+  border-radius: 2.1rem;
+  background: color-mix(in srgb, var(--p-content-background) 78%, transparent);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--p-text-color) 12%, transparent),
+    0 22px 60px -18px rgb(0 0 0 / 0.45);
+  overflow: hidden;
 }
 .dsh__grabber {
   align-self: center;
   width: 2.3rem;
   height: 0.3rem;
-  margin: 0.45rem 0 0.1rem;
+  margin: 0.5rem 0 0;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--p-text-color) 22%, transparent);
+  background: color-mix(in srgb, var(--p-text-color) 25%, transparent);
 }
 .dsh__head {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) 2.4rem;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.85rem 1rem 0.55rem;
+  gap: 0.5rem;
+  padding: 0.75rem 0.85rem 0.6rem;
 }
 .dsh--sheet .dsh__head {
-  padding: 0.5rem 1.1rem 0.6rem;
+  padding: 0.45rem 1rem 0.7rem;
   touch-action: none;
 }
-.dsh__icon {
-  display: grid;
-  place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 0.55rem;
-  color: #fff;
-  background: linear-gradient(145deg, var(--p-primary-400, var(--p-primary-color)), var(--p-primary-600, var(--p-primary-color)));
-  box-shadow: 0 4px 10px -4px var(--p-primary-color);
+.dsh__side {
+  display: flex;
 }
-.dsh__icon i {
-  font-size: 0.8rem;
+.dsh__side--end {
+  justify-content: flex-end;
 }
 .dsh__title {
-  flex: 1;
   margin: 0;
-  font-size: 0.98rem;
+  overflow: hidden;
+  font-size: 1.02rem;
   font-weight: 650;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.dsh__done {
+/* the round glass button (also given to the lead slot's button by its owner) */
+.dsh__round,
+.dsh__side :slotted(.dsh-round) {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
   border: 0;
-  background: none;
-  color: var(--p-primary-color);
-  font: inherit;
-  font-weight: 650;
-  font-size: 0.92rem;
-  padding: 0.3rem 0.2rem;
+  border-radius: 999px;
+  color: var(--p-text-color);
+  background: color-mix(in srgb, var(--p-text-color) 8%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.4),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--p-text-color) 10%, transparent);
   cursor: pointer;
+  transition:
+    transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+    background 0.2s;
+}
+.dsh__round i,
+.dsh__side :slotted(.dsh-round) i {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.dsh__round:hover,
+.dsh__side :slotted(.dsh-round:hover) {
+  background: color-mix(in srgb, var(--p-text-color) 13%, transparent);
+}
+.dsh__round:active,
+.dsh__side :slotted(.dsh-round:active) {
+  transform: scale(0.88);
 }
 .dsh__body {
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 1rem 1rem;
+  padding: 0 0.85rem 1rem;
 }
 .dsh--sheet .dsh__body {
-  padding: 0 1.1rem 1.2rem;
+  padding: 0 1rem 1.15rem;
 }
 </style>
 
 <style>
+html.app-dark .p-dialog.dash-sheet .dsh--sheet {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.1),
+    0 22px 60px -18px rgb(0 0 0 / 0.7);
+}
 /* The popover's frame: rounder, softer, the iOS shadow; glass in the glass theme */
 .dash-pop.p-popover {
   --p-popover-content-padding: 0;
-  border-radius: 1.1rem;
+  border-radius: 1.6rem;
+  background: color-mix(in srgb, var(--p-content-background) 80%, transparent);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
   border-color: color-mix(in srgb, var(--p-text-color) 9%, transparent);
   box-shadow:
     0 24px 60px -18px rgb(15 23 42 / 0.38),
