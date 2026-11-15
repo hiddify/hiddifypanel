@@ -131,7 +131,7 @@ const readout = computed(() => {
 }
 .hm__label {
   fill: var(--p-text-muted-color);
-  font-size: 8.5px;
+  font-size: 7px;
 }
 .hm__cell {
   cursor: pointer;

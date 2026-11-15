@@ -57,7 +57,10 @@ onMounted(() => requestAnimationFrame(() => requestAnimationFrame(() => (shown.v
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  align-content: center;
   justify-content: center;
+  /* in the middle of a tile taller than the rings (beside a taller one) */
+  height: 100%;
   gap: 1rem 1.5rem;
   min-width: 0;
   padding-block: 0.25rem;

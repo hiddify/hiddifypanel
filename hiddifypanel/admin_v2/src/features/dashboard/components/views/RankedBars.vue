@@ -40,6 +40,8 @@ onMounted(() => requestAnimationFrame(() => requestAnimationFrame(() => (shown.v
 .rb {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  height: 100%;
   gap: 0.8rem;
   min-width: 0;
   margin: 0;
