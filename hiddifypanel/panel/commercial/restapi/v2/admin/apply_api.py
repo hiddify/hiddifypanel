@@ -74,6 +74,16 @@ def _unit_active(unit: str | None) -> bool:
         return False
 
 
+def _still_running(log_name: str) -> bool:
+    """Whether an action that writes ``log_name`` is still running: its unit is active, or its installer lock is held.
+    The update prints "Finished!" before its last steps (it applies the configs and restarts the panel after it), and
+    the installer it runs prints its own "Finished!" midway, so the mark alone said "done" while the update went on."""
+    for spec in ACTIONS.values():
+        if spec["log"] == log_name and (_unit_active(spec["unit"]) or (spec["lock"] and _lock_held(spec["lock"]))):
+            return True
+    return False
+
+
 def running_actions() -> list[str]:
     """Actions running now: their systemd unit is active, or (started from the console) the installer lock is held."""
     out = [key for key, spec in ACTIONS.items() if _unit_active(spec["unit"])]
@@ -287,7 +297,8 @@ class ApplyLogApi(MethodView):
         if matches:
             percent, title, sub = matches[-1]
             progress = {"percent": int(percent), "title": title.strip(), "text": sub.strip()}
-        finished = FINISHED_MARK in tail[-4096:]
+        # done only once the run is over too, not as soon as a "Finished!" shows (see _still_running)
+        finished = FINISHED_MARK in tail[-4096:] and not _still_running(path.name)
         return _cors(
             {
                 "text": _strip_progress(text),
