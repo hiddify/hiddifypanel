@@ -1434,12 +1434,41 @@ html.theme-caddy .p-dialog.ip-sheet .ips {
 }
 html.theme-liquid .p-dialog.ip-sheet .ips {
   --ips-bg: rgb(var(--lg-tint) / 0.72);
-  --ips-group: rgb(var(--lg-tint) / 0.55);
+  /* Apple's grouped cells on glass: a grey fill of their own (the system fill), not more of the sheet's white, which
+     made them vanish into it */
+  --ips-group: rgb(120 120 128 / 0.12);
   -webkit-backdrop-filter: blur(var(--lg-blur-float)) saturate(var(--lg-saturate));
   backdrop-filter: blur(var(--lg-blur-float)) saturate(var(--lg-saturate));
   box-shadow:
     inset 0 1px 0 var(--lg-rim),
     var(--lg-shadow-float);
+}
+html.theme-liquid.app-dark .p-dialog.ip-sheet .ips {
+  --ips-group: rgb(118 118 128 / 0.24);
+}
+/* each cell a pane of glass: a light rim along its top edge and a hairline round it */
+html.theme-liquid .p-dialog.ip-sheet :is(.ips__address, .ips__tile, .ips__group) {
+  box-shadow:
+    inset 0 1px 0 var(--lg-rim),
+    inset 0 0 0 0.5px rgb(0 0 0 / 0.06);
+}
+html.theme-liquid.app-dark .p-dialog.ip-sheet :is(.ips__address, .ips__tile, .ips__group) {
+  box-shadow:
+    inset 0 1px 0 var(--lg-rim),
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.07);
+}
+/* the segmented control: a grey track and a bright glass lens on the chosen side */
+html.theme-liquid .p-dialog.ip-sheet .ips__segments {
+  background: rgb(120 120 128 / 0.16);
+}
+html.theme-liquid .p-dialog.ip-sheet .ips__segment--on {
+  background: rgb(var(--lg-tint) / 0.95);
+  box-shadow:
+    inset 0 1px 0 var(--lg-rim),
+    0 3px 10px -3px rgb(0 0 0 / 0.22);
+}
+html.theme-liquid.app-dark .p-dialog.ip-sheet .ips__segment--on {
+  background: rgb(255 255 255 / 0.16);
 }
 @media (prefers-reduced-motion: reduce) {
   .p-dialog.ip-sheet.p-dialog-enter-active,
