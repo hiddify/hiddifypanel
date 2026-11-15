@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { countryFlag, countryName } from '@/shared/utils/country'
+import { countryName } from '@/shared/utils/country'
+import FlagIcon from '@/shared/components/FlagIcon.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
@@ -44,8 +45,8 @@ const visibleNodes = computed(() =>
 const multiNode = computed(() => visibleNodes.value.length > 1)
 
 const nodeTitle = (node: DashboardNodeStats) => dashboardNodeName(node.id, node.name, t('dashboard.thisServer'))
-/** The node's country, by its address: the flag before its name, as on the Nodes page. */
-const nodeFlag = (node: DashboardNodeStats) => countryFlag(node.country)
+/** The node's country, by its address: the flag before its name (waving, as on the Nodes page). */
+const nodeFlag = (node: DashboardNodeStats) => (node.country ?? '').toLowerCase()
 const nodeCountry = (node: DashboardNodeStats) => (node.country ? countryName(node.country, locale.value) : '')
 
 const tableRows = computed(() =>
@@ -415,11 +416,11 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <template #body="{ data }">
           <span class="node-cell__dot" :style="{ background: data.color }" />
           <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
-            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }} <i class="pi pi-external-link" /></strong>
+            <strong><FlagIcon v-if="data.flag" class="node-flag" :code="data.flag" :label="data.country" waving />{{ data.title }} <i class="pi pi-external-link" /></strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </a>
           <div v-else class="min-w-0 node-cell__title">
-            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }}</strong>
+            <strong><FlagIcon v-if="data.flag" class="node-flag" :code="data.flag" :label="data.country" waving />{{ data.title }}</strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
@@ -464,11 +465,11 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <div class="node-list__head">
           <span class="node-cell__dot" :style="{ background: data.color }" />
           <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
-            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }} <i class="pi pi-external-link" /></strong>
+            <strong><FlagIcon v-if="data.flag" class="node-flag" :code="data.flag" :label="data.country" waving />{{ data.title }} <i class="pi pi-external-link" /></strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </a>
           <div v-else class="min-w-0 node-cell__title">
-            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }}</strong>
+            <strong><FlagIcon v-if="data.flag" class="node-flag" :code="data.flag" :label="data.country" waving />{{ data.title }}</strong>
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
@@ -589,13 +590,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 </template>
 
 <style scoped>
-/* The node's country flag before its name; colour emoji fonts first, so the flag shows, not its two letters */
+/* The node's country flag before its name (a waving FlagIcon) */
 .node-flag {
-  display: inline-block;
-  margin-inline-end: 0.35rem;
-  font-size: 1.1em;
-  line-height: 1;
-  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  margin-inline-end: 0.4rem;
+  font-size: 0.95em;
 }
 .node-health__legend {
   display: flex;
