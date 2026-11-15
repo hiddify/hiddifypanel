@@ -9,6 +9,10 @@ import DashCard from './DashCard.vue'
 import MetricChart from './MetricChart.vue'
 import MiniStat from './MiniStat.vue'
 import { dashboardNodeName } from '../utils/node-name'
+import ChartViewSwitch from './ChartViewSwitch.vue'
+import HeatmapCalendar from './views/HeatmapCalendar.vue'
+import WeekdayRhythm from './views/WeekdayRhythm.vue'
+import { useChartView } from '../composables/useChartView'
 
 const props = defineProps<{
   series: DashboardDailyPoint[]
@@ -45,8 +49,26 @@ const stackedSeries = computed(() => {
   }))
 })
 
+/** How the trend is shown: smooth areas (with the 7-day average), daily bars, a calendar, or the week's rhythm */
+const VIEWS = ['area', 'bars', 'calendar', 'rhythm'] as const
+const view = useChartView('users-trend', VIEWS)
+const viewOptions = computed(() => [
+  { value: 'area', icon: 'pi pi-wave-pulse', label: t('dashboard.views.area') },
+  { value: 'bars', icon: 'pi pi-chart-bar', label: t('dashboard.views.bars') },
+  { value: 'calendar', icon: 'pi pi-calendar', label: t('dashboard.views.calendar') },
+  { value: 'rhythm', icon: 'pi pi-clock', label: t('dashboard.views.rhythm') },
+])
+const perNode = computed(() => props.stacked && stackedSeries.value.length > 1)
+const points = computed(() => props.series.map((point) => ({ date: point.date, value: point.online })))
+const countText = (value: number) => String(Math.round(value))
+
 const chartSeries = computed(() => {
-  if (props.stacked && stackedSeries.value.length > 1) return stackedSeries.value
+  if (perNode.value) return stackedSeries.value.map((s) => (view.value === 'bars' ? { ...s, type: 'bar' as const, area: false } : s))
+  if (view.value === 'bars')
+    return [
+      { label: t('dashboard.dailyOnline'), values: values.value, color: SERIES.users, type: 'bar' as const },
+      { label: t('dashboard.rollingAverage'), values: rollingAverage(values.value, 7), color: SERIES.online, type: 'line' as const, dashed: true },
+    ]
   return [
     { label: t('dashboard.dailyOnline'), values: values.value, color: SERIES.users, type: 'line' as const, area: true },
     {
@@ -63,26 +85,54 @@ const chartSeries = computed(() => {
 <template>
   <DashCard
     :title="t('dashboard.usersTrend')"
-    :subtitle="stacked && stackedSeries.length > 1 ? t('dashboard.usageStackedHint') : t('dashboard.lastNDays', { days: rangeDays })"
+    :subtitle="perNode && (view === 'area' || view === 'bars') ? t('dashboard.usageStackedHint') : t('dashboard.lastNDays', { days: rangeDays })"
     icon="pi pi-users"
     :accent="SERIES.users"
     padded
   >
-    <MetricChart
-      :labels="labels"
-      :series="chartSeries"
-      type="line"
-      :stacked="stacked && stackedSeries.length > 1"
-      :stack-total-label="t('dashboard.onlineUsers')"
-      :value-formatter="(value: number) => String(Math.round(value))"
-      :height="280"
-      :max-x-ticks="rangeDays > 60 ? 8 : 12"
-      :tooltip-extra="(index: number) => {
-        const point = series[index]
-        if (!point) return []
-        return [t('dashboard.usageOnDay', { value: formatBytes(point.usage) })]
-      }"
-    />
+    <template #actions>
+      <ChartViewSwitch v-model="view" :options="viewOptions" :label="t('dashboard.views.switch')" />
+    </template>
+    <Transition name="cv" mode="out-in">
+      <HeatmapCalendar
+        v-if="view === 'calendar'"
+        key="calendar"
+        :points="points"
+        :color="SERIES.users"
+        :format="countText"
+        :locale="locale"
+        :peak-label="t('dashboard.views.busiestDay')"
+        :less-label="t('dashboard.views.less')"
+        :more-label="t('dashboard.views.more')"
+      />
+      <WeekdayRhythm
+        v-else-if="view === 'rhythm'"
+        key="rhythm"
+        :points="points"
+        :color="SERIES.users"
+        :format="(value: number) => value.toFixed(1)"
+        :locale="locale"
+        :busiest-label="t('dashboard.views.busiestWeekday')"
+        :average-label="t('dashboard.views.average')"
+      />
+      <MetricChart
+        v-else
+        :key="view"
+        :labels="labels"
+        :series="chartSeries"
+        :type="view === 'bars' ? 'bar' : 'line'"
+        :stacked="perNode"
+        :stack-total-label="t('dashboard.onlineUsers')"
+        :value-formatter="countText"
+        :height="280"
+        :max-x-ticks="rangeDays > 60 ? 8 : 12"
+        :tooltip-extra="(index: number) => {
+          const point = series[index]
+          if (!point) return []
+          return [t('dashboard.usageOnDay', { value: formatBytes(point.usage) })]
+        }"
+      />
+    </Transition>
     <template #footer>
       <div class="users-footer">
         <MiniStat

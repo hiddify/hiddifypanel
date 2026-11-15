@@ -17,6 +17,9 @@ import { timeLabels } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricBar from './MetricBar.vue'
 import MetricChart from './MetricChart.vue'
+import ResourceGauge from './ResourceGauge.vue'
+import ChartViewSwitch from './ChartViewSwitch.vue'
+import { useChartView } from '../composables/useChartView'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Popover from 'primevue/popover'
@@ -215,6 +218,26 @@ const networkLegend = computed(() =>
 )
 
 const cpuOverview = computed(() => resourceSeries('cpu', t('dashboard.cpu'), SERIES.cpu))
+/** How the live charts are shown: lines over the last minutes, gauges of the latest reading, or bars */
+const OVERVIEW_VIEWS = ['lines', 'gauges', 'bars'] as const
+const overviewView = useChartView('node-overview', OVERVIEW_VIEWS)
+const overviewViewOptions = computed(() => [
+  { value: 'lines', icon: 'pi pi-wave-pulse', label: t('dashboard.views.lines') },
+  { value: 'gauges', icon: 'pi pi-gauge', label: t('dashboard.views.gauges') },
+  { value: 'bars', icon: 'pi pi-chart-bar', label: t('dashboard.views.bars') },
+])
+/** The latest reading of each shown server, for the gauges */
+const latest = computed(() =>
+  visibleNodes.value.map((node) => {
+    const samples = props.history[node.id] ?? []
+    return { id: node.id, title: nodeTitle(node), color: nodeColor(node.id), sample: samples[samples.length - 1] }
+  }),
+)
+/** The same series drawn as bars */
+const asBars = <S extends { type: string; area?: boolean }>(series: S[]) => series.map((one) => ({ ...one, type: 'bar' as const, area: false }))
+const netShare = (value: number | undefined) => (networkPeak.value && value ? Math.min(100, (value / networkPeak.value) * 100) : 0)
+
+
 const memoryOverview = computed(() => resourceSeries('memory', t('dashboard.ram'), SERIES.memory))
 
 /** The sample a chart point shows for a node (multi-node series are left-padded to the same width). */
@@ -328,6 +351,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
     :accent="SERIES.usage"
     padded
   >
+    <template #actions>
+      <ChartViewSwitch v-model="overviewView" :options="overviewViewOptions" :label="t('dashboard.views.switch')" />
+    </template>
     <div v-if="multiNode" class="node-health__legend">
       <span v-for="node in tableRows" :key="node.id" class="node-health__legend-item">
         <span class="node-health__dot" :style="{ background: node.color }" />
@@ -339,41 +365,88 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
     <div class="node-health__overview-grid">
       <button type="button" class="node-health__overview-chart" @click="toggleMetric('cpu')">
         <p class="node-health__heading">{{ t('dashboard.cpu') }}</p>
-        <MetricChart
-          :labels="overviewLabels"
-          :series="cpuOverview"
-          :tooltip-label="cpuTooltipLabel"
-          type="line"
-          :stacked="true"
-          :legend="false"
-          :value-formatter="percentFormatter"
-          :height="140"
-          :max-x-ticks="6"
-        />
+        <Transition name="cv" mode="out-in">
+          <div v-if="overviewView === 'gauges'" key="gauges" class="node-health__gauges">
+            <div v-for="n in latest" :key="n.id" class="node-health__gauge">
+              <ResourceGauge
+                :percent="n.sample?.cpu ?? 0"
+                :color="multiNode ? n.color : SERIES.cpu"
+                :value="n.sample ? percentFormatter(n.sample.cpu) : '—'"
+                :size="multiNode ? 78 : 104"
+              />
+              <span v-if="multiNode" class="node-health__gauge-name">{{ n.title }}</span>
+            </div>
+          </div>
+          <MetricChart
+            v-else
+            :key="overviewView"
+            :labels="overviewLabels"
+            :series="overviewView === 'bars' ? asBars(cpuOverview) : cpuOverview"
+            :tooltip-label="cpuTooltipLabel"
+            :type="overviewView === 'bars' ? 'bar' : 'line'"
+            :stacked="true"
+            :legend="false"
+            :value-formatter="percentFormatter"
+            :height="140"
+            :max-x-ticks="6"
+          />
+        </Transition>
       </button>
       <button type="button" class="node-health__overview-chart" @click="toggleMetric('memory')">
         <p class="node-health__heading">{{ t('dashboard.ram') }}</p>
-        <MetricChart
-          :labels="overviewLabels"
-          :series="memoryOverview"
-          :tooltip-label="memoryTooltipLabel"
-          type="line"
-          :stacked="true"
-          :legend="false"
-          :value-formatter="percentFormatter"
-          :height="140"
-          :max-x-ticks="6"
-        />
+        <Transition name="cv" mode="out-in">
+          <div v-if="overviewView === 'gauges'" key="gauges" class="node-health__gauges">
+            <div v-for="n in latest" :key="n.id" class="node-health__gauge">
+              <ResourceGauge
+                :percent="n.sample?.memory ?? 0"
+                :color="multiNode ? n.color : SERIES.memory"
+                :value="n.sample ? percentFormatter(n.sample.memory) : '—'"
+                :size="multiNode ? 78 : 104"
+              />
+              <span v-if="multiNode" class="node-health__gauge-name">{{ n.title }}</span>
+            </div>
+          </div>
+          <MetricChart
+            v-else
+            :key="overviewView"
+            :labels="overviewLabels"
+            :series="overviewView === 'bars' ? asBars(memoryOverview) : memoryOverview"
+            :tooltip-label="memoryTooltipLabel"
+            :type="overviewView === 'bars' ? 'bar' : 'line'"
+            :stacked="true"
+            :legend="false"
+            :value-formatter="percentFormatter"
+            :height="140"
+            :max-x-ticks="6"
+          />
+        </Transition>
       </button>
       <div class="node-health__overview-chart node-health__overview-chart--static">
         <p class="node-health__heading">{{ t('dashboard.network') }}</p>
         <div class="node-health__net">
           <span class="node-health__net-side node-health__net-side--up"><i class="pi pi-arrow-up" />{{ t('dashboard.upload') }}</span>
           <span class="node-health__net-side node-health__net-side--down"><i class="pi pi-arrow-down" />{{ t('dashboard.download') }}</span>
+          <div v-if="overviewView === 'gauges'" class="node-health__meters">
+            <div v-for="n in networkLegend" :key="n.id" class="node-health__meter">
+              <span v-if="multiNode" class="node-health__gauge-name">{{ n.title }}</span>
+              <div class="node-health__meter-row">
+                <i class="pi pi-arrow-up" />
+                <span class="node-health__meter-track"><span class="node-health__meter-fill" :style="{ width: `${netShare(n.last?.up)}%`, background: n.color }" /></span>
+                <b dir="ltr">{{ n.last ? bitRateFormatter(n.last.up) : '—' }}</b>
+              </div>
+              <div class="node-health__meter-row">
+                <i class="pi pi-arrow-down" />
+                <span class="node-health__meter-track"><span class="node-health__meter-fill node-health__meter-fill--down" :style="{ width: `${netShare(n.last?.down)}%`, background: n.color }" /></span>
+                <b dir="ltr">{{ n.last ? bitRateFormatter(n.last.down) : '—' }}</b>
+              </div>
+            </div>
+          </div>
           <MetricChart
+            v-else
+            :key="overviewView"
             :labels="overviewLabels"
-            :series="networkOverview"
-            type="line"
+            :series="overviewView === 'bars' ? asBars(networkOverview) : networkOverview"
+            :type="overviewView === 'bars' ? 'bar' : 'line'"
             :stacked="true"
             mirror
             :y-max="networkPeak"
@@ -606,6 +679,76 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 </template>
 
 <style scoped>
+/* Gauges view of the live charts: a ring per server (latest reading), and up / down meters for the network */
+.node-health__gauges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+  min-height: 140px;
+}
+.node-health__gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+.node-health__gauge-name {
+  max-width: 7rem;
+  overflow: hidden;
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.node-health__meters {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.85rem;
+  min-height: 140px;
+  padding-block: 0.5rem;
+}
+.node-health__meter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.node-health__meter-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+}
+.node-health__meter-row i {
+  font-size: 0.65rem;
+  color: var(--p-text-muted-color);
+}
+.node-health__meter-row b {
+  min-width: 4.5rem;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+.node-health__meter-track {
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--p-text-color) 7%, transparent);
+}
+.node-health__meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.node-health__meter-fill--down {
+  opacity: 0.6;
+}
+
 /* The node's country flag before its name (a waving FlagIcon) */
 .node-flag {
   margin-inline-end: 0.4rem;

@@ -8,6 +8,10 @@ import DashCard from './DashCard.vue'
 import MetricChart from './MetricChart.vue'
 import TrendChip from './TrendChip.vue'
 import { dashboardNodeName } from '../utils/node-name'
+import ChartViewSwitch from './ChartViewSwitch.vue'
+import ActivityRings from './views/ActivityRings.vue'
+import RankedBars from './views/RankedBars.vue'
+import { useChartView } from '../composables/useChartView'
 
 const props = defineProps<{
   usage: DashboardUsage | null
@@ -59,6 +63,21 @@ const stackedSeries = computed(() => {
   }))
 })
 
+/** How the four readings are shown: bars, activity rings, or ranked bars */
+const VIEWS = ['bars', 'rings', 'ranked'] as const
+const view = useChartView('usage-comparison', VIEWS)
+const viewOptions = computed(() => [
+  { value: 'bars', icon: 'pi pi-chart-bar', label: t('dashboard.views.bars') },
+  { value: 'rings', icon: 'pi pi-circle', label: t('dashboard.views.rings') },
+  { value: 'ranked', icon: 'pi pi-sort-amount-down', label: t('dashboard.views.ranked') },
+])
+/** Today outermost: the reading the eye goes to first */
+const RING_COLORS: Record<string, string> = { today: SERIES.usage, yesterday: SERIES.download, weeklyAverage: SERIES.usageAvg, monthlyAverage: SERIES.online }
+const readings = computed(() =>
+  [...buckets.value].reverse().map((bucket) => ({ label: t(`dashboard.${bucket.key}`), value: bucket.value, color: RING_COLORS[bucket.key]! })),
+)
+const bytes = (value: number) => formatBytes(value, 1)
+
 const chartSeries = computed(() => {
   if (props.stacked && stackedSeries.value.length > 1) return stackedSeries.value
   return [
@@ -80,16 +99,25 @@ const chartSeries = computed(() => {
     :accent="SERIES.usageAvg"
     padded
   >
-    <MetricChart
-      :labels="labels"
-      :series="chartSeries"
-      type="bar"
-      :stacked="stacked && stackedSeries.length > 1"
-      :value-formatter="(value: number) => formatBytes(value, 0)"
-      :height="216"
-      :legend="stacked && stackedSeries.length > 1"
-      :max-x-ticks="4"
-    />
+    <template #actions>
+      <ChartViewSwitch v-model="view" :options="viewOptions" :label="t('dashboard.views.switch')" />
+    </template>
+    <Transition name="cv" mode="out-in">
+      <ActivityRings v-if="view === 'rings'" key="rings" :items="readings" :format="bytes" />
+      <RankedBars v-else-if="view === 'ranked'" key="ranked" :items="readings" :color="SERIES.usage" :format="bytes" />
+      <MetricChart
+        v-else
+        key="bars"
+        :labels="labels"
+        :series="chartSeries"
+        type="bar"
+        :stacked="stacked && stackedSeries.length > 1"
+        :value-formatter="(value: number) => formatBytes(value, 0)"
+        :height="216"
+        :legend="stacked && stackedSeries.length > 1"
+        :max-x-ticks="4"
+      />
+    </Transition>
     <template #footer>
       <div class="comparison-footer">
         <div class="comparison-footer__row">
