@@ -1,7 +1,7 @@
 """The "Complete IP Info" checks of a server's address, from open sources and free lists only (each one's terms allow a
 commercial product to use it for free), plus three checks of the server itself:
 
-- Tor: the Tor Project's Onionoo service (relays, running now) and exit list;
+- Tor: the Tor Project's Onionoo service (relays, exits, running now; its data is CC0);
 - iCloud Private Relay: Apple's published egress ranges;
 - crawlers: the IP ranges Google, Bing, Apple and OpenAI publish for their bots;
 - abuse: the Spamhaus DROP lists (free for all; credit "The Spamhaus Project"; at most one download a day: kept a
@@ -83,10 +83,10 @@ def _in(ip: str, cidrs: list[str]) -> bool | None:
 
 
 # --- Tor -------------------------------------------------------------------------------------------------------------
-def _tor_relay(ip: str) -> dict | None:
+def tor_relay(ip: str) -> dict | None:
     """The Tor relay on this address (its nickname, whether it runs now and is an exit), {} when none, None on error."""
     try:
-        res = requests.get(_ONIONOO, params={"search": ip, "fields": "nickname,running,flags"}, headers=_UA, timeout=_TIMEOUT)
+        res = requests.get(_ONIONOO, params={"search": ip, "fields": "nickname,running,flags,exit_addresses"}, headers=_UA | {"Accept-Encoding": "gzip"}, timeout=_TIMEOUT)
         relays = res.json().get("relays", []) if res.ok else None
     except Exception:
         return None
@@ -95,7 +95,8 @@ def _tor_relay(ip: str) -> dict | None:
     if not relays:
         return {}
     relay = relays[0]
-    return {"nickname": str(relay.get("nickname") or ""), "running": bool(relay.get("running")), "exit": "Exit" in (relay.get("flags") or [])}
+    exits = relay.get("exit_addresses") or []
+    return {"nickname": str(relay.get("nickname") or ""), "running": bool(relay.get("running")), "exit": "Exit" in (relay.get("flags") or []) or ip in exits}
 
 
 # --- published ranges and lists ----------------------------------------------------------------------------------------
@@ -250,18 +251,17 @@ def _certificates(ip: str, domains: list[str]) -> list[dict]:
 
 
 # --- all of them -------------------------------------------------------------------------------------------------------
-def check(ip: str, *, asn: str, names: str, ptr: str, datacenter: bool, mobile: bool, tor_exit: bool, domains: list[str]) -> dict:
+def check(ip: str, *, asn: str, names: str, ptr: str, datacenter: bool, mobile: bool, relay: dict | None, domains: list[str]) -> dict:
     """The flags of the "Complete IP Info" section, and what they were read from."""
     addr = ipaddress.ip_address(ip)
     public = addr.is_global
     number = asn.removeprefix("AS")
-    relay = _tor_relay(ip) if public else {}
     crawler = _crawler(ip) if public else ""
     drop = _in(ip, _drop()) if public else False
     botnet = _in(ip, _abuse_ch()) if public else False
     certs = _certificates(ip, domains) if public else []
     icloud = _apple_relay(ip) if public else False
-    tor = None if relay is None else bool(relay) or tor_exit
+    tor = None if relay is None else bool(relay)
     flags = {
         # network and infrastructure
         "bogon": not public,
@@ -285,7 +285,7 @@ def check(ip: str, *, asn: str, names: str, ptr: str, datacenter: bool, mobile: 
         "threat": botnet,
         "security_scanner": bool(_SCANNER_WORDS.search(f"{ptr} {names}")),
         # security and the web
-        "tor_exit": tor_exit or bool(relay and relay.get("exit")),
+        "tor_exit": None if relay is None else bool(relay and relay.get("exit")),
         "open_directory": _open_directory(ip) if public else False,
         "expired_certificate": any(c["expired"] for c in certs) if certs else None,
     }

@@ -4,7 +4,7 @@
 - network owner, range, abuse contact, registration dates: RDAP (RFC 9083), the regional registries' own open
   protocol, at the registry IANA's bootstrap files name for the address;
 - reverse DNS: this server's resolver;
-- Tor exit: the Tor Project's public exit list;
+- Tor exit: the Tor Project's Onionoo service (its data is CC0);
 - hosting / datacenter networks: brianhama/bad-asn-list (MIT), plus the AS name;
 - the company's logo: the favicon of the company's own website.
 
@@ -32,7 +32,6 @@ _UA = {"User-Agent": "HiddifyPanel (node info)", "Accept": "application/rdap+jso
 _KEY = "ipdetails:v4"
 
 _BOOTSTRAP = {"v4": "https://data.iana.org/rdap/ipv4.json", "v6": "https://data.iana.org/rdap/ipv6.json", "asn": "https://data.iana.org/rdap/asn.json"}
-_TOR_LIST = "https://check.torproject.org/torbulkexitlist"
 _HOSTING_ASNS = "https://raw.githubusercontent.com/brianhama/bad-asn-list/master/bad-asn-list.csv"
 
 # An AS name that says what kind of network it is (the list above does not know every host)
@@ -73,16 +72,6 @@ def _kept(name: str, fetch, ttl: int = TTL):
 
 
 # --- open lists --------------------------------------------------------------------------------------------------
-def _tor_exits() -> list[str]:
-    def fetch():
-        try:
-            res = requests.get(_TOR_LIST, timeout=_TIMEOUT)
-            return [line.strip() for line in res.text.splitlines() if line.strip() and not line.startswith("#")] if res.ok else []
-        except Exception:
-            return []
-
-    return _kept("tor", fetch)
-
 
 def _hosting_asns() -> dict[str, str]:
     def fetch():
@@ -267,7 +256,7 @@ def _ptr(ip: str) -> str:
         return ""
 
 
-def _detect(ip: str, asn: str, names: str, domain: str) -> dict:
+def _detect(ip: str, asn: str, names: str, domain: str, tor_exit: bool) -> dict:
     addr = ipaddress.ip_address(ip)
     hosts = _hosting_asns()
     listed = asn.removeprefix("AS") in hosts
@@ -281,7 +270,7 @@ def _detect(ip: str, asn: str, names: str, domain: str) -> dict:
         "datacenter_listed": listed,
         # websites (and paid IP databases) treat datacenter addresses as VPN / proxy servers
         "vpn_likely": datacenter,
-        "tor": ip in set(_tor_exits()),
+        "tor": tor_exit,
         "mobile": mobile,
         "residential": not datacenter and not mobile and not addr.is_private,
         "bogon": not addr.is_global,
@@ -300,7 +289,9 @@ def _describe(ip: str, domains: list[str]) -> dict:
     asn_info = _rdap_asn(asn) if asn else {}
     ptr = _ptr(ip)
     names = " ".join([geo.get("org", ""), asn_info.get("name", ""), rdap.get("netname", ""), owner.get("name", "")])
-    detect = _detect(ip, asn, names, domain)
+    # the Tor Project's Onionoo (CC0): the relay on this address, if any, and whether it is an exit
+    relay = ip_flags.tor_relay(ip) if ipaddress.ip_address(ip).is_global else {}
+    detect = _detect(ip, asn, names, domain, bool(relay and relay.get("exit")))
     return {
         "ip": ip,
         "version": ipaddress.ip_address(ip).version,
@@ -311,7 +302,7 @@ def _describe(ip: str, domains: list[str]) -> dict:
         "company": {"name": owner.get("name") or geo.get("org", ""), "domain": domain, "logo": logo(domain)},
         "detect": detect,
         # the "Complete IP Info" section
-        "complete": ip_flags.check(ip, asn=asn, names=names, ptr=ptr, datacenter=detect["datacenter"], mobile=detect["mobile"], tor_exit=detect["tor"], domains=domains),
+        "complete": ip_flags.check(ip, asn=asn, names=names, ptr=ptr, datacenter=detect["datacenter"], mobile=detect["mobile"], relay=relay, domains=domains),
         "fetched_at": int(time.time()),
     }
 

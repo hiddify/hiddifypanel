@@ -1565,7 +1565,7 @@
         "domains": "دامنه‌های این سرور",
         "noDomains": "این سرور دامنه‌ای ندارد",
         "updatedAgo": "بررسی‌شده {when} · بررسی دوباره {next}",
-        "sources": "از GeoLite2، رجیستری‌های منطقه‌ای اینترنت (RDAP)، Tor Project و bad-asn-list.",
+        "sources": "این محصول از داده‌های GeoLite ساخت MaxMind استفاده می‌کند (https://www.maxmind.com). منابع دیگر: رجیستری‌های منطقه‌ای اینترنت (RDAP)، Tor Project، Spamhaus DROP (The Spamhaus Project)، abuse.ch و bad-asn-list (MIT).",
         "notChecked": "بررسی نشد",
         "defaultCert": "گواهی پیش‌فرض سرور",
         "expiredOn": "منقضی‌شده در {date}",

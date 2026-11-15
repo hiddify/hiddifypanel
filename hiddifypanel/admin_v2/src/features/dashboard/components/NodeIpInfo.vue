@@ -6,7 +6,7 @@
  * open sources and keeps the answer 7 days; this browser keeps it as long, so opening the sheet again asks nobody.
  * A bottom sheet on a phone, a card in the middle elsewhere.
  */
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
@@ -274,6 +274,40 @@ const FLAG_GROUPS: { key: string; color: string; flags: FlagDef[] }[] = [
 ]
 const ICON_COLORS = ['#007aff', '#5856d6', '#af52de', '#ff9500', '#30b0c7', '#34c759', '#ff2d55', '#5ac8fa']
 watch(selected, () => (completeOpen.value = completeOpen.value && !!current.value?.complete))
+
+/**
+ * Opening Complete IP Info glides the sheet down so the section comes into view as it unfolds; closing glides it back
+ * to where it was. Our own easing (the iOS curve), so it is as soft in every browser.
+ */
+const moreButton = ref<HTMLElement | null>(null)
+let scrollBefore = 0
+let glideFrame = 0
+function glide(el: HTMLElement, to: number, ms = 560) {
+  cancelAnimationFrame(glideFrame)
+  const from = el.scrollTop
+  const start = performance.now()
+  const ease = (x: number) => 1 - Math.pow(1 - x, 3.2)
+  const step = (now: number) => {
+    const k = Math.min(1, (now - start) / ms)
+    el.scrollTop = from + (to - from) * ease(k)
+    if (k < 1) glideFrame = requestAnimationFrame(step)
+  }
+  glideFrame = requestAnimationFrame(step)
+}
+function toggleComplete() {
+  const body = sheet.value?.querySelector<HTMLElement>('.ips__body')
+  const opening = !completeOpen.value
+  completeOpen.value = opening
+  if (!body) return
+  if (opening) {
+    scrollBefore = body.scrollTop
+    // the button near the top of the sheet, the section unfolding under it
+    const target = (moreButton.value?.offsetTop ?? body.scrollTop) - 14
+    void nextTick(() => glide(body, Math.max(0, target)))
+  } else {
+    glide(body, Math.min(scrollBefore, body.scrollTop))
+  }
+}
 
 /** A flag's state for the badge: yes / likely / no / not checked */
 function stateOf(def: FlagDef): { label: string; kind: 'yes' | 'bad' | 'likely' | 'no' | 'unknown' } {
@@ -656,9 +690,9 @@ const sections = computed(() =>
 
             <!-- Complete IP Info: every flag of the address, opened in place -->
             <template v-if="current.complete">
-              <button type="button" class="ips__more" :class="{ 'ips__more--open': completeOpen }" :aria-expanded="completeOpen" @click="completeOpen = !completeOpen">
+              <button ref="moreButton" type="button" class="ips__more" :class="{ 'ips__more--open': completeOpen }" :aria-expanded="completeOpen" @click="toggleComplete">
                 <span>Complete IP Info</span>
-                <i class="pi pi-chevron-down" />
+                <span class="ips__more-arrow"><i class="pi pi-chevron-down" /></span>
               </button>
               <div class="ips__complete" :class="{ 'ips__complete--open': completeOpen }">
                 <div class="ips__complete-inner">
@@ -1093,31 +1127,54 @@ const sections = computed(() =>
 }
 
 /* Complete IP Info: the button, and the flags it opens in place */
+/* Complete IP Info: a small pill in the middle, its arrow in a little circle that turns as the section opens */
 .ips__more {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  margin-top: 0.9rem;
-  padding: 0.75rem 1rem;
-  border: 0;
-  border-radius: 1rem;
-  background: color-mix(in srgb, var(--p-primary-color) 11%, var(--ips-group));
+  gap: 0.45rem;
+  margin: 0.85rem auto 0;
+  padding: 0.32rem 0.38rem 0.32rem 0.85rem;
+  border: 0.5px solid color-mix(in srgb, var(--p-primary-color) 22%, transparent);
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--p-primary-color) 9%, var(--ips-bg)), color-mix(in srgb, var(--p-primary-color) 15%, var(--ips-bg)));
+  box-shadow:
+    0 4px 12px -6px color-mix(in srgb, var(--p-primary-color) 55%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.35);
   color: var(--p-primary-color);
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   font-weight: 650;
+  letter-spacing: -0.005em;
   cursor: pointer;
-  transition: background 0.2s;
+  transition:
+    box-shadow 0.25s,
+    background 0.25s,
+    transform 0.2s;
+}
+html[dir='rtl'] .ips__more {
+  padding: 0.32rem 0.85rem 0.32rem 0.38rem;
 }
 .ips__more:hover {
-  background: color-mix(in srgb, var(--p-primary-color) 17%, var(--ips-group));
+  box-shadow:
+    0 6px 16px -6px color-mix(in srgb, var(--p-primary-color) 65%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.35);
 }
-.ips__more i {
-  font-size: 0.8rem;
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+.ips__more:active {
+  transform: scale(0.97);
 }
-.ips__more--open i {
+.ips__more-arrow {
+  display: grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 999px;
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color, #fff);
+  transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.ips__more-arrow i {
+  font-size: 0.6rem;
+}
+.ips__more--open .ips__more-arrow {
   transform: rotate(180deg);
 }
 .ips__complete {
@@ -1125,8 +1182,8 @@ const sections = computed(() =>
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows 0.45s cubic-bezier(0.32, 0.72, 0, 1),
-    opacity 0.3s ease;
+    grid-template-rows 0.55s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.4s ease;
 }
 .ips__complete--open {
   grid-template-rows: 1fr;

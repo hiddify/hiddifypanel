@@ -1566,7 +1566,7 @@
         "domains": "Domains on This Server",
         "noDomains": "No domains on this server",
         "updatedAgo": "Looked up {when} · again {next}",
-        "sources": "From GeoLite2, the regional internet registries (RDAP), the Tor Project and bad-asn-list.",
+        "sources": "This product includes GeoLite Data created by MaxMind, available from https://www.maxmind.com. Also from the regional internet registries (RDAP), the Tor Project, Spamhaus DROP (The Spamhaus Project), abuse.ch and bad-asn-list (MIT).",
         "notChecked": "Not checked",
         "defaultCert": "The server's default certificate",
         "expiredOn": "expired {date}",
