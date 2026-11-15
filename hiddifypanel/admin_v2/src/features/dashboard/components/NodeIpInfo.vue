@@ -302,7 +302,8 @@ function toggleComplete() {
   if (opening) {
     scrollBefore = body.scrollTop
     // the button near the top of the sheet, the section unfolding under it
-    const target = (moreButton.value?.offsetTop ?? body.scrollTop) - 14
+    const button = moreButton.value?.getBoundingClientRect()
+    const target = button ? body.scrollTop + button.top - body.getBoundingClientRect().top - 14 : body.scrollTop
     void nextTick(() => glide(body, Math.max(0, target)))
   } else {
     glide(body, Math.min(scrollBefore, body.scrollTop))
