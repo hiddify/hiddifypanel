@@ -2,12 +2,13 @@
 <html lang="{{ locale }}" dir="{{ 'rtl' if locale in ('fa', 'ar') else 'ltr' }}">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       // Installed app (PWA): iOS zooms the page into any focused field under 16px. maximum-scale=1 stops that
-      // auto-zoom (iOS still allows pinch zoom); in a browser tab the viewport stays as it is.
+      // auto-zoom (iOS still allows pinch zoom); viewport-fit=cover lets the page draw
+      // under the status bar (the top bar grows by it). In a browser tab the viewport stays as it is.
       if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) {
-        document.querySelector('meta[name=viewport]').content += ', maximum-scale=1'
+        document.querySelector('meta[name=viewport]').content += ', maximum-scale=1, viewport-fit=cover'
       }
     </script>
     <title>HiddifyManager</title>

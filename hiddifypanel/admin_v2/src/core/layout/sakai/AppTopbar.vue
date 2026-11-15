@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useLayout } from './composables/layout'
+import { syncThemeColor, useLayout } from './composables/layout'
 import AppearanceMenu from './AppearanceMenu.vue'
 import NotificationsMenu from './NotificationsMenu.vue'
 import { getPanelLogoUrl, getPanelVersion } from '@/core/panel-branding'
@@ -35,6 +35,7 @@ function fitName() {
 }
 let resizeObserver: ResizeObserver | null = null
 onMounted(() => {
+  syncThemeColor()
   fitName()
   resizeObserver = new ResizeObserver(fitName)
   if (topbarEl.value) resizeObserver.observe(topbarEl.value)
