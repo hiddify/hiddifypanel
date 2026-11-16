@@ -24,8 +24,10 @@ const id = useId()
   </svg>
 
   <svg v-else class="glyph" viewBox="0 0 24 24" aria-hidden="true">
-    <!-- drawn lying down, tip to the left, then turned so the tip points down-left as a writing pencil does -->
-    <g transform="rotate(-45 12 12)">
+    <!-- drawn lying down, tip to the left, then turned so the tip points down-left as a writing pencil does. Its weight
+         (band and eraser) sits up-right of its box's centre, so it is moved down-left to line up optically with a
+         round icon beside it -->
+    <g transform="translate(-0.8 0.6) rotate(-45 12 12)">
       <!-- sharpened wood and the graphite point -->
       <path d="M1.6 12 7 8.9v6.2Z" fill="#f3c98f" />
       <path d="M1.6 12 3.9 10.7v2.6Z" fill="#3a3a3c" />
