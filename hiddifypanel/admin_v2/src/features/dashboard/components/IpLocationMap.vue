@@ -205,7 +205,7 @@ onBeforeUnmount(() => listen(false))
   place-items: center;
   width: 1.05rem;
   height: 1.05rem;
-  margin: -0.2rem 0 -0.1rem -0.1rem;
+  margin: -0.2rem 0 -0.1rem;
   padding: 0;
   border: 0;
   background: none;

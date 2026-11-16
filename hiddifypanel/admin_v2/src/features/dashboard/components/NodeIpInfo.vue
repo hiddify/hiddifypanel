@@ -645,7 +645,13 @@ const sections = computed(() =>
           </div>
           <div class="ips__titles">
             <h2 class="ips__name">{{ node?.title }}</h2>
-            <p v-if="company" class="ips__company" :style="companyTint">{{ company }}</p>
+            <p v-if="company" class="ips__company" :style="companyTint">
+              <svg class="ips__company-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4.5 21V5.6c0-.9.6-1.6 1.5-1.8l7-1.5c1.1-.2 2 .6 2 1.7V21M15 9h3.2c.9 0 1.8.8 1.8 1.8V21M2.8 21h18.4" />
+                <path d="M8 7.5h3.5M8 11h3.5M8 14.5h3.5M17.2 13h.01M17.2 16.5h.01" />
+              </svg>
+              <span>{{ company }}</span>
+            </p>
             <p v-if="place" class="ips__place"><IpLocationMap :lat="current?.geo.latitude" :lon="current?.geo.longitude" :place="place" :city="current?.geo.city" />{{ place }}</p>
           </div>
           <FlagIcon v-if="countryCode" class="ips__flag" :code="countryCode" :label="country" waving />
@@ -894,34 +900,61 @@ html.app-dark .ips__logo img {
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
-/* the company's name in a faint tag of its colour: a label, not a button (no shadow, no hover) */
+/* the company's name in a faint tag of its colour: a label, not a button (no shadow, no hover). Its icon and the
+   place's pin below share one column (--ips-lead-*), so the two lines' icons and texts start at the same place. */
+.ips__hero {
+  --ips-lead-pad: 0.42rem;
+  --ips-lead-icon: 1.05rem;
+  --ips-lead-gap: 0.32rem;
+}
 .ips__company {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ips-lead-gap);
   max-width: 100%;
   margin: 0.3rem 0 0;
-  padding: 0.16rem 0.7rem;
+  padding: 0.16rem 0.75rem 0.16rem var(--ips-lead-pad);
   overflow: hidden;
-  border: 0.5px solid color-mix(in srgb, var(--tint) 16%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--tint) 6%, transparent);
+  /* the outline as an inset shadow: it takes no room, so the text lines up exactly with the place's below */
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--tint) 16%, transparent);
   color: color-mix(in srgb, var(--tint) 35%, var(--ips-muted));
   font-size: 1rem;
   font-weight: 550;
   line-height: 1.45;
-  text-overflow: ellipsis;
   white-space: nowrap;
   vertical-align: top;
 }
+.ips__company span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ips__company-icon {
+  flex: none;
+  width: var(--ips-lead-icon);
+  height: 0.95rem;
+  fill: none;
+  stroke: color-mix(in srgb, var(--tint) 70%, var(--ips-muted));
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+html.app-dark .ips__company-icon {
+  stroke: color-mix(in srgb, var(--tint-dark) 75%, var(--ips-muted));
+}
 html.app-dark .ips__company {
-  border-color: color-mix(in srgb, var(--tint-dark) 22%, transparent);
   background: color-mix(in srgb, var(--tint-dark) 9%, transparent);
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--tint-dark) 22%, transparent);
   color: color-mix(in srgb, var(--tint-dark) 40%, var(--ips-muted));
 }
 .ips__place {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: var(--ips-lead-gap);
   margin: 0.3rem 0 0;
+  padding-inline-start: var(--ips-lead-pad);
   color: var(--ips-muted);
   font-size: 0.85rem;
 }
