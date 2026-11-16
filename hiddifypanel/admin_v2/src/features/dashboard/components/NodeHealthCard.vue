@@ -28,6 +28,7 @@ import { dashboardNodeName, editableNodeName } from '../utils/node-name'
 import { useCardPopover } from '@/shared/composables/useCardPopover'
 import { RENAME_MIN_MAJOR, nodeRenameBlock, type RenameBlock } from '@/shared/utils/node-rename'
 import NodeIpInfo from './NodeIpInfo.vue'
+import ColorGlyph from './ColorGlyph.vue'
 
 const props = defineProps<{
   nodes: DashboardNodeStats[]
@@ -433,10 +434,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
-            <i class="pi pi-pencil" />
+            <ColorGlyph name="pencil" />
           </button>
           <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
-            <i class="pi pi-info-circle" />
+            <ColorGlyph name="info" />
           </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </template>
@@ -485,10 +486,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
-            <i class="pi pi-pencil" />
+            <ColorGlyph name="pencil" />
           </button>
           <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
-            <i class="pi pi-info-circle" />
+            <ColorGlyph name="info" />
           </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </div>
@@ -770,8 +771,26 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   flex-shrink: 0;
   vertical-align: middle;
 }
-.node-cell__info i {
-  font-size: 0.8rem;
+/* the colour icons (ColorGlyph): a light-blue info circle and a yellow pencil, a little larger than the old glyphs */
+.node-cell__info .glyph {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+.node-cell__edit .glyph {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+.node-cell__info .glyph,
+.node-cell__edit .glyph {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.node-cell__info:hover .glyph,
+.node-cell__edit:hover .glyph {
+  transform: scale(1.12);
+}
+.node-cell__info:active .glyph,
+.node-cell__edit:active .glyph {
+  transform: scale(0.92);
 }
 .node-cell__info:hover,
 .node-cell__info:focus-visible {
@@ -818,9 +837,6 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   cursor: pointer;
   flex-shrink: 0;
   vertical-align: middle;
-}
-.node-cell__edit i {
-  font-size: 0.7rem;
 }
 .node-cell__edit:hover,
 .node-cell__edit:focus-visible {
