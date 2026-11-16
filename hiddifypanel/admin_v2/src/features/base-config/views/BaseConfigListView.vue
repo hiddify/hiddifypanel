@@ -8,7 +8,6 @@
       striped-rows
       paginator
       :rows="15"
-      :rows-per-page-options="[15, 25, 50]"
       data-key="id"
     >
       <template #empty>
@@ -148,6 +147,10 @@
           <span v-if="data.version">≥ {{ data.version }}</span>
         </template>
       </Column>
+      <!-- the Users page's pager: the bar, the page numbers, Previous / Next and the rows per page -->
+      <template #paginatorcontainer="p">
+        <TablePager :first="p.page * p.rows" :rows="p.rows" :total-records="p.totalRecords ?? 0" :options="[15, 25, 50]" @page="p.changePageCallback" @rows="p.rowChangeCallback" />
+      </template>
     </DataTable>
   </Panel>
 
@@ -213,6 +216,7 @@ import { useI18n } from 'vue-i18n'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { useToast } from 'primevue/usetoast'
 import DataTable from 'primevue/datatable'
+import TablePager from '@/shared/components/TablePager.vue'
 import Column from 'primevue/column'
 import Panel from 'primevue/panel'
 import Button from 'primevue/button'

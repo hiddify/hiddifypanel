@@ -67,7 +67,6 @@
       :row-class="(p: CustomProxy) => (isEffectivelyEnabled(p) ? '' : 'proxy-row--off')"
       paginator
       :rows="10"
-      :rows-per-page-options="[10, 25, 50]"
       data-key="id"
       v-model:first="first"
       v-model:sort-field="sortField"
@@ -334,6 +333,10 @@
           <span v-else>—</span>
         </template>
       </Column>
+      <!-- the Users page's pager: the bar, the page numbers, Previous / Next and the rows per page -->
+      <template #paginatorcontainer="p">
+        <TablePager :first="p.page * p.rows" :rows="p.rows" :total-records="p.totalRecords ?? 0" :options="[10, 25, 50]" @page="p.changePageCallback" @rows="p.rowChangeCallback" />
+      </template>
     </DataTable>
   </Panel>
 
@@ -406,6 +409,7 @@ import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { useToast } from 'primevue/usetoast'
 import Panel from 'primevue/panel'
 import DataTable from 'primevue/datatable'
+import TablePager from '@/shared/components/TablePager.vue'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
