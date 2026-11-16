@@ -8,7 +8,7 @@
       striped-rows
       paginator
       :rows="15"
-      :rows-per-page-options="[10, 25, 50]"
+      :rows-per-page-options="[15, 25, 50]"
       data-key="id"
     >
       <template #empty>
