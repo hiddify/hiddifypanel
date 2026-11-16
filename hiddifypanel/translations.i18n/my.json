@@ -3933,7 +3933,7 @@
     },
     "xhttp_different_up_down_enable": {
       "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
-      "label": "🈁 XHTTP with different upload/download"
+      "label": "🈁 XHTTP with Different Upload/Download"
     },
     "xhttp_enable": {
       "description": "ဤပရိုတိုကောသည် ချန်နယ်တစ်ခုချင်းစီတွင် အချက်အလက်များကို ပေးပို့လက်ခံသည်",
