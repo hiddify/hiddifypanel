@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** The internet this browser is on (the operator the scan tests), as the panel sees it. */
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
@@ -9,7 +9,7 @@ import { countryName } from '@/shared/utils/country'
 import type { CleanIpNetwork } from '../api'
 import { operatorLabel } from './operatorLabel'
 
-const props = defineProps<{ net: CleanIpNetwork | null; error: string }>()
+const props = defineProps<{ net: CleanIpNetwork | null; error: string; checking?: boolean }>()
 defineEmits<{ refresh: [] }>()
 const { t, locale } = useI18n()
 
@@ -23,6 +23,30 @@ const vpnOn = computed(() => !!props.net?.panel_country && props.net.country !==
 const here = computed(() => (props.net ? countryName(props.net.country.toUpperCase(), locale.value) : ''))
 const usersHere = computed(() => (props.net?.panel_country ? countryName(props.net.panel_country.toUpperCase(), locale.value) : ''))
 
+/** Checked again and the VPN is still on: the notice nudges, as iOS does for a wrong entry */
+const nudge = ref(false)
+watch(
+  () => props.checking,
+  (now, before) => {
+    if (before && !now && vpnOn.value) {
+      nudge.value = false
+      requestAnimationFrame(() => (nudge.value = true))
+    }
+  },
+)
+
+/** The VPN is off now: the notice folds away (its height goes to 0), so the page below rises smoothly */
+function foldAway(el: Element, done: () => void) {
+  const box = el as HTMLElement
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return done()
+  const ease = 'cubic-bezier(0.32, 0.72, 0, 1)'
+  box.style.height = `${box.offsetHeight}px`
+  void box.offsetHeight
+  box.style.transition = `height 0.45s ${ease}, margin 0.45s ${ease}, padding 0.45s ${ease}, opacity 0.3s ease, transform 0.45s ease`
+  Object.assign(box.style, { height: '0px', marginTop: '0px', paddingTop: '0px', paddingBottom: '0px', opacity: '0', transform: 'scale(0.98)' })
+  setTimeout(done, 460)
+}
+
 // The detected operator's logo (assets/operators/<code>.png, sources in CREDITS.md); an operator without one, an
 // unknown network or a VPN keeps the icon
 const LOGOS = import.meta.glob<string>('@/assets/operators/*.png', { eager: true, query: '?url', import: 'default' })
@@ -35,9 +59,9 @@ const logo = computed(() => {
 <template>
   <section class="net card">
     <div class="net__main">
-      <span v-if="logo" class="net__icon net__icon--logo"><img :src="logo" :alt="operatorName" /></span>
-      <span v-else class="net__icon" :class="{ 'net__icon--warn': vpnOn }"><i class="pi" :class="vpnOn ? 'pi-exclamation-triangle' : 'pi-wifi'" /></span>
-      <div class="net__body">
+      <span v-if="logo" class="net__icon net__icon--logo" :class="{ 'is-checking': checking }"><img :src="logo" :alt="operatorName" /></span>
+      <span v-else class="net__icon" :class="{ 'net__icon--warn': vpnOn, 'is-checking': checking }"><i class="pi" :class="vpnOn ? 'pi-exclamation-triangle' : 'pi-wifi'" /></span>
+      <div class="net__body" :class="{ 'is-checking': checking }">
         <div class="net__label">{{ t('cleanIp.yourNetwork') }}</div>
         <template v-if="net">
           <div class="net__name">
@@ -53,11 +77,11 @@ const logo = computed(() => {
           <Skeleton width="14rem" height="0.9rem" />
         </template>
       </div>
-      <Button icon="pi pi-refresh" text rounded :aria-label="t('cleanIp.refreshNetwork')" v-tooltip.bottom="t('cleanIp.refreshNetwork')" @click="$emit('refresh')" />
+      <Button :icon="checking ? 'pi pi-refresh pi-spin' : 'pi pi-refresh'" text rounded :disabled="checking" :aria-label="t('cleanIp.refreshNetwork')" v-tooltip.bottom="t('cleanIp.refreshNetwork')" @click="$emit('refresh')" />
     </div>
     <!-- Another country than the panel's: an iOS-style notice that says why, shows the two countries, and how to fix it -->
-    <Transition name="vpn" appear>
-      <div v-if="vpnOn && net" class="vpn" role="status">
+    <Transition name="vpn" appear @leave="foldAway">
+      <div v-if="vpnOn && net" class="vpn" :class="{ 'is-checking': checking, 'is-nudged': nudge }" role="status" :aria-busy="checking" @animationend="nudge = false">
         <div class="vpn__head">
           <span class="vpn__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
@@ -90,9 +114,11 @@ const logo = computed(() => {
         </ol>
         <div class="vpn__foot">
           <p>{{ t('cleanIp.vpn.abroad') }}</p>
-          <button type="button" class="vpn__again" @click="$emit('refresh')">
+          <button type="button" class="vpn__again" :disabled="checking" @click="$emit('refresh')">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4.5h-4.5" /></svg>
-            {{ t('cleanIp.vpn.checkAgain') }}
+            <Transition name="vpn-label" mode="out-in">
+              <span :key="checking ? 'c' : 'a'">{{ checking ? t('cleanIp.vpn.checking') : t('cleanIp.vpn.checkAgain') }}</span>
+            </Transition>
           </button>
         </div>
       </div>
@@ -346,24 +372,116 @@ html.app-dark .vpn {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+/* checking: the card keeps its content; the name dims a little and the icon breathes */
+.net__body,
+.net__icon {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+.net__body.is-checking {
+  opacity: 0.55;
+}
+.net__icon.is-checking {
+  animation: net-breathe 1.2s ease-in-out infinite;
+}
+@keyframes net-breathe {
+  50% {
+    transform: scale(0.94);
+  }
+}
+/* …and a soft light sweeps across the notice */
+.vpn {
+  position: relative;
+  overflow: hidden;
+}
+.vpn.is-checking::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.45) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: vpn-sweep 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+html.app-dark .vpn.is-checking::after {
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.1) 50%, transparent 70%);
+}
+@keyframes vpn-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+.vpn__route,
+.vpn__steps {
+  transition: opacity 0.3s ease;
+}
+.vpn.is-checking .vpn__route,
+.vpn.is-checking .vpn__steps {
+  opacity: 0.6;
+}
+.vpn__again:disabled {
+  cursor: default;
+  filter: saturate(0.85);
+}
+.vpn.is-checking .vpn__again svg {
+  animation: vpn-spin 0.9s linear infinite;
+}
+@keyframes vpn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* still on after the check: a short, soft shake */
+.vpn.is-nudged {
+  animation: vpn-nudge 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+@keyframes vpn-nudge {
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-2.5px);
+  }
+  80% {
+    transform: translateX(1.5px);
+  }
+}
+.vpn-label-enter-active,
+.vpn-label-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.vpn-label-enter-from {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.vpn-label-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
 .vpn-enter-active {
   transition:
     opacity 0.35s ease,
     transform 0.5s cubic-bezier(0.32, 1.2, 0.4, 1);
 }
-.vpn-leave-active {
-  transition: opacity 0.2s ease;
-}
 .vpn-enter-from {
   opacity: 0;
   transform: translateY(-6px) scale(0.97);
 }
-.vpn-leave-to {
-  opacity: 0;
-}
 @media (prefers-reduced-motion: reduce) {
   .vpn-enter-active {
     transition: opacity 0.2s ease;
+  }
+  .net__icon.is-checking,
+  .vpn.is-checking::after,
+  .vpn.is-checking .vpn__again svg,
+  .vpn.is-nudged {
+    animation: none;
   }
   .vpn-enter-from {
     transform: none;

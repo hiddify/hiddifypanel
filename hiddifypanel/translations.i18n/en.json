@@ -1171,7 +1171,8 @@
         "step1": "Turn off the VPN or proxy on this device.",
         "step2": "Tap Check Again.",
         "abroad": "Really abroad, without a VPN? You can still scan, but the results are for the network you are on.",
-        "checkAgain": "Check Again"
+        "checkAgain": "Check Again",
+        "checking": "Checking…"
       },
       "waiting": "Waiting for a run of the command…",
       "yourNetwork": "Your network (as the panel sees it)"

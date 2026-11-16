@@ -29,6 +29,8 @@ const scan = useIpScan()
 
 const net = ref<CleanIpNetwork | null>(null)
 const netError = ref('')
+/** A "Check Again" in progress: the card keeps what it shows (no skeleton, no jump) until the new answer is in */
+const netChecking = ref(false)
 const domains = ref<DomainRow[]>([])
 const loaded = ref(false)
 // ?domain=<id> (the domain dialog's scanner link) picks that domain in step 1
@@ -54,6 +56,23 @@ async function loadNetwork() {
     net.value = await cleanIpApi.network()
   } catch (e) {
     netError.value = apiErrorMessage(e)
+  }
+}
+
+/** Looks the network up again in place: at least a short moment, so the check reads as one and not as a flicker. */
+async function recheckNetwork() {
+  if (netChecking.value) return
+  if (!net.value) return loadNetwork()
+  netChecking.value = true
+  netError.value = ''
+  try {
+    const [answer] = await Promise.all([cleanIpApi.network(), new Promise((r) => setTimeout(r, 900))])
+    net.value = answer
+  } catch (e) {
+    net.value = null
+    netError.value = apiErrorMessage(e)
+  } finally {
+    netChecking.value = false
   }
 }
 
@@ -102,7 +121,7 @@ onMounted(() => {
   <PageHeader :title="t('cleanIp.title')" :subtitle="t('cleanIp.subtitle')" />
 
   <div class="scanner">
-    <NetworkCard :net="net" :error="netError" @refresh="loadNetwork" />
+    <NetworkCard :net="net" :error="netError" :checking="netChecking" @refresh="recheckNetwork" />
 
     <Tabs v-model:value="tab" class="scanner__tabs">
       <TabList>
