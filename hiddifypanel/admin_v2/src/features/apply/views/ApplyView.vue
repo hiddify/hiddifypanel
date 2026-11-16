@@ -182,7 +182,11 @@ function ask(key: ApplyAction) {
 }
 
 /** Jump to the absolute top of the page so the run panel (under the title) is on screen after a click far down. */
+/** The glide to the top under way, if any: showRunPanel runs twice when an action starts (the click, then the
+ *  running-action check); a second call joins the glide instead of starting a rival one. */
+let gliding = false
 function showRunPanel() {
+  if (gliding) return
   void nextTick(() => {
     // The page's scroller: the window, or a layout ancestor that scrolls itself
     let box: HTMLElement | null = null
@@ -193,23 +197,31 @@ function showRunPanel() {
     }
     const read = () => (box ? box.scrollTop : window.scrollY)
     const write = (y: number) => (box ? (box.scrollTop = y) : window.scrollTo(0, y))
-    const from = read()
-    if (from <= 0) return
+    if (read() <= 0) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return void write(0)
+    gliding = true
     // While gliding, the browser must not move the page itself when the run panel appears above (scroll anchoring
     // pushed it down for a frame: a jolt); set back once at the top.
     const anchored = [document.documentElement, ...(box ? [box] : [])]
     anchored.forEach((el) => (el.style.overflowAnchor = 'none'))
     // A glide of our own, frame by frame: the browser's smooth scroll stopped short while the run panel appeared
     // above (the page moved under it). Each frame sets where the page should be, so it always ends at the top.
-    const duration = Math.min(700, 300 + from * 0.25)
     const ease = (x: number) => 1 - Math.pow(1 - x, 3)
-    const start = performance.now()
+    // where it starts is read in the first frame, once the run panel above is laid out
+    let from = 0
+    let duration = 0
+    let start = 0
     const step = (now: number) => {
-      const p = Math.min(1, (now - start) / duration)
+      if (!start) {
+        start = now
+        from = read()
+        duration = Math.min(700, 300 + from * 0.25)
+      }
+      const p = duration ? Math.min(1, (now - start) / duration) : 1
       write(Math.round(from * (1 - ease(p))))
-      if (p < 1) requestAnimationFrame(step)
-      else anchored.forEach((el) => (el.style.overflowAnchor = ''))
+      if (p < 1) return void requestAnimationFrame(step)
+      anchored.forEach((el) => (el.style.overflowAnchor = ''))
+      gliding = false
     }
     requestAnimationFrame(step)
   })
