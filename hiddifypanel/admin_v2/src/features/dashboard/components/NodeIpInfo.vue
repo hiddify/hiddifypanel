@@ -11,9 +11,11 @@ import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
 import LiveIcon from './LiveIcon.vue'
+import IpLocationMap from './IpLocationMap.vue'
 import { countryName } from '@/shared/utils/country'
 import { apiErrorMessage } from '@/core/api/client'
 import { nodesApi, type IpDetails, type NodeIpInfo } from '@/features/nodes/api'
+import { companyLogo, logoColor } from '../company-logos'
 
 const props = defineProps<{ node: { id: number; title: string } | null }>()
 const visible = defineModel<boolean>('visible', { default: false })
@@ -98,6 +100,18 @@ const company = computed(() => current.value?.company.name || current.value?.geo
 const monogram = computed(() => (company.value.trim()[0] || '?').toUpperCase())
 /** The company's initial on a colour of its own when it has no logo */
 const monogramHue = computed(() => [...company.value].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 210))
+/** A well-known company's vector logo (sharp at any size); others keep their website's icon */
+const vectorLogo = computed(() => (current.value ? companyLogo(current.value.company.domain, company.value) : undefined))
+const vectorLogoStyle = computed(() =>
+  vectorLogo.value ? { '--logo-light': logoColor(vectorLogo.value.icon.hex, false), '--logo-dark': logoColor(vectorLogo.value.icon.hex, true) } : {},
+)
+/** The company name's faint tag: the brand's colour, else the colour of its initial */
+const companyTint = computed(() => {
+  const hex = vectorLogo.value?.icon.hex
+  return hex
+    ? { '--tint': logoColor(hex, false), '--tint-dark': logoColor(hex, true) }
+    : { '--tint': `hsl(${monogramHue.value} 65% 46%)`, '--tint-dark': `hsl(${monogramHue.value} 70% 62%)` }
+})
 
 // --- a phone: pull the sheet down to close it, as in iOS ------------------------------------------------------
 const sheet = ref<HTMLElement | null>(null)
@@ -623,15 +637,16 @@ const sections = computed(() =>
 
         <!-- the server: logo, name, company, waving flag, where it is -->
         <header class="ips__hero">
-          <div class="ips__logo" :style="{ '--hue': monogramHue }">
-            <img v-if="current?.company.logo" :src="current.company.logo" alt="" />
+          <div class="ips__logo" :class="{ 'ips__logo--bare': vectorLogo || current?.company.logo }" :style="{ '--hue': monogramHue, ...vectorLogoStyle }">
+            <svg v-if="vectorLogo" viewBox="0 0 24 24" role="img" :aria-label="vectorLogo.icon.title"><path :d="vectorLogo.icon.path" /></svg>
+            <img v-else-if="current?.company.logo" :src="current.company.logo" alt="" />
             <span v-else-if="current">{{ monogram }}</span>
             <i v-else class="pi pi-server" />
           </div>
           <div class="ips__titles">
             <h2 class="ips__name">{{ node?.title }}</h2>
-            <p v-if="company" class="ips__company">{{ company }}</p>
-            <p v-if="place" class="ips__place"><i class="pi pi-map-marker" />{{ place }}</p>
+            <p v-if="company" class="ips__company" :style="companyTint">{{ company }}</p>
+            <p v-if="place" class="ips__place"><IpLocationMap :lat="current?.geo.latitude" :lon="current?.geo.longitude" :place="place" :city="current?.geo.city" />{{ place }}</p>
           </div>
           <FlagIcon v-if="countryCode" class="ips__flag" :code="countryCode" :label="country" waving />
         </header>
@@ -844,12 +859,29 @@ const sections = computed(() =>
   font-size: 1.5rem;
   font-weight: 700;
 }
+/* a logo stands on its own, no tile behind it: only a very light shadow */
+.ips__logo--bare {
+  overflow: visible;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.ips__logo svg,
 .ips__logo img {
   width: 100%;
   height: 100%;
-  padding: 0.45rem;
   object-fit: contain;
-  background: #fff;
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.12));
+}
+.ips__logo svg {
+  fill: var(--logo-light);
+}
+html.app-dark .ips__logo svg {
+  fill: var(--logo-dark);
+}
+html.app-dark .ips__logo svg,
+html.app-dark .ips__logo img {
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.35));
 }
 .ips__titles {
   min-width: 0;
@@ -862,11 +894,28 @@ const sections = computed(() =>
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
+/* the company's name in a faint tag of its colour: a label, not a button (no shadow, no hover) */
 .ips__company {
-  margin: 0.1rem 0 0;
-  color: var(--ips-muted);
-  font-size: 0.95rem;
-  font-weight: 500;
+  display: inline-block;
+  max-width: 100%;
+  margin: 0.3rem 0 0;
+  padding: 0.16rem 0.7rem;
+  overflow: hidden;
+  border: 0.5px solid color-mix(in srgb, var(--tint) 16%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tint) 6%, transparent);
+  color: color-mix(in srgb, var(--tint) 35%, var(--ips-muted));
+  font-size: 1rem;
+  font-weight: 550;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+}
+html.app-dark .ips__company {
+  border-color: color-mix(in srgb, var(--tint-dark) 22%, transparent);
+  background: color-mix(in srgb, var(--tint-dark) 9%, transparent);
+  color: color-mix(in srgb, var(--tint-dark) 40%, var(--ips-muted));
 }
 .ips__place {
   display: flex;
@@ -875,10 +924,6 @@ const sections = computed(() =>
   margin: 0.3rem 0 0;
   color: var(--ips-muted);
   font-size: 0.85rem;
-}
-.ips__place i {
-  font-size: 0.75rem;
-  color: #ff3b30;
 }
 .ips__flag {
   flex: none;

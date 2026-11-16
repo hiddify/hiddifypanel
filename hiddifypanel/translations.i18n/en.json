@@ -1513,6 +1513,12 @@
       "renameChecking": "{name}'s connection is being checked right now. Once it is known, you can rename it.",
       "ipInfo": {
         "open": "IP Info",
+        "map": {
+          "show": "Show on Map",
+          "title": "Server Location",
+          "openInMaps": "Open in Maps",
+          "approximate": "Approximate location, from the IP address."
+        },
         "loading": "Looking up the addresses…",
         "failed": "Could not look up the addresses",
         "retry": "Try Again",
