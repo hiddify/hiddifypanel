@@ -661,7 +661,8 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 /* which half is which: upload on top, download below zero */
 .node-health__net-side {
   position: absolute;
-  inset-inline-end: 0.25rem;
+  /* on the right in every language: the chart keeps its value axis on the left, also in right-to-left pages */
+  right: 0.25rem;
   z-index: 1;
   display: inline-flex;
   align-items: center;
