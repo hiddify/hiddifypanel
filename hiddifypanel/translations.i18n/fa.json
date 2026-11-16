@@ -4290,7 +4290,7 @@
     "hiddify": {
       "next": {
         "description": "توضیحات HiddifyApp",
-        "title": "هیدیفای‌اپ"
+        "title": "هیدیفای"
       }
     },
     "hiddifyn": {
@@ -4315,7 +4315,7 @@
     },
     "singbox": {
       "description": "برنامه Sing-box برنامه رسمی برای پروتکل Sing-box است.",
-      "title": "برنامه Sing-box"
+      "title": "Sing-box"
     },
     "stash": {
       "description": "توضیحات Stash",

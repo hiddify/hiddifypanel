@@ -4110,7 +4110,7 @@
     "hiddify": {
       "next": {
         "description": "HiddifyApp 설명",
-        "title": "HiddifyApp"
+        "title": "Hiddify"
       }
     },
     "hiddify-clash-android": {
@@ -4143,7 +4143,7 @@
     },
     "singbox": {
       "description": "sing-box 앱은 sing-box 프로토콜의 공식 앱입니다.",
-      "title": "sing-box 앱"
+      "title": "Sing-box"
     },
     "stash": {
       "description": "Stash 설명",

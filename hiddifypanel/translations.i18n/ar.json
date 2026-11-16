@@ -4110,7 +4110,7 @@
     "hiddify": {
       "next": {
         "description": "وصف HiddifyApp",
-        "title": "HiddifyApp"
+        "title": "Hiddify"
       }
     },
     "hiddify-clash-android": {
@@ -4143,7 +4143,7 @@
     },
     "singbox": {
       "description": "تطبيق Sing-box هو التطبيق الرسمي لبروتوكول Sing-box.",
-      "title": "تطبيق Sing-box"
+      "title": "Sing-box"
     },
     "stash": {
       "description": "وصف Stash",

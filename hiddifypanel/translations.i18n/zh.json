@@ -2891,7 +2891,7 @@
     "hiddify": {
       "next": {
         "description": "HiddifyApp 下一个说明",
-        "title": "HiddifyApp"
+        "title": "Hiddify"
       }
     },
     "hiddifyn": {
@@ -2916,7 +2916,7 @@
     },
     "singbox": {
       "description": "Sing-box 应用程序是 Sing-box 协议的官方应用程序。",
-      "title": "Sing-box 应用程序是"
+      "title": "Sing-box"
     },
     "stash": {
       "description": "Stash描述",

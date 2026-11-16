@@ -2893,7 +2893,7 @@
     "hiddify": {
       "next": {
         "description": "Описание HiddifyApp",
-        "title": "HiddifyApp"
+        "title": "Hiddify"
       }
     },
     "hiddifyn": {
@@ -2918,7 +2918,7 @@
     },
     "singbox": {
       "description": "Приложение Sing-box — официальное приложение для протокола Sing-box.",
-      "title": "Приложение Sing-box"
+      "title": "Sing-box"
     },
     "stash": {
       "description": "Описание Stash ",
