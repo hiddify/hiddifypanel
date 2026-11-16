@@ -38,6 +38,7 @@
       </template>
       <template #option="{ option }">
         <span class="qf-option">
+          <span class="proto-dot" :style="{ background: option.color }" />
           <span class="qf-option__label">{{ option.label }}</span>
           <small>{{ option.count }}</small>
         </span>
@@ -55,7 +56,11 @@
       :aria-label="t('proxy.domainModes')"
       class="qf-select"
       :class="{ 'qf-select--on': selectedDomainModes.length }"
-    />
+    >
+      <template #option="{ node }">
+        <span class="proto-option"><span class="proto-dot" :style="{ background: categoryColor(String(node.key).replace(/^group:/, '')) }" />{{ node.label }}</span>
+      </template>
+    </TreeSelect>
 
   </section>
   <ListFilterStatus :shown="filteredProxies.length" :total="proxies.length" :active="anyFilterActive" @reset="resetAllFilters" />
@@ -643,8 +648,23 @@ const quickGroups = computed<QuickGroup[]>(() => [
   },
 ])
 
+/**
+ * Each option's dot: the color it already has in the list — a protocol's or a core's as in their columns
+ * (protoColor), a transport's, a TLS layer's or a mode's as its category tag (categoryColor).
+ */
+function optionColor(group: string, value: string): string {
+  // "Other" is no protocol or transport of its own: a neutral gray
+  if (value === 'other') return 'var(--p-surface-400)'
+  return group === 'proto' || group === 'core' ? protoColor(value) : categoryColor(value)
+}
+
 function groupOptions(group: QuickGroup) {
-  return group.options.map((o) => ({ value: o.value, label: o.label, count: proxies.value.filter((row) => matchesQuick(row, group.key) && o.test(row)).length }))
+  return group.options.map((o) => ({
+    value: o.value,
+    label: o.label,
+    color: optionColor(group.key, o.value),
+    count: proxies.value.filter((row) => matchesQuick(row, group.key) && o.test(row)).length,
+  }))
 }
 
 /** Domain modes as a tree: direct → valid, fake…; relay → …; CDN on its own. */
@@ -1094,6 +1114,7 @@ onActivated(() => {
   gap: 0.55rem;
 }
 .proto-dot {
+  flex: none;
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 999px;
