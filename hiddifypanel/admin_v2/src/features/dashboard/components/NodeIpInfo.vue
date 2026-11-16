@@ -12,6 +12,7 @@ import Dialog from 'primevue/dialog'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
 import LiveIcon from './LiveIcon.vue'
 import IpLocationMap from './IpLocationMap.vue'
+import ServerLogo from './ServerLogo.vue'
 import { countryName } from '@/shared/utils/country'
 import { apiErrorMessage } from '@/core/api/client'
 import { nodesApi, type IpDetails, type NodeIpInfo } from '@/features/nodes/api'
@@ -97,8 +98,7 @@ const countryCode = computed(() => current.value?.geo.country_code || current.va
 const country = computed(() => (countryCode.value ? countryName(countryCode.value, locale.value) : ''))
 const place = computed(() => [current.value?.geo.city, current.value?.geo.region, country.value].filter(Boolean).join(', '))
 const company = computed(() => current.value?.company.name || current.value?.geo.org || '')
-const monogram = computed(() => (company.value.trim()[0] || '?').toUpperCase())
-/** The company's initial on a colour of its own when it has no logo */
+/** A colour of the company's own (from its name), for its tag and the hero's glow when it has no brand colour */
 const monogramHue = computed(() => [...company.value].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 210))
 /** A well-known company's vector logo (sharp at any size); others keep their website's icon */
 const vectorLogo = computed(() => (current.value ? companyLogo(current.value.company.domain, company.value) : undefined))
@@ -637,10 +637,10 @@ const sections = computed(() =>
 
         <!-- the server: logo, name, company, waving flag, where it is -->
         <header class="ips__hero">
-          <div class="ips__logo" :class="{ 'ips__logo--bare': vectorLogo || current?.company.logo }" :style="{ '--hue': monogramHue, ...vectorLogoStyle }">
+          <div class="ips__logo" :class="{ 'ips__logo--bare': current }" :style="{ '--hue': monogramHue, ...vectorLogoStyle }">
             <svg v-if="vectorLogo" viewBox="0 0 24 24" role="img" :aria-label="vectorLogo.icon.title"><path :d="vectorLogo.icon.path" /></svg>
             <img v-else-if="current?.company.logo" :src="current.company.logo" alt="" />
-            <span v-else-if="current">{{ monogram }}</span>
+            <ServerLogo v-else-if="current" />
             <i v-else class="pi pi-server" />
           </div>
           <div class="ips__titles">
