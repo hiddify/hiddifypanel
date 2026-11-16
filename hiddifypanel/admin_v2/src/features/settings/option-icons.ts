@@ -1,5 +1,8 @@
-import chromeLogo from '@/assets/images/brands/chrome.svg'
-import edgeLogo from '@/assets/images/brands/edge.svg'
+// The browsers' current full-colour logos, from github.com/alrra/browser-logos (trademarks of their owners)
+import chromeLogo from '@browser-logos/chrome/chrome.svg'
+import edgeLogo from '@browser-logos/edge/edge.svg'
+import firefoxLogo from '@browser-logos/firefox/firefox.svg'
+import safariLogo from '@browser-logos/safari/safari.svg'
 
 /**
  * Icons of the settings' select options, by setting key and option value: each one says what the option says
@@ -12,7 +15,7 @@ export interface OptionIcon {
   level?: 1 | 2 | 3
   /** a vector logo (BrandGlyph.vue): the proxy cores */
   brand?: 'xray' | 'hiddify'
-  /** a full-colour logo file (an SVG in assets/images/brands): the browsers */
+  /** a full-colour logo file (an SVG of the @browser-logos packages): the browsers */
   logo?: string
   color: string
 }
@@ -63,8 +66,8 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
     edge: { logo: edgeLogo, color: TEAL },
     ios: { icon: 'pi pi-apple', color: GRAY },
     android: { icon: 'pi pi-android', color: GREEN },
-    safari: { icon: 'pi pi-compass', color: SKY },
-    firefox: { icon: 'pi pi-globe', color: ORANGE },
+    safari: { logo: safariLogo, color: SKY },
+    firefox: { logo: firefoxLogo, color: ORANGE },
     random: { icon: 'pi pi-sync', color: PURPLE },
     randomized: { icon: 'pi pi-sparkles', color: INDIGO },
   },

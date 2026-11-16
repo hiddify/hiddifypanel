@@ -11,6 +11,10 @@
     "preview": "bash scripts/run-with-node.sh node_modules/vite/bin/vite.js preview"
   },
   "dependencies": {
+    "@browser-logos/chrome": "^2.0.0",
+    "@browser-logos/edge": "^2.0.7",
+    "@browser-logos/firefox": "^3.0.10",
+    "@browser-logos/safari": "^2.1.0",
     "@primeuix/themes": "^1.2.0",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/addon-web-links": "^0.12.0",
