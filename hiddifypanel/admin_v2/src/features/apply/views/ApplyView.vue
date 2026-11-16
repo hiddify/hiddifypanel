@@ -200,10 +200,6 @@ function showRunPanel() {
     if (read() <= 0) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return void write(0)
     gliding = true
-    // While gliding, the browser must not move the page itself when the run panel appears above (scroll anchoring
-    // pushed it down for a frame: a jolt); set back once at the top.
-    const anchored = [document.documentElement, ...(box ? [box] : [])]
-    anchored.forEach((el) => (el.style.overflowAnchor = 'none'))
     // A glide of our own, frame by frame: the browser's smooth scroll stopped short while the run panel appeared
     // above (the page moved under it). Each frame sets where the page should be, so it always ends at the top.
     const ease = (x: number) => 1 - Math.pow(1 - x, 3)
@@ -220,7 +216,6 @@ function showRunPanel() {
       const p = duration ? Math.min(1, (now - start) / duration) : 1
       write(Math.round(from * (1 - ease(p))))
       if (p < 1) return void requestAnimationFrame(step)
-      anchored.forEach((el) => (el.style.overflowAnchor = ''))
       gliding = false
     }
     requestAnimationFrame(step)
