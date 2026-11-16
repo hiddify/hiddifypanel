@@ -206,14 +206,17 @@ function showRunPanel() {
     // where it starts is read in the first frame, once the run panel above is laid out
     let from = 0
     let duration = 0
-    let start = 0
+    // the glide's own clock: a frame moves it at most 20ms on, so a slow frame (the run panel being built) pauses
+    // the glide for a moment instead of making it leap
+    let clock = 0
+    let last = 0
     const step = (now: number) => {
-      if (!start) {
-        start = now
+      if (!last) {
         from = read()
         duration = Math.min(700, 300 + from * 0.25)
-      }
-      const p = duration ? Math.min(1, (now - start) / duration) : 1
+      } else clock += Math.min(now - last, 20)
+      last = now
+      const p = duration ? Math.min(1, clock / duration) : 1
       write(Math.round(from * (1 - ease(p))))
       if (p < 1) return void requestAnimationFrame(step)
       gliding = false
