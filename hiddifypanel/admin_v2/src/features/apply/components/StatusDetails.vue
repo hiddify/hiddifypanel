@@ -8,6 +8,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
+import ServiceLogo from './ServiceLogo.vue'
 import { countryCode, parseStatus, serviceLook, type StatusPlace } from '../status-parse'
 
 const props = defineProps<{ text: string }>()
@@ -95,7 +96,7 @@ function stateLabel(state: string) {
       <header class="sd-card__head"><i class="pi pi-th-large" />{{ t('apply.details.services') }}</header>
       <ul>
         <li v-for="(s, n) in services" :key="s.unit" :style="{ '--c': s.color, '--j': n }">
-          <span class="sd-svc__icon"><i :class="s.icon" /></span>
+          <ServiceLogo :logo="s.logo" :icon="s.icon" :color="s.color" />
           <span class="sd-svc__name">
             <strong>{{ s.name }}</strong>
             <small dir="ltr">{{ s.unit }}</small>
@@ -320,18 +321,6 @@ html.app-dark .sd {
 }
 .sd-services li + li {
   box-shadow: inset 0 0.5px 0 color-mix(in srgb, var(--p-text-color) 10%, transparent);
-}
-.sd-svc__icon {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 1.9rem;
-  height: 1.9rem;
-  border-radius: 0.55rem;
-  background: var(--c);
-  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.35);
-  color: #fff;
-  font-size: 0.85rem;
 }
 .sd-svc__name {
   display: flex;

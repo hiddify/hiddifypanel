@@ -1,3 +1,5 @@
+import { siHaproxy, siMysql, siRedis, siTelegram, siWireguard, type SimpleIcon } from 'simple-icons'
+
 /**
  * What "Check Status" prints (scripts/status.sh in Hiddify-Manager), read back as data for the status details:
  *
@@ -86,26 +88,29 @@ export function parseStatus(text: string): StatusReport {
   return report
 }
 
-/** A unit's name for people, its icon and colour. Units not listed keep their name. */
-const SERVICES: { test: RegExp; name: string; icon: string; color: string }[] = [
-  { test: /mysql|mariadb/, name: 'MySQL', icon: 'pi pi-database', color: '#0a84ff' },
-  { test: /redis/, name: 'Redis', icon: 'pi pi-bolt', color: '#ff453a' },
-  { test: /hiddify-core|singbox/, name: 'Hiddify Core', icon: 'pi pi-box', color: '#5e5ce6' },
-  { test: /xray/, name: 'XRay', icon: 'pi pi-star', color: '#636366' },
-  { test: /haproxy/, name: 'HAProxy', icon: 'pi pi-sitemap', color: '#30b0c7' },
-  { test: /panel/, name: 'Hiddify Panel', icon: 'pi pi-th-large', color: '#007aff' },
+/** A logo instead of a PrimeIcon (ServiceLogo.vue): a vendor's mark from Simple Icons, XRay's star, Hiddify's hexagon. */
+export type ServiceLogoKind = SimpleIcon | 'xray' | 'hiddify-black' | 'hiddify-blue'
+
+/** A unit's name for people, its logo (or icon) and colour. Units not listed keep their name. */
+const SERVICES: { test: RegExp; name: string; icon: string; color: string; logo?: ServiceLogoKind }[] = [
+  { test: /mysql|mariadb/, name: 'MySQL', icon: 'pi pi-database', color: '#4479a1', logo: siMysql },
+  { test: /redis/, name: 'Redis', icon: 'pi pi-bolt', color: '#ff4438', logo: siRedis },
+  { test: /hiddify-core|singbox/, name: 'Hiddify Core', icon: 'pi pi-box', color: '#1c1c1e', logo: 'hiddify-black' },
+  { test: /xray/, name: 'XRay', icon: 'pi pi-star', color: '#1c1c1e', logo: 'xray' },
+  { test: /haproxy/, name: 'HAProxy', icon: 'pi pi-sitemap', color: '#169bd6', logo: siHaproxy },
+  { test: /panel/, name: 'Hiddify Panel', icon: 'pi pi-th-large', color: '#2563eb', logo: 'hiddify-blue' },
   { test: /rpxy/, name: 'Reverse Proxy (rpxy)', icon: 'pi pi-directions', color: '#ff9f0a' },
-  { test: /telegram/, name: 'Telegram Proxy', icon: 'pi pi-telegram', color: '#2aabee' },
+  { test: /telegram/, name: 'Telegram Proxy', icon: 'pi pi-telegram', color: '#26a5e4', logo: siTelegram },
   { test: /warp|usque/, name: 'WARP', icon: 'pi pi-cloud', color: '#f48120' },
-  { test: /wg-quick|wireguard/, name: 'WireGuard', icon: 'pi pi-shield', color: '#88171a' },
+  { test: /wg-quick|wireguard/, name: 'WireGuard', icon: 'pi pi-shield', color: '#88171a', logo: siWireguard },
   { test: /nginx/, name: 'Nginx', icon: 'pi pi-server', color: '#34c759' },
   { test: /ssh/, name: 'SSH Proxy', icon: 'pi pi-key', color: '#8e8e93' },
   { test: /dns/, name: 'DNS', icon: 'pi pi-globe', color: '#64d2ff' },
 ]
 
-export function serviceLook(unit: string): { name: string; icon: string; color: string } {
+export function serviceLook(unit: string): { name: string; icon: string; color: string; logo?: ServiceLogoKind } {
   const hit = SERVICES.find((s) => s.test.test(unit))
-  return hit ? { name: hit.name, icon: hit.icon, color: hit.color } : { name: unit.replace(/^hiddify-/, ''), icon: 'pi pi-cog', color: '#8e8e93' }
+  return hit ? { name: hit.name, icon: hit.icon, color: hit.color, logo: hit.logo } : { name: unit.replace(/^hiddify-/, ''), icon: 'pi pi-cog', color: '#8e8e93' }
 }
 
 /** A country's ISO code from its English name (ip-api.com gives names), for its flag. */
