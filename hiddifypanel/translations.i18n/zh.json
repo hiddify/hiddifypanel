@@ -3078,10 +3078,10 @@
     },
     "common_proxy_core": {
       "both": "两者",
-      "description": "当协议同时存在于 Xray 和 Hiddify Core 时，仅所选核心保持启用。选择“两者”则同时保留。",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "当协议同时存在于 XRay 和 Hiddify Core 时，仅所选核心保持启用。选择“两者”则同时保留。",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ 通用代理核心",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "在启动后及每 6 小时从服务器本身测试订阅中的所有配置，并在配置失效时（通过 Telegram）通知管理员。每次检查都会通过每个配置连接到服务器：部分主机商会将其视为洪水攻击。仪表盘上的“立即检查”始终可用。",

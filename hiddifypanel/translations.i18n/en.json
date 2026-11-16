@@ -4731,10 +4731,10 @@
     },
     "common_proxy_core": {
       "both": "Both",
-      "description": "When a protocol exists on both Xray and Hiddify Core, only the selected core stays enabled. Choose Both to keep both.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "When a protocol exists on both XRay and Hiddify Core, only the selected core stays enabled. Choose Both to keep both.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Common Proxy Core",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Test every config of the subscription from the server after a start and every 6 hours, and warn the admins (Telegram) when configs stop working. Each check connects through every config to the server: some hosting providers take that for a flood. “Check now” on the dashboard always works.",

@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Ikkalasi",
-      "description": "Protokol Xray da ham, Hiddify Core da ham mavjud boʻlsa, faqat tanlangan yadro yoqilgan holda qoladi. Ikkalasini saqlash uchun «Ikkalasi» ni tanlang.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Protokol XRay da ham, Hiddify Core da ham mavjud boʻlsa, faqat tanlangan yadro yoqilgan holda qoladi. Ikkalasini saqlash uchun «Ikkalasi» ni tanlang.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Umumiy proksi yadrosi",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Obunaning har bir konfiguratsiyasini ishga tushgandan keyin va har 6 soatda serverdan tekshiradi hamda konfiguratsiyalar ishlamay qolganda adminlarni ogohlantiradi (Telegram). Har bir tekshiruv serverga barcha konfiguratsiyalar orqali ulanadi: ayrim hosting provayderlar buni hujum deb hisoblaydi. Boshqaruv panelidagi «Hozir tekshirish» doim ishlaydi.",

@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Beide",
-      "description": "Wenn ein Protokoll sowohl in Xray als auch in Hiddify Core existiert, bleibt nur der ausgewählte Core aktiviert. Wählen Sie Beide, um beide zu behalten.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Wenn ein Protokoll sowohl in XRay als auch in Hiddify Core existiert, bleibt nur der ausgewählte Core aktiviert. Wählen Sie Beide, um beide zu behalten.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Gemeinsamer Proxy-Core",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Jede Konfiguration des Abos nach einem Start und alle 6 Stunden vom Server aus testen und die Admins (Telegram) warnen, wenn Konfigurationen nicht mehr funktionieren. Jede Prüfung verbindet sich über jede Konfiguration mit dem Server: Manche Hosting-Anbieter halten das für eine Flut. „Jetzt prüfen“ im Dashboard funktioniert immer.",

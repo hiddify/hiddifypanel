@@ -7,6 +7,8 @@ export interface OptionIcon {
   icon?: string
   flag?: string
   level?: 1 | 2 | 3
+  /** a vector logo (BrandGlyph.vue): the proxy cores */
+  brand?: 'xray' | 'hiddify'
   color: string
 }
 
@@ -46,8 +48,8 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
     beta: { icon: 'pi pi-wrench', color: AMBER },
   },
   common_proxy_core: {
-    xray: { icon: 'pi pi-microchip', color: SKY },
-    hiddify_core: { icon: 'pi pi-box', color: INDIGO },
+    xray: { brand: 'xray', color: GRAY },
+    hiddify_core: { brand: 'hiddify', color: BLUE },
     both: { icon: 'pi pi-clone', color: PURPLE },
   },
   utls: {

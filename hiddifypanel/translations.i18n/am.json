@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "ሁለቱም",
-      "description": "አንድ ፕሮቶኮል በXray እና በHiddify Core ላይ ሲኖር፣ የተመረጠው ኮር ብቻ ነቅቶ ይቆያል። ሁለቱንም ለማቆየት ሁለቱም ን ይምረጡ።",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "አንድ ፕሮቶኮል በXRay እና በHiddify Core ላይ ሲኖር፣ የተመረጠው ኮር ብቻ ነቅቶ ይቆያል። ሁለቱንም ለማቆየት ሁለቱም ን ይምረጡ።",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ የጋራ ፕሮክሲ ኮር",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "ከጅምር በኋላ እና በየ6 ሰዓቱ የደንበኝነት ምዝገባውን እያንዳንዱን ኮንፊግ ከሰርቨሩ ይፈትሹ፣ ኮንፊጎች መሥራት ሲያቆሙ አስተዳዳሪዎችን (ቴሌግራም) ያስጠነቅቁ። እያንዳንዱ ፍተሻ በእያንዳንዱ ኮንፊግ በኩል ወደ ሰርቨሩ ይገናኛል፦ አንዳንድ አስተናጋጆች ይህን እንደ ጎርፍ ጥቃት ይቆጥሩታል። በዳሽቦርዱ ላይ “አሁን ፈትሽ” ሁልጊዜ ይሠራል።",

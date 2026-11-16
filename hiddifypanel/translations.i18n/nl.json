@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Beide",
-      "description": "Wanneer een protocol zowel in Xray als in Hiddify Core bestaat, blijft alleen de gekozen core ingeschakeld. Kies Beide om beide te behouden.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Wanneer een protocol zowel in XRay als in Hiddify Core bestaat, blijft alleen de gekozen core ingeschakeld. Kies Beide om beide te behouden.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Common Proxy Core",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Test elke configuratie van het abonnement vanaf de server na een start en elke 6 uur, en waarschuw de beheerders (Telegram) wanneer configuraties niet meer werken. Elke controle verbindt via elke configuratie met de server: sommige hostingproviders zien dat voor een flood aan. “Nu controleren” op het dashboard werkt altijd.",

@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Hər ikisi",
-      "description": "Protokol həm Xray-də, həm Hiddify Core-da mövcud olduqda yalnız seçilmiş nüvə aktiv qalır. Hər ikisini saxlamaq üçün Hər ikisi seçin.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Protokol həm XRay-də, həm Hiddify Core-da mövcud olduqda yalnız seçilmiş nüvə aktiv qalır. Hər ikisini saxlamaq üçün Hər ikisi seçin.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Ümumi proksi nüvəsi",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Abunəlik hər konfiqurasiyasını başladıqdan sonra və hər 6 saatdan bir serverdən test edin və konfiqurasiyalar işləməyi dayandıqda adminləri xəbərdar edin (Telegram). Hər yoxlama serverə hər konfiqurasiya ilə qoşulur: bəzi hostinq provayderləri bunu flood hesab edir. İdarə panelindəki “İndi yoxla” həmişə işləyir.",

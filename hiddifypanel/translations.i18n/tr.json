@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Her ikisi",
-      "description": "Bir protokol hem Xray'de hem Hiddify Core'da bulunuyorsa yalnızca seçilen çekirdek etkin kalır. İkisini de tutmak için Her ikisi'ni seçin.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Bir protokol hem XRay'de hem Hiddify Core'da bulunuyorsa yalnızca seçilen çekirdek etkin kalır. İkisini de tutmak için Her ikisi'ni seçin.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Yaygın Proxy Çekirdeği",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Aboneliğin her yapılandırmasını başlangıçtan sonra ve her 6 saatte bir sunucudan test eder, yapılandırmalar çalışmayı bıraktığında yöneticileri uyarır (Telegram). Her denetim sunucuya her yapılandırma üzerinden bağlanır: bazı barındırma sağlayıcıları bunu saldırı sanır. Gösterge panelindeki “Şimdi denetle” her zaman çalışır.",

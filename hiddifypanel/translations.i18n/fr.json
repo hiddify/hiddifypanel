@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Les deux",
-      "description": "Quand un protocole existe à la fois dans Xray et dans Hiddify Core, seul le cœur sélectionné reste activé. Choisissez Les deux pour garder les deux.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Quand un protocole existe à la fois dans XRay et dans Hiddify Core, seul le cœur sélectionné reste activé. Choisissez Les deux pour garder les deux.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Cœur du proxy courant",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Teste chaque configuration de l'abonnement depuis le serveur après un démarrage puis toutes les 6 heures, et avertit les administrateurs (Telegram) quand des configurations cessent de fonctionner. Chaque vérification se connecte au serveur via toutes les configurations : certains hébergeurs prennent cela pour une attaque par saturation. « Vérifier maintenant » sur le tableau de bord fonctionne toujours.",

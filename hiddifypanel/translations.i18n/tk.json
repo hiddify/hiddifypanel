@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Ikisi hem",
-      "description": "Protokol hem Xray-da, hem Hiddify Core-da bar bolanda, diňe saýlanan ýadro açyk galýar. Ikisini hem saklamak üçin Ikisi hem saýlaň.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Protokol hem XRay-da, hem Hiddify Core-da bar bolanda, diňe saýlanan ýadro açyk galýar. Ikisini hem saklamak üçin Ikisi hem saýlaň.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Umumy proksi ýadrosy",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Abunanyň her konfigini başlandan soň we her 6 sagatdan serwerden synaň we konfigler işlemeýän bolanda adminlere (Telegram) duýduryş beriň. Her barlag serwere her konfig arkaly birigýär: käbir hosting üpjünçileri muny flud hasaplaýar. Dolandyryş panelindäki “Häzir barla” hemişe işleýär.",

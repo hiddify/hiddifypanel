@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "둘 다",
-      "description": "Xray와 Hiddify Core 모두에 있는 프로토콜은 선택한 코어만 활성화된 상태로 유지됩니다. 둘 다 유지하려면 둘 다를 선택하세요.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "XRay와 Hiddify Core 모두에 있는 프로토콜은 선택한 코어만 활성화된 상태로 유지됩니다. 둘 다 유지하려면 둘 다를 선택하세요.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ 공통 프록시 코어",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "시작 후와 6시간마다 서버에서 구독의 모든 구성을 테스트하고, 구성이 작동하지 않으면 관리자에게 Telegram으로 알립니다. 점검할 때마다 모든 구성으로 서버에 연결하는데, 일부 호스팅 업체는 이를 플러드 공격으로 간주합니다. 대시보드의 「지금 확인」은 항상 작동합니다.",

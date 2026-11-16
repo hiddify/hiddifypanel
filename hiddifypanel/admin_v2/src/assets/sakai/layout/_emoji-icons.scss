@@ -58,6 +58,18 @@
         margin-inline-end: 0.3em;
     }
 }
+/* a core's logo on its tile (BrandGlyph.vue): XRay's star takes the text colour (black, white in dark mode) */
+.ui-opt-icon .ui-brand {
+    width: 1.05rem;
+    height: 1.05rem;
+    filter: drop-shadow(0 0.5px 0.5px rgb(0 0 0 / 0.12));
+}
+.ui-opt-icon .ui-brand--xray {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: var(--p-text-color);
+    filter: none;
+}
 .ui-opt-icon__level {
     display: inline-flex;
     align-items: flex-end;

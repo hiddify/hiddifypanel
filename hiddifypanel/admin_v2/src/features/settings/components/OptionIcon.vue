@@ -1,6 +1,7 @@
 <script setup lang="ts">
-/** A select option's icon (option-icons.ts) on a soft tile of its colour: an icon, a flag, or 1–3 level bars (styles: _emoji-icons.scss). */
+/** A select option's icon (option-icons.ts) on a soft tile of its colour: an icon, a flag, a brand logo or 1–3 level bars (styles: _emoji-icons.scss). */
 import FlagIcon from '@/shared/components/FlagIcon.vue'
+import BrandGlyph from './BrandGlyph.vue'
 import type { OptionIcon } from '@/features/settings/option-icons'
 
 defineProps<{ icon: OptionIcon }>()
@@ -12,6 +13,7 @@ defineProps<{ icon: OptionIcon }>()
     <span v-else-if="icon.level" class="ui-opt-icon__level">
       <i v-for="n in 3" :key="n" :class="{ on: n <= icon.level! }" :style="{ height: `${n * 0.22 + 0.2}rem` }" />
     </span>
+    <BrandGlyph v-else-if="icon.brand" :name="icon.brand" />
     <i v-else :class="icon.icon" />
   </span>
 </template>
