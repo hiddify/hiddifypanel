@@ -376,7 +376,11 @@
   <Popover ref="modePopover" @show="focusFirstInput(modePopover)">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('proxy.mode') }}</label>
-      <Listbox v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="modePopover.hide()" />
+      <Listbox v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="modePopover.hide()">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: modeColor(option.value) }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
   <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
@@ -392,7 +396,11 @@
   <Popover ref="enabledPopover">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('common.enabled') }}</label>
-      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()" />
+      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: option.color }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
 
@@ -794,10 +802,17 @@ const modePopover = ref()
 const corePopover = ref()
 const enabledPopover = ref()
 
+/** Their dots say what they are: on (green), off (red) */
 const enabledOptions = [
-  { label: t('common.enabled'), value: true },
-  { label: t('common.disabled'), value: false },
+  { label: t('common.enabled'), value: true, color: 'var(--p-green-500)' },
+  { label: t('common.disabled'), value: false, color: 'var(--p-red-500)' },
 ]
+
+/** A mode's dot in the Mode column's filter: the same color as in the quick Mode filter above the list */
+const MODE_KEYS: Record<string, string> = { domains_l7_gateway: 'l7', domains_sni_gateway: 'sni', domains_dns_gateway: 'dns', ip: 'ip' }
+function modeColor(mode: string): string {
+  return categoryColor(MODE_KEYS[mode] ?? mode)
+}
 
 const COMMON_PROXY_CORES = new Set(['hiddify-core', 'xray'])
 
