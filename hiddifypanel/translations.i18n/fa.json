@@ -4794,7 +4794,7 @@
       "label": "☑️ اجازه اتصال HTTP"
     },
     "httpupgrade_enable": {
-      "description": "HTTPUpgrade یک درخواست ارتقاء HTTP ۱.۱ است و پاسخ را قبل از استفاده مستقیم از اتصال تکمیل می کند. این شبیه به WebSocket است که یک کانال ایجاد می کند که می تواند توسط بسیاری از پروکسی های معکوس و CDN ها ارسال شود، بدون اینکه نیازی به رسیدگی به تمام مسائل پیرامون خود پروتکل WebSocket باشد.<br /><a href=\"https://hiddify.com/fa/manager/basic-concepts-and-troubleshooting/Basic-Concepts/#http-upgarde\" target=\"_blank\"><strong>(بیشتر بدانید)</strong></a>",
+      "description": "HTTPUpgrade یک درخواست ارتقاء HTTP ۱.۱ است و پاسخ را قبل از استفاده مستقیم از اتصال تکمیل می کند. این شبیه به WebSocket است که یک کانال ایجاد می کند که می تواند توسط بسیاری از پروکسی های معکوس و CDN ها ارسال شود، بدون اینکه نیازی به رسیدگی به تمام مسائل پیرامون خود پروتکل WebSocket باشد.<br />\n⚠️ <strong>در کلاینت‌های مبتنی بر Xray کار نمی‌کند. فقط کلاینت‌های <a href=\"https://app.hiddify.com\" target=\"_blank\">هیدیفای</a>، Singbox و V2fly پشتیبانی می‌شوند.</strong>&nbsp;<a href=\"https://hiddify.com/fa/manager/basic-concepts-and-troubleshooting/Basic-Concepts/#http-upgrade\" target=\"_blank\"><strong>(بیشتر بدانید)</strong></a>",
       "label": "🆙 HTTPUpgrade"
     },
     "hysteria": {
@@ -4807,7 +4807,7 @@
     },
     "hysteria_enable": {
       "description": "برای فعال کردن پروتکل هیستریا مبتنی بر UDP",
-      "label": "⚪️ هیستریا"
+      "label": "⚫️ هیستریا ۲"
     },
     "hysteria_obfs_enable": {
       "description": "مبهم سازی هیستریا (Salamander) را فعال می کند",
