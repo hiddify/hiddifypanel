@@ -78,13 +78,16 @@ const coords = computed(() => {
 /** Apple Maps on Apple devices, its web page elsewhere */
 const mapsUrl = computed(() => `https://maps.apple.com/?ll=${props.lat},${props.lon}&q=${encodeURIComponent(props.city || props.place)}&z=10`)
 
-/** Under the pin, inside the window; above it when there is no room below. */
+/** Centred on the sheet (in every language and direction), under the pin; above it when there is no room below. It
+ * still grows out of the pin: the transform origin follows the pin. */
 function position() {
   const el = trigger.value
   if (!el) return
   const r = el.getBoundingClientRect()
   const width = Math.min(CARD_W, window.innerWidth - 24)
-  const left = Math.min(Math.max(r.left + r.width / 2 - 34, 12), window.innerWidth - width - 12)
+  const sheet = el.closest('.p-dialog')?.getBoundingClientRect()
+  const centre = sheet ? sheet.left + sheet.width / 2 : window.innerWidth / 2
+  const left = Math.min(Math.max(centre - width / 2, 12), window.innerWidth - width - 12)
   const height = card.value?.offsetHeight || 300
   const below = r.bottom + GAP + height <= window.innerHeight - 12
   const top = below ? r.bottom + GAP : Math.max(12, r.top - GAP - height)
