@@ -266,7 +266,7 @@ def get_config_form(**form_kwargs):
             elif c.key == ConfigEnum.utls:
                 field = wtf.SelectField(
                     _(f"config.{c.key}.label"),
-                    choices=[("none", "None"), ("chrome", "Chrome"), ("edge", "Edge"), ("ios", "iOS"), ("android", "Android"), ("safari", "Safari"), ("firefox", "Firefox"), ("random", "random"), ("randomized", "randomized")],
+                    choices=[("none", "None"), ("chrome", "Chrome"), ("edge", "Edge"), ("ios", "iOS"), ("android", "Android"), ("safari", "Safari"), ("firefox", "Firefox"), ("random", "Random"), ("randomized", "Randomized")],
                     description=_(f"config.{c.key}.description"),
                     default=hconfig(c.key),
                 )

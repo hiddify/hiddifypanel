@@ -1,3 +1,6 @@
+import chromeLogo from '@/assets/images/brands/chrome.svg'
+import edgeLogo from '@/assets/images/brands/edge.svg'
+
 /**
  * Icons of the settings' select options, by setting key and option value: each one says what the option says
  * (High → three bars, No Wait → a bolt), in a colour of its own. Options not listed keep their label as it is.
@@ -9,6 +12,8 @@ export interface OptionIcon {
   level?: 1 | 2 | 3
   /** a vector logo (BrandGlyph.vue): the proxy cores */
   brand?: 'xray' | 'hiddify'
+  /** a full-colour logo file (an SVG in assets/images/brands): the browsers */
+  logo?: string
   color: string
 }
 
@@ -54,8 +59,8 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
   },
   utls: {
     none: { icon: 'pi pi-ban', color: GRAY },
-    chrome: { icon: 'pi pi-google', color: BLUE },
-    edge: { icon: 'pi pi-microsoft', color: TEAL },
+    chrome: { logo: chromeLogo, color: BLUE },
+    edge: { logo: edgeLogo, color: TEAL },
     ios: { icon: 'pi pi-apple', color: GRAY },
     android: { icon: 'pi pi-android', color: GREEN },
     safari: { icon: 'pi pi-compass', color: SKY },

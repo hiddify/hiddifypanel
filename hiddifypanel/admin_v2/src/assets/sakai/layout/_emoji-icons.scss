@@ -58,6 +58,11 @@
         margin-inline-end: 0.3em;
     }
 }
+/* a browser's full-colour logo (assets/images/brands): nearly the whole tile, as the logo itself is round */
+.ui-opt-icon .ui-brand--logo {
+    width: 1.2rem;
+    height: 1.2rem;
+}
 /* a core's logo on its tile (BrandGlyph.vue): XRay's star takes the text colour (black, white in dark mode) */
 .ui-opt-icon .ui-brand {
     width: 1.05rem;
@@ -65,8 +70,8 @@
     filter: drop-shadow(0 0.5px 0.5px rgb(0 0 0 / 0.12));
 }
 .ui-opt-icon .ui-brand--xray {
-    width: 0.95rem;
-    height: 0.95rem;
+    width: 1.2rem;
+    height: 1.2rem;
     color: var(--p-text-color);
     filter: none;
 }

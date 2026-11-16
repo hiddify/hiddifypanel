@@ -14,6 +14,7 @@ defineProps<{ icon: OptionIcon }>()
       <i v-for="n in 3" :key="n" :class="{ on: n <= icon.level! }" :style="{ height: `${n * 0.22 + 0.2}rem` }" />
     </span>
     <BrandGlyph v-else-if="icon.brand" :name="icon.brand" />
+    <img v-else-if="icon.logo" :src="icon.logo" class="ui-brand ui-brand--logo" alt="" />
     <i v-else :class="icon.icon" />
   </span>
 </template>
