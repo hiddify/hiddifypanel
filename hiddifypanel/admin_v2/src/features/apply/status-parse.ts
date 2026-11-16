@@ -99,7 +99,8 @@ const SERVICES: { test: RegExp; name: string; icon: string; color: string; logo?
   { test: /xray/, name: 'XRay', icon: 'pi pi-star', color: '#1c1c1e', logo: 'xray' },
   { test: /haproxy/, name: 'HAProxy', icon: 'pi pi-sitemap', color: '#169bd6', logo: siHaproxy },
   { test: /panel/, name: 'Hiddify Panel', icon: 'pi pi-th-large', color: '#2563eb', logo: 'hiddify-blue' },
-  { test: /rpxy/, name: 'Reverse Proxy (rpxy)', icon: 'pi pi-directions', color: '#ff9f0a' },
+  // a reverse proxy takes the request and hands it on to the service behind it: two arrows, there and back
+  { test: /rpxy/, name: 'Reverse Proxy (rpxy)', icon: 'pi pi-arrow-right-arrow-left', color: '#ff9f0a' },
   { test: /telegram/, name: 'Telegram Proxy', icon: 'pi pi-telegram', color: '#26a5e4', logo: siTelegram },
   { test: /warp|usque/, name: 'WARP', icon: 'pi pi-cloud', color: '#f48120' },
   { test: /wg-quick|wireguard/, name: 'WireGuard', icon: 'pi pi-shield', color: '#88171a', logo: siWireguard },
