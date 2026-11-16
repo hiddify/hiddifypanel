@@ -184,16 +184,34 @@ function ask(key: ApplyAction) {
 /** Jump to the absolute top of the page so the run panel (under the title) is on screen after a click far down. */
 function showRunPanel() {
   void nextTick(() => {
-    // Instant: smooth scrollIntoView on .ap-run stopped short (left PageHeader above the fold).
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-    document.documentElement.scrollTop = 0
-    document.body.scrollTop = 0
-    // If a layout ancestor is the real scroller, reset that too.
+    // The page's scroller: the window, or a layout ancestor that scrolls itself
+    let box: HTMLElement | null = null
     for (let el = document.querySelector('.ap-page')?.parentElement; el; el = el.parentElement) {
       if (!(el instanceof HTMLElement)) continue
       const oy = getComputedStyle(el).overflowY
-      if ((oy === 'auto' || oy === 'scroll') && el.scrollTop) el.scrollTop = 0
+      if ((oy === 'auto' || oy === 'scroll') && el.scrollTop) box = el
     }
+    const read = () => (box ? box.scrollTop : window.scrollY)
+    const write = (y: number) => (box ? (box.scrollTop = y) : window.scrollTo(0, y))
+    const from = read()
+    if (from <= 0) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return void write(0)
+    // While gliding, the browser must not move the page itself when the run panel appears above (scroll anchoring
+    // pushed it down for a frame: a jolt); set back once at the top.
+    const anchored = [document.documentElement, ...(box ? [box] : [])]
+    anchored.forEach((el) => (el.style.overflowAnchor = 'none'))
+    // A glide of our own, frame by frame: the browser's smooth scroll stopped short while the run panel appeared
+    // above (the page moved under it). Each frame sets where the page should be, so it always ends at the top.
+    const duration = Math.min(700, 300 + from * 0.25)
+    const ease = (x: number) => 1 - Math.pow(1 - x, 3)
+    const start = performance.now()
+    const step = (now: number) => {
+      const p = Math.min(1, (now - start) / duration)
+      write(Math.round(from * (1 - ease(p))))
+      if (p < 1) requestAnimationFrame(step)
+      else anchored.forEach((el) => (el.style.overflowAnchor = ''))
+    }
+    requestAnimationFrame(step)
   })
 }
 
