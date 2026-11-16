@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Come viene chiamato un dominio senza alias nelle configurazioni degli utenti, nel titolo del profilo e nel nome dell'abbonamento.<br>🔒 Privato: il suo tipo e un codice che non lo rivela (☁️ CDN K7Q)<br>🫥 Mascherato: la maggior parte delle lettere nascosta (⚡ h*y.com)<br>🌐 Nome di dominio completo",
+      "description": "Come viene chiamato un dominio senza alias nelle configurazioni degli utenti, nel titolo del profilo e nel nome dell'abbonamento.<br>🔒 Privato: il suo tipo e un codice che non lo rivela (CDN K7Q)<br>🫥 Mascherato: la maggior parte delle lettere nascosta (h*y.com)<br>🌐 Nome di dominio completo",
       "full": "🌐 Nome di dominio completo",
       "label": "🏷️ Nomi delle configurazioni",
-      "masked": "🫥 Mascherato (⚡ h*y.com)",
-      "private": "🔒 Privato: tipo e codice (☁️ CDN K7Q)"
+      "masked": "🫥 Mascherato (h*y.com)",
+      "private": "🔒 Privato: tipo e codice (CDN K7Q)"
     },
     "firewall": {
       "description": "Attivare il firewall aprirà le porte usate (almeno 22, 443, 80 e SSH) e chiuderà tutte le altre porte",

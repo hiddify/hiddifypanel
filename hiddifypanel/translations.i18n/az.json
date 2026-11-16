@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Aliası olmayan domenin istifadəçilərin konfiqurasiyalarında, profil başlığında və abunəlik adında necə adlandırıldığı.<br>🔒 Məxfi: növü və onu üzə çıxarmayan kod (☁️ CDN K7Q)<br>🫥 Maskalanmış: hərflərin çoxu gizlədilir (⚡ h*y.com)<br>🌐 Tam domen adı",
+      "description": "Aliası olmayan domenin istifadəçilərin konfiqurasiyalarında, profil başlığında və abunəlik adında necə adlandırıldığı.<br>🔒 Məxfi: növü və onu üzə çıxarmayan kod (CDN K7Q)<br>🫥 Maskalanmış: hərflərin çoxu gizlədilir (h*y.com)<br>🌐 Tam domen adı",
       "full": "🌐 Tam domen adı",
       "label": "🏷️ Konfiqurasiya adları",
-      "masked": "🫥 Maskalanmış (⚡ h*y.com)",
-      "private": "🔒 Məxfi: növ və kod (☁️ CDN K7Q)"
+      "masked": "🫥 Maskalanmış (h*y.com)",
+      "private": "🔒 Məxfi: növ və kod (CDN K7Q)"
     },
     "firewall": {
       "description": "Firewall-ı aktiv etmək istifadə olunan portları (ən azı 22,443,80 və SSH) açır və bütün digər portları bağlayır",

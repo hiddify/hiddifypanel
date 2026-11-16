@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS-Domain-Fronting"
     },
     "domain_label_mode": {
-      "description": "Wie eine Domain ohne Alias in den Konfigurationen, im Profiltitel und im Abo-Namen der Benutzer benannt wird.<br>🔒 Privat: ihre Art und ein Code, der sie nicht verrät (☁️ CDN K7Q)<br>🫥 Maskiert: die meisten Buchstaben verborgen (⚡ h*y.com)<br>🌐 Vollständiger Domainname",
+      "description": "Wie eine Domain ohne Alias in den Konfigurationen, im Profiltitel und im Abo-Namen der Benutzer benannt wird.<br>🔒 Privat: ihre Art und ein Code, der sie nicht verrät (CDN K7Q)<br>🫥 Maskiert: die meisten Buchstaben verborgen (h*y.com)<br>🌐 Vollständiger Domainname",
       "full": "🌐 Vollständiger Domainname",
       "label": "🏷️ Konfigurationsnamen",
-      "masked": "🫥 Maskiert (⚡ h*y.com)",
-      "private": "🔒 Privat: Art und Code (☁️ CDN K7Q)"
+      "masked": "🫥 Maskiert (h*y.com)",
+      "private": "🔒 Privat: Art und Code (CDN K7Q)"
     },
     "firewall": {
       "description": "Das Aktivieren der Firewall öffnet die verwendeten Ports (mindestens 22, 443, 80 und SSH) und schließt alle anderen Ports",

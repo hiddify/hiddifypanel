@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Hoe een domein zonder alias wordt genoemd in de configuraties van gebruikers, de profieltitel en de abonnementsnaam.<br>🔒 Privé: het soort en een code die het niet verraadt (☁️ CDN K7Q)<br>🫥 Gemaskeerd: de meeste letters verborgen (⚡ h*y.com)<br>🌐 Volledige domeinnaam",
+      "description": "Hoe een domein zonder alias wordt genoemd in de configuraties van gebruikers, de profieltitel en de abonnementsnaam.<br>🔒 Privé: het soort en een code die het niet verraadt (CDN K7Q)<br>🫥 Gemaskeerd: de meeste letters verborgen (h*y.com)<br>🌐 Volledige domeinnaam",
       "full": "🌐 Volledige domeinnaam",
       "label": "🏷️ Configuratienamen",
-      "masked": "🫥 Gemaskeerd (⚡ h*y.com)",
-      "private": "🔒 Privé: soort en code (☁️ CDN K7Q)"
+      "masked": "🫥 Gemaskeerd (h*y.com)",
+      "private": "🔒 Privé: soort en code (CDN K7Q)"
     },
     "firewall": {
       "description": "Het inschakelen van de firewall opent de gebruikte poorten (minimaal 22, 443, 80 en SSH) en sluit alle andere poorten",

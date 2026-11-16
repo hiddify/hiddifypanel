@@ -3151,11 +3151,11 @@
       "label": "🔒 Habilitar fronting de domínio TLS"
     },
     "domain_label_mode": {
-      "description": "Como um domínio sem apelido é nomeado nas configurações, no título do perfil e no nome da assinatura dos usuários.<br>🔒 Privado: o tipo e um código que não o revela (☁️ CDN K7Q)<br>🫥 Mascarado: a maioria das letras oculta (⚡ h*y.com)<br>🌐 Nome de domínio completo",
+      "description": "Como um domínio sem apelido é nomeado nas configurações, no título do perfil e no nome da assinatura dos usuários.<br>🔒 Privado: o tipo e um código que não o revela (CDN K7Q)<br>🫥 Mascarado: a maioria das letras oculta (h*y.com)<br>🌐 Nome de domínio completo",
       "full": "🌐 Nome de domínio completo",
       "label": "🏷️ Nomes das configurações",
-      "masked": "🫥 Mascarado (⚡ h*y.com)",
-      "private": "🔒 Privado: tipo e código (☁️ CDN K7Q)"
+      "masked": "🫥 Mascarado (h*y.com)",
+      "private": "🔒 Privado: tipo e código (CDN K7Q)"
     },
     "firewall": {
       "description": "A ativação do Firewall abrirá as portas usadas (pelo menos 22.443.80 e SSH) e fechará todas as outras portas",

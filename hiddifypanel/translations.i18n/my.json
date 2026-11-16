@@ -3153,11 +3153,11 @@
       "label": "🔒 TLS ဒိုမိန်း Fronting"
     },
     "domain_label_mode": {
-      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (☁️ CDN K7Q)<br>🫥 Masked: most letters hidden (⚡ h*y.com)<br>🌐 Full domain name",
-      "full": "🌐 Full domain name",
-      "label": "🏷️ Config names",
-      "masked": "🫥 Masked (⚡ h*y.com)",
-      "private": "🔒 Private: kind and code (☁️ CDN K7Q)"
+      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (CDN K7Q)<br>🫥 Masked: most letters hidden (h*y.com)<br>🌐 Full Domain Name",
+      "full": "🌐 Full Domain Name",
+      "label": "🏷️ Config Names",
+      "masked": "🫥 Masked (h*y.com)",
+      "private": "🔒 Private: Kind and Code (CDN K7Q)"
     },
     "firewall": {
       "description": "Firewall ကိုဖွင့်ခြင်းဖြင့် အသုံးပြုထားသော Ports (အနည်းဆုံး 22,443,80 နှင့် SSH) ကိုဖွင့်ပြီး အခြား Port အားလုံးကို ပိတ်ပါမည်။",

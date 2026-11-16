@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Taxallusi yoʻq domen foydalanuvchilar konfiguratsiyalarida, profil sarlavhasida va obuna nomida qanday nomlanadi.<br>🔒 Yashirin: uning turi va uni oshkor qilmaydigan kod (☁️ CDN K7Q)<br>🫥 Niqoblangan: harflarning koʻpi yashirilgan (⚡ h*y.com)<br>🌐 Toʻliq domen nomi",
+      "description": "Taxallusi yoʻq domen foydalanuvchilar konfiguratsiyalarida, profil sarlavhasida va obuna nomida qanday nomlanadi.<br>🔒 Yashirin: uning turi va uni oshkor qilmaydigan kod (CDN K7Q)<br>🫥 Niqoblangan: harflarning koʻpi yashirilgan (h*y.com)<br>🌐 Toʻliq domen nomi",
       "full": "🌐 Toʻliq domen nomi",
       "label": "🏷️ Konfiguratsiya nomlari",
-      "masked": "🫥 Niqoblangan (⚡ h*y.com)",
-      "private": "🔒 Yashirin: tur va kod (☁️ CDN K7Q)"
+      "masked": "🫥 Niqoblangan (h*y.com)",
+      "private": "🔒 Yashirin: tur va kod (CDN K7Q)"
     },
     "firewall": {
       "description": "Xavfsizlik devorini yoqish ishlatilgan portlarni (kamida 22, 443, 80 va SSH) ochadi va boshqa barcha portlarni yopadi",

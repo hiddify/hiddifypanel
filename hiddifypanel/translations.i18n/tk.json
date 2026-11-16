@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Lakamsyz domeniň ulanyjylaryň konfiglerinde, profil adynda we abuna adynda nähili atlandyrylýandygy.<br>🔒 Şahsy: onuň görnüşi we ony açmaýan kod (☁️ CDN K7Q)<br>🫥 Örtülen: köp harp gizlenen (⚡ h*y.com)<br>🌐 Doly domen ady",
+      "description": "Lakamsyz domeniň ulanyjylaryň konfiglerinde, profil adynda we abuna adynda nähili atlandyrylýandygy.<br>🔒 Şahsy: onuň görnüşi we ony açmaýan kod (CDN K7Q)<br>🫥 Örtülen: köp harp gizlenen (h*y.com)<br>🌐 Doly domen ady",
       "full": "🌐 Doly domen ady",
       "label": "🏷️ Konfig atlary",
-      "masked": "🫥 Örtülen (⚡ h*y.com)",
-      "private": "🔒 Şahsy: görnüş we kod (☁️ CDN K7Q)"
+      "masked": "🫥 Örtülen (h*y.com)",
+      "private": "🔒 Şahsy: görnüş we kod (CDN K7Q)"
     },
     "firewall": {
       "description": "Firewall-y açmak ulanylýan portlary (iň az 22,443,80 we SSH) açar we beýleki ähli portlary ýapar",

@@ -61,6 +61,12 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
     random: { icon: 'pi pi-sync', color: PURPLE },
     randomized: { icon: 'pi pi-sparkles', color: INDIGO },
   },
+  // Config names: a lock (private), an eye that does not see (masked), the globe (the full domain)
+  domain_label_mode: {
+    private: { icon: 'pi pi-lock', color: INDIGO },
+    masked: { icon: 'pi pi-eye-slash', color: PURPLE },
+    full: { icon: 'pi pi-globe', color: SKY },
+  },
   country: {
     ir: { flag: 'ir', color: GREEN },
     zh: { flag: 'cn', color: RED },
@@ -75,6 +81,7 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
  */
 export const DESCRIPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
   warp_mode: { '✴': OPTION_ICONS.warp_mode.all, '☑': OPTION_ICONS.warp_mode.custom },
+  domain_label_mode: { '🔒': OPTION_ICONS.domain_label_mode.private, '🫥': OPTION_ICONS.domain_label_mode.masked, '🌐': OPTION_ICONS.domain_label_mode.full },
 }
 
 export function optionIcon(key: string, value: unknown): OptionIcon | null {
