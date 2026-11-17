@@ -196,6 +196,22 @@ def edit_card(chat_id: int, message_id: int, text: str, markup: dict[str, Any] |
         return False
 
 
+def send_document(chat_id: int, text: str, markup: dict[str, Any] | None, document, file_name: str) -> dict[str, Any] | None:
+    """A file (a backup) with its text and buttons as one rich message, the file on top; None when it cannot be
+    rich (the caller sends the classic document). Raises what Telegram answers about the buttons or the file."""
+    from telebot import apihelper
+
+    from . import bot
+
+    page = None if _off() else rich_html(text, markup or {})
+    if page is None:
+        return None
+    rich = {"html": '<tg-document src="tg://document?id=file"/>' + page, "media": [{"id": "file", "media": {"type": "document", "media": "attach://file"}}]}
+    document.seek(0)
+    sent = apihelper._make_request(bot.token, "sendRichMessage", "post", {"chat_id": chat_id, "rich_message": json.dumps(rich, ensure_ascii=False)}, {"file": (file_name, document)})
+    return sent if isinstance(sent, dict) and "message_id" in sent else None
+
+
 def install() -> None:
     from telebot import apihelper
 

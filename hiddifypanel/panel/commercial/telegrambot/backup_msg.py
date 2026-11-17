@@ -116,11 +116,23 @@ def send(chat_id: int, document: IO[bytes], disk_name: str, account, *, size: in
     when = when_of(disk_name)
     text = caption(lang, when, size)
     tries = [lambda: markup(lang, owner, tail=tail), lambda: markup(lang, owner, plain_http=False, tail=tail), lambda: keyboard(tail) if tail else None]
+    from . import rich
+
     error: Exception | None = None
     for build in tries:
         try:
+            # One rich message: the file on top, the card, the links as soft buttons inside; else the classic document
+            keys = build()
+            try:
+                sent = rich.send_document(chat_id, text, keys.to_dict() if keys else None, document, file_name(when))
+                if sent is not None:
+                    return types.Message.de_json(sent)
+            except ApiTelegramException as e:
+                if "button" in str(e).lower() or "url" in str(e).lower():
+                    raise  # the next try has fewer buttons
+                logger.info(f"backup: not as a rich message ({e}); the classic document")
             document.seek(0)
-            return bot.send_document(chat_id, types.InputFile(document, file_name=file_name(when)), caption=text, parse_mode="HTML", reply_markup=build())
+            return bot.send_document(chat_id, types.InputFile(document, file_name=file_name(when)), caption=text, parse_mode="HTML", reply_markup=keys)
         except ApiTelegramException as e:
             if "button" not in str(e).lower() and "url" not in str(e).lower():
                 raise  # not about a link button: trying again would not help

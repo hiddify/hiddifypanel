@@ -128,6 +128,27 @@ class CardTests(unittest.TestCase):
 
 
 
+class DocumentTests(unittest.TestCase):
+    def test_the_file_goes_on_top_with_its_name(self):
+        import io
+
+        got = []
+
+        def request(token, method_name, method="get", params=None, files=None):
+            got.append((method_name, params, files))
+            return {"message_id": 4, "chat": {"id": 5}}
+
+        keys = {"inline_keyboard": [[{"text": "🔒 panel.example.com", "url": "https://panel.example.com/p/", "style": "success"}], [{"text": "✖️ Close", "callback_data": "x"}]]}
+        with mock.patch.object(apihelper, "_make_request", request), mock.patch.object(rich, "_off", lambda: False):
+            self.assertEqual(rich.send_document(5, "💾 <b>Backup</b>", keys, io.BytesIO(b"{}"), "2026.11.18_03.12.json")["message_id"], 4)
+        method, params, files = got[0]
+        page = json.loads(params["rich_message"])
+        self.assertEqual(method, "sendRichMessage")
+        self.assertTrue(page["html"].startswith('<tg-document src="tg://document?id=file"/>'))
+        self.assertIn('style="success"', page["html"])
+        self.assertEqual(files["file"][0], "2026.11.18_03.12.json")
+
+
 class PictureTests(unittest.TestCase):
     def ctx(self, on_photo=False):
         from types import SimpleNamespace
