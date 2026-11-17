@@ -271,9 +271,34 @@ watch(
   border-inline-start: 3px solid var(--primary-color);
 }
 
+/* One column (phones, small windows): the panel sits under the editor and shows every template, no inner scroll. */
 .template-side-list {
-  max-height: min(60vh, 32rem);
-  overflow-y: auto;
   user-select: text;
+}
+
+/* Beside the editor (the pages' xl grid, ≥1280px): the panel stays in view while the editor scrolls and is as tall as
+   the window allows; the list takes all the room left under the search and scrolls only if it still does not fit. */
+@media (min-width: 1280px) {
+  .template-side-panel {
+    position: sticky;
+    top: calc(5.5rem + var(--safe-top, 0px));
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 7rem - var(--safe-top, 0px));
+  }
+  .template-side-panel :deep(.p-panel-content-container),
+  .template-side-panel :deep(.p-panel-content-wrapper),
+  .template-side-panel :deep(.p-panel-content) {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .template-side-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 }
 </style>
