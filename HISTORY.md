@@ -5,6 +5,23 @@
 
 #### Other
 
+* Fix(i18n): translations the release left empty, and fall back to English for empty ones. 
+  _make prepare (run by make release) adds every new msgid with an empty string to
+the non-English files and the key itself as the English text. The JSON loader
+kept "" in the catalog, so gettext returned it instead of falling back: the
+Inbox menu item had no text in my/pt/ru/zh, and several labels were blank in
+every language.
+
+- json_translations.flatten skips empty strings, so a placeholder falls back
+  to English instead of showing nothing.
+- Fill the placeholders: admin.menu.inbox/broadcast, domain.reality.no_x25519,
+  the Telegram web proxy settings, and real English plus translations for the
+  hidden settings that only had their key (acme_accounts,
+  config_tester_disabled, openvpn_certificate/private_key, parent_sync_cursor,
+  reality_sni_auto/spares).
+- Keep the key order update_translations.sh writes, so the next make prepare
+  changes nothing._
+
 * Chore: Update submodule user_front to latest commit 36290676. 
 
 * Merge pull request #251 from slavaolesik/feat/ip-info-honeypot-attackers. 
