@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
- * Addresses (IPs, ranges, host names) as chips: what is typed becomes a chip at a space, comma, semicolon or Enter,
+ * Addresses (IPs, ranges, host names) as chips: what is typed becomes a chip at a space, comma, semicolon or Enter
+ * (the phone keyboards show an Enter key here, not "Next", which would jump to the form's next field),
  * on a paste or when leaving the box; Backspace in an empty box takes the last one back. v-model: "a, b, c".
  */
 import { computed, ref } from 'vue'
@@ -30,7 +31,11 @@ function remove(index: number) {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if ([' ', ',', ';', 'Enter', 'Tab'].includes(e.key) && draft.value.trim()) {
+  // Enter adds what is typed and stays here; it never submits the form around the field (an empty field neither)
+  if (e.key === 'Enter') {
+    e.preventDefault()
+    if (draft.value.trim()) commit()
+  } else if ([' ', ',', ';', 'Tab'].includes(e.key) && draft.value.trim()) {
     if (e.key !== 'Tab') e.preventDefault()
     commit()
   } else if (e.key === 'Backspace' && !draft.value && chips.value.length) {
@@ -39,6 +44,19 @@ function onKeydown(e: KeyboardEvent) {
     setChips(chips.value.slice(0, -1))
     draft.value = last // back to text, to fix it
   }
+}
+/**
+ * Android keyboards send most keys as "Unidentified" (no space or comma in keydown): the separator is found in the
+ * text instead. What comes after the last one stays as the draft.
+ */
+function onInput() {
+  const text = draft.value
+  const last = Math.max(text.lastIndexOf(' '), text.lastIndexOf(','), text.lastIndexOf(';'), text.lastIndexOf('\n'))
+  if (last < 0) return
+  const rest = text.slice(last + 1)
+  draft.value = text.slice(0, last)
+  commit()
+  draft.value = rest
 }
 function onPaste(e: ClipboardEvent) {
   const text = e.clipboardData?.getData('text') ?? ''
@@ -63,9 +81,12 @@ function onPaste(e: ClipboardEvent) {
       :dir="draft ? 'ltr' : undefined"
       spellcheck="false"
       autocomplete="off"
+      autocapitalize="off"
+      enterkeyhint="enter"
       :placeholder="chips.length ? '' : props.placeholder"
       :aria-label="props.ariaLabel"
       @keydown="onKeydown"
+      @input="onInput"
       @paste="onPaste"
       @blur="commit"
     />
