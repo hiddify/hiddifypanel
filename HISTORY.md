@@ -5,6 +5,882 @@
 
 #### Other
 
+* Chore: Update submodule user_front to latest commit 36290676. 
+
+* Merge pull request #251 from slavaolesik/feat/ip-info-honeypot-attackers. 
+  _feat(admin): Complete IP Info: an Attacker flag from the NetAPI honeypot list_
+
+* Feat(admin): Complete IP Info: an Attacker flag from the NetAPI honeypot list. 
+
+* Merge pull request #247 from Hiddify-Official/feat/config-names-option-icons. 
+  _feat(admin): logos and icons for settings options, Title Case labels_
+
+* Feat(admin): Safari and Firefox logos in uTLS; settings lists show every option. 
+  _- uTLS's Safari and Firefox options show the browsers' current full-colour
+  logos, like Chrome and Edge. All four now come straight from the
+  @browser-logos packages (github.com/alrra/browser-logos: chrome 2.0.0,
+  edge 2.0.7, safari 2.1.0, firefox 3.0.10) instead of copies in the repo.
+- Settings selects open tall enough for all their options (min(26rem, 60vh)
+  instead of PrimeVue's 14rem): uTLS's nine options no longer hide Safari,
+  Firefox, Random and Randomized below an inner scroll._
+
+* Feat(admin): real Chrome and Edge logos in uTLS, a larger XRay logo. 
+  _- uTLS's Chrome and Edge options show the browsers' current full-colour
+  logos, vector SVGs from github.com/alrra/browser-logos (@browser-logos/chrome
+  2.0.0, @browser-logos/edge 2.0.7), as option icons of a new kind (logo).
+- XRay's star is larger on its tile (0.95rem → 1.2rem), so it reads as a logo.
+- uTLS's "random" / "randomized" labels are capitalised (values unchanged)._
+
+* Feat(admin): XRay and Hiddify Core options show their own vector logos. 
+  _- Option icons can be a brand logo (BrandGlyph.vue): XRay's four-pointed star,
+  redrawn as a vector from the measured geometry of Project X's logo (four
+  quarters split by a thin cross, each turned 90°), in the text colour; and
+  Hiddify's blue hexagon with the white Hiddify mark (the app icon's shapes).
+  Common Proxy Core's XRay and Hiddify Core options use them.
+- Spelling in that setting, all languages: "XRay", "Hiddify Core (Sing-Box)"._
+
+* Fix(admin): Title Case for the XHTTP different upload/download setting. 
+
+* Feat(admin): Config Names options get their own colour icons. 
+  _- domain_label_mode's options take option icons on soft tiles, as the other
+  selects do: a lock (Private), an eye that does not see (Masked), the globe
+  (Full Domain Name); the description's markers get the same icons.
+- English label and options in Title Case ("Config Names", "Full Domain
+  Name"); the example values lose the emoji inside their brackets, which had no
+  icon and showed as "( CDN K7Q)" (all languages)._
+
+* Merge pull request #250 from Hiddify-Official/feat/status-details. 
+  _feat(admin): Check Status details as cards, smooth glide to the top_
+
+* Merge branch 'dev' into feat/status-details. 
+
+* Merge pull request #249 from Hiddify-Official/feat/proxy-filter-colour-dots. 
+  _feat(admin): colour dots in the proxy and base config filters_
+
+* Feat(admin): colour dots in the Base Configs' Side and Enabled filters. 
+  _The Side filter shows Server in sky and Client in orange, the colours the
+Templates page gives Server Inbound and Client Outbound; the Enabled filter
+shows Enabled green and Disabled red, as on the Proxies page. (The Core filter,
+and the Templates page's Core and Category filters, already had their dots.)_
+
+* Feat(admin): colour dots in the Enabled and Mode column filters. 
+  _The Enabled column's filter shows a green dot for Enabled and a red one for
+Disabled; the Mode column's filter shows each mode in the same colour as the
+quick Mode filter above the list._
+
+* Feat(admin): colour dots in the Proxies page's quick filters. 
+  _The quick filters above the proxies list (Protocol, Transport, Mode, Server
+Core, TLS, Domain Modes) show a colour dot before each option, as the column
+filters (Categories, Protocol, Server Core) already do, in the colour each
+value already has in the list: protocols and cores as their tags (protoColor),
+transports, TLS layers, modes and domain modes as their category tags
+(categoryColor). "Other" takes a neutral gray._
+
+* Merge pull request #248 from Hiddify-Official/fix/table-page-size-options. 
+  _feat(admin): Users-style pager for the paged lists_
+
+* Feat(admin): paged lists get the Users page's pager. 
+  _Base Configs, Templates, Custom Proxies and Template Variables now page with the
+Users page's PageScrubber (the bar to drag through the pages, page numbers,
+Previous / Next, "page [n] of N", "Showing a–b of N") plus a small rows-per-page
+choice, through a shared TablePager in DataTable's #paginatorcontainer slot, so
+the tables keep their own paging, sorting and filtering. A list that fits on
+its smallest page shows no pager at all (no empty bar). New string
+common.rowsPerPage (en, fa)._
+
+* Fix(admin): Base Configs' page-size select shows its default (15) 
+  _The list showed 15 rows per page by default but offered 10 / 25 / 50, so the
+paginator's page-size select was empty. It offers 15 / 25 / 50 now: the default
+stays (all base configs on one page) and the select shows it. The other paged
+lists already default to one of their options._
+
+* Merge pull request #246 from Hiddify-Official/fix/theme-switch-flash. 
+  _fix(admin): bright flash when switching to Liquid Glass in dark mode_
+
+* Fix(admin): no bright flash when switching to Liquid Glass in dark mode. 
+  _Liquid Glass paints the page with the registered --lg-base, which flows over
+0.8s. Outside the theme it had no value, so it sat at its light initial value:
+entering Liquid Glass in dark mode flowed from light to the dark base, a
+bright flash (most visible from Smart Caddy). --lg-base now has the mode's own
+base outside the theme too (only Liquid Glass uses it), so the switch starts
+from the right color. Mode and color changes inside the theme still flow._
+
+* Merge pull request #245 from lymanjre/fix/fa-settings-translations. 
+  _fix(i18n): match the Persian and English texts of three settings_
+
+* Fix(i18n): match the Persian and English texts of three settings. 
+  _- HTTPUpgrade (fa): add the warning the English text has: not available in
+  Xray based clients, only Hiddify, Singbox and V2fly; fix the "Read more"
+  anchor (#http-upgarde -> #http-upgrade)
+- Hysteria (fa): the label says Hysteria 2, as in English
+- Show Usage in Sublink (en): the fake config also shows the days left,
+  as the Persian text says and as the subscription shows_
+
+* Merge pull request #244 from Hiddify-Official/fix/templates-side-list-height. 
+  _fix(admin): templates side list cut although it has room_
+
+* Fix(admin): the templates side list uses the room it has. 
+  _The list beside the Base Config / Template / Custom Proxy editors was capped at
+min(60vh, 32rem), so it was cut (e.g. after "Protocol: SS") even with empty
+room below, and the rest was only reachable by an inner scroll with a hidden
+scrollbar.
+
+- Beside the editor (≥1280px): the panel is sticky, as tall as the window
+  allows, and the list takes all the room under the search, scrolling inside
+  only when it still does not fit.
+- One column (phones, small windows): no cap; every template is listed._
+
+* Merge pull request #243 from Hiddify-Official/fix/address-chips-android-enter. 
+  _fix(admin): Enter in the IP field jumps to Extra Params on Android_
+
+* Fix(admin): Enter in the IP field no longer jumps to Extra Params on Android. 
+  _On Android (Chrome, Samsung Internet, Firefox) the keyboard showed "Next" for
+the IP chips field of the domain dialog: it sends no Enter, it moves the cursor
+to the form's next text field (Extra Params). iOS shows "return", so Safari
+was fine. Android keyboards also send most keys as "Unidentified", so a space
+or comma did not make a chip either.
+
+- enterkeyhint="enter": the keyboard shows Enter, which adds the typed address
+  and keeps the cursor in the field.
+- Enter in this field never submits the form (an empty field neither).
+- Separators (space, comma, semicolon, newline) are found in the text as it
+  changes, not only in keydown, so chips also form on Android keyboards.
+
+Used by the domain dialog's CDN IP editor and the scanner's IP list._
+
+* Merge pull request #242 from Hiddify-Official/fix/dashboard-tile-overlaps. 
+  _fix(admin): dashboard chart labels overlap and reverse in Persian_
+
+* Fix(admin): dashboard chart labels no longer overlap or reverse in Persian. 
+  _- The network tile's Upload / Download labels used inset-inline-end, so in
+  right-to-left pages they moved onto the value axis (which charts keep on the
+  left in every language) and covered its numbers. They stay on the right now.
+- Value-axis ticks are isolated left-to-right (LRI … PDI): a right-to-left
+  canvas drew "5.00 Mb/s" as "Mb/s 5.00".
+
+Checked with a script over every dashboard tile (DOM text and the labels the
+charts draw): no overlaps, nothing outside its tile, no reversed number+unit,
+in English and Persian at 390, 820, 1024 and 1440 px._
+
+* Merge pull request #241 from Hiddify-Official/feat/dashboard-color-icons. 
+  _feat(admin): colour info and pencil icons in dashboard node rows_
+
+* Fix(admin): the pencil icon lines up optically with the info icon. 
+  _A diagonal pencil's weight (band and eraser) sits up-right of its box's centre,
+so beside the round info icon it looked higher. Its drawing moves a little
+down-left: its weighted centre is now within 0.1 px of the circle's centre._
+
+* Feat(admin): colour info and pencil icons in the dashboard's node rows. 
+  _The node rows' info button becomes a light-blue circle with a white i, and the
+rename button a real yellow pencil (eraser, metal band, wood and graphite tip),
+both drawn as vectors (ColorGlyph.vue), a little larger, with a soft spring on
+hover and press._
+
+* Merge pull request #240 from Hiddify-Official/feat/scanner-vpn-notice. 
+  _feat(admin): clearer VPN notice in the scanner, smooth Check Again_
+
+* Feat(admin): the scanner's Check Again checks in place, smoothly. 
+  _"Check Again" no longer empties the network card (a skeleton, the notice gone,
+the page jumping). The card keeps its content while the panel looks again (at
+least 0.9 s): the button reads "Checking…" with a turning arrow, a soft light
+sweeps over the notice and the icon breathes. Still on a VPN: the notice gives
+a short soft shake. VPN off: the notice folds away and the page rises smoothly._
+
+* Feat(admin): a clearer, iOS-style VPN notice in the scanner. 
+  _The one-line warning becomes a notice that says what to do and why: a title
+("Turn off your VPN for this scan"), why it matters, the two countries side by
+side (this device ≠ your users, with flags), two numbered steps, a "Check
+Again" button that looks the network up again, and a line for admins who are
+really abroad without a VPN. Shown when it was before (the browser's country is
+not the panel's)._
+
+* Merge pull request #239 from Hiddify-Official/feat/users-select-page. 
+  _feat(admin): users' header checkbox selects the page, count selects all_
+
+* Feat(admin): users' header checkbox picks this page; the bulk count picks every page. 
+  _The table's header checkbox (and the phone cards' select box) now picks only
+the users of the page on screen (10, 50… as the page size says; everyone when
+not paged). The bulk bar's count becomes the "every page" checkbox: it shows
+"Select all N users" and picks every user the filter / search shows; once all
+are picked, it clears the selection._
+
+* Merge pull request #238 from Hiddify-Official/feat/vector-company-logos. 
+  _feat(admin): vector logos, company tag and location map in IP sheet_
+
+* Fix(admin): the IP sheet's map popover is centred in every language. 
+  _It was placed under the pin, so in right-to-left languages (the pin on the
+right) it stuck to the right edge. It is now centred on the sheet; it still
+grows out of the pin._
+
+* Feat(admin): a vector server logo for companies without a logo in the IP sheet. 
+  _A company with no logo of its own (no vector logo, no website icon) shows a
+rack of three servers on a network hub instead of its initial, drawn as a
+vector, its green lights blinking softly one after another._
+
+* Fix(admin): the company tag and the place line up in one column in the IP sheet. 
+  _The company tag gets a small building icon; it and the place's pin share one
+column, so both icons and both texts start at the same x. The tag's outline is
+an inset shadow, which takes no room._
+
+* Feat(admin): vector company logos, a company tag and a location map in the IP details sheet. 
+  _- Well-known hosting and network companies (Hetzner, OVH, DigitalOcean, Vultr,
+  Akamai/Linode, Cloudflare, Google Cloud, Ionos, Scaleway, Contabo, …) get
+  their vector logo from the simple-icons package (CC0-1.0, only the icons used
+  are bundled), in their own colour; near-black logos turn white in dark mode.
+  Other companies keep their website's icon, now preferring its SVG icon.
+  The logo stands on its own with a very light shadow, no white tile.
+- The company's name sits in a faint tag of the brand's colour (a label, not a
+  button), one step larger.
+- The pin before the server's place breathes all the time and opens a small
+  iOS-style popover with a vector map of the place (Natural Earth countries
+  via world-atlas, drawn with d3-geo, loaded only when a map first opens), the
+  coordinates and an "Open in Maps" link. Escape or a tap outside closes it._
+
+* Merge pull request #236 from Hiddify-Official/fix/tile-tip-outside-tap. 
+  _fix(admin): dashboard tooltips close on a tap outside them_
+
+* Fix(admin): a chart's card closes on a tap outside the chart. 
+  _Touch keeps a tapped chart's card up; it closed on a scroll only, so opening the
+menu (a button that takes no focus) left it over the menu._
+
+* Fix(admin): a tile's card closes on a tap outside it. 
+  _On a phone the card opens on the tile's focus; the menu button (and others) take
+no focus on iOS, so the tile kept it and its card stayed over the opened menu._
+
+* Merge pull request #235 from Hiddify-Official/feat/topbar-hexagon-logo. 
+  _feat(admin): hexagon logo in the top bar, in the theme colour_
+
+* Feat(admin): the hexagon logo in the top bar, in the theme's colour. 
+  _One logo for every theme: the app icon's white glass tile (the same picture in
+every colour, 256 px), with the ring and the logo drawn as vectors in
+--p-primary-color, so it follows the theme and its colour._
+
+* Merge pull request #233 from Hiddify-Official/fix/caddy-ip-sheet. 
+  _fix(admin): IP details sheet in Smart Caddy and Liquid Glass_
+
+* Fix(admin): IP details cells visible in the Liquid Glass theme. 
+  _The cells took more of the sheet's white glass and vanished into it; they now
+use Apple's grey system fill with a glass rim, and the segmented control a
+grey track with a bright lens._
+
+* Fix(admin): IP details sheet bright in the Smart Caddy theme. 
+
+* Merge pull request #232 from Hiddify-Official/feat/dashboard-chart-views. 
+  _feat(admin): dashboard chart styles, custom period and live tiles_
+
+* Fix(admin): sparkline tip closes on scroll and on a cancelled touch. 
+  _A finger that started a scroll on a tile's sparkline cancelled the pointer, which
+never sent pointerleave: the fixed tip stayed on the screen while the page moved._
+
+* Fix(admin): tile changes rounded to one decimal. 
+
+* Feat(admin): top tiles follow the chosen period and name what they cover. 
+  _Online users stays live (marked Live); the other tiles show the period's usage
+against the period of the same length before it, its daily average against its
+last day, and its busiest day. The API is asked for both periods; the usage
+trend's peak day is the period's own._
+
+* Fix(admin): chart windows bright in the Smart Caddy theme. 
+
+* Fix(admin): chart types in one grid, no half-empty group boxes. 
+
+* Feat(admin): chart style window in the iOS 27 style, live type drawings. 
+  _- Floating glass sheet, centred title between round glass reset and close buttons
+- A large live preview of the chosen type; the chosen tile's drawing moves itself
+  (points rise and fall, bars grow, candles change, the ring fills)
+- Palettes as glossy squircles of their colours
+- Opening the window closes the tile's own numbers card_
+
+* Fix(admin): speedometer scale under the dial's ends, clear of the needle. 
+
+* Feat(admin): dashboard chart styles, custom period, tile faces and network views. 
+  _- A style window on every chart: 13 chart types (line, smooth, step, markers, area,
+  baseline, column, lollipop, dots, candles, hollow candles, Heikin Ashi, high-low),
+  colour themes, grid and average line; kept per tile in the browser
+- A period window beside the 7/30/90/180 days: quick periods and a from-to calendar
+  in the page's calendar (Persian in Persian), cut from the API's days
+- The four top tiles pick their face: a small chart, a ring or a bar pair against
+  the previous period, and their colour
+- The network gets its own panel: mirror, overlay, speedometers and numbers
+  (now, average, peak, p95, transferred)_
+
+* Fix(admin): calendar labels at text size; rings and ranked bars centred in their tile. 
+
+* Fix(admin): dashboard gauges without the line chart's labels; centred calendar. 
+
+* Feat(admin): dashboard tiles switch between chart views. 
+  _Each chart tile gets an iOS-style view switch (its choice kept per tile in the
+browser) and new views drawn for it:
+- usage trend: bars, area, running total, a calendar heatmap, the week's rhythm;
+- users trend: area, bars, calendar, week's rhythm;
+- usage and users comparison: bars, activity rings, ranked bars;
+- the servers' live charts: lines, gauges (a ring per server, up/down meters for
+  the network), bars.
+The calendar and rhythm name the day under the finger or the mouse; views ease
+in when switched; the tiles' header controls wrap instead of overflowing._
+
+* Fix(admin): the Actions glide does not leap after a slow frame. 
+  _Its progress now follows a clock of its own that a frame moves at most 20ms
+on: the frame that builds the run panel (about 100ms) paused the glide briefly
+instead of making its first step a leap._
+
+* Fix(admin): the Actions glide keeps the browser's scroll anchoring. 
+  _Switching anchoring off undid the browser's own adjustment for the run panel in
+one frame (a jump); the glide now starts from where the browser keeps the page._
+
+* Fix(admin): the Actions glide to the top runs once, from where the page is. 
+  _showRunPanel runs twice when an action starts (the click, then the running-
+action check), so two glides fought over the first frames (a jolt down and
+back). A second call now joins the glide under way, and the starting point is
+read in the glide's first frame, once the run panel above is laid out._
+
+* Feat(admin): Actions glide smoothly to the top when an action starts. 
+  _Starting an action (Check Status, Apply…) jumped to the top of the page in one
+frame. It now glides there (ease-out, 300–700 ms by distance) with a frame by
+frame scroll of its own, which, unlike the browser's smooth scroll, does not
+stop short while the run panel appears above. Reduced motion keeps the jump._
+
+* Feat(admin): status details: reverse Hiddify logos, larger marks, rpxy icon. 
+  _- Hiddify Core and Hiddify Panel use the hexagon's reverse look (as the top
+  bar's logo): a ring in the colour, white inside, the mark in the colour
+  (black for the core, blue for the panel).
+- Thin or airy marks are drawn larger on their tile (XRay, WireGuard, MySQL,
+  HAProxy, Telegram); MySQL's dolphin takes MySQL's darker blue so it reads.
+- Reverse Proxy (rpxy): two arrows, there and back._
+
+* Feat(admin): status details show the services' real logos. 
+  _Each service in the status details shows its real, current logo as an app
+icon: MySQL, Redis, HAProxy, Telegram and WireGuard from the simple-icons
+package (CC0-1.0, in their brand colours) on a white tile; XRay's four-pointed
+star; Hiddify Manager's hexagon, black for Hiddify Core and blue for the
+panel (ServiceLogo.vue). Other services keep their icon._
+
+* Feat(admin): Check Status shows its result as cards (Show Details) 
+  _After "Check Status", the run panel offers "Show Details" instead of "Show
+Log": the page glides down to the status drawn as iOS-style cards that rise in
+one after another — a summary (all services running, or how many are down,
+with a tick per service), where the server reaches the internet from (flag,
+city, provider, its address with a copy button), WARP when it is in use, and
+every service as a row of a grouped list (its own icon, a readable name, a
+breathing status dot). The raw log is one tap away below the cards. The text is
+read by status-parse.ts from what scripts/status.sh prints; other actions keep
+"Show Log". New strings apply.details.* (en, fa)._
+
+* Merge pull request #237 from Hiddify-Official/fix/app-names-recommended. 
+  _fix(user): app names without "app", Recommended for Hiddify_
+
+* Fix(user): app names without "app" and a recommended flag for Hiddify. 
+  _The app list of the user page showed "HiddifyApp" and "Sing-box app". The two
+names are now "Hiddify" and "Sing-box" in every language.
+
+The "Recommended" mark was set in the user page by comparing the app title with
+"Streisand" or "Hiddify Next", so it no longer matched. The apps API now sends
+a `recommended` flag (Hiddify and Streisand), and the page shows the mark from it._
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #231 from Hiddify-Official/fix/chart-time-labels. 
+  _fix(admin): keep the live charts' time labels apart on phones_
+
+* Fix(admin): the dashboard's live charts keep their time labels apart. 
+  _The CPU, RAM and network charts labelled their time axis "06:19:02 PM", up
+to five on a phone, and the labels ran into each other. They now use a
+24-hour clock ("18:19:02", the seconds stay: the charts span a minute or
+two), keep at least 18 px between labels (Chart.js skips one rather than
+overlapping), and show at most four on a phone._
+
+* Fix(proxy): keep the v12 Shadowsocks port after upgrade. 
+  _The proxy was given a generated port and the old one stayed reserved, so a domain could not use it._
+
+* Fix(user): point the NekoBox download at the phone build. 
+  _The 1.4 release renamed NB4A-*-x86_64.apk, so the user page link 404s._
+
+* Merge pull request #230 from Hiddify-Official/fix/apply-running-after-update. 
+  _fix(admin): show an update as finished only once it is really over_
+
+* Fix(admin): an update is shown as finished only once it is really over. 
+  _The update prints "Finished!" before its last steps (it applies the configs
+and restarts the panel after it), and the installer it runs prints its own
+"Finished!" midway. The run panel took the first mark as the end and said
+"Update finished", while hiddify-update was still running, so closing it
+showed "Something is running on the server right now". The log endpoint now
+reports finished only when the mark is there and no action writing that log
+is still running (its systemd unit active, or its installer lock held)._
+
+* Merge pull request #229 from Hiddify-Official/fix/passkey-ip-notice. 
+  _fix(admin): a clearer passkeys note when My Account is opened on an IP_
+
+* Fix(admin): a clearer note when My Account's passkeys are opened on an IP. 
+  _The note was one long blue paragraph. It is now a soft card: a short title
+(the page is open on an IP address), one line on why (browsers allow passkeys
+only on domain names, so here you sign in with your password), the address
+in a small tag, and a button that opens this same page on the panel's
+domain, where the passkey works._
+
+* Merge pull request #228 from Hiddify-Official/feat/node-ip-info. 
+  _feat(admin): IP details sheet for servers and nodes on the dashboard_
+
+* Fix(admin): the Complete IP Info glide stops with the pill near the top. 
+
+* Feat(admin): a small Complete IP Info pill that glides the sheet; Tor from Onionoo. 
+  _The Complete IP Info button is now a small pill with its arrow in a little
+circle that turns. Opening it glides the sheet down so the section comes
+into view as it unfolds; closing glides it back (an eased scroll of our
+own, the same in every browser).
+
+Tor exits now come from the Tor Project's Onionoo (its data is CC0) with the
+relay lookup that was already made, not from the exit list, which has no
+published terms. The footer credits MaxMind in the words its GeoLite EULA
+asks for._
+
+* Fix(admin): Complete IP Info checks only the server's own certificates. 
+  _Reality and fake domains hand out another site's certificate, so they are
+left out of the certificate check; the server's default certificate gets a
+name of its own; the flag badges no longer share a class with the sheet's
+error state. The cached details are looked up again (new cache key)._
+
+* Fix(admin): Complete IP Info starts closed each time the IP sheet opens. 
+
+* Feat(admin): Complete IP Info: every flag of a server's address, by category. 
+  _A "Complete IP Info" button in the IP sheet opens, in place, 21 flags in
+four groups (network, anonymity, behaviour and threats, security and web),
+each with its own live vector icon, a short description, its source and a
+yes / likely / no / not checked badge.
+
+Sources, all free for commercial use: the Tor Project (Onionoo, exit list),
+Apple's iCloud Private Relay ranges, the bot ranges Google, Bing, Apple and
+OpenAI publish, the Spamhaus DROP download (credited; a week between
+downloads) and abuse.ch Feodo Tracker / SSL Blacklist (CC0); three checks of
+the server itself (TLS certificates on 443 for each of its domains, an open
+directory on its web root, the IPFS port); and "likely" signs read from the
+AS, network names and reverse DNS. Not added, for want of a source with
+clear commercial terms: spam, recent abuse, known attacker (blocklist.de,
+SpamCop), nor the flags no open source can tell.
+
+The address details are now kept 7 days (was 72 hours), here and in the
+browser._
+
+* Refactor(admin): the IP sheet's flag uses the one cloth. 
+
+* Feat(admin): the IP sheet's flag flies in a steady wind. 
+
+* Fix(admin): the envelope icon's letter is a white card that clearly rises. 
+
+* Fix(admin): the envelope icon's letter rises in front of the open flap. 
+
+* Feat(admin): IP sheet icons come alive the way their thing would. 
+  _The icons were font glyphs, so they could only be nudged as a whole. They are
+now drawn as SVG in parts (LiveIcon), each with its own motion: the clock's
+hands turn, the envelope opens and a letter rises, a pen writes the language's
+lines, the globe turns, the server's lights blink, smoke rises from the house,
+windows light up, the pin drops and bounces, the map folds, the compass needle
+settles, the phone rings, a coin drops into the wallet, and so on (26 icons).
+Only the parts move; the icon's tile keeps its size. On a desktop it plays
+while the mouse is on the icon; on a touch screen a tap plays it once through
+and it ends where it started._
+
+* Feat(admin): a tap brings an IP sheet icon alive on touch screens. 
+  _Touch screens have no hover: a tap on an icon plays its glyph's motion for
+about 2.6 seconds and it then settles by itself (the tile keeps its size).
+Also puts the file back in the project's code style (single quotes, no
+semicolons) after an earlier formatter run with the wrong defaults._
+
+* Fix(admin): IP sheet icons move only their glyph, only under the mouse. 
+  _No more springy pop, growing tiles or row highlight: an icon comes alive only
+while the mouse is on that icon, and only its glyph moves, softly, in its own
+way; the icon's tile keeps its size._
+
+* Feat(admin): pull the IP sheet down to close it; icons come alive on hover. 
+  _On a phone the sheet follows the finger down from its top (or from anywhere
+once its content is scrolled up) and closes past a quarter or on a flick,
+else springs back; the close button gives way to a clearer grabber. On
+desktop each icon pops and then keeps its own small motion while hovered
+(globes spin, markers bounce, phones wiggle, clocks tick), and the logo tilts._
+
+* Fix(admin): IP details find the company's logo and its known hosting networks. 
+  _The logo comes from the icons the company's home page names (largest first),
+then the usual paths. An address is a datacenter one also when its owner is a
+company the hosting list knows (under another AS), or by its AS name._
+
+* Feat(admin): IP details sheet for servers and nodes on the dashboard. 
+  _An (i) after each name opens an iOS-style sheet: the company's logo and the
+country's waving flag, each IPv4/IPv6 address with its reverse DNS, what kind
+of network it is (datacenter, likely VPN/proxy, Tor exit, mobile, residential,
+public), the network and AS with their registration, the location, the abuse
+contact and the server's domains.
+
+Open sources only: the panel's GeoLite2 databases, RDAP at the regional
+registries (IANA bootstrap), the Tor Project's exit list, bad-asn-list (MIT)
+and the company's own favicon. Each address is kept 72 hours in Redis (new
+GET nodes/<id>/ip-info/), and the browser keeps the answer as long._
+
+* Merge pull request #226 from Hiddify-Official/feat/waving-flags. 
+  _feat(admin): waving cloth flags for servers and nodes_
+
+* Feat(admin): one calm cloth for every waving flag, that never loops. 
+  _The flags repeated a short loop, and the ripples were quick. There is now one
+cloth for all of them (the gust variant is gone): the wind rises and falls
+slowly (7.6 s with a 12.3 s drift), lifting the cloth and its ripples, two
+soft ripples of different pace (1.7 s and 2.9 s) run to the flying end, and
+the end rocks at 2.3 s and 3.7 s. No period divides another, so the nearest
+repeat is over half a minute away, and the bottom corner moves a third as
+fast as before. The shape keeps the measured reference's means. Each flag
+starts at its own moment, so neighbours do not move as one, and the sheen
+crosses only now and then._
+
+* Feat(admin): a steady-wind flag with a leaning end and a sheen. 
+  _A second cloth, measured from a second reference: it never straightens, its
+top edge falls to 0.58 of its height at the flying end and the bottom corner
+drops 0.24, quick small ripples (0.8 s) run along it, and the end's two
+corners move opposite each other, so the flying edge keeps leaning. Against
+the measured clip its edges are within 1-6% of the flag's height (10% at the
+curling top corner). FlagIcon takes it with wind="steady", lays each slice
+leaning like the cloth, and adds slanted light bands with a travelling sheen.
+The default (the gust) is unchanged._
+
+* Fix(admin): paint the waving flag on a canvas at twice the screen's resolution. 
+  _Bending the picture with SVG pieces left its lines stepping where the cloth
+narrows (a piece can only be slanted, and hundreds of them a frame are too
+slow). The flag is now painted on a canvas at twice the screen's pixels, in
+slices one canvas pixel wide placed on the cloth, then the light and shade and
+the outline. No steps or seams, the same in every browser, sharp up to a 2x
+zoom, and far lighter than the SVG mesh. A flag that must not move is drawn
+flat with its outline._
+
+* Fix(admin): waving flag as a triangle mesh, cut to the cloth's outline. 
+  _Strips met only along their top edge, so the picture stepped a little towards
+the flying end, and their overlap poked out of the outline. Each strip is now
+two triangles that stay on the cloth, so neighbours meet along whole edges;
+the picture is cut to the outline's own path; and the number of strips follows
+the flag's size on screen (14 to 48)._
+
+* Feat(admin): waving flags fly like cloth, after a measured reference. 
+  _The cloth now follows a 3 second loop measured from a reference animation:
+the pole edge is fixed, the cloth falls away towards its flying end (top edge
+0.62 of its height, half as tall and 7.5% narrower there), a wave runs to the
+end, which flaps, and a gust pulls it flat once a loop. Against the measured
+outlines the model is within 2-8% of the flag's height.
+
+Quality: the strips overlap, so no seam shows between them; the flag's picture
+is drawn once at twice the screen's resolution, the same in every browser; and
+one dark vector outline runs around the cloth._
+
+* Style(admin): FlagIcon back in the project's code style. 
+
+* Fix(admin): waving flag shading as one soft gradient, smoother cloth. 
+  _Light and shade were flat per strip and showed as bands between strips; they
+are now one gradient across the cloth. The outline is one path along the wave
+(it broke at each strip), the cloth has 48 strips, and it renders at
+geometric precision, so it looks soft and sharp-free on Retina screens._
+
+* Fix(admin): waving flags drawn as vector cloth with real wind. 
+  _The flag is now drawn inside an SVG: 32 thin strips, each skewed along the wave
+so neighbours share their edges and the cloth is one smooth surface, with light
+and shade that follow the folds. No CSS filters or per-strip layers, so it stays
+sharp at any size (the old strips stepped and looked pixelated). The wave grows
+from the pole to the flying end with a faster ripple on top; one shared loop
+animates every flag on screen and stops off screen or with reduced motion._
+
+* Feat(admin): waving flags for servers and nodes on the dashboard and Nodes page. 
+  _FlagIcon gets a waving mode: the flag is cut into thin strips that rise and
+fall one after another, more the further from the pole, with a light that
+follows the wave. The dashboard's node cards move from flag emoji to FlagIcon
+(the same SVG flags as the Nodes page, also on Windows) and both wave._
+
+* Merge pull request #225 from Hiddify-Official/fix/toast-below-topbar. 
+  _fix(admin): toasts below the top bar, in the style of iOS banners_
+
+* Feat(admin): toasts in the style of iOS banners, glass in the glass theme. 
+  _A neutral rounded card on a frosted material with the colour only in a round
+icon (Apple's system colours), a round grey close button, a dark variant, and
+the iOS spring as it slides down from the top centre. In the glass theme the
+toast is clear glass with the bright rim along its top._
+
+* Fix(admin): show toasts below the topbar, also in the installed app. 
+  _PrimeVue puts top: 20px inline on the toast, so the 100px rule never applied:
+toasts covered the topbar, and in the installed app on a phone with a notch
+they went up under the status bar. They now open just below the topbar, which
+already grows by the status bar's height (--safe-top)._
+
+* Merge pull request #222 from Hiddify-Official/fix/account-title-case. 
+  _fix(i18n): title case for admin titles, buttons and labels_
+
+* Fix(i18n): title case for the remaining admin buttons, dialog titles and labels; fix English typos. 
+
+* Fix(i18n): title case for admin panel titles, buttons and labels. 
+
+* Fix(i18n): title case for the My Account page's titles and buttons. 
+
+* Merge pull request #219 from Hiddify-Official/fix/pwa-status-bar-standalone. 
+  _fix(pwa): status bar changes for the installed app only_
+
+* Fix(pwa): manifest theme_color is the user page's header color. 
+  _Android paints the installed app's status bar with it: Chrome ignores a
+theme-color this light from the page (#eaecf7), but takes the manifest's.
+The admin page sets its own theme-color in the installed app._
+
+* Fix(admin_v2): the installed app's status bar follows the topbar's color. 
+  _Android paints an installed app's status bar with theme-color, which was a
+fixed dark #1a1b21 over the blue topbar. In the installed app only, it now
+takes the topbar's color on load and after every change of theme, color or
+mode (see-through bars laid over the page's color, settled after Liquid
+Glass's 1.2s color flow). A browser tab keeps the page's theme-color._
+
+* Fix(pwa): status bar changes for the installed app only. 
+  _- admin_v2: viewport-fit=cover is added by the script that already runs in
+  the installed app only, and --safe-top and the topbar without its light
+  top edge apply there only, so a browser tab (landscape too) is as before.
+- user page: apple-mobile-web-app-capable, without black-translucent: with
+  it iOS 26 moves the installed app's page up under the status bar but
+  draws nothing in a status-bar-high strip at the bottom of the screen. The
+  status bar takes the page's background (the header's color, set in
+  hiddify-user-front)._
+
+* Merge pull request #224 from Hiddify-Official/feat/dashboard-rename-server. 
+  _feat(admin): rename servers and nodes from the dashboard_
+
+* Feat(admin): say a node is being checked before it can be renamed. 
+  _Until it is known whether this panel can reach the node, its pencil opens a
+small popover saying it is being checked. When the check ends with the popover
+still open, it turns into the reason, or into the rename itself when allowed._
+
+* Feat(admin): one rule for when a node can be renamed, on both pages. 
+  _A rename reaches the node only when this panel can reach it and the node's panel
+is 14.0 or newer (older ones lack the node-name API). nodeRenameBlock holds that
+rule for the dashboard and the Nodes page: the pencil explains why only in those
+two cases, and allows the rename otherwise (also while not checked yet)._
+
+* Feat(admin): Nodes page explains why an unreachable node can't be renamed. 
+  _As on the dashboard, the pencil of a node this panel can't reach opens a small
+popover that says why, not the rename field. The popover logic (centred on the
+card, arrow on the pencil, gliding between cards, easing in) moves to a shared
+useCardPopover composable with its styles in _card-popover.scss._
+
+* Fix(admin): rename popover follows the pencil, sits mid-card and eases in. 
+  _Tapping another pencil while the popover was open changed its text but left it
+by the first one: it now glides to the new pencil. On a phone it is centred on
+the node's card (arrow still on the pencil) and never runs off the screen, and
+it eases in from its arrow._
+
+* Feat(admin): explain instead of renaming an offline node on the dashboard. 
+  _The pencil of a node that is not connected opens a small popover that says
+why it can't be renamed now (it would only change here), not the rename form._
+
+* Feat(admin): rename servers and nodes from the dashboard; pulse the node dot. 
+  _A pencil after each name on the dashboard opens a small popover to rename it.
+Nodes use the existing rename (here and on the node); this server's name is
+kept on its own child row and shown instead of "This server" once set (empty
+goes back to it). The coloured dot before each name now pulses slowly, by
+opacity only, so its size stays the same._
+
+* Merge pull request #223 from Hiddify-Official/fix/menu-swipe-flash. 
+  _fix(admin): stop the page blinking after the menu is swiped open_
+
+* Fix(admin): stop the page blinking after the menu is swiped open. 
+  _The mask's fade-in animation was switched off only while dragging and settling;
+when settling ended it started over and the mask blinked. A menu opened with a
+finger now keeps the animation off until it closes._
+
+* Merge pull request #221 from Hiddify-Official/fix/sparkline-touch-tooltip. 
+  _fix(admin_v2): dashboard tile and chart cards on touch_
+
+* Fix(admin_v2): close a dashboard tile's card on scroll on touch. 
+  _The card sits on <body> and PrimeVue only follows scrolling parents, not
+the page itself, so on touch the open card stayed put while the tile
+scrolled away. A scroll now blurs the tile, which closes its card._
+
+* Fix(admin_v2): one dashboard chart card at a time on touch. 
+  _Touch never sends a pointer-left, so Chart.js kept a tapped chart's card
+open, and a finger put on another chart to scroll opened a second one.
+Opening a chart's card now closes the other one, and a page scroll
+closes the open card._
+
+* Fix(admin_v2): open the dashboard tile's details card on tap. 
+  _On touch a tap sends mouseenter and click together, and the tooltip's
+click handler closed the card at once, so only the sparkline's small tip
+was left. On hover-less devices the card now opens on focus (the tile is
+focusable) and closes on a tap elsewhere._
+
+* Merge pull request #220 from Hiddify-Official/fix/account-default-lang-label. 
+  _fix(account): show the panel's default language in My account_
+
+* Fix(account): show the panel's default language in My account. 
+  _The Select treats an empty value as nothing chosen, so the "Panel default"
+option ("" in the API) showed an empty field and no tick. It now has a
+value of its own that is sent as "" when saved._
+
+* Merge pull request #214 from Hiddify-Official/feat/pwa-icons. 
+  _feat(pwa): app icons per panel, App Color, one-step install guide_
+
+* Feat(pwa): the admin app icon follows the panel's theme color. 
+  _Until a color is picked by hand, the admin app icon takes the ready color
+closest to the theme's color (its primary 500, compared in OKLCH with hue
+counting double): an orange theme gives the orange icon, a pink one the pink
+icon, the panel's own blue the stock blue. The page's app icon and manifest
+links follow it, also when the theme changes, so the app installed from the
+browser gets that color. A color picked by hand (the stock blue too) is kept
+in the cookie and wins from then on; the page is told so (app_icon.chosen)._
+
+* Fix(pwa): the App Color window opens a little slower. 
+
+* Feat(pwa): App Color for the user page too, and logo tabs in the install guide. 
+  _The user page's app icon can be drawn in any color as well: the same tiles
+with the user logo on top (white, or a deep tone on a very light color). The
+route, the cookie (hiddify_user_icon), the manifest's ?icon= and the page's
+app icon link work as for the admin panel; the tab icon stays the stock one.
+The user page gets window.__APP_ICON__ for its install guide.
+
+In the admin install dialog the button is now "App Color" and its window
+opens softly; the title is "Install the Panel as an App"; the device tabs
+show only each system's logo, as vector drawings in their own colors, each on
+a very pale tint of its own._
+
+* Fix(pwa): the install dialog is in the middle of the screen on phones too. 
+  _On phones the dialog was a sheet at the bottom of the screen. It is now
+centered at every width, like on a computer._
+
+* Feat(pwa): the install guide's scenes show the real app and end on the home screen. 
+  _The drawings stood in for the app with a grey bar next to its icon, and the
+phone scenes stopped on the install prompt. Now each install prompt shows the
+app as the real one does: its icon, its name and, under it, this panel's
+address. The iPhone sheet also has its "Open as Web App" switch. After "Add"
+(iPhone) or "Install" (Android) the prompt closes and the home screen shows
+the app's icon among the others, for the rest of the step; the computer
+scene's app window carries the app's name._
+
+* Feat(pwa): the install guide shows one step at a time. 
+  _The guide listed all its steps under the animation and lit the current one,
+which made the dialog too tall for small phones. Now only the step the scene
+is showing is on screen: it comes up into one box as the step before it
+leaves, and small marks under the box say which step of how many it is. The
+box is as tall as the longest step, so nothing moves when the step changes.
+With reduced motion the steps stay a plain list.
+
+For small phones the dialog is tighter too: on phones each device tab names
+the device only, on one line, and on short screens the scene, the icon and
+the gaps shrink step by step. The whole guide shows without scrolling on a
+375x548 screen; on 320x460 only the "do not show again" line needs a scroll._
+
+* Feat(pwa): choose the admin app icon's color (PWA Color) 
+  _A "PWA Color" button opens a small window with 25 ready colors (Apple's
+system colors, colors between two of them, and dark tones such as black,
+graphite and brown) and "your own color", with a picker and a hex field.
+The button is under the icon in the install dialog and in a row of
+My account > Settings; the icon next to it shows the choice at once.
+
+- hutils/app_icon.py draws the icon in any color with Pillow, from grey-level
+  light maps (static/images/app-icon-parts): the tile takes the color's ramp,
+  the ring and the logo the color itself (darkened only while it is too light
+  to read on the white hexagon). Black has its own measured tile colors.
+- /<proxy_path>/app-icon/admin/<RRGGBB>/<name>.png serves it, open like the
+  static icons and cached for a year (the URL names the color and the icon
+  version).
+- The choice is kept in a cookie for this browser. The page's
+  apple-touch-icon and manifest links follow it, and the manifest names the
+  color in its own URL (?icon=RRGGBB), because browsers fetch a manifest
+  without cookies. The stock blue stays the plain files.
+- The browser tab's icon never changes: it is always the stock one._
+
+* Feat(pwa): the admin icon is the hexagon on a blue glass tile. 
+  _The white glass hexagon (blue ring and logo) now sits on the blue glass tile
+of the app icons, a little larger than before. The picture comes from a
+2048 px render, so the edges and the logo stay sharp at every size.
+
+- apple-touch 180 and 192 / 512: the hexagon takes about 78% of the tile
+- maskable 512: about 68%, so a round launcher mask does not cut it
+- the tab icons are the same tile, cut to its shape
+- APP_ICON_VERSION 7, so browsers fetch the new pictures_
+
+* Feat(pwa): hexagon admin icon (white glass, blue ring and logo) 
+  _The admin panel's app icon, tab icon and install-guide icon are now the
+Hiddify hexagon: a white glass hexagon in a blue ring with a blue logo.
+
+- 192 / 512 and the tab icons: the hexagon on a transparent background
+- apple-touch 180 and maskable 512: the hexagon on white, inside the area
+  phones keep when they cut their own shape
+- APP_ICON_VERSION 3, so browsers fetch the new pictures_
+
+* Feat(pwa): the app icons as tab icons and in the install guide. 
+  _- Tab icon (favicon): the admin panel, its sign-in page and the classic pages
+  under the admin path show the admin icon; the user page and its classic
+  pages show the user icon. New files favicon-{admin,user}-{32,256}.png: the
+  app icon cut to its shape, without a margin or shadow.
+- Install guide: the top of the dialog shows that icon as it is on a home
+  screen, without the frame that was drawn around it, and the animated scenes
+  draw the same picture.
+- Icon URLs carry a version (hutils.flask.app_icon_url, APP_ICON_VERSION).
+  Static images are served as immutable for a year, so a changed icon under
+  the same URL never reached browsers that had already loaded it._
+
+* Feat(pwa): separate app icons for the admin panel and the user page. 
+  _The admin panel and the user page shared one installed-app icon. Each has
+its own now, so both can sit side by side on one device: a slate-black glass
+tile for the admin panel and the same tile in blue for the user page, with
+the logo in flat white. The manifest and the apple-touch-icon links pick the
+set by panel.
+
+- apple-touch 180: a full square with the edge light drawn on the iOS icon
+  outline (iOS cuts the shape out itself)
+- 192 / 512: the same picture already cut out, with a margin and a soft shadow
+- maskable 512: the body gradient only (launchers cut their own shape)_
+
+* Merge pull request #227 from Hiddify-Official/fix/docs-links-fa-spelling. 
+  _fix(docs): Help and setting guides on hiddify.com, Persian spelling_
+
+* Fix(docs): point Help and setting guides to hiddify.com, one Persian spelling. 
+  _- The admin menu Help link opened the old GitHub wiki, which is no longer
+  kept up to date: it now opens the tutorials page on hiddify.com
+  (/fa/manager/ for the Persian admin area).
+- The guides linked from the Cloudflare API, domain fronting and domain
+  settings pointed to the old hiddify-config wiki: they now open the same
+  articles on hiddify.com, in every language.
+- Persian: Cloudflare and Reality are spelled as on the website._
+
+* Merge pull request #215 from Hiddify-Official/fix/pwa-status-bar. 
+  _fix(admin_v2): run the topbar up behind the iOS status bar in the PWA_
+
+* Fix(admin_v2): run the topbar up behind the iOS status bar in the installed app. 
+  _The installed admin app (PWA) on iOS showed a plain strip above the topbar,
+split from it by a line: the page had no viewport-fit=cover nor a
+translucent status bar, so iOS painted its own bar there.
+
+- The page draws under the status bar (viewport-fit=cover,
+  black-translucent) and the topbar grows by the status bar's height plus
+  20% (--safe-top), so its color reaches the top edge and its title sits
+  below the band iOS 26 blurs there.
+- In the installed app the topbar has a plain color under its gradient:
+  iOS 26 paints the status bar from it instead of laying a blur.
+- The topbar's light top edge is gone, so no line splits the two.
+- The sidebar, page padding and settings' sticky nav move down by
+  --safe-top. Browsers without a notch see no change._
+
+* Merge pull request #216 from Hiddify-Official/fix/pwa-edge-swipe-menu. 
+  _fix(admin_v2): edge swipe in the phone PWA opens the menu, never back_
+
+* Fix(admin_v2): in the installed app on a phone, back opens the menu. 
+  _Android's back gesture (a swipe from the screen's edge) never reaches the page,
+only the history step that follows. In the installed app (PWA) on a phone, a
+guard history entry with the same URL now sits on top of every page: "back"
+only steps off it, the step is kept from the router, the menu opens and the
+guard goes back on top. A normal browser tab is unchanged._
+
+* Fix(admin_v2): edge swipe on phones always opens the menu, never goes back. 
+  _On phones (PWA included), a touch on either edge of the screen is cancelled at
+touchstart so iOS can no longer read it as the swipe-back (or forward) gesture;
+a tap there is replayed as a click. A swipe from the start edge now opens the
+menu whatever it starts on (a field, a slider, a sideways-scrolling row), unless
+a dialog or drawer is open._
+
+* Merge pull request #217 from Hiddify-Official/fix/menu-icons-inbox-qr. 
+  _feat(admin_v2): colour and animate the Inbox and QR Code menu icons_
+
+* Feat(admin_v2): colour and animate the Inbox and QR Code menu icons. 
+
+* Merge pull request #218 from Hiddify-Official/feat/menu-active-icon-motion. 
+  _feat(admin_v2): animate the current page's menu icon on touch screens_
+
+* Feat(admin_v2): on touch screens, animate the current page's icon in the side menu. 
+
 * Fix(auth): keep account passwords as salted scrypt hashes. 
   _Admin and user passwords were stored and compared as typed. Now only a
 salted scrypt hash is kept (hiddifypanel.passwords), and every sign-in path
