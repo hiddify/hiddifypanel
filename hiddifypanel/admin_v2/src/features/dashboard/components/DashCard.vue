@@ -95,9 +95,12 @@ defineProps<{
 }
 .dash-card__actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 100%;
 }
 .dash-card__body {
   flex: 1;
