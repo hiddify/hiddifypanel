@@ -38,6 +38,7 @@
       </template>
       <template #option="{ option }">
         <span class="qf-option">
+          <span class="proto-dot" :style="{ background: option.color }" />
           <span class="qf-option__label">{{ option.label }}</span>
           <small>{{ option.count }}</small>
         </span>
@@ -55,7 +56,11 @@
       :aria-label="t('proxy.domainModes')"
       class="qf-select"
       :class="{ 'qf-select--on': selectedDomainModes.length }"
-    />
+    >
+      <template #option="{ node }">
+        <span class="proto-option"><span class="proto-dot" :style="{ background: categoryColor(String(node.key).replace(/^group:/, '')) }" />{{ node.label }}</span>
+      </template>
+    </TreeSelect>
 
   </section>
   <ListFilterStatus :shown="filteredProxies.length" :total="proxies.length" :active="anyFilterActive" @reset="resetAllFilters" />
@@ -67,7 +72,6 @@
       :row-class="(p: CustomProxy) => (isEffectivelyEnabled(p) ? '' : 'proxy-row--off')"
       paginator
       :rows="10"
-      :rows-per-page-options="[10, 25, 50]"
       data-key="id"
       v-model:first="first"
       v-model:sort-field="sortField"
@@ -334,6 +338,10 @@
           <span v-else>—</span>
         </template>
       </Column>
+      <!-- the Users page's pager: the bar, the page numbers, Previous / Next and the rows per page -->
+      <template #paginatorcontainer="p">
+        <TablePager :first="p.page * p.rows" :rows="p.rows" :total-records="p.totalRecords ?? 0" :options="[10, 25, 50]" @page="p.changePageCallback" @rows="p.rowChangeCallback" />
+      </template>
     </DataTable>
   </Panel>
 
@@ -371,7 +379,11 @@
   <Popover ref="modePopover" @show="focusFirstInput(modePopover)">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('proxy.mode') }}</label>
-      <Listbox v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="modePopover.hide()" />
+      <Listbox v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="modePopover.hide()">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: modeColor(option.value) }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
   <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
@@ -387,7 +399,11 @@
   <Popover ref="enabledPopover">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('common.enabled') }}</label>
-      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()" />
+      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: option.color }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
 
@@ -406,6 +422,7 @@ import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { useToast } from 'primevue/usetoast'
 import Panel from 'primevue/panel'
 import DataTable from 'primevue/datatable'
+import TablePager from '@/shared/components/TablePager.vue'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -643,8 +660,23 @@ const quickGroups = computed<QuickGroup[]>(() => [
   },
 ])
 
+/**
+ * Each option's dot: the color it already has in the list — a protocol's or a core's as in their columns
+ * (protoColor), a transport's, a TLS layer's or a mode's as its category tag (categoryColor).
+ */
+function optionColor(group: string, value: string): string {
+  // "Other" is no protocol or transport of its own: a neutral gray
+  if (value === 'other') return 'var(--p-surface-400)'
+  return group === 'proto' || group === 'core' ? protoColor(value) : categoryColor(value)
+}
+
 function groupOptions(group: QuickGroup) {
-  return group.options.map((o) => ({ value: o.value, label: o.label, count: proxies.value.filter((row) => matchesQuick(row, group.key) && o.test(row)).length }))
+  return group.options.map((o) => ({
+    value: o.value,
+    label: o.label,
+    color: optionColor(group.key, o.value),
+    count: proxies.value.filter((row) => matchesQuick(row, group.key) && o.test(row)).length,
+  }))
 }
 
 /** Domain modes as a tree: direct → valid, fake…; relay → …; CDN on its own. */
@@ -774,10 +806,17 @@ const modePopover = ref()
 const corePopover = ref()
 const enabledPopover = ref()
 
+/** Their dots say what they are: on (green), off (red) */
 const enabledOptions = [
-  { label: t('common.enabled'), value: true },
-  { label: t('common.disabled'), value: false },
+  { label: t('common.enabled'), value: true, color: 'var(--p-green-500)' },
+  { label: t('common.disabled'), value: false, color: 'var(--p-red-500)' },
 ]
+
+/** A mode's dot in the Mode column's filter: the same color as in the quick Mode filter above the list */
+const MODE_KEYS: Record<string, string> = { domains_l7_gateway: 'l7', domains_sni_gateway: 'sni', domains_dns_gateway: 'dns', ip: 'ip' }
+function modeColor(mode: string): string {
+  return categoryColor(MODE_KEYS[mode] ?? mode)
+}
 
 const COMMON_PROXY_CORES = new Set(['hiddify-core', 'xray'])
 
@@ -1094,6 +1133,7 @@ onActivated(() => {
   gap: 0.55rem;
 }
 .proto-dot {
+  flex: none;
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 999px;

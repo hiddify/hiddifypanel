@@ -81,7 +81,19 @@
         <span v-if="bulkBusy" class="users-bulk__count users-bulk__count--busy" role="status">
           <ProgressSpinner class="users-bulk__spinner" stroke-width="6" aria-hidden="true" />{{ t('users.bulkWorking', { n: bulkBusyCount }, bulkBusyCount) }}
         </span>
-        <span v-else class="users-bulk__count"><i class="pi pi-check-square" />{{ t('users.selected', { n: selected.length }, selected.length) }}</span>
+        <!-- The count is the "every page" checkbox: it picks every user the filter / search shows; once all are picked, it clears -->
+        <button
+          v-else
+          type="button"
+          class="users-bulk__count users-bulk__all"
+          :aria-pressed="allPicked"
+          :title="allPicked ? t('users.clearSelection') : t('users.selectAllUsers', { n: rows.length }, rows.length)"
+          @click="allPicked ? (selected = []) : toggleAll(true)"
+        >
+          <span class="users-bulk__box" :class="{ 'is-on': allPicked }" aria-hidden="true"><i :class="['pi', allPicked ? 'pi-check' : 'pi-minus']" /></span>
+          <span>{{ t('users.selected', { n: selected.length }, selected.length) }}</span>
+          <span v-if="!allPicked" class="users-bulk__all-hint">{{ t('users.selectAllUsers', { n: rows.length }, rows.length) }}</span>
+        </button>
         <div class="users-bulk__actions">
           <Button size="small" icon="pi pi-send" :label="t('broadcast.fromUsers')" severity="secondary" outlined :disabled="bulkBusy !== null" @click="messageSelected" />
           <Button v-for="a in BULK_BUTTONS" :key="a.action" size="small" :icon="a.icon" :label="t(`users.bulk.${a.action}`)" severity="secondary" outlined :loading="bulkBusy === a.action" :disabled="bulkBusy !== null" @click="bulk(a.action)" />
@@ -104,7 +116,7 @@
     <div v-else-if="state && !narrow" class="users-card" :class="{ 'users-card--virtual': virtualTable }" :style="virtualTable ? { '--u-row': `${rowPx}px` } : undefined">
       <DataTable
         v-model:selection="selected"
-        :select-all="allPicked"
+        :select-all="pagePicked"
         @select-all-change="onSelectAllChange"
         :value="tableRows"
         data-key="uuid"
@@ -270,11 +282,11 @@
 
     <!-- Phones: compact cards -->
     <div v-else-if="state" class="u-cards" :class="{ 'u-cards--moving': userDrag.moving.value, 'u-cards--settling': userDrag.settling.value }">
-      <!-- Select every user the current filter / search shows (all pages), as the table's header checkbox does on a wider screen -->
+      <!-- Select the users of this page, as the table's header checkbox does on a wider screen (every page: the bulk bar's count) -->
       <div v-if="rows.length" class="u-cardbar">
         <label v-if="!readOnly" class="u-selectall">
-          <Checkbox :model-value="allPicked" :indeterminate="somePicked && !allPicked" binary :aria-label="t('users.selectAll', { n: rows.length }, rows.length)" @update:model-value="(v: boolean) => toggleAll(v)" />
-          <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
+          <Checkbox :model-value="pagePicked" :indeterminate="pageSome && !pagePicked" binary :aria-label="t('users.selectPage', { n: pageSet.length }, pageSet.length)" @update:model-value="(v: boolean) => togglePage(v)" />
+          <span>{{ t('users.selectPage', { n: pageSet.length }, pageSet.length) }}</span>
         </label>
         <!-- The table's column sorts, as small buttons: a tap sorts up, the next down, the third goes back to your own order -->
         <div class="u-sorts-wrap">
@@ -1042,15 +1054,27 @@ function isSelected(u: Row): boolean {
 const allPicked = computed(() => rows.value.length > 0 && rows.value.every((u) => isSelected(u)))
 const somePicked = computed(() => rows.value.some((u) => isSelected(u)))
 
-function toggleAll(on: boolean) {
-  const shown = new Set(rows.value.map((u) => u.uuid))
+/** Picks (or drops) these users, keeping the rest of the selection as it is. */
+function toggleUsers(list: Row[], on: boolean) {
+  const shown = new Set(list.map((u) => u.uuid))
   const others = selected.value.filter((s) => !shown.has(s.uuid))
-  selected.value = on ? [...others, ...rows.value] : others
+  selected.value = on ? [...others, ...list] : others
+}
+function toggleAll(on: boolean) {
+  toggleUsers(rows.value, on)
 }
 
-/** The header checkbox: every user the filter / search shows (not only this page), as before a sort was lazy. */
+/** The users of the page on screen (10, 50… as the page size says); every user the filter shows when not paged. */
+const pageSet = computed<Row[]>(() => (paged.value ? pageRows.value : rows.value))
+const pagePicked = computed(() => pageSet.value.length > 0 && pageSet.value.every((u) => isSelected(u)))
+const pageSome = computed(() => pageSet.value.some((u) => isSelected(u)))
+function togglePage(on: boolean) {
+  toggleUsers(pageSet.value, on)
+}
+
+/** The header checkbox: the users of this page only; every page is the bulk bar's count. */
 function onSelectAllChange(e: { checked: boolean }) {
-  toggleAll(e.checked)
+  togglePage(e.checked)
 }
 
 function toggleSelect(u: Row, on: boolean) {
@@ -1572,6 +1596,44 @@ onBeforeUnmount(() => {
   gap: 0.45rem;
   font-weight: 600;
   color: var(--p-primary-color);
+}
+.users-bulk__all {
+  padding: 0.25rem 0.6rem 0.25rem 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.users-bulk__all:hover,
+.users-bulk__all:focus-visible {
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+}
+.users-bulk__box {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1.5px solid var(--p-primary-color);
+  border-radius: 0.35rem;
+  color: var(--p-primary-color);
+  font-size: 0.65rem;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.users-bulk__box.is-on {
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+}
+.users-bulk__all-hint {
+  color: var(--p-text-muted-color);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 0.2em;
 }
 .users-bulk__count--busy {
   color: var(--p-text-color);

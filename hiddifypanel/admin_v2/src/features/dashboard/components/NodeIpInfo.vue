@@ -11,9 +11,12 @@ import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
 import LiveIcon from './LiveIcon.vue'
+import IpLocationMap from './IpLocationMap.vue'
+import ServerLogo from './ServerLogo.vue'
 import { countryName } from '@/shared/utils/country'
 import { apiErrorMessage } from '@/core/api/client'
 import { nodesApi, type IpDetails, type NodeIpInfo } from '@/features/nodes/api'
+import { companyLogo, logoColor } from '../company-logos'
 
 const props = defineProps<{ node: { id: number; title: string } | null }>()
 const visible = defineModel<boolean>('visible', { default: false })
@@ -95,9 +98,20 @@ const countryCode = computed(() => current.value?.geo.country_code || current.va
 const country = computed(() => (countryCode.value ? countryName(countryCode.value, locale.value) : ''))
 const place = computed(() => [current.value?.geo.city, current.value?.geo.region, country.value].filter(Boolean).join(', '))
 const company = computed(() => current.value?.company.name || current.value?.geo.org || '')
-const monogram = computed(() => (company.value.trim()[0] || '?').toUpperCase())
-/** The company's initial on a colour of its own when it has no logo */
+/** A colour of the company's own (from its name), for its tag and the hero's glow when it has no brand colour */
 const monogramHue = computed(() => [...company.value].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 210))
+/** A well-known company's vector logo (sharp at any size); others keep their website's icon */
+const vectorLogo = computed(() => (current.value ? companyLogo(current.value.company.domain, company.value) : undefined))
+const vectorLogoStyle = computed(() =>
+  vectorLogo.value ? { '--logo-light': logoColor(vectorLogo.value.icon.hex, false), '--logo-dark': logoColor(vectorLogo.value.icon.hex, true) } : {},
+)
+/** The company name's faint tag: the brand's colour, else the colour of its initial */
+const companyTint = computed(() => {
+  const hex = vectorLogo.value?.icon.hex
+  return hex
+    ? { '--tint': logoColor(hex, false), '--tint-dark': logoColor(hex, true) }
+    : { '--tint': `hsl(${monogramHue.value} 65% 46%)`, '--tint-dark': `hsl(${monogramHue.value} 70% 62%)` }
+})
 
 // --- a phone: pull the sheet down to close it, as in iOS ------------------------------------------------------
 const sheet = ref<HTMLElement | null>(null)
@@ -623,15 +637,22 @@ const sections = computed(() =>
 
         <!-- the server: logo, name, company, waving flag, where it is -->
         <header class="ips__hero">
-          <div class="ips__logo" :style="{ '--hue': monogramHue }">
-            <img v-if="current?.company.logo" :src="current.company.logo" alt="" />
-            <span v-else-if="current">{{ monogram }}</span>
+          <div class="ips__logo" :class="{ 'ips__logo--bare': current }" :style="{ '--hue': monogramHue, ...vectorLogoStyle }">
+            <svg v-if="vectorLogo" viewBox="0 0 24 24" role="img" :aria-label="vectorLogo.icon.title"><path :d="vectorLogo.icon.path" /></svg>
+            <img v-else-if="current?.company.logo" :src="current.company.logo" alt="" />
+            <ServerLogo v-else-if="current" />
             <i v-else class="pi pi-server" />
           </div>
           <div class="ips__titles">
             <h2 class="ips__name">{{ node?.title }}</h2>
-            <p v-if="company" class="ips__company">{{ company }}</p>
-            <p v-if="place" class="ips__place"><i class="pi pi-map-marker" />{{ place }}</p>
+            <p v-if="company" class="ips__company" :style="companyTint">
+              <svg class="ips__company-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4.5 21V5.6c0-.9.6-1.6 1.5-1.8l7-1.5c1.1-.2 2 .6 2 1.7V21M15 9h3.2c.9 0 1.8.8 1.8 1.8V21M2.8 21h18.4" />
+                <path d="M8 7.5h3.5M8 11h3.5M8 14.5h3.5M17.2 13h.01M17.2 16.5h.01" />
+              </svg>
+              <span>{{ company }}</span>
+            </p>
+            <p v-if="place" class="ips__place"><IpLocationMap :lat="current?.geo.latitude" :lon="current?.geo.longitude" :place="place" :city="current?.geo.city" />{{ place }}</p>
           </div>
           <FlagIcon v-if="countryCode" class="ips__flag" :code="countryCode" :label="country" waving />
         </header>
@@ -844,12 +865,29 @@ const sections = computed(() =>
   font-size: 1.5rem;
   font-weight: 700;
 }
+/* a logo stands on its own, no tile behind it: only a very light shadow */
+.ips__logo--bare {
+  overflow: visible;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.ips__logo svg,
 .ips__logo img {
   width: 100%;
   height: 100%;
-  padding: 0.45rem;
   object-fit: contain;
-  background: #fff;
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.12));
+}
+.ips__logo svg {
+  fill: var(--logo-light);
+}
+html.app-dark .ips__logo svg {
+  fill: var(--logo-dark);
+}
+html.app-dark .ips__logo svg,
+html.app-dark .ips__logo img {
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.35));
 }
 .ips__titles {
   min-width: 0;
@@ -862,23 +900,63 @@ const sections = computed(() =>
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
+/* the company's name in a faint tag of its colour: a label, not a button (no shadow, no hover). Its icon and the
+   place's pin below share one column (--ips-lead-*), so the two lines' icons and texts start at the same place. */
+.ips__hero {
+  --ips-lead-pad: 0.42rem;
+  --ips-lead-icon: 1.05rem;
+  --ips-lead-gap: 0.32rem;
+}
 .ips__company {
-  margin: 0.1rem 0 0;
-  color: var(--ips-muted);
-  font-size: 0.95rem;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ips-lead-gap);
+  max-width: 100%;
+  margin: 0.3rem 0 0;
+  padding: 0.16rem 0.75rem 0.16rem var(--ips-lead-pad);
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tint) 6%, transparent);
+  /* the outline as an inset shadow: it takes no room, so the text lines up exactly with the place's below */
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--tint) 16%, transparent);
+  color: color-mix(in srgb, var(--tint) 35%, var(--ips-muted));
+  font-size: 1rem;
+  font-weight: 550;
+  line-height: 1.45;
+  white-space: nowrap;
+  vertical-align: top;
+}
+.ips__company span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ips__company-icon {
+  flex: none;
+  width: var(--ips-lead-icon);
+  height: 0.95rem;
+  fill: none;
+  stroke: color-mix(in srgb, var(--tint) 70%, var(--ips-muted));
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+html.app-dark .ips__company-icon {
+  stroke: color-mix(in srgb, var(--tint-dark) 75%, var(--ips-muted));
+}
+html.app-dark .ips__company {
+  background: color-mix(in srgb, var(--tint-dark) 9%, transparent);
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--tint-dark) 22%, transparent);
+  color: color-mix(in srgb, var(--tint-dark) 40%, var(--ips-muted));
 }
 .ips__place {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: var(--ips-lead-gap);
   margin: 0.3rem 0 0;
+  padding-inline-start: var(--ips-lead-pad);
   color: var(--ips-muted);
   font-size: 0.85rem;
-}
-.ips__place i {
-  font-size: 0.75rem;
-  color: #ff3b30;
 }
 .ips__flag {
   flex: none;
@@ -1424,14 +1502,51 @@ html.app-dark .ips__flag-state--likely {
     transform: translateY(100%);
   }
 }
+/* Smart Caddy: its page colour is a thin glass (half white), which over the dimmed page read grey; the sheet takes the
+   theme's strong glass, bright as in the Liquid theme */
+html.theme-caddy .p-dialog.ip-sheet .ips {
+  --ips-bg: var(--caddy-glass-strong);
+  --ips-group: color-mix(in srgb, var(--p-text-color) 5%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+}
 html.theme-liquid .p-dialog.ip-sheet .ips {
   --ips-bg: rgb(var(--lg-tint) / 0.72);
-  --ips-group: rgb(var(--lg-tint) / 0.55);
+  /* Apple's grouped cells on glass: a grey fill of their own (the system fill), not more of the sheet's white, which
+     made them vanish into it */
+  --ips-group: rgb(120 120 128 / 0.12);
   -webkit-backdrop-filter: blur(var(--lg-blur-float)) saturate(var(--lg-saturate));
   backdrop-filter: blur(var(--lg-blur-float)) saturate(var(--lg-saturate));
   box-shadow:
     inset 0 1px 0 var(--lg-rim),
     var(--lg-shadow-float);
+}
+html.theme-liquid.app-dark .p-dialog.ip-sheet .ips {
+  --ips-group: rgb(118 118 128 / 0.24);
+}
+/* each cell a pane of glass: a light rim along its top edge and a hairline round it */
+html.theme-liquid .p-dialog.ip-sheet :is(.ips__address, .ips__tile, .ips__group) {
+  box-shadow:
+    inset 0 1px 0 var(--lg-rim),
+    inset 0 0 0 0.5px rgb(0 0 0 / 0.06);
+}
+html.theme-liquid.app-dark .p-dialog.ip-sheet :is(.ips__address, .ips__tile, .ips__group) {
+  box-shadow:
+    inset 0 1px 0 var(--lg-rim),
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.07);
+}
+/* the segmented control: a grey track and a bright glass lens on the chosen side */
+html.theme-liquid .p-dialog.ip-sheet .ips__segments {
+  background: rgb(120 120 128 / 0.16);
+}
+html.theme-liquid .p-dialog.ip-sheet .ips__segment--on {
+  background: rgb(var(--lg-tint) / 0.95);
+  box-shadow:
+    inset 0 1px 0 var(--lg-rim),
+    0 3px 10px -3px rgb(0 0 0 / 0.22);
+}
+html.theme-liquid.app-dark .p-dialog.ip-sheet .ips__segment--on {
+  background: rgb(255 255 255 / 0.16);
 }
 @media (prefers-reduced-motion: reduce) {
   .p-dialog.ip-sheet.p-dialog-enter-active,

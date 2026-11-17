@@ -55,6 +55,18 @@
             width: 3rem;
         }
 
+        // the hexagon app icon: lifted off the bar a little
+        .layout-topbar-logo-hex {
+            width: 2.3rem;
+            height: 2.3rem;
+            filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.22));
+            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        &:active .layout-topbar-logo-hex {
+            transform: scale(0.92);
+        }
+
         .layout-topbar-logo-image {
             height: 2rem;
             width: auto;

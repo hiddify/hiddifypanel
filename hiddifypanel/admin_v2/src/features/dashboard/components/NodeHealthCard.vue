@@ -17,6 +17,14 @@ import { timeLabels } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricBar from './MetricBar.vue'
 import MetricChart from './MetricChart.vue'
+import ResourceGauge from './ResourceGauge.vue'
+import ChartViewSwitch from './ChartViewSwitch.vue'
+import { useChartView } from '../composables/useChartView'
+import ChartStyleButton from './ChartStyleButton.vue'
+import SpeedGauge from './views/SpeedGauge.vue'
+import NetStats from './views/NetStats.vue'
+import { CHART_TYPES, LINE_TYPES, useChartStyle } from '../composables/useChartStyle'
+import { formatBytes } from '@/shared/utils/format-metrics'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Popover from 'primevue/popover'
@@ -28,6 +36,7 @@ import { dashboardNodeName, editableNodeName } from '../utils/node-name'
 import { useCardPopover } from '@/shared/composables/useCardPopover'
 import { RENAME_MIN_MAJOR, nodeRenameBlock, type RenameBlock } from '@/shared/utils/node-rename'
 import NodeIpInfo from './NodeIpInfo.vue'
+import ColorGlyph from './ColorGlyph.vue'
 
 const props = defineProps<{
   nodes: DashboardNodeStats[]
@@ -215,6 +224,98 @@ const networkLegend = computed(() =>
 )
 
 const cpuOverview = computed(() => resourceSeries('cpu', t('dashboard.cpu'), SERIES.cpu))
+/** How the CPU and memory charts are shown: a chart over the last minutes (drawn in the style sheet's type), or gauges
+ *  of the latest reading */
+const OVERVIEW_VIEWS = ['lines', 'gauges'] as const
+const overviewView = useChartView('node-overview', OVERVIEW_VIEWS)
+const overviewViewOptions = computed(() => [
+  { value: 'lines', icon: 'pi pi-wave-pulse', label: t('dashboard.views.lines') },
+  { value: 'gauges', icon: 'pi pi-gauge', label: t('dashboard.views.gauges') },
+])
+/** Several servers stack: summed shapes (candles, baselines) would add their percentages up, so only per-server types */
+const SPLIT_TYPES = [...LINE_TYPES, 'area', 'column', 'dots'] as readonly string[]
+const resourceTypes = computed(() => (multiNode.value ? SPLIT_TYPES : CHART_TYPES))
+const resourceStyleRaw = useChartStyle('node-resources', { type: 'area' })
+const resetResourceStyle = resourceStyleRaw.reset
+const resourceStyle = computed(() => (resourceTypes.value.includes(resourceStyleRaw.value.type) ? resourceStyleRaw.value : { ...resourceStyleRaw.value, type: 'area' }))
+
+/** The network on its own: upload above and download below (mirror), both over zero (overlay), speedometers of the
+ *  rate now, or the window's numbers */
+const NET_VIEWS = ['mirror', 'overlay', 'speed', 'stats'] as const
+const netView = useChartView('node-network', NET_VIEWS)
+const netViewOptions = computed(() => [
+  { value: 'mirror', icon: 'pi pi-sort-alt', label: t('dashboard.views.mirror') },
+  { value: 'overlay', icon: 'pi pi-chart-line', label: t('dashboard.views.overlay') },
+  { value: 'speed', icon: 'pi pi-gauge', label: t('dashboard.views.speed') },
+  { value: 'stats', icon: 'pi pi-list', label: t('dashboard.views.stats') },
+])
+const netStyleRaw = useChartStyle('node-network', { type: 'area' })
+const resetNetStyle = netStyleRaw.reset
+/** Overlaid, upload and download are on one side: shapes that sum a side (candles, baselines, lollipops) would add them */
+const netTypes = computed(() => (netView.value === 'overlay' ? SPLIT_TYPES : CHART_TYPES))
+const netStyle = computed(() => (netTypes.value.includes(netStyleRaw.value.type) ? netStyleRaw.value : { ...netStyleRaw.value, type: 'area' }))
+
+/** Download and upload over zero, each node in its colour (one server: download cyan, upload orange) */
+const networkOverlay = computed(() => {
+  const width = overviewLabels.value.length
+  return visibleNodes.value.flatMap((node) => {
+    const samples = props.history[node.id] ?? []
+    const pad: number[] = Array(Math.max(0, width - samples.length)).fill(0)
+    const title = nodeTitle(node)
+    const one = !multiNode.value
+    return [
+      { label: one ? t('dashboard.download') : `${title} · ${t('dashboard.download')}`, values: [...pad, ...samples.map((x) => x.down)], color: one ? SERIES.download : nodeColor(node.id), type: 'line' as const, area: true },
+      { label: one ? t('dashboard.upload') : `${title} · ${t('dashboard.upload')}`, values: [...pad, ...samples.map((x) => x.up)], color: one ? SERIES.upload : nodeColor(node.id), type: 'line' as const, area: one, dashed: !one },
+    ]
+  })
+})
+
+/** Every shown server together, per sample: times, download and upload */
+const netTotals = computed(() => {
+  let longest: NodeSample[] = []
+  for (const node of visibleNodes.value) {
+    const samples = props.history[node.id] ?? []
+    if (samples.length > longest.length) longest = samples
+  }
+  const width = longest.length
+  const down: number[] = Array(width).fill(0)
+  const up: number[] = Array(width).fill(0)
+  for (const node of visibleNodes.value) {
+    const samples = props.history[node.id] ?? []
+    const offset = width - samples.length
+    samples.forEach((sample, i) => {
+      down[offset + i]! += sample.down
+      up[offset + i]! += sample.up
+    })
+  }
+  return { times: longest.map((x) => x.at), down, up }
+})
+const netNow = computed(() => ({ down: netTotals.value.down.at(-1) ?? 0, up: netTotals.value.up.at(-1) ?? 0 }))
+const netPeaks = computed(() => ({ down: Math.max(0, ...netTotals.value.down), up: Math.max(0, ...netTotals.value.up) }))
+/** One scale for both dials, so their needles compare */
+const speedMax = computed(() => niceRate(Math.max(netPeaks.value.down, netPeaks.value.up, 125000) * 1.1))
+const netSides = computed(() => [
+  { key: 'down', label: t('dashboard.download'), icon: 'pi pi-arrow-down', color: SERIES.download, values: netTotals.value.down },
+  { key: 'up', label: t('dashboard.upload'), icon: 'pi pi-arrow-up', color: SERIES.upload, values: netTotals.value.up },
+])
+const netStatNames = computed(() => ({
+  now: t('dashboard.netStats.now'),
+  average: t('dashboard.netStats.average'),
+  peak: t('dashboard.netStats.peak'),
+  p95: t('dashboard.netStats.p95'),
+  moved: t('dashboard.netStats.moved'),
+}))
+const bytesText = (value: number) => formatBytes(value, 1)
+
+/** The latest reading of each shown server, for the gauges */
+const latest = computed(() =>
+  visibleNodes.value.map((node) => {
+    const samples = props.history[node.id] ?? []
+    return { id: node.id, title: nodeTitle(node), color: nodeColor(node.id), sample: samples[samples.length - 1] }
+  }),
+)
+
+
 const memoryOverview = computed(() => resourceSeries('memory', t('dashboard.ram'), SERIES.memory))
 
 /** The sample a chart point shows for a node (multi-node series are left-padded to the same width). */
@@ -328,6 +429,16 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
     :accent="SERIES.usage"
     padded
   >
+    <template #actions>
+      <ChartViewSwitch v-model="overviewView" :options="overviewViewOptions" :label="t('dashboard.views.switch')" />
+      <ChartStyleButton
+        v-if="overviewView === 'lines'"
+        v-model="resourceStyleRaw"
+        :types="resourceTypes"
+        :accent="SERIES.cpu"
+        @reset="resetResourceStyle"
+      />
+    </template>
     <div v-if="multiNode" class="node-health__legend">
       <span v-for="node in tableRows" :key="node.id" class="node-health__legend-item">
         <span class="node-health__dot" :style="{ background: node.color }" />
@@ -339,64 +450,130 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
     <div class="node-health__overview-grid">
       <button type="button" class="node-health__overview-chart" @click="toggleMetric('cpu')">
         <p class="node-health__heading">{{ t('dashboard.cpu') }}</p>
-        <MetricChart
-          :labels="overviewLabels"
-          :series="cpuOverview"
-          :tooltip-label="cpuTooltipLabel"
-          type="line"
-          :stacked="true"
-          :legend="false"
-          :value-formatter="percentFormatter"
-          :height="140"
-          :max-x-ticks="6"
-        />
-      </button>
-      <button type="button" class="node-health__overview-chart" @click="toggleMetric('memory')">
-        <p class="node-health__heading">{{ t('dashboard.ram') }}</p>
-        <MetricChart
-          :labels="overviewLabels"
-          :series="memoryOverview"
-          :tooltip-label="memoryTooltipLabel"
-          type="line"
-          :stacked="true"
-          :legend="false"
-          :value-formatter="percentFormatter"
-          :height="140"
-          :max-x-ticks="6"
-        />
-      </button>
-      <div class="node-health__overview-chart node-health__overview-chart--static">
-        <p class="node-health__heading">{{ t('dashboard.network') }}</p>
-        <div class="node-health__net">
-          <span class="node-health__net-side node-health__net-side--up"><i class="pi pi-arrow-up" />{{ t('dashboard.upload') }}</span>
-          <span class="node-health__net-side node-health__net-side--down"><i class="pi pi-arrow-down" />{{ t('dashboard.download') }}</span>
+        <Transition name="cv" mode="out-in">
+          <div v-if="overviewView === 'gauges'" key="gauges" class="node-health__gauges">
+            <div v-for="n in latest" :key="n.id" class="node-health__gauge">
+              <ResourceGauge
+                :percent="n.sample?.cpu ?? 0"
+                :color="multiNode ? n.color : SERIES.cpu"
+                :value="n.sample ? percentFormatter(n.sample.cpu) : '—'"
+                :size="multiNode ? 78 : 104"
+              />
+              <span v-if="multiNode" class="node-health__gauge-name">{{ n.title }}</span>
+            </div>
+          </div>
           <MetricChart
+            v-else
+            :key="overviewView"
             :labels="overviewLabels"
-            :series="networkOverview"
-            type="line"
+            :series="cpuOverview"
+            :tooltip-label="cpuTooltipLabel"
+            :chart-style="resourceStyle"
+            :average-window="6"
+            :average-label="t('dashboard.chartStyle.movingAverage')""
             :stacked="true"
-            mirror
-            :y-max="networkPeak"
-            :y-min="networkPeak ? -networkPeak : undefined"
             :legend="false"
-            :value-formatter="bitRateFormatter"
+            :value-formatter="percentFormatter"
             :height="140"
             :max-x-ticks="6"
           />
-        </div>
-        <ul class="node-health__net-legend">
-          <li v-for="n in networkLegend" :key="n.id">
-            <span class="node-health__net-dot" :style="{ background: n.color }" />
-            <span class="node-health__net-name">{{ n.title }}</span>
-            <template v-if="n.last">
-              <span class="node-health__net-rate" dir="ltr"><i class="pi pi-arrow-up" />{{ bitRateFormatter(n.last.up) }}</span>
-              <span class="node-health__net-rate" dir="ltr"><i class="pi pi-arrow-down" />{{ bitRateFormatter(n.last.down) }}</span>
-            </template>
-            <span v-else class="node-health__net-rate">—</span>
-          </li>
-        </ul>
-      </div>
+        </Transition>
+      </button>
+      <button type="button" class="node-health__overview-chart" @click="toggleMetric('memory')">
+        <p class="node-health__heading">{{ t('dashboard.ram') }}</p>
+        <Transition name="cv" mode="out-in">
+          <div v-if="overviewView === 'gauges'" key="gauges" class="node-health__gauges">
+            <div v-for="n in latest" :key="n.id" class="node-health__gauge">
+              <ResourceGauge
+                :percent="n.sample?.memory ?? 0"
+                :color="multiNode ? n.color : SERIES.memory"
+                :value="n.sample ? percentFormatter(n.sample.memory) : '—'"
+                :size="multiNode ? 78 : 104"
+              />
+              <span v-if="multiNode" class="node-health__gauge-name">{{ n.title }}</span>
+            </div>
+          </div>
+          <MetricChart
+            v-else
+            :key="overviewView"
+            :labels="overviewLabels"
+            :series="memoryOverview"
+            :tooltip-label="memoryTooltipLabel"
+            :chart-style="resourceStyle"
+            :average-window="6"
+            :average-label="t('dashboard.chartStyle.movingAverage')""
+            :stacked="true"
+            :legend="false"
+            :value-formatter="percentFormatter"
+            :height="140"
+            :max-x-ticks="6"
+          />
+        </Transition>
+      </button>
     </div>
+
+    <!-- The network on its own panel: its own views and its own chart style -->
+    <section class="nh-net">
+      <header class="nh-net__head">
+        <p class="node-health__heading nh-net__title">{{ t('dashboard.network') }}</p>
+        <span class="nh-net__now" dir="ltr">
+          <span class="nh-net__chip nh-net__chip--down"><i class="pi pi-arrow-down" />{{ bitRateFormatter(netNow.down) }}</span>
+          <span class="nh-net__chip nh-net__chip--up"><i class="pi pi-arrow-up" />{{ bitRateFormatter(netNow.up) }}</span>
+        </span>
+        <div class="nh-net__tools">
+          <ChartViewSwitch v-model="netView" :options="netViewOptions" :label="t('dashboard.views.switch')" />
+          <ChartStyleButton v-if="netView === 'mirror' || netView === 'overlay'" v-model="netStyleRaw" :types="netTypes" :accent="SERIES.download" @reset="resetNetStyle" />
+        </div>
+      </header>
+      <Transition name="cv" mode="out-in">
+        <div v-if="netView === 'speed'" key="speed" class="nh-net__speed">
+          <SpeedGauge :value="netNow.down" :max="speedMax" :peak="netPeaks.down" :label="t('dashboard.download')" icon="pi pi-arrow-down" :color="SERIES.download" :format="bitRateFormatter" />
+          <SpeedGauge :value="netNow.up" :max="speedMax" :peak="netPeaks.up" :label="t('dashboard.upload')" icon="pi pi-arrow-up" :color="SERIES.upload" :format="bitRateFormatter" />
+        </div>
+        <NetStats
+          v-else-if="netView === 'stats'"
+          key="stats"
+          :sides="netSides"
+          :times="netTotals.times"
+          :labels="overviewLabels.slice(-netTotals.times.length)"
+          :rate="bitRateFormatter"
+          :bytes="bytesText"
+          :names="netStatNames"
+        />
+        <div v-else :key="netView" class="node-health__net">
+          <template v-if="netView === 'mirror'">
+            <span class="node-health__net-side node-health__net-side--up"><i class="pi pi-arrow-up" />{{ t('dashboard.upload') }}</span>
+            <span class="node-health__net-side node-health__net-side--down"><i class="pi pi-arrow-down" />{{ t('dashboard.download') }}</span>
+          </template>
+          <MetricChart
+            :labels="overviewLabels"
+            :series="netView === 'mirror' ? networkOverview : networkOverlay"
+            :chart-style="netStyle"
+            :average-window="6"
+            :average-label="t('dashboard.chartStyle.movingAverage')"
+            :stacked="netView === 'mirror'"
+            :mirror="netView === 'mirror'"
+            :y-max="netView === 'mirror' ? networkPeak : undefined"
+            :y-min="netView === 'mirror' && networkPeak ? -networkPeak : undefined"
+            :legend="false"
+            :value-formatter="bitRateFormatter"
+            :height="190"
+            :max-x-ticks="8"
+          />
+        </div>
+      </Transition>
+      <ul v-if="multiNode || netView === 'mirror'" class="node-health__net-legend">
+        <li v-for="n in networkLegend" :key="n.id">
+          <span class="node-health__net-dot" :style="{ background: n.color }" />
+          <span class="node-health__net-name">{{ n.title }}</span>
+          <template v-if="n.last">
+            <span class="node-health__net-rate" dir="ltr"><i class="pi pi-arrow-up" />{{ bitRateFormatter(n.last.up) }}</span>
+            <span class="node-health__net-rate" dir="ltr"><i class="pi pi-arrow-down" />{{ bitRateFormatter(n.last.down) }}</span>
+          </template>
+          <span v-else class="node-health__net-rate">—</span>
+        </li>
+      </ul>
+    </section>
 
     <div v-if="expandedMetric" class="node-health__processes">
       <p class="node-health__heading">{{ t('dashboard.topProcesses') }} · {{ expandedMetric === 'cpu' ? t('dashboard.cpu') : t('dashboard.ram') }}</p>
@@ -433,10 +610,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
-            <i class="pi pi-pencil" />
+            <ColorGlyph name="pencil" />
           </button>
           <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
-            <i class="pi pi-info-circle" />
+            <ColorGlyph name="info" />
           </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </template>
@@ -485,10 +662,10 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
             <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <button v-if="canRename" type="button" class="node-cell__edit" :aria-label="t('nodes.rename')" :title="t('nodes.rename')" @click="openRename($event, data)">
-            <i class="pi pi-pencil" />
+            <ColorGlyph name="pencil" />
           </button>
           <button v-if="isSuperAdmin" type="button" class="node-cell__info" :aria-label="t('dashboard.ipInfo.open')" :title="t('dashboard.ipInfo.open')" @click="openIpInfo(data)">
-            <i class="pi pi-info-circle" />
+            <ColorGlyph name="info" />
           </button>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </div>
@@ -606,6 +783,32 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 </template>
 
 <style scoped>
+/* Gauges view of the live charts: a ring per server (latest reading), and up / down meters for the network */
+.node-health__gauges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+  min-height: 140px;
+}
+.node-health__gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+.node-health__gauge-name {
+  max-width: 7rem;
+  overflow: hidden;
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
 /* The node's country flag before its name (a waving FlagIcon) */
 .node-flag {
   margin-inline-end: 0.4rem;
@@ -630,15 +833,73 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   border-radius: 999px;
   flex-shrink: 0;
 }
+/* The network's own panel under the CPU and memory charts */
+.nh-net {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.85rem 0.6rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.85rem;
+  background: var(--p-content-background);
+}
+.nh-net__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.6rem;
+}
+.nh-net__title {
+  margin: 0;
+}
+.nh-net__now {
+  display: inline-flex;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.nh-net__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.nh-net__chip i {
+  font-size: 0.6rem;
+}
+.nh-net__chip--down {
+  color: color-mix(in srgb, #06b6d4 80%, var(--p-text-color));
+  background: color-mix(in srgb, #06b6d4 13%, transparent);
+}
+.nh-net__chip--up {
+  color: color-mix(in srgb, #f97316 80%, var(--p-text-color));
+  background: color-mix(in srgb, #f97316 13%, transparent);
+}
+.nh-net__tools {
+  display: flex;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+.nh-net__speed {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1.5rem;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding-block: 0.25rem 0.4rem;
+}
 .node-health__overview-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
   margin-bottom: 1rem;
 }
-@container dashboard (min-width: 52rem) {
+@container dashboard (min-width: 40rem) {
   .node-health__overview-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 .node-health__overview-chart {
@@ -661,7 +922,8 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 /* which half is which: upload on top, download below zero */
 .node-health__net-side {
   position: absolute;
-  inset-inline-end: 0.25rem;
+  /* on the right in every language: the chart keeps its value axis on the left, also in right-to-left pages */
+  right: 0.25rem;
   z-index: 1;
   display: inline-flex;
   align-items: center;
@@ -770,8 +1032,26 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   flex-shrink: 0;
   vertical-align: middle;
 }
-.node-cell__info i {
-  font-size: 0.8rem;
+/* the colour icons (ColorGlyph): a light-blue info circle and a yellow pencil, a little larger than the old glyphs */
+.node-cell__info .glyph {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+.node-cell__edit .glyph {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+.node-cell__info .glyph,
+.node-cell__edit .glyph {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.node-cell__info:hover .glyph,
+.node-cell__edit:hover .glyph {
+  transform: scale(1.12);
+}
+.node-cell__info:active .glyph,
+.node-cell__edit:active .glyph {
+  transform: scale(0.92);
 }
 .node-cell__info:hover,
 .node-cell__info:focus-visible {
@@ -818,9 +1098,6 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   cursor: pointer;
   flex-shrink: 0;
   vertical-align: middle;
-}
-.node-cell__edit i {
-  font-size: 0.7rem;
 }
 .node-cell__edit:hover,
 .node-cell__edit:focus-visible {

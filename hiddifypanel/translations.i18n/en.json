@@ -1184,10 +1184,22 @@
       "useThese": "Use These IPs Above",
       "viewScript": "View the Script",
       "vpnWarning": "This browser is not in the panel's country: a VPN or proxy is probably on. Turn it off, otherwise you test the VPN, not your ISP.",
+      "vpn": {
+        "title": "Turn off your VPN for this scan",
+        "body": "The scan tests the internet this device is on. Right now it looks connected through another country, so the results would be for the VPN, not for your users' internet.",
+        "thisDevice": "This device",
+        "yourUsers": "Your users",
+        "step1": "Turn off the VPN or proxy on this device.",
+        "step2": "Tap Check Again.",
+        "abroad": "Really abroad, without a VPN? You can still scan, but the results are for the network you are on.",
+        "checkAgain": "Check Again",
+        "checking": "Checking…"
+      },
       "waiting": "Waiting for a run of the command…",
       "yourNetwork": "Your network (as the panel sees it)"
     },
     "common": {
+      "rowsPerPage": "Rows per Page",
       "actions": "Actions",
       "add": "Add",
       "back": "Back",
@@ -1526,6 +1538,28 @@
       "subtitle": "Traffic, users and server health at a glance",
       "swap": "Swap",
       "thisServer": "This Server",
+      "views": {
+        "switch": "Chart view",
+        "bars": "Bars",
+        "area": "Area",
+        "cumulative": "Running Total",
+        "calendar": "Calendar",
+        "rhythm": "Weekly Rhythm",
+        "rings": "Rings",
+        "ranked": "Ranked",
+        "lines": "Lines",
+        "gauges": "Gauges",
+        "busiestDay": "Busiest day",
+        "busiestWeekday": "Busiest weekday",
+        "average": "Average",
+        "less": "Less",
+        "more": "More",
+        "trend": "Trend",
+        "mirror": "Mirror",
+        "overlay": "Overlay",
+        "speed": "Speedometer",
+        "stats": "Numbers"
+      },
       "renameThisServerHint": "Shown on the dashboard. Leave it empty to show “{name}”.",
       "renameOfflineTitle": "Can't Rename Right Now",
       "renameOffline": "{name} can't be reached from this panel right now. Its name can be changed once it can be reached again, so the node takes the new name too.",
@@ -1534,6 +1568,12 @@
       "renameChecking": "{name}'s connection is being checked right now. Once it is known, you can rename it.",
       "ipInfo": {
         "open": "IP Info",
+        "map": {
+          "show": "Show on Map",
+          "title": "Server Location",
+          "openInMaps": "Open in Maps",
+          "approximate": "Approximate location, from the IP address."
+        },
         "loading": "Looking up the addresses…",
         "failed": "Could not look up the addresses",
         "retry": "Try Again",
@@ -1690,7 +1730,119 @@
       "weekUsers": "Week",
       "weeklyAverage": "Weekly Average",
       "weeklyOnline": "Weekly Online",
-      "yesterday": "Yesterday"
+      "yesterday": "Yesterday",
+      "chartStyle": {
+        "title": "Chart Style",
+        "done": "Done",
+        "colors": "Colors",
+        "grid": "Grid Lines",
+        "average": "Average Line",
+        "reset": "Reset to Default",
+        "total": "Total",
+        "movingAverage": "Moving Average",
+        "open": "Open",
+        "high": "High",
+        "low": "Low",
+        "close": "Close",
+        "groups": {
+          "lines": "Lines",
+          "fills": "Fills",
+          "bars": "Bars",
+          "ranges": "Candles & Ranges",
+          "faces": "Against the Previous Period"
+        },
+        "types": {
+          "line": "Line",
+          "smooth": "Smooth",
+          "step": "Step",
+          "markers": "Markers",
+          "area": "Area",
+          "baseline": "Baseline",
+          "column": "Column",
+          "lollipop": "Lollipop",
+          "dots": "Dots",
+          "candles": "Candles",
+          "hollow": "Hollow",
+          "heikin": "Heikin Ashi",
+          "highlow": "High-Low",
+          "ring": "Ring",
+          "compare": "Compare"
+        },
+        "palettes": {
+          "auto": "Default",
+          "ios": "iOS",
+          "ocean": "Ocean",
+          "sunset": "Sunset",
+          "forest": "Forest",
+          "grape": "Grape",
+          "graphite": "Graphite"
+        },
+        "type": "Chart Type"
+      },
+      "netStats": {
+        "now": "Now",
+        "average": "Average",
+        "peak": "Peak",
+        "p95": "95th Percentile",
+        "moved": "Transferred"
+      },
+      "face": {
+        "now": "Now",
+        "active": "Active",
+        "ofActive": "of active users",
+        "ofYesterday": "of yesterday",
+        "thisWeek": "7 days",
+        "lastWeek": "Before",
+        "ofLastWeek": "of the previous 7 days",
+        "thisMonth": "30 days",
+        "lastMonth": "Before",
+        "ofLastMonth": "of the previous 30 days",
+        "period": "Period",
+        "before": "Before",
+        "ofPrevious": "of the period before",
+        "lastDay": "Last day",
+        "average": "Average",
+        "ofAverage": "of the daily average",
+        "peak": "Busiest"
+      },
+      "period": {
+        "title": "Time Period",
+        "from": "From",
+        "to": "To",
+        "pickStart": "Pick the first day",
+        "pickEnd": "Pick the last day",
+        "apply": "Apply",
+        "previousMonth": "Previous month",
+        "nextMonth": "Next month",
+        "dailyNote": "Usage is recorded per day, so the shortest period is one day. You can go back up to 365 days.",
+        "presets": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "last7": "Last 7 Days",
+          "last14": "Last 14 Days",
+          "last30": "Last 30 Days",
+          "thisMonth": "This Month",
+          "lastMonth": "Last Month",
+          "last90": "Last 90 Days",
+          "last180": "Last 180 Days",
+          "last365": "Last 365 Days"
+        }
+      },
+      "kpi": {
+        "live": "Live",
+        "usage": "Usage",
+        "dailyAverage": "Daily Average",
+        "busiestDay": "Busiest Day",
+        "vsPreviousPeriod": "vs previous period",
+        "lastDayVsAverage": "last day vs average",
+        "noPrevious": "No data for the period before",
+        "thisPeriod": "This period",
+        "previousPeriod": "Period before",
+        "days": "Days",
+        "lastDay": "Last day",
+        "on": "On",
+        "onlineAverage": "Daily average · {period}"
+      }
     },
     "domain": {
       "addFailed": "Could not add domain",
@@ -4208,6 +4360,8 @@
       "search": "Search name, UUID or note",
       "select": "Select",
       "selectAll": "Select all {n} | Select all {n}",
+      "selectPage": "Select page ({n}) | Select page ({n})",
+      "selectAllUsers": "Select all {n} users | Select all {n} users",
       "selected": "{n} selected | {n} selected",
       "showDates": "Show End Dates",
       "showLink": "Show User Link",
@@ -5290,7 +5444,7 @@
       "label": "🔐 Shared Secret"
     },
     "show_usage_in_sublink": {
-      "description": "This option creates a Fake Config in the user's sub link that shows the user's remaining volume",
+      "description": "This option creates a Fake Config in the user's sub link that shows the user's remaining volume and the days left until it expires",
       "label": "👁️‍🗨️ Show Usage in Sublink"
     },
     "snell_enable": {
