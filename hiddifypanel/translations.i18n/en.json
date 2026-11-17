@@ -1163,6 +1163,17 @@
       "useThese": "Use These IPs Above",
       "viewScript": "View the Script",
       "vpnWarning": "This browser is not in the panel's country: a VPN or proxy is probably on. Turn it off, otherwise you test the VPN, not your ISP.",
+      "vpn": {
+        "title": "Turn off your VPN for this scan",
+        "body": "The scan tests the internet this device is on. Right now it looks connected through another country, so the results would be for the VPN, not for your users' internet.",
+        "thisDevice": "This device",
+        "yourUsers": "Your users",
+        "step1": "Turn off the VPN or proxy on this device.",
+        "step2": "Tap Check Again.",
+        "abroad": "Really abroad, without a VPN? You can still scan, but the results are for the network you are on.",
+        "checkAgain": "Check Again",
+        "checking": "Checking…"
+      },
       "waiting": "Waiting for a run of the command…",
       "yourNetwork": "Your network (as the panel sees it)"
     },
