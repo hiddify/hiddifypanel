@@ -6,6 +6,8 @@ commercial product to use it for free), plus three checks of the server itself:
 - crawlers: the IP ranges Google, Bing, Apple and OpenAI publish for their bots;
 - abuse: the Spamhaus DROP lists (free for all; credit "The Spamhaus Project"; at most one download a day: kept a
   week here) and abuse.ch's Feodo Tracker and SSL Blacklist (CC0). Never Spamhaus's DNSBL (paid for commercial use);
+- attackers: the NetAPI honeypot list, the addresses that attacked its sensors in the last 30 days (CC BY 4.0, free
+  for commercial use; credit "NetAPI"). One public file is read: the server's address is sent to nobody;
 - the server itself: its TLS certificates (port 443, each of its domains), an open directory listing on its web
   root, and the IPFS swarm port (4001);
 - "likely" signs read from the AS, the network's names and the reverse DNS name (satellite, anycast, a dynamic
@@ -39,6 +41,7 @@ _CRAWLERS = {
 }
 _DROP = ("https://www.spamhaus.org/drop/drop_v4.json", "https://www.spamhaus.org/drop/drop_v6.json")
 _ABUSE_CH = ("https://feodotracker.abuse.ch/downloads/ipblocklist.txt", "https://sslbl.abuse.ch/blacklist/sslipblacklist.txt")
+_NETAPI = "https://netapi.com/api2/?method=compromised&dataset_type=ip-all&window=30d"
 
 # AS numbers of satellite internet providers (Starlink, Viasat, HughesNet, Inmarsat, OneWeb, Intelsat, Eutelsat…)
 _SATELLITE_ASNS = {"14593", "7155", "6621", "31515", "800", "22351", "29286", "40306", "19571", "27277", "45474"}
@@ -193,6 +196,32 @@ def _abuse_ch() -> list[str]:
     return _kept("abuse-ch", fetch)
 
 
+def _attacker(ip: str) -> bool | None:
+    """Whether ``ip`` attacked NetAPI's honeypot sensors in the last 30 days: logins tried, exploits sent (addresses
+    that only scanned are not listed; IPv4 only). The list is over a megabyte, so, like Apple's, it is read as it
+    streams in; the answer is kept with the rest of the address's details, so this runs once a week per address."""
+    addr = ipaddress.ip_address(ip)
+    if addr.version != 4:
+        return False
+    wanted = str(addr)
+    read = False
+    try:
+        with requests.get(_NETAPI, headers=_UA, timeout=20, stream=True) as res:
+            if not res.ok:
+                return None
+            for line in res.iter_lines():
+                token = line.decode("ascii", "ignore").strip()
+                if not token or token.startswith("#"):
+                    continue
+                read = True
+                if token == wanted:
+                    return True
+        # an answer without a single address is not a list that was read
+        return False if read else None
+    except Exception:
+        return None
+
+
 # --- the server itself -------------------------------------------------------------------------------------------------
 def _host(ip: str) -> str:
     return f"[{ip}]" if ":" in ip else ip
@@ -259,6 +288,7 @@ def check(ip: str, *, asn: str, names: str, ptr: str, datacenter: bool, mobile: 
     crawler = _crawler(ip) if public else ""
     drop = _in(ip, _drop()) if public else False
     botnet = _in(ip, _abuse_ch()) if public else False
+    attacker = _attacker(ip) if public else False
     certs = _certificates(ip, domains) if public else []
     icloud = _apple_relay(ip) if public else False
     tor = None if relay is None else bool(relay)
@@ -280,9 +310,10 @@ def check(ip: str, *, asn: str, names: str, ptr: str, datacenter: bool, mobile: 
         "active_tor": None if relay is None else bool(relay and relay.get("running")),
         # behaviour and threats
         "crawler": None if crawler is None else bool(crawler),
-        "abuser": None if drop is None and botnet is None else bool(drop or botnet),
+        "abuser": None if drop is None and botnet is None and attacker is None else bool(drop or botnet or attacker),
         "known_abuser": drop,
         "threat": botnet,
+        "attacker": attacker,
         "security_scanner": bool(_SCANNER_WORDS.search(f"{ptr} {names}")),
         # security and the web
         "tor_exit": None if relay is None else bool(relay and relay.get("exit")),

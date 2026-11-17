@@ -273,6 +273,7 @@ const FLAG_GROUPS: { key: string; color: string; flags: FlagDef[] }[] = [
       { key: 'abuser', name: 'Abuser', icon: 'x-warning', tone: 'bad', source: 'blocklists' },
       { key: 'known_abuser', name: 'Known Abuser', icon: 'x-blocked', tone: 'bad', source: 'spamhaus' },
       { key: 'threat', name: 'Threat', icon: 'x-bug', tone: 'bad', source: 'abusech' },
+      { key: 'attacker', name: 'Attacker', icon: 'pi-bolt', tone: 'bad', source: 'netapi' },
       { key: 'security_scanner', name: 'Security Scanner', icon: 'x-radar', likely: true, source: 'ptrAs' },
     ],
   },
