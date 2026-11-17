@@ -5422,7 +5422,7 @@
       "label": "🔐 Shared Secret"
     },
     "show_usage_in_sublink": {
-      "description": "This option creates a Fake Config in the user's sub link that shows the user's remaining volume",
+      "description": "This option creates a Fake Config in the user's sub link that shows the user's remaining volume and the days left until it expires",
       "label": "👁️‍🗨️ Show Usage in Sublink"
     },
     "snell_enable": {
