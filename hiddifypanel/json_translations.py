@@ -25,7 +25,9 @@ def flatten(data: dict[str, Any], prefix: str = "") -> dict[str, str]:
         full = f"{prefix}.{key}" if prefix else key
         if isinstance(value, dict):
             out.update(flatten(value, full))
-        elif isinstance(value, str) and full.strip():
+        # An empty string is a placeholder that scripts/update_translations.sh adds for a new msgid: leave it out so
+        # gettext falls back to English instead of showing nothing.
+        elif isinstance(value, str) and value and full.strip():
             out[full] = value
     return out
 

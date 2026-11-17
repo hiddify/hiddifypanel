@@ -300,6 +300,7 @@
       "dashboard_v2": "Далее",
       "domain": "Домены",
       "home": "Панель управления",
+      "inbox": "Входящие",
       "proxy": "Прокси",
       "proxy_stats": "Прокси Статус",
       "support": "Помощь",
@@ -429,8 +430,6 @@
       "viewlogsHint": "Просмотр файлов системных журналов."
     },
     "admins": {
-      "messageTitle": "Сообщение для {name}",
-      "telegramMessage": "Отправить сообщение в Telegram этому админу",
       "add": "Добавить админа",
       "canAddHint": "Этот админ может создавать собственных субадминов",
       "canAddShort": "Добавляет субадминов",
@@ -534,6 +533,7 @@
         "usernameHint": "Эта ссылка открывает страницу входа; он входит с этим именем пользователя и своим паролем."
       },
       "meLocked": "Это вы: здесь можно изменить только конфигурации ваших пользователей. Пароль меняется в разделе «Мой аккаунт».",
+      "messageTitle": "Сообщение для {name}",
       "meter": {
         "active": "Активные",
         "activeHint": "Пользователи, которые включены и у которых остались дни и трафик, из разрешённого числа",
@@ -577,6 +577,7 @@
         "online": "онлайн",
         "users": "пользователь | пользователей"
       },
+      "telegramMessage": "Отправить сообщение в Telegram этому админу",
       "title": "Админы",
       "you": "Вы"
     },
@@ -1696,7 +1697,6 @@
       "resetTitle": "Сбросить {name} к встроенным спискам?",
       "saved": "{name} сохранено",
       "subtitle": "Выберите по порядку, куда трафик выходит с этого сервера: через WARP, напрямую, блокировка или выход через Socks, Tor или Psiphon.",
-      "title": "Исходящие подключения",
       "terms": {
         "accept": "Принять",
         "accepted": "Условия Cloudflare приняты. Примените конфигурацию, чтобы WARP заработал.",
@@ -1712,7 +1712,8 @@
         "review": "Прочитать условия",
         "termsLink": "Условия использования",
         "title": "Условия Cloudflare WARP"
-      }
+      },
+      "title": "Исходящие подключения"
     },
     "pager": {
       "first": "Первая страница",
@@ -2969,8 +2970,8 @@
     "Invalid_proxy_path": "Неверный Proxy Path Это должна быть строка ASCI (a-z A-Z 0-9).",
     "Invalid_telegram_bot_token": "Неверный токен Telegram bot",
     "acme_accounts": {
-      "description": "",
-      "label": ""
+      "description": "Ключи ACME-аккаунтов панели (Let's Encrypt, ZeroSSL), по одному на центр сертификации",
+      "label": "Аккаунты ACME"
     },
     "acme_email": {
       "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
@@ -3090,8 +3091,8 @@
       "label": "🩺 Автоматическая проверка конфигов"
     },
     "config_tester_disabled": {
-      "description": "",
-      "label": ""
+      "description": "Пользовательские прокси, отключённые тестером конфигов; сохраняются, чтобы их можно было восстановить",
+      "label": "Прокси, отключённые тестером конфигов"
     },
     "core_type": {
       "description": "☢️ XRay: хорошее ядро\n<br>\n📦 Singbox: разработан SagerNet. Это также хорошее ядро",
@@ -3401,16 +3402,16 @@
       "label": "ℹ️ Только IPv4"
     },
     "openvpn_certificate": {
-      "description": "",
-      "label": ""
+      "description": "Самоподписанный сертификат сервера OpenVPN, передаётся клиентам в конфиге",
+      "label": "Сертификат OpenVPN"
     },
     "openvpn_enable": {
       "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
       "label": "OpenVPN"
     },
     "openvpn_private_key": {
-      "description": "",
-      "label": ""
+      "description": "Закрытый ключ сертификата сервера OpenVPN",
+      "label": "Закрытый ключ OpenVPN"
     },
     "package_mode": {
       "description": "Укажите, хотите ли вы релиз версию пакета или версию в стадии разработки.",
@@ -3436,8 +3437,8 @@
       "label": "Главная панель (мультисервер)"
     },
     "parent_sync_cursor": {
-      "description": "",
-      "label": ""
+      "description": "До какого места этот узел прочитал ленту изменений главной панели",
+      "label": "Позиция синхронизации с главной панелью"
     },
     "path_grpc": {
       "description": "Путь gRPC в конфигурации",
@@ -3544,12 +3545,12 @@
       "label": "🆔 Short IDs"
     },
     "reality_sni_auto": {
-      "description": "",
-      "label": ""
+      "description": "Автоматически заменять заблокированный SNI REALITY запасным (иначе это делает администратор на странице чистых IP)",
+      "label": "Автоматически заменять заблокированные SNI REALITY"
     },
     "reality_sni_spares": {
-      "description": "",
-      "label": ""
+      "description": "SNI REALITY, на которые переключаться при блокировке, по одному на строку",
+      "label": "Запасные SNI REALITY"
     },
     "restls": {
       "description": "Настройки протокола RestLS",
@@ -3736,8 +3737,8 @@
       "label": "📍 Тег Telegram AD"
     },
     "telegram_base_path": {
-      "description": "",
-      "label": ""
+      "description": "Секретный путь веб-прокси Telegram на HTTPS-доменах",
+      "label": "ℹ️ Путь веб-прокси Telegram"
     },
     "telegram_bot_token": {
       "description": "Чтобы добавить функцию бота Telegram вам нужно создать бота с @BotFather и ввести в это поле код API",
@@ -3756,8 +3757,8 @@
       "label": "🔢 Библиотека Telegram Proxy"
     },
     "telegram_webproxy_enable": {
-      "description": "",
-      "label": ""
+      "description": "Прокси Telegram через HTTPS на каждом домене с настоящим сертификатом, включая CDN (ссылки tg://webproxy, обслуживает telemt)",
+      "label": "✔️ Включить веб-прокси Telegram"
     },
     "tls": {
       "description": "В этом разделе можно установить конфигурации TLS",
@@ -4000,7 +4001,7 @@
     "mode": "Режим",
     "reality": {
       "asn_issue": "Выбранный домен для REALITY не находится в том же ASN. Для более эффективного использования протокола лучше найти Домен в том же ASN",
-      "no_x25519": ""
+      "no_x25519": "Этот домен не поддерживает обмен ключами X25519, который нужен REALITY, поэтому он несовместим с REALITY: клиенты получат сертификат настоящего сайта и не подключатся. Используйте другой домен."
     },
     "resolveip": {
       "description": "Использовать IP вместо доменного имени в прокси. Полезно при сильных помехах в DNS.",

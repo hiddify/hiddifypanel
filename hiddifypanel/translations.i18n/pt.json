@@ -300,6 +300,7 @@
       "dashboard_v2": "Próximo",
       "domain": "domínios",
       "home": "Painel",
+      "inbox": "Caixa de entrada",
       "proxy": "Proxies",
       "proxy_stats": "Status dos procuradores",
       "support": "Ajuda",
@@ -429,8 +430,6 @@
       "viewlogsHint": "Navegue pelos arquivos de log do sistema."
     },
     "admins": {
-      "messageTitle": "Mensagem para {name}",
-      "telegramMessage": "Enviar uma mensagem do Telegram a este admin",
       "add": "Adicionar administrador",
       "canAddHint": "Este administrador pode criar seus próprios subadministradores",
       "canAddShort": "Adiciona subadministradores",
@@ -534,6 +533,7 @@
         "usernameHint": "Este link abre a página de login; entram com este nome de usuário e sua senha."
       },
       "meLocked": "Este é você: aqui só é possível alterar as configs dos seus usuários. Altere sua senha em Minha conta.",
+      "messageTitle": "Mensagem para {name}",
       "meter": {
         "active": "Ativos",
         "activeHint": "Usuários ativados e com dias e tráfego restantes, do número permitido",
@@ -577,6 +577,7 @@
         "online": "online",
         "users": "usuário | usuários"
       },
+      "telegramMessage": "Enviar uma mensagem do Telegram a este admin",
       "title": "Administradores",
       "you": "Você"
     },
@@ -1685,7 +1686,6 @@
       "resetTitle": "Restaurar {name} para as listas integradas?",
       "saved": "{name} salvo",
       "subtitle": "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto, bloqueado ou por uma saída Socks, Tor ou Psiphon.",
-      "title": "Outbounds",
       "terms": {
         "accept": "Aceitar",
         "accepted": "Os termos da Cloudflare foram aceitos. Aplique as configurações para o WARP começar.",
@@ -1701,7 +1701,8 @@
         "review": "Ler os termos",
         "termsLink": "Termos de Serviço",
         "title": "Termos do Cloudflare WARP"
-      }
+      },
+      "title": "Outbounds"
     },
     "pager": {
       "first": "Primeira página",
@@ -2958,8 +2959,8 @@
     "Invalid_proxy_path": "Caminho de proxy inválido. Deve ser uma string ASCI (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Token do bot telegram inválido",
     "acme_accounts": {
-      "description": "",
-      "label": ""
+      "description": "Chaves das contas ACME do painel (Let's Encrypt, ZeroSSL), uma por autoridade certificadora",
+      "label": "Contas ACME"
     },
     "acme_email": {
       "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
@@ -3079,8 +3080,8 @@
       "label": "🩺 Verificação automática das configs"
     },
     "config_tester_disabled": {
-      "description": "",
-      "label": ""
+      "description": "Proxies personalizados que o testador de configurações desativou, guardados para poderem ser restaurados",
+      "label": "Proxies desativados pelo testador de configurações"
     },
     "core_type": {
       "description": "☢️ XRay: é um núcleo completo\n<br>\n📦 Singbox: Desenvolvido por SagerNet. Também é um bom núcleo",
@@ -3390,16 +3391,16 @@
       "label": "4⃣ Somente IPv4"
     },
     "openvpn_certificate": {
-      "description": "",
-      "label": ""
+      "description": "Certificado autoassinado do servidor OpenVPN, enviado aos clientes na configuração",
+      "label": "Certificado OpenVPN"
     },
     "openvpn_enable": {
       "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
       "label": "OpenVPN"
     },
     "openvpn_private_key": {
-      "description": "",
-      "label": ""
+      "description": "Chave privada do certificado do servidor OpenVPN",
+      "label": "Chave privada OpenVPN"
     },
     "package_mode": {
       "description": "Especifique se você deseja um pacote lançado ou desenvolvido",
@@ -3425,8 +3426,8 @@
       "label": "Painel Pai (Multi-servidor)"
     },
     "parent_sync_cursor": {
-      "description": "",
-      "label": ""
+      "description": "Até onde este nó leu o feed de alterações do painel pai",
+      "label": "Posição de sincronização com o painel pai"
     },
     "path_grpc": {
       "description": "Caminho gRPC nas configurações",
@@ -3533,12 +3534,12 @@
       "label": "🆔 IDs curtos"
     },
     "reality_sni_auto": {
-      "description": "",
-      "label": ""
+      "description": "Substitui automaticamente um SNI REALITY filtrado por um reserva (senão o administrador faz isso na página de IP limpo)",
+      "label": "Trocar automaticamente SNIs REALITY filtrados"
     },
     "reality_sni_spares": {
-      "description": "",
-      "label": ""
+      "description": "SNIs REALITY para usar quando um for filtrado, um por linha",
+      "label": "SNIs REALITY de reserva"
     },
     "restls": {
       "description": "Configurações do protocolo RestLS",
@@ -3725,8 +3726,8 @@
       "label": "📍Telegram AD Tag"
     },
     "telegram_base_path": {
-      "description": "",
-      "label": ""
+      "description": "Caminho secreto do proxy web do Telegram nos domínios HTTPS",
+      "label": "ℹ️ Caminho do proxy web do Telegram"
     },
     "telegram_bot_token": {
       "description": "Para adicionar o recurso de bot do Telegram. você precisa criar um bot com @BotFather e inserir o código da API neste campo",
@@ -3745,8 +3746,8 @@
       "label": "🔢 Biblioteca de proxy do Telegram"
     },
     "telegram_webproxy_enable": {
-      "description": "",
-      "label": ""
+      "description": "Proxy do Telegram via HTTPS em todos os domínios com certificado real, incluindo CDN (links tg://webproxy, servidos pelo telemt)",
+      "label": "✔️ Ativar proxy web do Telegram"
     },
     "tls": {
       "description": "As configurações de TLS podem ser definidas nesta seção.",
@@ -3989,7 +3990,7 @@
     "mode": "Modo",
     "reality": {
       "asn_issue": "O domínio selecionado para REALITY não está no mesmo ASN.\nPara melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN",
-      "no_x25519": ""
+      "no_x25519": "Este domínio não suporta a troca de chaves X25519 de que o REALITY precisa, então não é compatível com REALITY: os clientes receberiam o certificado do site real e falhariam. Use outro domínio."
     },
     "resolveip": {
       "description": "Usa o IP em vez do nome de domínio nos proxies. Útil quando há muito ruído no DNS.",

@@ -300,6 +300,7 @@
       "dashboard_v2": "下一步",
       "domain": "域名",
       "home": "仪表板",
+      "inbox": "收件箱",
       "proxy": "代理",
       "proxy_stats": "代理状态",
       "support": "帮助",
@@ -429,8 +430,6 @@
       "viewlogsHint": "浏览系统日志文件。"
     },
     "admins": {
-      "messageTitle": "发送给 {name} 的消息",
-      "telegramMessage": "向此管理员发送 Telegram 消息",
       "add": "添加管理员",
       "canAddHint": "该管理员可以创建自己的子管理员",
       "canAddShort": "添加子管理员",
@@ -534,6 +533,7 @@
         "usernameHint": "此链接打开登录页面；他们使用此用户名和密码登录。"
       },
       "meLocked": "这是您自己：此处只能更改您用户的配置。请在“我的账户”中修改密码。",
+      "messageTitle": "发送给 {name} 的消息",
       "meter": {
         "active": "活跃",
         "activeHint": "已启用且仍有剩余天数和流量的用户数，占允许数量",
@@ -577,6 +577,7 @@
         "online": "在线",
         "users": "用户"
       },
+      "telegramMessage": "向此管理员发送 Telegram 消息",
       "title": "管理员",
       "you": "您"
     },
@@ -1694,7 +1695,6 @@
       "resetTitle": "将 {name} 重置为内置列表？",
       "saved": "{name} 已保存",
       "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 Socks、Tor 或 Psiphon 出口。",
-      "title": "出站",
       "terms": {
         "accept": "接受",
         "accepted": "已接受 Cloudflare 的条款。应用配置后 WARP 才会开始。",
@@ -1710,7 +1710,8 @@
         "review": "查看条款",
         "termsLink": "服务条款",
         "title": "Cloudflare WARP 条款"
-      }
+      },
+      "title": "出站"
     },
     "pager": {
       "first": "第一页",
@@ -2967,8 +2968,8 @@
     "Invalid_proxy_path": "代理路径无效。它应该是 ASCI 字符串 (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Telegram 机器人令牌无效",
     "acme_accounts": {
-      "description": "",
-      "label": ""
+      "description": "面板的 ACME 账户密钥（Let's Encrypt、ZeroSSL），每个证书颁发机构一个",
+      "label": "ACME 账户"
     },
     "acme_email": {
       "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
@@ -3088,8 +3089,8 @@
       "label": "🩺 自动检查配置健康"
     },
     "config_tester_disabled": {
-      "description": "",
-      "label": ""
+      "description": "配置测试器关闭的自定义代理，保留以便恢复",
+      "label": "配置测试器关闭的代理"
     },
     "core_type": {
       "description": "☢️ XRay：是一个完整的核心\n<br>\n📦 Singbox：由 SagerNet 开发。也是一个不错的核心",
@@ -3399,16 +3400,16 @@
       "label": "ℹ️仅限IPv4"
     },
     "openvpn_certificate": {
-      "description": "",
-      "label": ""
+      "description": "自签名的 OpenVPN 服务器证书，随配置发送给客户端",
+      "label": "OpenVPN 证书"
     },
     "openvpn_enable": {
       "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
       "label": "OpenVPN"
     },
     "openvpn_private_key": {
-      "description": "",
-      "label": ""
+      "description": "OpenVPN 服务器证书的私钥",
+      "label": "OpenVPN 私钥"
     },
     "package_mode": {
       "description": "指定您想要发布的包还是开发的包",
@@ -3434,8 +3435,8 @@
       "label": "父面板（多服务器）"
     },
     "parent_sync_cursor": {
-      "description": "",
-      "label": ""
+      "description": "此节点已读到父面板变更流的哪个位置",
+      "label": "父面板同步位置"
     },
     "path_grpc": {
       "description": "配置中的 gRPC 路径",
@@ -3542,12 +3543,12 @@
       "label": "🆔 短 ID"
     },
     "reality_sni_auto": {
-      "description": "",
-      "label": ""
+      "description": "REALITY SNI 被过滤时自动换成备用 SNI（否则由管理员在干净 IP 页面操作）",
+      "label": "自动更换被过滤的 REALITY SNI"
     },
     "reality_sni_spares": {
-      "description": "",
-      "label": ""
+      "description": "某个 SNI 被过滤时切换使用的 REALITY SNI，每行一个",
+      "label": "备用 REALITY SNI"
     },
     "restls": {
       "description": "RestLS 协议设置",
@@ -3734,8 +3735,8 @@
       "label": "📍 Telegram 广告标签"
     },
     "telegram_base_path": {
-      "description": "",
-      "label": ""
+      "description": "HTTPS 域名上 Telegram 网页代理的秘密路径",
+      "label": "ℹ️ Telegram 网页代理路径"
     },
     "telegram_bot_token": {
       "description": "添加 Telegram 机器人功能。您需要使用@BotFather创建一个机器人并在此字段中输入API代码",
@@ -3754,8 +3755,8 @@
       "label": "🔢 Telegram 代理库"
     },
     "telegram_webproxy_enable": {
-      "description": "",
-      "label": ""
+      "description": "在每个拥有真实证书的域名（包括 CDN）上通过 HTTPS 提供 Telegram 代理（tg://webproxy 链接，由 telemt 提供）",
+      "label": "✔️ 启用 Telegram 网页代理"
     },
     "tls": {
       "description": "可以在此部分设置 TLS 配置。",
@@ -3998,7 +3999,7 @@
     "mode": "模式",
     "reality": {
       "asn_issue": "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域",
-      "no_x25519": ""
+      "no_x25519": "此域名不支持 REALITY 所需的 X25519 密钥交换，因此与 REALITY 不兼容：客户端会收到真实网站的证书并连接失败。请使用其他域名。"
     },
     "resolveip": {
       "description": "在代理中使用 IP 而不是域名。DNS 噪声很大时有用。",

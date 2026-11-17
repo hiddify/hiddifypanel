@@ -297,11 +297,12 @@
     "incomplete_setup_warning": "သင်စနစ်အား အပြည့်အဝ မတပ်ဆင်ရသေးပုံရသည်။ စနစ်ထည့်သွင်းမှု အပြီးသတ်ရန် <a class='btn btn-success' href='%(quick_setup)s'>ဤနေရာကိုနှိပ်ပါ</a> ။",
     "menu": {
       "api": "API",
-      "broadcast": "",
+      "broadcast": "မက်ဆေ့ချ် ပို့ရန်",
       "config": "အပြင်အဆင်များ",
       "dashboard_v2": "နောက်သို့",
       "domain": "ဒိုမိန်းများ",
       "home": "ဒိုင်ခွက်",
+      "inbox": "စာဝင်ပုံး",
       "proxy": "ပရောက်စီများ",
       "proxy_stats": "ပရောက်စီများ အခြေအနေ",
       "support": "အကူအညီ",
@@ -431,8 +432,6 @@
       "viewlogsHint": "စနစ် log ဖိုင်များကို ကြည့်ရှုပါ။"
     },
     "admins": {
-      "messageTitle": "{name} ထံ မက်ဆေ့ချ်",
-      "telegramMessage": "ဤ admin ထံ Telegram မက်ဆေ့ချ် ပို့ရန်",
       "add": "အက်ဒမင် ထည့်ရန်",
       "canAddHint": "ဤအက်ဒမင်သည် ကိုယ်ပိုင် sub-admin များ ဖန်တီးနိုင်သည်",
       "canAddShort": "Sub-admin ထည့်နိုင်",
@@ -536,6 +535,7 @@
         "usernameHint": "ဤလင့်ခ်သည် ဝင်ရောက်ရာစာမျက်နှာကို ဖွင့်ပေးပြီး ၎င်းတို့သည် ဤအသုံးပြုသူအမည်နှင့် စကားဝှက်ဖြင့် ဝင်ရောက်သည်။"
       },
       "meLocked": "ဤသည် သင်ဖြစ်သည်၊ ဤနေရာတွင် သင့်အသုံးပြုသူများ၏ ကွန်ဖစ်များကိုသာ ပြောင်းနိုင်သည်။ စကားဝှက်ကို ကျွန်ုပ်၏အကောင့်တွင် ပြောင်းပါ။",
+      "messageTitle": "{name} ထံ မက်ဆေ့ချ်",
       "meter": {
         "active": "အသက်ဝင်သည်",
         "activeHint": "ဖွင့်ထားပြီး ရက်နှင့် traffic ကျန်သောအသုံးပြုသူများ၊ ခွင့်ပြုထားသောအရေအတွက်အနက်",
@@ -579,6 +579,7 @@
         "online": "အွန်လိုင်း",
         "users": "အသုံးပြုသူ | အသုံးပြုသူ"
       },
+      "telegramMessage": "ဤ admin ထံ Telegram မက်ဆေ့ချ် ပို့ရန်",
       "title": "အက်ဒမင်များ",
       "you": "သင်"
     },
@@ -1687,7 +1688,6 @@
       "resetTitle": "{name} ကို built-in စာရင်းများသို့ ပြန်လည်သတ်မှတ်မလား?",
       "saved": "{name} ကို သိမ်းပြီးပါပြီ",
       "subtitle": "traffic သည် ဤဆာဗာမှ ထွက်ရာနေရာကို အစီအစဉ်အတိုင်း ရွေးပါ: WARP မှတစ်ဆင့်၊ တိုက်ရိုက်၊ ပိတ်ဆို့ သို့မဟုတ် Socks၊ Tor၊ Psiphon မှ ထွက်။",
-      "title": "Outbound များ",
       "terms": {
         "accept": "လက်ခံသည်",
         "accepted": "Cloudflare စည်းကမ်းများကို လက်ခံပြီးပါပြီ။ WARP စတင်ရန် ကွန်ဖစ်ကို အသုံးချပါ။",
@@ -1703,7 +1703,8 @@
         "review": "စည်းကမ်းများကို ဖတ်ရန်",
         "termsLink": "ဝန်ဆောင်မှုစည်းကမ်း",
         "title": "Cloudflare WARP စည်းကမ်းများ"
-      }
+      },
+      "title": "Outbound များ"
     },
     "pager": {
       "first": "ပထမ စာမျက်နှာ",
@@ -2960,8 +2961,8 @@
     "Invalid_proxy_path": "မရေရာသော ပရောက်စီလမ်းကြောင်း။ ၎င်းသည် ASCI စာကြောင်းဖြစ်သင့်သည် (az AZ 0-9)",
     "Invalid_telegram_bot_token": "တယ်လီဂရမ်ဘော့တိုကင် မမှန်ကန်ပါ။",
     "acme_accounts": {
-      "description": "",
-      "label": ""
+      "description": "ပန်နယ်၏ ACME အကောင့်သော့များ (Let's Encrypt၊ ZeroSSL)၊ လက်မှတ်ထုတ်ပေးသူ တစ်ခုလျှင် တစ်ခု",
+      "label": "ACME အကောင့်များ"
     },
     "acme_email": {
       "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
@@ -3081,8 +3082,8 @@
       "label": "🩺 Automatic config health checks"
     },
     "config_tester_disabled": {
-      "description": "",
-      "label": ""
+      "description": "Config စမ်းသပ်သူက ပိတ်ထားသော စိတ်ကြိုက်ပရောက်စီများ၊ ပြန်ဖွင့်နိုင်ရန် သိမ်းထားသည်",
+      "label": "Config စမ်းသပ်သူက ပိတ်ထားသော ပရောက်စီများ"
     },
     "core_type": {
       "description": "☢️ XRay သည် ပြီးပြည့်စုံသော Core တစ်ခုဖြစ်သည်။\n<br>\n📦 Singbox : SagerNet မှတီထွင်သည်။ အူတိုင်ကောင်းတစ်ခုလည်း ဖြစ်သည်။",
@@ -3392,16 +3393,16 @@
       "label": "ℹ️ IPv4 သာလျှင်"
     },
     "openvpn_certificate": {
-      "description": "",
-      "label": ""
+      "description": "ကိုယ်တိုင်လက်မှတ်ထိုးထားသော OpenVPN ဆာဗာလက်မှတ်၊ client များ၏ config ထဲသို့ ထည့်ပေးသည်",
+      "label": "OpenVPN လက်မှတ်"
     },
     "openvpn_enable": {
       "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
       "label": "OpenVPN"
     },
     "openvpn_private_key": {
-      "description": "",
-      "label": ""
+      "description": "OpenVPN ဆာဗာလက်မှတ်၏ ကိုယ်ပိုင်သော့",
+      "label": "OpenVPN ကိုယ်ပိုင်သော့"
     },
     "package_mode": {
       "description": "ဖြန့်ချိထားသော ပက်ကေ့ခ်ျ သို့မဟုတ် စမ်းသပ်ဆော့ဖ်ဝဲတစ်ခုကို သင်အလိုရှိမရှိ သတ်မှတ်ပါ။",
@@ -3427,8 +3428,8 @@
       "label": "ပင်မပန်နယ် (များစွာသော ဆာဗာ)"
     },
     "parent_sync_cursor": {
-      "description": "",
-      "label": ""
+      "description": "မိခင်ပန်နယ်၏ ပြောင်းလဲမှုစာရင်းကို ဤ node မည်မျှအထိ ဖတ်ပြီးပြီဖြစ်ကြောင်း",
+      "label": "မိခင်ပန်နယ်နှင့် ချိန်ကိုက်မှု အနေအထား"
     },
     "path_grpc": {
       "description": "configs တွင် gRPC လမ်းကြောင်း",
@@ -3535,12 +3536,12 @@
       "label": "🆔 ID အတို"
     },
     "reality_sni_auto": {
-      "description": "",
-      "label": ""
+      "description": "စစ်ထုတ်ခံရသော REALITY SNI ကို အရန် SNI ဖြင့် အလိုအလျောက် အစားထိုးသည် (မဟုတ်ပါက admin က Clean IP စာမျက်နှာတွင် ပြုလုပ်သည်)",
+      "label": "စစ်ထုတ်ခံရသော REALITY SNI များကို အလိုအလျောက်ပြောင်းရန်"
     },
     "reality_sni_spares": {
-      "description": "",
-      "label": ""
+      "description": "တစ်ခု စစ်ထုတ်ခံရသောအခါ ပြောင်းသုံးရန် REALITY SNI များ၊ တစ်ကြောင်းလျှင် တစ်ခု",
+      "label": "အရန် REALITY SNI များ"
     },
     "restls": {
       "description": "RestLS protocol ဆက်တင်များ",
@@ -3727,8 +3728,8 @@
       "label": "📍 တယ်လီဂရမ် AD Tag"
     },
     "telegram_base_path": {
-      "description": "",
-      "label": ""
+      "description": "HTTPS ဒိုမိန်းများပေါ်ရှိ Telegram web proxy ၏ လျှို့ဝှက်လမ်းကြောင်း",
+      "label": "ℹ️ Telegram Web Proxy လမ်းကြောင်း"
     },
     "telegram_bot_token": {
       "description": "တယ်လီဂရမ်ဘော့ အင်္ဂါရပ်ကို ထည့်သွင်းရန်။ <a href=\"https://t.me/BotFather\" target=\"_blank\">@BotFather</a> ဖြင့် ဘော့တစ်ခုကို ဖန်တီးပြီး ဤအကွက်တွင် API ကုဒ်ကို ရိုက်ထည့်ရန် လိုအပ်သည်။",
@@ -3747,8 +3748,8 @@
       "label": "🔢 တယ်လီဂရမ် ပရောက်စီ စာကြည့်တိုက်"
     },
     "telegram_webproxy_enable": {
-      "description": "",
-      "label": ""
+      "description": "အစစ်အမှန်လက်မှတ်ရှိသော ဒိုမိန်းတိုင်း (CDN အပါအဝင်) ပေါ်တွင် HTTPS ဖြင့် Telegram proxy (tg://webproxy လင့်ခ်များ၊ telemt မှ ဆောင်ရွက်သည်)",
+      "label": "✔️ Telegram Web Proxy ဖွင့်ရန်"
     },
     "tls": {
       "description": "TLS Configurations ကို ဤကဏ္ဍတွင် သတ်မှတ်နိုင်ပါသည်။",
@@ -3991,7 +3992,7 @@
     "mode": "မုဒ်",
     "reality": {
       "asn_issue": "REALITY အတွက် ရွေးချယ်ထားသော ဒိုမိန်းသည် ASN တစ်ခုတည်းတွင် မရှိပါ။ ပရိုတိုကောလ်ကို ပိုမိုကောင်းမွန်စွာအသုံးပြုရန်၊ တူညီသော ASN တွင် ဒိုမိန်းတစ်ခုကို ရှာဖွေခြင်းသည် ပိုကောင်းပါသည်။",
-      "no_x25519": ""
+      "no_x25519": "ဤဒိုမိန်းသည် REALITY လိုအပ်သော X25519 key exchange ကို မပံ့ပိုးသဖြင့် REALITY နှင့် မကိုက်ညီပါ- client များသည် ဆိုက်အစစ်၏ လက်မှတ်ကို ရရှိပြီး ချိတ်ဆက်မှု မအောင်မြင်ပါ။ အခြားဒိုမိန်းကို အသုံးပြုပါ။"
     },
     "resolveip": {
       "description": "proxy များတွင် ဒိုမိန်းအမည်အစား IP ကို သုံးသည်။ DNS တွင် noise များစွာရှိသည့်အခါ အသုံးဝင်သည်။",
