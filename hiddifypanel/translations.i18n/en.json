@@ -1178,6 +1178,7 @@
       "yourNetwork": "Your network (as the panel sees it)"
     },
     "common": {
+      "rowsPerPage": "Rows per Page",
       "actions": "Actions",
       "add": "Add",
       "back": "Back",
