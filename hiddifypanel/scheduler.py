@@ -55,6 +55,19 @@ def init_app(app):
         run_in_app_context, args=(run_once, "once-tgbot-notify", 3600, telegram_notify), trigger=CronTrigger(hour="10", minute="0"), id="tgbot_notify", name="telegram expiry notices"
     )
 
+    def telegram_outage():
+        from hiddifypanel.models import ConfigEnum, hconfig
+
+        if hconfig(ConfigEnum.telegram_bot_token):
+            from hiddifypanel.panel.commercial.telegrambot import outage
+
+            outage.check()
+
+    # Telegram: the server's proxy services down for a while (and back) are told to the admins and recent users.
+    scheduler.add_job(
+        run_in_app_context, args=(run_once, "once-tgbot-outage", 100, telegram_outage), trigger=IntervalTrigger(minutes=2), id="tgbot_outage", name="telegram outage notices"
+    )
+
     from hiddifypanel.proxy_v3 import config_health
 
     # Config health: every config of the subscription tested from the server, a few minutes after a start and every

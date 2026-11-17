@@ -258,6 +258,13 @@ def init_app(app):
             ServerIpsApi,
         )
 
+        from .telegram_bot_api import TelegramBotApi, TelegramBotIconsApi, TelegramBotTestApi, TelegramBotWebhookApi
+
+        bp.add_url_rule("/telegram-bot/", view_func=TelegramBotApi)
+        bp.add_url_rule("/telegram-bot/test/", view_func=TelegramBotTestApi)
+        bp.add_url_rule("/telegram-bot/webhook/", view_func=TelegramBotWebhookApi)
+        bp.add_url_rule("/telegram-bot/icons/", view_func=TelegramBotIconsApi)
+
         from .broadcast_api import BroadcastApi, BroadcastJobApi, BroadcastPreviewApi, BroadcastRecipientsApi, BroadcastSelectionApi
 
         bp.add_url_rule("/broadcast/", view_func=BroadcastApi)

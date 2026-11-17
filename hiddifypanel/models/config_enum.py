@@ -208,6 +208,10 @@ class ConfigEnum(metaclass=FastEnum):
     package_mode = _StrConfigDscr(ConfigCategory.advanced, hide_in_virtual_child=True)
     utls = _StrConfigDscr(ConfigCategory.advanced)
     telegram_bot_token = _StrConfigDscr(ConfigCategory.telegram, hide_in_virtual_child=True)
+    # Animated custom emoji as the bot's button icons (needs the bot owner's Telegram Premium), and the custom emoji
+    # sets they come from (comma separated, empty: the built-in list in telegrambot/icons.py)
+    telegram_bot_animated_icons = _BoolConfigDscr(ConfigCategory.telegram, hide_in_virtual_child=True)
+    telegram_bot_icon_sets = _StrConfigDscr(ConfigCategory.telegram, hide_in_virtual_child=True)
 
     additional_configs_urls = _StrConfigDscr(ConfigCategory.hidden)
     additional_configs_singbox = _StrConfigDscr(ConfigCategory.hidden)

@@ -49,6 +49,18 @@ class _LazyBot:
 
             real = telebot.TeleBot("1:2", parse_mode="HTML", threaded=False, exception_handler=ExceptionHandler())
             real.username = ""
+            # Animated button icons that Telegram refuses are sent again as plain emoji (telegrambot/icons.py)
+            from hiddifypanel.panel.commercial.telegrambot.icons import install_refusal_guard
+
+            install_refusal_guard()
+            # The bot's messages reach a chat that asked for it without a sound (telegrambot/silence.py)
+            from hiddifypanel.panel.commercial.telegrambot import silence
+
+            silence.install()
+            # Buttons inside the message (soft pills), Telegram's rich messages (telegrambot/rich.py); outermost
+            from hiddifypanel.panel.commercial.telegrambot import rich
+
+            rich.install()
             object.__setattr__(self, "_real", real)
         return real
 
@@ -119,6 +131,10 @@ def register_bot(set_hook=False, remove_hook=False) -> dict:
         if set_hook:
             # No admin uuid in the URL: uuid-path auth rejects admins with a password.
             bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/api/v1/tgbot/", secret_token=webhook_secret())
+            # The "/" menu (menu, language) in every language the bot speaks
+            from hiddifypanel.panel.commercial.telegrambot.settings import set_commands
+
+            set_commands()
         return {"ok": True, "username": bot.username, "error": ""}
     except Exception as e:
         logger.error(e)
@@ -180,9 +196,9 @@ class TGAppResource(Resource):
             abort(404)
         from flask import make_response
 
-        from hiddifypanel.panel.commercial.telegrambot.webapp import PAGE
+        from hiddifypanel.panel.commercial.telegrambot.webapp import page
 
-        res = make_response(PAGE)
+        res = make_response(page())
         res.headers["Content-Type"] = "text/html; charset=utf-8"
         res.headers["Cache-Control"] = "no-store"
         return res
@@ -193,18 +209,18 @@ class TGAppLoginResource(Resource):
         token = hconfig(ConfigEnum.telegram_bot_token)
         if not token:
             abort(404)
-        from hiddifypanel.auth import login_user
-        from hiddifypanel.panel import hiddify
-        from hiddifypanel.panel.commercial.telegrambot.webapp import telegram_user_id
+        from hiddifypanel.auth import login_user, logout_user
+        from hiddifypanel.panel.commercial.telegrambot.webapp import destination, telegram_user_id
 
         tg_id = telegram_user_id(str((request.get_json(silent=True) or {}).get("init_data") or ""), token)
         if tg_id is None:
-            return {"error": "Invalid Telegram sign-in"}, 403
-        admin = AdminUser.query.filter(AdminUser.telegram_id == tg_id, AdminUser.deleted.is_(False)).first()
-        if admin:
-            login_user(admin, force=True)
-            return {"redirect": f"/{hconfig(ConfigEnum.proxy_path_admin)}/admin/v2/"}
-        user = User.query.filter(User.telegram_id == tg_id, User.deleted.is_(False)).first()
-        if user:
-            return {"redirect": hiddify.get_account_panel_link(user, request.host)}
-        return {"error": "This Telegram account is not linked to the panel. Send /start from the panel link first."}, 403
+            return {"error": "invalid_sign_in"}, 403
+        kind, account, answer = destination(tg_id, request.host)
+        # Whoever opened it before on this device is signed out first: an admin's session never stays for someone else
+        logout_user()
+        if kind == "admin":
+            login_user(account, force=True)
+            return answer
+        if kind == "user":
+            return answer  # their own page (its address is their own key): no panel session at all
+        return answer, 403

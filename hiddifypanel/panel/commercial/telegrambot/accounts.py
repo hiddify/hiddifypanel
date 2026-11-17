@@ -8,6 +8,8 @@ import uuid as uuid_lib
 from dataclasses import dataclass
 from enum import StrEnum
 
+from sqlalchemy import or_
+
 from hiddifypanel import hutils
 from hiddifypanel.database import db
 from hiddifypanel.drivers import user_driver
@@ -79,15 +81,125 @@ def matches(user: User, f: Filter) -> bool:
             return is_online(user)
 
 
-def visible_users(admin: AdminUser) -> list[User]:
-    return admin.recursive_users_query().order_by(User.id.desc()).all()
+@dataclass(frozen=True, slots=True)
+class Page:
+    users: list[User]
+    total: int
+    #: The page shown (asked pages past the end show the last one) and how many there are, at least 1.
+    page: int
+    pages: int
 
 
-def find_users(admin: AdminUser, query: str) -> list[User]:
-    q = query.strip().lower()
+def _pages(total: int, page: int, size: int) -> tuple[int, int]:
+    pages = max((total + size - 1) // size, 1)
+    return min(max(page, 0), pages - 1), pages
+
+
+def _sql_page(query, page: int, size: int) -> Page:
+    """One page of ``query`` from the database (the newest first), without loading the rest."""
+    total = query.order_by(None).count()
+    page, pages = _pages(total, page, size)
+    return Page(query.order_by(User.id.desc()).offset(page * size).limit(size).all(), total, page, pages)
+
+
+def users_page(admin: AdminUser, f: Filter, page: int, size: int) -> Page:
+    """The users under ``admin`` that ``f`` keeps, one page of them. "All" and "online" are counted and cut in the
+    database; the others depend on the package (days left, data used), the same rule as ``status``, so only the
+    switched-on accounts (the only ones they can keep) are read and checked here."""
+    query = admin.recursive_users_query()
+    if f is Filter.all:
+        return _sql_page(query, page, size)
+    if f is Filter.online:
+        return _sql_page(query.filter(User.last_online >= datetime.datetime.now() - ONLINE_WINDOW), page, size)
+    kept = [u for u in query.filter(User.enable.is_(True)).order_by(User.id.desc()).all() if matches(u, f)]
+    page, pages = _pages(len(kept), page, size)
+    return Page(kept[page * size : (page + 1) * size], len(kept), page, pages)
+
+
+class Sort(StrEnum):
+    """How a users list is ordered (the list's ↕️ button goes round them)."""
+
+    new = "n"
+    usage = "u"
+    days = "d"
+    seen = "l"
+    name = "m"
+
+
+def _sort_key(sort: Sort):
+    match sort:
+        case Sort.usage:  # the fullest first
+            return lambda u: -usage_ratio(u)
+        case Sort.days:  # the fewest days left first; not started and ended at the end
+            return lambda u: (status(u) is not Status.active, u.remaining_days if u.start_date else 10**6)
+        case Sort.seen:  # the last to connect first
+            return lambda u: -u.last_online.timestamp() if u.last_online and u.last_online.year > 1970 else float("inf")
+        case Sort.name:
+            return lambda u: (u.name or "").casefold()
+    return lambda u: -u.id
+
+
+def list_page(admin: AdminUser, f: Filter, sort: Sort, page: int, size: int) -> Page:
+    """``users_page`` in the order asked for. The newest first is cut in the database; any other order needs every
+    user the filter keeps, read once and sorted here."""
+    if sort is Sort.new:
+        return users_page(admin, f, page, size)
+    query = admin.recursive_users_query()
+    if f is Filter.online:
+        query = query.filter(User.last_online >= datetime.datetime.now() - ONLINE_WINDOW)
+    elif f is not Filter.all:
+        query = query.filter(User.enable.is_(True))
+    kept = sorted((u for u in query.all() if matches(u, f)), key=_sort_key(sort))
+    page, pages = _pages(len(kept), page, size)
+    return Page(kept[page * size : (page + 1) * size], len(kept), page, pages)
+
+
+def counts(admin: AdminUser) -> dict[Filter, int]:
+    """How many users each filter keeps (the list's tabs): all and online from the database, the rest over the
+    switched-on accounts only."""
+    query = admin.recursive_users_query()
+    enabled = query.filter(User.enable.is_(True)).all()
+    return {
+        Filter.all: query.order_by(None).count(),
+        Filter.active: sum(status(u) is Status.active for u in enabled),
+        Filter.expiring: sum(is_expiring(u) for u in enabled),
+        Filter.ended: sum(status(u) in (Status.expired, Status.no_data) for u in enabled),
+        Filter.online: query.filter(User.last_online >= datetime.datetime.now() - ONLINE_WINDOW).order_by(None).count(),
+    }
+
+
+def _search_query(admin: AdminUser, text: str):
+    q = text.strip()
     if not q:
-        return []
-    return [u for u in visible_users(admin) if q in (u.name or "").lower() or q in u.uuid or q in (u.comment or "").lower() or q == str(u.telegram_id or "")]
+        return None
+    match = or_(User.name.icontains(q, autoescape=True), User.uuid.icontains(q, autoescape=True), User.comment.icontains(q, autoescape=True))
+    if q.isdigit():
+        match = or_(match, User.telegram_id == int(q))
+    return admin.recursive_users_query().filter(match)
+
+
+def search_page(admin: AdminUser, text: str, page: int, size: int) -> Page:
+    """Users under ``admin`` whose name, uuid or comment holds ``text`` (any case), or whose Telegram id it is."""
+    query = _search_query(admin, text)
+    return _sql_page(query, page, size) if query is not None else Page([], 0, 0, 1)
+
+
+@dataclass(frozen=True, slots=True)
+class Summary:
+    total: int
+    active: int
+    online: int
+    expiring: int
+
+
+def summary(admin: AdminUser) -> Summary:
+    """The admin home's counts: the total and the online ones from the database, the rest over the switched-on
+    accounts only."""
+    query = admin.recursive_users_query()
+    total = query.order_by(None).count()
+    online = query.filter(User.last_online >= datetime.datetime.now() - ONLINE_WINDOW).order_by(None).count()
+    enabled = query.filter(User.enable.is_(True)).all()
+    return Summary(total, sum(status(u) is Status.active for u in enabled), online, sum(is_expiring(u) for u in enabled))
 
 
 def get_visible(admin: AdminUser, user_id: int) -> User | None:
@@ -176,7 +288,7 @@ def create(admin: AdminUser, *, gb: int, days: int, count: int, name: str) -> li
     for i in range(1, count + 1):
         user = User(
             uuid=str(uuid_lib.uuid4()),
-            name=name if count == 1 else f"{name} {i:0{len(str(count))}d}",
+            name=name if count == 1 else f"{name}-{i:0{max(2, len(str(count)))}d}",
             package_days=days,
             added_by=admin.id,
             enable=True,

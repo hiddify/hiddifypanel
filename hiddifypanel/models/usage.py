@@ -5,7 +5,7 @@ import uuid as uuidlib
 from datetime import date, timedelta
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, Date, DateTime, ForeignKey, String, func
+from sqlalchemy import BigInteger, Date, DateTime, ForeignKey, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel import g
@@ -15,6 +15,46 @@ from .usage_data import UsageData
 
 if TYPE_CHECKING:
     from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import DashboardStats
+
+
+class UserDailyUsage(db.Model):  # type: ignore
+    """Each user's traffic per day (all nodes together), for the Telegram bot's usage chart. Kept KEEP_DAYS days.
+    No foreign key: users are rarely removed for good, and their rows go with the next prune."""
+
+    __tablename__ = "user_daily_usage"
+    __table_args__ = (UniqueConstraint("user_id", "date", name="uq_user_daily_usage"),)
+    KEEP_DAYS = 90
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(index=True)
+    date: Mapped[datetime.date] = mapped_column(Date, index=True)
+    usage: Mapped[int] = mapped_column(BigInteger, default=0)
+
+    @classmethod
+    def add(cls, day: datetime.date, used: dict[int, int]) -> None:
+        """Add ``used`` (bytes by user id) to ``day``. In the caller's transaction (the usage lock is held: one writer)."""
+        used = {uid: n for uid, n in used.items() if uid and n > 0}
+        if not used:
+            return
+        rows = {r.user_id: r for r in cls.query.filter(cls.date == day, cls.user_id.in_(used.keys())).all()}
+        for uid, n in used.items():
+            if uid in rows:
+                rows[uid].usage = (rows[uid].usage or 0) + n
+            else:
+                db.session.add(cls(user_id=uid, date=day, usage=n))
+
+    @classmethod
+    def prune(cls, today: datetime.date) -> int:
+        """Forget the days older than KEEP_DAYS (and so the users removed since)."""
+        return cls.query.filter(cls.date < today - timedelta(days=cls.KEEP_DAYS)).delete(synchronize_session=False)
+
+    @classmethod
+    def last_days(cls, user_id: int, days: int, today: datetime.date | None = None) -> list[tuple[datetime.date, int]]:
+        """(day, bytes) for each of the last ``days`` days, oldest first, 0 for a day without traffic."""
+        today = today or date.today()
+        first = today - timedelta(days=days - 1)
+        got = {r.date: r.usage or 0 for r in cls.query.filter(cls.user_id == user_id, cls.date >= first, cls.date <= today).all()}
+        return [(first + timedelta(days=i), got.get(first + timedelta(days=i), 0)) for i in range(days)]
 
 
 class DailyUsage(db.Model):

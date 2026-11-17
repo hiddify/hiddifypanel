@@ -14,19 +14,27 @@ from hiddifypanel.models import AdminUser, User
 
 from hiddifypanel import free_test
 
-from . import accounts, admin, bot, free, status, user  # noqa: F401  (status registers its routes)
+from . import accounts, admin, admin_settings, bandwidth, bot, broadcast, chart, chats, doctor, free, groups, guide, menukey, nav, settings, status, support, user, usernames, widget  # noqa: F401  (they register their routes)
 from .texts import T, t
-from .ui import ROUTES, Cb, Ctx, Screen, btn, keyboard, lang_of
+from .ui import BRAND, ROUTES, Cb, Ctx, Screen, btn, keyboard, lang_of
 
 _UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.I)
 
 
-def context(chat_id: int, message_id: int | None = None, call_id: str | None = None) -> Ctx:
-    """The admin linked to this chat, else the user, else a stranger."""
+def context(chat_id: int, message_id: int | None = None, call_id: str | None = None, telegram_lang: str | None = None) -> Ctx:
+    """The admin linked to this chat, else the user, else a stranger. ``telegram_lang`` is the person's Telegram
+    language (their ``language_code``): spoken when no language was chosen for them."""
     if found_admin := AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.deleted.is_(False)).first():
-        return Ctx(chat_id, lang_of(found_admin, admin=True), admin=found_admin, message_id=message_id, call_id=call_id)
+        return Ctx(chat_id, lang_of(found_admin, admin=True, telegram=telegram_lang), admin=found_admin, message_id=message_id, call_id=call_id)
     found_user = User.query.filter(User.telegram_id == chat_id, User.deleted.is_(False)).first()
-    return Ctx(chat_id, lang_of(found_user, admin=False), user=found_user, message_id=message_id, call_id=call_id)
+    if found_user is None:
+        settings.remember_telegram_lang(chat_id, telegram_lang)
+        telegram_lang = settings.chat_lang(chat_id) or telegram_lang
+    return Ctx(chat_id, lang_of(found_user, admin=False, telegram=telegram_lang), user=found_user, message_id=message_id, call_id=call_id)
+
+
+def _tg_lang(person: types.User | None) -> str | None:
+    return getattr(person, "language_code", None) if person else None
 
 
 def _link_admin(chat_id: int, uuid: str) -> AdminUser | None:
@@ -50,17 +58,70 @@ def _link_user(chat_id: int, uuid: str) -> User | None:
     return found
 
 
-def _open_home(ctx: Ctx) -> None:
-    """A fresh panel message at the bottom of the chat, plus the Mini App button by the message box."""
+def open_home(ctx: Ctx, *, keys: bool = False) -> None:
+    """A fresh panel message at the bottom of the chat, plus the Mini App button and the keyboard by the message box.
+    ``keys``: send the keyboard again even if the chat had it (/start: the chat may have been cleared, and the
+    keyboard went with its message)."""
     ctx.message_id = None
+    menukey.ensure(ctx.chat_id, ctx.lang, person=ctx.person, force=keys, admin_mode=menukey.admin_mode(ctx.admin))
     if ctx.admin:
-        user.set_menu_button(ctx.chat_id, ctx.tr(T.panel), accounts.panel_app_url())
+        user.set_menu_button(ctx.chat_id, BRAND, accounts.panel_app_url())
         ctx.show(admin.home_screen(ctx))
     elif ctx.user:
-        user.set_menu_button(ctx.chat_id, ctx.tr(T.my_page), accounts.links(ctx.user).home)
+        user.set_menu_button(ctx.chat_id, BRAND, accounts.links(ctx.user).home)
         ctx.show(user.home(ctx))
     else:
         ctx.show(Screen(ctx.tr(T.welcome)))
+
+
+def _open_admin_key(ctx: Ctx, kind: Cb, args: list[str]) -> None:
+    """An admin's key: the screen comes at the bottom of the chat and the old panel message goes."""
+    old = ctx.state.get("panel")
+    target = ROUTES.get(kind)
+    if kind is Cb.home or kind not in menukey.ADMIN_KINDS or target is None:
+        nav.reset(ctx)
+        open_home(ctx)
+    else:
+        nav.reset(ctx, kind, args)  # a first step: Back goes to the start
+        ctx.message_id = None
+        try:
+            target.handler(ctx, args)
+        except Exception as e:
+            logger.exception(f"tgbot: admin key {kind}: {e}")
+            db.session.rollback()
+            bot.send_message(ctx.chat_id, f"⚠️ {ctx.tr(T.error_generic)}")
+            return
+    new = ctx.state.get("panel")
+    if old and new and int(old) != int(new):
+        _delete(ctx.chat_id, int(old))
+
+
+def _open_key(ctx: Ctx, kind: Cb, args: list[str] | None = None) -> None:
+    """A key of the keyboard: its screen as a new message (Menu: the menu)."""
+    if ctx.admin:
+        return _open_admin_key(ctx, kind, args or [])
+    target = ROUTES.get(kind)
+    if kind is Cb.me or kind not in menukey.PERSON_KINDS or ctx.user is None or target is None:
+        nav.reset(ctx)
+        return open_home(ctx)
+    # A first step from the start: it takes the place of the screen shown now
+    nav.reset(ctx, kind)
+    ctx.on_panel()
+    try:
+        target.handler(ctx, [])
+    except Exception as e:
+        logger.exception(f"tgbot: key {kind}: {e}")
+        db.session.rollback()
+        bot.send_message(ctx.chat_id, f"⚠️ {ctx.tr(T.error_generic)}")
+
+
+def _how_to_write(ctx: Ctx, typed: int | None = None) -> None:
+    """Something typed (or sent) outside "Write a Message": it is not sent to support; one line says how to, with
+    Support (the line becomes the support screen) and Back (the line and what was typed go, the screen stays)."""
+    if free_test.current_conversation(ctx.chat_id, ctx.user) is None:  # no support to write to: the start screen
+        return open_home(ctx)
+    extra = [typed] if typed else []
+    bot.send_message(ctx.chat_id, f"💡 {ctx.tr(T.sp_how_to_write)}", reply_markup=keyboard([btn(ctx.tr(T.support), Cb.support, "h", *extra), btn(ctx.tr(T.back), Cb.close, *extra)]))
 
 
 def _delete(chat_id: int, message_id: int) -> None:
@@ -72,28 +133,43 @@ def _delete(chat_id: int, message_id: int) -> None:
 
 @bot.message_handler(commands=["start", "menu"], chat_types=["private"])
 def on_start(message: types.Message) -> None:
+    usernames.remember(message.from_user)
     chat_id = message.chat.id
     payload = (message.text or "").partition(" ")[2].strip()
     if payload.startswith("free_"):
         # An admin's free test link: the offer, for anyone (an admin sees what its customers see).
         host, package_id = free_test.resolve_payload(payload.removeprefix("free_"))
         if host:
-            return free.open_offer(context(chat_id), host, message.from_user, package_id)
+            return free.open_offer(context(chat_id, telegram_lang=_tg_lang(message.from_user)), host, message.from_user, package_id)
     if payload.startswith("admin_") and (match := _UUID.search(payload)):
         _link_admin(chat_id, match.group(0).lower())
     elif match := _UUID.search(payload):
         _link_user(chat_id, match.group(0).lower())
-    ctx = context(chat_id)
+    ctx = context(chat_id, telegram_lang=_tg_lang(message.from_user))
     if payload and (ctx.admin or ctx.user):
         bot.send_message(chat_id, f"✅ {ctx.tr(T.linked)}")
-    _open_home(ctx)
+    open_home(ctx, keys=True)
+
+
+@bot.message_handler(commands=["language"], chat_types=["private"])
+def on_language(message: types.Message) -> None:
+    """The languages, as a new message at the bottom of the chat."""
+    ctx = context(message.chat.id, telegram_lang=_tg_lang(message.from_user))
+    ctx.show(settings.language_screen(ctx))
 
 
 @bot.message_handler(content_types=["text"], chat_types=["private"])
 def on_text(message: types.Message) -> None:
+    usernames.remember(message.from_user)
     chat_id = message.chat.id
     text = message.text or ""
-    ctx = context(chat_id)
+    ctx = context(chat_id, telegram_lang=_tg_lang(message.from_user))
+    if (kind := menukey.action(text, admin=ctx.admin is not None)) is not None:  # a key of the keyboard by the message box
+        _delete(chat_id, message.message_id)
+        ctx.state.update(awaiting=None)
+        return _open_key(ctx, kind, menukey.action_args(text, admin=ctx.admin is not None))
+    if ctx.admin and broadcast.take(ctx, message):  # a message to all users: it stays (it is what gets copied)
+        return
     if ctx.admin:
         # Keep the chat to one message: drop what was typed and update the panel.
         _delete(chat_id, message.message_id)
@@ -102,31 +178,35 @@ def on_text(message: types.Message) -> None:
         return
     if match := _UUID.search(text):
         if _link_user(chat_id, match.group(0).lower()):
-            ctx = context(chat_id)
+            ctx = context(chat_id, telegram_lang=_tg_lang(message.from_user))
             bot.send_message(chat_id, f"✅ {ctx.tr(T.linked)}")
-            return _open_home(ctx)
-    # Anything else is a message to the admin this chat talks to (kept in its inbox).
+            return open_home(ctx)
+    # A message to support, only while writing one ("Write a Message"); anything else says how to write one
     if not free.on_user_text(ctx, message):
-        _open_home(ctx)
+        _how_to_write(ctx, message.message_id)
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def on_button(call: types.CallbackQuery) -> None:
+    usernames.remember(call.from_user)
     message = call.message
     if message is None or not call.data:
         return
     kind_raw, *args = call.data.split(":")
-    ctx = context(message.chat.id, message.message_id, call.id)
+    ctx = context(message.chat.id, message.message_id, call.id, telegram_lang=_tg_lang(call.from_user))
     try:
         kind = Cb(kind_raw)
     except ValueError:
         # A button from the old bot: replace that message with the current home.
         ctx.toast()
-        _open_home(ctx)
+        open_home(ctx)
         return
     if kind is Cb.close:
         ctx.toast()
         _delete(message.chat.id, message.message_id)
+        for extra in args[:1]:  # a message of this chat that goes with it (what was typed, under "how to write")
+            if extra.isdigit():
+                _delete(message.chat.id, int(extra))
         return
     target = ROUTES.get(kind)
     if target is None or (target.admin and not ctx.admin) or (not target.admin and not target.anyone and not ctx.user):
@@ -138,17 +218,46 @@ def on_button(call: types.CallbackQuery) -> None:
         ctx.message_id = None
     else:
         ctx.on_photo = message.content_type == "photo"
+    # A button while writing (a message, a name): the writing stops and the menu keyboard comes back, unless the
+    # button is the next step of that same writing (picking the user to write to)
+    if not (kind is Cb.broadcast and args[:1] in (["to"], ["one"], ["all"])) and menukey.restore(ctx):
+        # The menu came back with a line under the screen: the screen comes again under it (the old one goes)
+        ctx.message_id, ctx.on_photo = None, False
+    if ctx.person:  # a person's path, for Back
+        if kind is Cb.me:
+            nav.reset(ctx)
+        elif nav.is_screen(kind, args):
+            nav.push(ctx, kind, args)
+    elif ctx.admin:  # an admin's path too
+        if kind is Cb.home:
+            nav.reset(ctx)
+        elif nav.is_admin_screen(kind, args):
+            nav.push(ctx, kind, args)
     try:
         target.handler(ctx, args)
     except Exception as e:
         logger.exception(f"tgbot: {call.data}: {e}")
         db.session.rollback()
-        ctx.toast(f"⚠️ {e}"[:200], alert=True)
+        # The details are in the log; the person gets a plain sentence in their language, never a stack message.
+        ctx.toast(f"⚠️ {ctx.tr(T.error_generic)}", alert=True)
     finally:
         ctx.toast()
 
 
-@bot.message_handler(func=lambda message: True, content_types=["photo", "document", "sticker", "voice", "video", "audio"])
+# Private chats only: in a group the bot stays quiet (it answered every sticker there)
+@bot.message_handler(func=lambda message: True, content_types=["photo", "document", "sticker", "voice", "video", "audio", "video_note"], chat_types=["private"])
 def on_other(message: types.Message) -> None:
-    ctx = context(message.chat.id)
+    usernames.remember(message.from_user)
+    ctx = context(message.chat.id, telegram_lang=_tg_lang(message.from_user))
+    # A photo, file or voice is a message for support (or, from an admin answering someone, the answer)
+    if ctx.admin:
+        if broadcast.take(ctx, message):
+            return
+        if support.admin_media(ctx, message):
+            _delete(message.chat.id, message.message_id)
+            return
+    elif support.relay_media(ctx, message):
+        return
+    else:
+        return _how_to_write(ctx, message.message_id)
     bot.send_message(message.chat.id, t(T.unknown, ctx.lang), reply_markup=keyboard([btn(ctx.tr(T.menu), Cb.home if ctx.admin else Cb.me)]))

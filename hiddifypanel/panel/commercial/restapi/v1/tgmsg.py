@@ -4,12 +4,36 @@ import datetime
 from apiflask import abort
 from flask import request
 from flask_restful import Resource
+from loguru import logger
 
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import *
 
 from .tgbot import bot
+
+
+#: Up to this many people, the message is sent before answering (with each one's error, if any).
+SEND_NOW_MAX = 20
+
+
+def _send_all(targets: list[tuple[str, str, int]], text: str) -> dict[str, dict[str, str]]:
+    """``text`` and the account card to each (uuid, name, telegram id); the errors by uuid."""
+    from hiddifypanel.panel.commercial.telegrambot import Usage
+    from hiddifypanel.panel.commercial.telegrambot.ui import with_retry
+
+    errors: dict[str, dict[str, str]] = {}
+    for uuid, name, telegram_id in targets:
+        try:
+            txt = text + "\n\n" + Usage.get_usage_msg(uuid)
+            keyboard = Usage.user_keyboard(uuid)
+            with_retry(lambda: bot.send_message(telegram_id, txt, reply_markup=keyboard))
+        except Exception as e:
+            logger.info(f"tgbot: message to {uuid} not sent: {e}")
+            errors[uuid] = {"name": name, "error": f"{e}"}
+    if len(targets) > SEND_NOW_MAX:
+        logger.info(f"tgbot: message sent to {len(targets) - len(errors)} of {len(targets)} users")
+    return errors
 
 
 class SendMsgResource(Resource):
@@ -24,18 +48,18 @@ class SendMsgResource(Resource):
             abort(400, "invalid request")
 
         users = self.get_users_by_identifier(msg["id"])
+        targets = [(user.uuid, user.name, user.telegram_id) for user in users if user]
+        text = str(msg["text"])
 
-        res = {}
-        for user in users:
-            try:
-                from hiddifypanel.panel.commercial.telegrambot import Usage
+        # A few are sent now and their errors answered; a big group goes out after the answer (Telegram takes about
+        # 30 messages a second, a long request would time out), waiting out the flood limits.
+        if len(targets) > SEND_NOW_MAX:
+            from hiddifypanel.panel.commercial.telegrambot.ui import background
 
-                keyboard = Usage.user_keyboard(user.uuid)
-                txt = msg["text"] + "\n\n" + Usage.get_usage_msg(user.uuid)
-                print("sending to ", user)
-                bot.send_message(user.telegram_id, txt, reply_markup=keyboard)
-            except Exception as e:
-                res[user.uuid] = {"name": user.name, "error": f"{e}"}
+            background(lambda: _send_all(targets, text))
+            return {"msg": "queued", "count": len(targets)}
+
+        res = _send_all(targets, text)
         if len(res) == 0:
             return {"msg": "success"}
         else:
