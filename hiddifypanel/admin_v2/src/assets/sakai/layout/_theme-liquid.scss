@@ -35,6 +35,15 @@
     inherits: true;
     initial-value: #eef0f6;
 }
+/* The base color outside Liquid Glass too, per mode (only Liquid Glass paints with it). Switching to Liquid Glass then
+   starts from the mode's own color: without it the page flowed from the light initial value to the dark base, a bright
+   flash in dark mode. Changes inside the theme (mode, color) still flow. */
+html {
+    --lg-base: #eef0f6;
+}
+html.app-dark {
+    --lg-base: #0b0b10;
+}
 
 /* ---------- The system: strength → alpha, blur, edge, depth ---------- */
 html.theme-liquid {
