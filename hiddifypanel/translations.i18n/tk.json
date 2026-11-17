@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Ikisi hem",
-      "description": "Protokol hem Xray-da, hem Hiddify Core-da bar bolanda, diňe saýlanan ýadro açyk galýar. Ikisini hem saklamak üçin Ikisi hem saýlaň.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Protokol hem XRay-da, hem Hiddify Core-da bar bolanda, diňe saýlanan ýadro açyk galýar. Ikisini hem saklamak üçin Ikisi hem saýlaň.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Umumy proksi ýadrosy",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Abunanyň her konfigini başlandan soň we her 6 sagatdan serwerden synaň we konfigler işlemeýän bolanda adminlere (Telegram) duýduryş beriň. Her barlag serwere her konfig arkaly birigýär: käbir hosting üpjünçileri muny flud hasaplaýar. Dolandyryş panelindäki “Häzir barla” hemişe işleýär.",
@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Lakamsyz domeniň ulanyjylaryň konfiglerinde, profil adynda we abuna adynda nähili atlandyrylýandygy.<br>🔒 Şahsy: onuň görnüşi we ony açmaýan kod (☁️ CDN K7Q)<br>🫥 Örtülen: köp harp gizlenen (⚡ h*y.com)<br>🌐 Doly domen ady",
+      "description": "Lakamsyz domeniň ulanyjylaryň konfiglerinde, profil adynda we abuna adynda nähili atlandyrylýandygy.<br>🔒 Şahsy: onuň görnüşi we ony açmaýan kod (CDN K7Q)<br>🫥 Örtülen: köp harp gizlenen (h*y.com)<br>🌐 Doly domen ady",
       "full": "🌐 Doly domen ady",
       "label": "🏷️ Konfig atlary",
-      "masked": "🫥 Örtülen (⚡ h*y.com)",
-      "private": "🔒 Şahsy: görnüş we kod (☁️ CDN K7Q)"
+      "masked": "🫥 Örtülen (h*y.com)",
+      "private": "🔒 Şahsy: görnüş we kod (CDN K7Q)"
     },
     "firewall": {
       "description": "Firewall-y açmak ulanylýan portlary (iň az 22,443,80 we SSH) açar we beýleki ähli portlary ýapar",

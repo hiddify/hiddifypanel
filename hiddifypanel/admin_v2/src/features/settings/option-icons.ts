@@ -1,3 +1,9 @@
+// The browsers' current full-colour logos, from github.com/alrra/browser-logos (trademarks of their owners)
+import chromeLogo from '@browser-logos/chrome/chrome.svg'
+import edgeLogo from '@browser-logos/edge/edge.svg'
+import firefoxLogo from '@browser-logos/firefox/firefox.svg'
+import safariLogo from '@browser-logos/safari/safari.svg'
+
 /**
  * Icons of the settings' select options, by setting key and option value: each one says what the option says
  * (High → three bars, No Wait → a bolt), in a colour of its own. Options not listed keep their label as it is.
@@ -7,6 +13,10 @@ export interface OptionIcon {
   icon?: string
   flag?: string
   level?: 1 | 2 | 3
+  /** a vector logo (BrandGlyph.vue): the proxy cores */
+  brand?: 'xray' | 'hiddify'
+  /** a full-colour logo file (an SVG of the @browser-logos packages): the browsers */
+  logo?: string
   color: string
 }
 
@@ -46,20 +56,26 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
     beta: { icon: 'pi pi-wrench', color: AMBER },
   },
   common_proxy_core: {
-    xray: { icon: 'pi pi-microchip', color: SKY },
-    hiddify_core: { icon: 'pi pi-box', color: INDIGO },
+    xray: { brand: 'xray', color: GRAY },
+    hiddify_core: { brand: 'hiddify', color: BLUE },
     both: { icon: 'pi pi-clone', color: PURPLE },
   },
   utls: {
     none: { icon: 'pi pi-ban', color: GRAY },
-    chrome: { icon: 'pi pi-google', color: BLUE },
-    edge: { icon: 'pi pi-microsoft', color: TEAL },
+    chrome: { logo: chromeLogo, color: BLUE },
+    edge: { logo: edgeLogo, color: TEAL },
     ios: { icon: 'pi pi-apple', color: GRAY },
     android: { icon: 'pi pi-android', color: GREEN },
-    safari: { icon: 'pi pi-compass', color: SKY },
-    firefox: { icon: 'pi pi-globe', color: ORANGE },
+    safari: { logo: safariLogo, color: SKY },
+    firefox: { logo: firefoxLogo, color: ORANGE },
     random: { icon: 'pi pi-sync', color: PURPLE },
     randomized: { icon: 'pi pi-sparkles', color: INDIGO },
+  },
+  // Config names: a lock (private), an eye that does not see (masked), the globe (the full domain)
+  domain_label_mode: {
+    private: { icon: 'pi pi-lock', color: INDIGO },
+    masked: { icon: 'pi pi-eye-slash', color: PURPLE },
+    full: { icon: 'pi pi-globe', color: SKY },
   },
   country: {
     ir: { flag: 'ir', color: GREEN },
@@ -75,6 +91,7 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
  */
 export const DESCRIPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
   warp_mode: { '✴': OPTION_ICONS.warp_mode.all, '☑': OPTION_ICONS.warp_mode.custom },
+  domain_label_mode: { '🔒': OPTION_ICONS.domain_label_mode.private, '🫥': OPTION_ICONS.domain_label_mode.masked, '🌐': OPTION_ICONS.domain_label_mode.full },
 }
 
 export function optionIcon(key: string, value: unknown): OptionIcon | null {

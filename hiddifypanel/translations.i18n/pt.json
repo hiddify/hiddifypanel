@@ -3069,10 +3069,10 @@
     },
     "common_proxy_core": {
       "both": "Ambos",
-      "description": "Quando um protocolo existe tanto no Xray quanto no Hiddify Core, apenas o core selecionado permanece ativado. Escolha Ambos para manter os dois.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Quando um protocolo existe tanto no XRay quanto no Hiddify Core, apenas o core selecionado permanece ativado. Escolha Ambos para manter os dois.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Core de proxy comum",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Testa todas as configs da assinatura a partir do próprio servidor após cada início e a cada 6 horas, e avisa os admins (Telegram) quando configs param de funcionar. Cada verificação conecta ao servidor por todas as configs: alguns provedores consideram isso um flood. “Verificar agora” no painel sempre funciona.",
@@ -3151,11 +3151,11 @@
       "label": "🔒 Habilitar fronting de domínio TLS"
     },
     "domain_label_mode": {
-      "description": "Como um domínio sem apelido é nomeado nas configurações, no título do perfil e no nome da assinatura dos usuários.<br>🔒 Privado: o tipo e um código que não o revela (☁️ CDN K7Q)<br>🫥 Mascarado: a maioria das letras oculta (⚡ h*y.com)<br>🌐 Nome de domínio completo",
+      "description": "Como um domínio sem apelido é nomeado nas configurações, no título do perfil e no nome da assinatura dos usuários.<br>🔒 Privado: o tipo e um código que não o revela (CDN K7Q)<br>🫥 Mascarado: a maioria das letras oculta (h*y.com)<br>🌐 Nome de domínio completo",
       "full": "🌐 Nome de domínio completo",
       "label": "🏷️ Nomes das configurações",
-      "masked": "🫥 Mascarado (⚡ h*y.com)",
-      "private": "🔒 Privado: tipo e código (☁️ CDN K7Q)"
+      "masked": "🫥 Mascarado (h*y.com)",
+      "private": "🔒 Privado: tipo e código (CDN K7Q)"
     },
     "firewall": {
       "description": "A ativação do Firewall abrirá as portas usadas (pelo menos 22.443.80 e SSH) e fechará todas as outras portas",

@@ -88,7 +88,9 @@ const checked = computed({
     <div class="setting-row__control">
       <ToggleSwitch v-if="field.type === 'bool'" v-model="checked" :input-id="inputId" />
       <DnsPicker v-else-if="field.key === 'dns_server'" v-model="text" :input-id="inputId" :invalid="Boolean(errors?.length)" />
+      <!-- tall enough to show every option of the settings' lists (uTLS has nine), never more than 60% of the screen -->
       <Select
+        scroll-height="min(26rem, 60vh)"
         v-else-if="field.type === 'select'"
         v-model="text"
         :input-id="inputId"

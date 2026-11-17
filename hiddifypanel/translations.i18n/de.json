@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Beide",
-      "description": "Wenn ein Protokoll sowohl in Xray als auch in Hiddify Core existiert, bleibt nur der ausgewählte Core aktiviert. Wählen Sie Beide, um beide zu behalten.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Wenn ein Protokoll sowohl in XRay als auch in Hiddify Core existiert, bleibt nur der ausgewählte Core aktiviert. Wählen Sie Beide, um beide zu behalten.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Gemeinsamer Proxy-Core",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Jede Konfiguration des Abos nach einem Start und alle 6 Stunden vom Server aus testen und die Admins (Telegram) warnen, wenn Konfigurationen nicht mehr funktionieren. Jede Prüfung verbindet sich über jede Konfiguration mit dem Server: Manche Hosting-Anbieter halten das für eine Flut. „Jetzt prüfen“ im Dashboard funktioniert immer.",
@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS-Domain-Fronting"
     },
     "domain_label_mode": {
-      "description": "Wie eine Domain ohne Alias in den Konfigurationen, im Profiltitel und im Abo-Namen der Benutzer benannt wird.<br>🔒 Privat: ihre Art und ein Code, der sie nicht verrät (☁️ CDN K7Q)<br>🫥 Maskiert: die meisten Buchstaben verborgen (⚡ h*y.com)<br>🌐 Vollständiger Domainname",
+      "description": "Wie eine Domain ohne Alias in den Konfigurationen, im Profiltitel und im Abo-Namen der Benutzer benannt wird.<br>🔒 Privat: ihre Art und ein Code, der sie nicht verrät (CDN K7Q)<br>🫥 Maskiert: die meisten Buchstaben verborgen (h*y.com)<br>🌐 Vollständiger Domainname",
       "full": "🌐 Vollständiger Domainname",
       "label": "🏷️ Konfigurationsnamen",
-      "masked": "🫥 Maskiert (⚡ h*y.com)",
-      "private": "🔒 Privat: Art und Code (☁️ CDN K7Q)"
+      "masked": "🫥 Maskiert (h*y.com)",
+      "private": "🔒 Privat: Art und Code (CDN K7Q)"
     },
     "firewall": {
       "description": "Das Aktivieren der Firewall öffnet die verwendeten Ports (mindestens 22, 443, 80 und SSH) und schließt alle anderen Ports",

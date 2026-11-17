@@ -4906,10 +4906,10 @@
     },
     "common_proxy_core": {
       "both": "Both",
-      "description": "When a protocol exists on both Xray and Hiddify Core, only the selected core stays enabled. Choose Both to keep both.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "When a protocol exists on both XRay and Hiddify Core, only the selected core stays enabled. Choose Both to keep both.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Common Proxy Core",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Test every config of the subscription from the server after a start and every 6 hours, and warn the admins (Telegram) when configs stop working. Each check connects through every config to the server: some hosting providers take that for a flood. “Check now” on the dashboard always works.",
@@ -4988,11 +4988,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (☁️ CDN K7Q)<br>🫥 Masked: most letters hidden (⚡ h*y.com)<br>🌐 Full domain name",
-      "full": "🌐 Full domain name",
-      "label": "🏷️ Config names",
-      "masked": "🫥 Masked (⚡ h*y.com)",
-      "private": "🔒 Private: kind and code (☁️ CDN K7Q)"
+      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (CDN K7Q)<br>🫥 Masked: most letters hidden (h*y.com)<br>🌐 Full Domain Name",
+      "full": "🌐 Full Domain Name",
+      "label": "🏷️ Config Names",
+      "masked": "🫥 Masked (h*y.com)",
+      "private": "🔒 Private: Kind and Code (CDN K7Q)"
     },
     "firewall": {
       "description": "Enabling Firewall will open used Ports (at least 22,443,80 and SSH) and close all other Ports",
@@ -5790,7 +5790,7 @@
     },
     "xhttp_different_up_down_enable": {
       "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
-      "label": "🈁 XHTTP with different upload/download"
+      "label": "🈁 XHTTP with Different Upload/Download"
     },
     "xhttp_enable": {
       "description": "This Protocol send and receive information in individual channels.<br />\n⚠️ <strong>Not Supported in SignBox based Clients. Only <a href=\"https://app.hiddify.com\" target=\"_blank\">Hiddify</a> App, and XRay base Clients are supported.</strong>",

@@ -3071,10 +3071,10 @@
     },
     "common_proxy_core": {
       "both": "နှစ်ခုလုံး",
-      "description": "protocol တစ်ခုသည် Xray နှင့် Hiddify Core နှစ်ခုလုံးတွင် ရှိလျှင် ရွေးထားသော core သာ ဖွင့်ထားမည်။ နှစ်ခုလုံးထားလိုလျှင် နှစ်ခုလုံးကို ရွေးပါ။",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "protocol တစ်ခုသည် XRay နှင့် Hiddify Core နှစ်ခုလုံးတွင် ရှိလျှင် ရွေးထားသော core သာ ဖွင့်ထားမည်။ နှစ်ခုလုံးထားလိုလျှင် နှစ်ခုလုံးကို ရွေးပါ။",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Common Proxy Core",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Test every config of the subscription from the server after a start and every 6 hours, and warn the admins (Telegram) when configs stop working. Each check connects through every config to the server: some hosting providers take that for a flood. “Check now” on the dashboard always works.",
@@ -3153,11 +3153,11 @@
       "label": "🔒 TLS ဒိုမိန်း Fronting"
     },
     "domain_label_mode": {
-      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (☁️ CDN K7Q)<br>🫥 Masked: most letters hidden (⚡ h*y.com)<br>🌐 Full domain name",
-      "full": "🌐 Full domain name",
-      "label": "🏷️ Config names",
-      "masked": "🫥 Masked (⚡ h*y.com)",
-      "private": "🔒 Private: kind and code (☁️ CDN K7Q)"
+      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (CDN K7Q)<br>🫥 Masked: most letters hidden (h*y.com)<br>🌐 Full Domain Name",
+      "full": "🌐 Full Domain Name",
+      "label": "🏷️ Config Names",
+      "masked": "🫥 Masked (h*y.com)",
+      "private": "🔒 Private: Kind and Code (CDN K7Q)"
     },
     "firewall": {
       "description": "Firewall ကိုဖွင့်ခြင်းဖြင့် အသုံးပြုထားသော Ports (အနည်းဆုံး 22,443,80 နှင့် SSH) ကိုဖွင့်ပြီး အခြား Port အားလုံးကို ပိတ်ပါမည်။",
@@ -3933,7 +3933,7 @@
     },
     "xhttp_different_up_down_enable": {
       "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
-      "label": "🈁 XHTTP with different upload/download"
+      "label": "🈁 XHTTP with Different Upload/Download"
     },
     "xhttp_enable": {
       "description": "ဤပရိုတိုကောသည် ချန်နယ်တစ်ခုချင်းစီတွင် အချက်အလက်များကို ပေးပို့လက်ခံသည်",

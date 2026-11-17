@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Ambos",
-      "description": "Cuando un protocolo existe tanto en Xray como en Hiddify Core, solo el núcleo seleccionado permanece activado. Elija Ambos para mantener los dos.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Cuando un protocolo existe tanto en XRay como en Hiddify Core, solo el núcleo seleccionado permanece activado. Elija Ambos para mantener los dos.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Núcleo del proxy común",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Prueba cada configuración de la suscripción desde el servidor después de un inicio y cada 6 horas, y avisa a los administradores (por Telegram) cuando las configuraciones dejan de funcionar. Cada comprobación se conecta al servidor a través de todas las configuraciones: algunos proveedores de alojamiento lo toman por una inundación. «Comprobar ahora» en el panel de control siempre funciona.",
@@ -4542,11 +4542,11 @@
       "label": "🔒 Domain Fronting de TLS"
     },
     "domain_label_mode": {
-      "description": "Cómo se nombra un dominio sin alias en las configuraciones de los usuarios, el título del perfil y el nombre de la suscripción.<br>🔒 Privado: su tipo y un código que no lo revela (☁️ CDN K7Q)<br>🫥 Enmascarado: la mayoría de las letras ocultas (⚡ h*y.com)<br>🌐 Nombre de dominio completo",
+      "description": "Cómo se nombra un dominio sin alias en las configuraciones de los usuarios, el título del perfil y el nombre de la suscripción.<br>🔒 Privado: su tipo y un código que no lo revela (CDN K7Q)<br>🫥 Enmascarado: la mayoría de las letras ocultas (h*y.com)<br>🌐 Nombre de dominio completo",
       "full": "🌐 Nombre de dominio completo",
       "label": "🏷️ Nombres de configuraciones",
-      "masked": "🫥 Enmascarado (⚡ h*y.com)",
-      "private": "🔒 Privado: tipo y código (☁️ CDN K7Q)"
+      "masked": "🫥 Enmascarado (h*y.com)",
+      "private": "🔒 Privado: tipo y código (CDN K7Q)"
     },
     "firewall": {
       "description": "Activar el firewall abrirá los puertos usados (como mínimo 22, 443, 80 y SSH) y cerrará todos los demás puertos",

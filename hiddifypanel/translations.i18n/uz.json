@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Ikkalasi",
-      "description": "Protokol Xray da ham, Hiddify Core da ham mavjud boʻlsa, faqat tanlangan yadro yoqilgan holda qoladi. Ikkalasini saqlash uchun «Ikkalasi» ni tanlang.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Protokol XRay da ham, Hiddify Core da ham mavjud boʻlsa, faqat tanlangan yadro yoqilgan holda qoladi. Ikkalasini saqlash uchun «Ikkalasi» ni tanlang.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Umumiy proksi yadrosi",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Obunaning har bir konfiguratsiyasini ishga tushgandan keyin va har 6 soatda serverdan tekshiradi hamda konfiguratsiyalar ishlamay qolganda adminlarni ogohlantiradi (Telegram). Har bir tekshiruv serverga barcha konfiguratsiyalar orqali ulanadi: ayrim hosting provayderlar buni hujum deb hisoblaydi. Boshqaruv panelidagi «Hozir tekshirish» doim ishlaydi.",
@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Taxallusi yoʻq domen foydalanuvchilar konfiguratsiyalarida, profil sarlavhasida va obuna nomida qanday nomlanadi.<br>🔒 Yashirin: uning turi va uni oshkor qilmaydigan kod (☁️ CDN K7Q)<br>🫥 Niqoblangan: harflarning koʻpi yashirilgan (⚡ h*y.com)<br>🌐 Toʻliq domen nomi",
+      "description": "Taxallusi yoʻq domen foydalanuvchilar konfiguratsiyalarida, profil sarlavhasida va obuna nomida qanday nomlanadi.<br>🔒 Yashirin: uning turi va uni oshkor qilmaydigan kod (CDN K7Q)<br>🫥 Niqoblangan: harflarning koʻpi yashirilgan (h*y.com)<br>🌐 Toʻliq domen nomi",
       "full": "🌐 Toʻliq domen nomi",
       "label": "🏷️ Konfiguratsiya nomlari",
-      "masked": "🫥 Niqoblangan (⚡ h*y.com)",
-      "private": "🔒 Yashirin: tur va kod (☁️ CDN K7Q)"
+      "masked": "🫥 Niqoblangan (h*y.com)",
+      "private": "🔒 Yashirin: tur va kod (CDN K7Q)"
     },
     "firewall": {
       "description": "Xavfsizlik devorini yoqish ishlatilgan portlarni (kamida 22, 443, 80 va SSH) ochadi va boshqa barcha portlarni yopadi",

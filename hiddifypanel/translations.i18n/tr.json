@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Her ikisi",
-      "description": "Bir protokol hem Xray'de hem Hiddify Core'da bulunuyorsa yalnızca seçilen çekirdek etkin kalır. İkisini de tutmak için Her ikisi'ni seçin.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Bir protokol hem XRay'de hem Hiddify Core'da bulunuyorsa yalnızca seçilen çekirdek etkin kalır. İkisini de tutmak için Her ikisi'ni seçin.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Yaygın Proxy Çekirdeği",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Aboneliğin her yapılandırmasını başlangıçtan sonra ve her 6 saatte bir sunucudan test eder, yapılandırmalar çalışmayı bıraktığında yöneticileri uyarır (Telegram). Her denetim sunucuya her yapılandırma üzerinden bağlanır: bazı barındırma sağlayıcıları bunu saldırı sanır. Gösterge panelindeki “Şimdi denetle” her zaman çalışır.",
@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Alan Adı Fronting"
     },
     "domain_label_mode": {
-      "description": "Takma adı olmayan bir alan adının kullanıcıların yapılandırmalarında, profil başlığında ve abonelik adında nasıl adlandırılacağı.<br>🔒 Gizli: türü ve onu ele vermeyen bir kod (☁️ CDN K7Q)<br>🫥 Maskeli: harflerin çoğu gizli (⚡ h*y.com)<br>🌐 Tam alan adı",
+      "description": "Takma adı olmayan bir alan adının kullanıcıların yapılandırmalarında, profil başlığında ve abonelik adında nasıl adlandırılacağı.<br>🔒 Gizli: türü ve onu ele vermeyen bir kod (CDN K7Q)<br>🫥 Maskeli: harflerin çoğu gizli (h*y.com)<br>🌐 Tam alan adı",
       "full": "🌐 Tam alan adı",
       "label": "🏷️ Yapılandırma adları",
-      "masked": "🫥 Maskeli (⚡ h*y.com)",
-      "private": "🔒 Gizli: tür ve kod (☁️ CDN K7Q)"
+      "masked": "🫥 Maskeli (h*y.com)",
+      "private": "🔒 Gizli: tür ve kod (CDN K7Q)"
     },
     "firewall": {
       "description": "Güvenlik duvarını etkinleştirmek kullanılan bağlantı noktalarını (en az 22,443,80 ve SSH) açar ve diğer tüm bağlantı noktalarını kapatır",

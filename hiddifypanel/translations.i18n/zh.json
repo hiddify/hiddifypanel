@@ -3078,10 +3078,10 @@
     },
     "common_proxy_core": {
       "both": "两者",
-      "description": "当协议同时存在于 Xray 和 Hiddify Core 时，仅所选核心保持启用。选择“两者”则同时保留。",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "当协议同时存在于 XRay 和 Hiddify Core 时，仅所选核心保持启用。选择“两者”则同时保留。",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ 通用代理核心",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "在启动后及每 6 小时从服务器本身测试订阅中的所有配置，并在配置失效时（通过 Telegram）通知管理员。每次检查都会通过每个配置连接到服务器：部分主机商会将其视为洪水攻击。仪表盘上的“立即检查”始终可用。",
@@ -3160,11 +3160,11 @@
       "label": "🔒 启用 TLS 域前置"
     },
     "domain_label_mode": {
-      "description": "没有别名的域名在用户配置、配置文件标题和订阅名称中的显示方式。<br>🔒 私密：类型和不泄露域名的代码（☁️ CDN K7Q）<br>🫥 遮盖：隐藏大部分字母（⚡ h*y.com）<br>🌐 完整域名",
+      "description": "没有别名的域名在用户配置、配置文件标题和订阅名称中的显示方式。<br>🔒 私密：类型和不泄露域名的代码（CDN K7Q）<br>🫥 遮盖：隐藏大部分字母（h*y.com）<br>🌐 完整域名",
       "full": "🌐 完整域名",
       "label": "🏷️ 配置名称",
-      "masked": "🫥 遮盖（⚡ h*y.com）",
-      "private": "🔒 私密：类型和代码（☁️ CDN K7Q）"
+      "masked": "🫥 遮盖（h*y.com）",
+      "private": "🔒 私密：类型和代码（CDN K7Q）"
     },
     "firewall": {
       "description": "启用防火墙将打开已使用的端口（至少 22,443,80 和 SSH）并关闭所有其他端口",

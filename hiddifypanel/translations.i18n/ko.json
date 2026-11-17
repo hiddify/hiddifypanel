@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "둘 다",
-      "description": "Xray와 Hiddify Core 모두에 있는 프로토콜은 선택한 코어만 활성화된 상태로 유지됩니다. 둘 다 유지하려면 둘 다를 선택하세요.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "XRay와 Hiddify Core 모두에 있는 프로토콜은 선택한 코어만 활성화된 상태로 유지됩니다. 둘 다 유지하려면 둘 다를 선택하세요.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ 공통 프록시 코어",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "시작 후와 6시간마다 서버에서 구독의 모든 구성을 테스트하고, 구성이 작동하지 않으면 관리자에게 Telegram으로 알립니다. 점검할 때마다 모든 구성으로 서버에 연결하는데, 일부 호스팅 업체는 이를 플러드 공격으로 간주합니다. 대시보드의 「지금 확인」은 항상 작동합니다.",
@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS 도메인 프런팅"
     },
     "domain_label_mode": {
-      "description": "별칭이 없는 도메인을 사용자 구성, 프로필 제목, 구독 이름에서 어떻게 부를지 정합니다.<br>🔒 비공개: 종류와 도메인을 드러내지 않는 코드(☁️ CDN K7Q)<br>🫥 가림: 대부분의 글자를 숨김(⚡ h*y.com)<br>🌐 전체 도메인 이름",
+      "description": "별칭이 없는 도메인을 사용자 구성, 프로필 제목, 구독 이름에서 어떻게 부를지 정합니다.<br>🔒 비공개: 종류와 도메인을 드러내지 않는 코드(CDN K7Q)<br>🫥 가림: 대부분의 글자를 숨김(h*y.com)<br>🌐 전체 도메인 이름",
       "full": "🌐 전체 도메인 이름",
       "label": "🏷️ 구성 이름",
-      "masked": "🫥 가림 (⚡ h*y.com)",
-      "private": "🔒 비공개: 종류와 코드 (☁️ CDN K7Q)"
+      "masked": "🫥 가림 (h*y.com)",
+      "private": "🔒 비공개: 종류와 코드 (CDN K7Q)"
     },
     "firewall": {
       "description": "방화벽을 활성화하면 사용 중인 포트(최소 22, 443, 80 및 SSH)를 열고 다른 모든 포트를 닫습니다",

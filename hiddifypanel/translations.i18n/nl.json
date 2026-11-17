@@ -4464,10 +4464,10 @@
     },
     "common_proxy_core": {
       "both": "Beide",
-      "description": "Wanneer een protocol zowel in Xray als in Hiddify Core bestaat, blijft alleen de gekozen core ingeschakeld. Kies Beide om beide te behouden.",
-      "hiddify_core": "Hiddify Core (singbox)",
+      "description": "Wanneer een protocol zowel in XRay als in Hiddify Core bestaat, blijft alleen de gekozen core ingeschakeld. Kies Beide om beide te behouden.",
+      "hiddify_core": "Hiddify Core (Sing-Box)",
       "label": "🎛️ Common Proxy Core",
-      "xray": "Xray"
+      "xray": "XRay"
     },
     "config_health_enable": {
       "description": "Test elke configuratie van het abonnement vanaf de server na een start en elke 6 uur, en waarschuw de beheerders (Telegram) wanneer configuraties niet meer werken. Elke controle verbindt via elke configuratie met de server: sommige hostingproviders zien dat voor een flood aan. “Nu controleren” op het dashboard werkt altijd.",
@@ -4542,11 +4542,11 @@
       "label": "🔒 TLS Domain Fronting"
     },
     "domain_label_mode": {
-      "description": "Hoe een domein zonder alias wordt genoemd in de configuraties van gebruikers, de profieltitel en de abonnementsnaam.<br>🔒 Privé: het soort en een code die het niet verraadt (☁️ CDN K7Q)<br>🫥 Gemaskeerd: de meeste letters verborgen (⚡ h*y.com)<br>🌐 Volledige domeinnaam",
+      "description": "Hoe een domein zonder alias wordt genoemd in de configuraties van gebruikers, de profieltitel en de abonnementsnaam.<br>🔒 Privé: het soort en een code die het niet verraadt (CDN K7Q)<br>🫥 Gemaskeerd: de meeste letters verborgen (h*y.com)<br>🌐 Volledige domeinnaam",
       "full": "🌐 Volledige domeinnaam",
       "label": "🏷️ Configuratienamen",
-      "masked": "🫥 Gemaskeerd (⚡ h*y.com)",
-      "private": "🔒 Privé: soort en code (☁️ CDN K7Q)"
+      "masked": "🫥 Gemaskeerd (h*y.com)",
+      "private": "🔒 Privé: soort en code (CDN K7Q)"
     },
     "firewall": {
       "description": "Het inschakelen van de firewall opent de gebruikte poorten (minimaal 22, 443, 80 en SSH) en sluit alle andere poorten",
