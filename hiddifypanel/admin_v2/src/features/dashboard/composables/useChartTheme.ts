@@ -99,6 +99,15 @@ function watchScroll() {
   scrollWatched = true
   // Capture: the page may scroll inside a layout element, not the window
   document.addEventListener('scroll', () => openTipChart && closeTip(openTipChart), { capture: true, passive: true })
+  // A tap anywhere but on the chart closes its card too (the menu button takes no focus and does not scroll)
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      const holder = openTipChart?.canvas?.parentElement
+      if (openTipChart && !holder?.contains(event.target as Node)) closeTip(openTipChart)
+    },
+    { capture: true, passive: true },
+  )
 }
 
 function domTooltip(above = false) {
