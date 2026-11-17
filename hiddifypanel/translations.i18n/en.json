@@ -4327,6 +4327,8 @@
       "search": "Search name, UUID or note",
       "select": "Select",
       "selectAll": "Select all {n} | Select all {n}",
+      "selectPage": "Select page ({n}) | Select page ({n})",
+      "selectAllUsers": "Select all {n} users | Select all {n} users",
       "selected": "{n} selected | {n} selected",
       "showDates": "Show End Dates",
       "showLink": "Show User Link",
