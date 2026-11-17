@@ -4,7 +4,7 @@
  * end, whether it worked. The log is pushed over the live channel; while the panel restarts (installs restart it at the
  * end) it is read over HTTP from whatever address still answers.
  */
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -12,6 +12,7 @@ import ProgressBar from 'primevue/progressbar'
 import { ACTION_META, adminDomainChanged, LogReader, type AdminLink, type ApplyAction, type LogChunk, type LogSources } from '@/features/apply/api'
 import { liveStream, type Subscription } from '@/core/live/live'
 import TerminalView from '@/features/apply/components/TerminalView.vue'
+import StatusDetails from '@/features/apply/components/StatusDetails.vue'
 import { AnsiParser, type AnsiSpan } from '@/shared/utils/ansi'
 
 const props = defineProps<{ action: ApplyAction; file: string; started: number; sources: LogSources }>()
@@ -26,6 +27,20 @@ const progress = ref<LogChunk['progress']>(null)
 const elapsed = ref(0)
 const reconnecting = ref(false)
 const showLog = ref(false) // the log opens only when asked
+// Check Status: its details (cards) and, below them, its raw log
+const showRaw = ref(false)
+const detailsEl = ref<HTMLElement | null>(null)
+const plainText = computed(() => spans.value.map((s) => s.text).join(''))
+/** Opens (or closes) the status details; opening glides the page down to them. */
+async function toggleDetails() {
+  showLog.value = !showLog.value
+  if (!showLog.value) return
+  await nextTick()
+  const el = detailsEl.value
+  if (!el) return
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 96, behavior: reduce ? 'auto' : 'smooth' })
+}
 
 const parser = new AnsiParser()
 const MAX_SPANS = 6000
@@ -241,12 +256,52 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <Button class="run__toggle" :label="showLog ? t('apply.log.hide') : t('apply.log.show')" :icon="showLog ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" text size="small" severity="secondary" @click="showLog = !showLog" />
-    <TerminalView v-show="showLog" :spans="spans" :height="phase === 'done' ? '18rem' : '22rem'" />
+    <!-- Check Status: its log drawn as cards (StatusDetails), the raw log one tap away below them -->
+    <template v-if="action === 'status'">
+      <Button
+        class="run__toggle"
+        :label="showLog ? t('apply.details.hide') : t('apply.details.show')"
+        :icon="showLog ? 'pi pi-chevron-up' : 'pi pi-sparkles'"
+        text
+        size="small"
+        severity="secondary"
+        @click="toggleDetails"
+      />
+      <Transition name="run-details">
+        <div v-if="showLog" ref="detailsEl" class="run__details">
+          <StatusDetails :text="plainText" />
+          <Button class="run__toggle run__raw" :label="showRaw ? t('apply.log.hide') : t('apply.details.rawLog')" :icon="showRaw ? 'pi pi-chevron-up' : 'pi pi-align-left'" text size="small" severity="secondary" @click="showRaw = !showRaw" />
+          <TerminalView v-show="showRaw" :spans="spans" height="18rem" />
+        </div>
+      </Transition>
+    </template>
+    <template v-else>
+      <Button class="run__toggle" :label="showLog ? t('apply.log.hide') : t('apply.log.show')" :icon="showLog ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" text size="small" severity="secondary" @click="showLog = !showLog" />
+      <TerminalView v-show="showLog" :spans="spans" :height="phase === 'done' ? '18rem' : '22rem'" />
+    </template>
   </section>
 </template>
 
 <style scoped>
+/* the status details open smoothly: they fade and grow in */
+.run-details-enter-active {
+  transition:
+    opacity 0.4s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.run-details-leave-active {
+  transition: opacity 0.2s ease;
+}
+.run-details-enter-from {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.run-details-leave-to {
+  opacity: 0;
+}
+.run__raw {
+  margin-top: 0.5rem;
+}
 .run {
   display: flex;
   flex-direction: column;

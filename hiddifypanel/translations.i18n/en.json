@@ -730,6 +730,27 @@
       },
       "busyOutside": "Something is running on the server right now.",
       "lastRun": "Last run {when}",
+      "details": {
+        "show": "Show Details",
+        "hide": "Hide Details",
+        "title": "Server status",
+        "rawLog": "Show Raw Log",
+        "allRunning": "All Services Running",
+        "someDown": "{n} Service Down | {n} Services Down",
+        "runningOf": "{n} of {total} running",
+        "publicAddress": "Public Address",
+        "warpNoNetwork": "WARP is on, but its network did not answer.",
+        "services": "Services",
+        "nothing": "Nothing to show yet: the status is still being checked.",
+        "state": {
+          "active": "Running",
+          "inactive": "Stopped",
+          "failed": "Failed",
+          "activating": "Starting",
+          "deactivating": "Stopping",
+          "reloading": "Reloading"
+        }
+      },
       "log": {
         "clear": "Clear",
         "clearConfirm": "Empty \"{name}\"? Its text is deleted from the server.",

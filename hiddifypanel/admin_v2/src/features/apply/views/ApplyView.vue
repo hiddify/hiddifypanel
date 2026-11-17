@@ -182,18 +182,46 @@ function ask(key: ApplyAction) {
 }
 
 /** Jump to the absolute top of the page so the run panel (under the title) is on screen after a click far down. */
+/** The glide to the top under way, if any: showRunPanel runs twice when an action starts (the click, then the
+ *  running-action check); a second call joins the glide instead of starting a rival one. */
+let gliding = false
 function showRunPanel() {
+  if (gliding) return
   void nextTick(() => {
-    // Instant: smooth scrollIntoView on .ap-run stopped short (left PageHeader above the fold).
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-    document.documentElement.scrollTop = 0
-    document.body.scrollTop = 0
-    // If a layout ancestor is the real scroller, reset that too.
+    // The page's scroller: the window, or a layout ancestor that scrolls itself
+    let box: HTMLElement | null = null
     for (let el = document.querySelector('.ap-page')?.parentElement; el; el = el.parentElement) {
       if (!(el instanceof HTMLElement)) continue
       const oy = getComputedStyle(el).overflowY
-      if ((oy === 'auto' || oy === 'scroll') && el.scrollTop) el.scrollTop = 0
+      if ((oy === 'auto' || oy === 'scroll') && el.scrollTop) box = el
     }
+    const read = () => (box ? box.scrollTop : window.scrollY)
+    const write = (y: number) => (box ? (box.scrollTop = y) : window.scrollTo(0, y))
+    if (read() <= 0) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return void write(0)
+    gliding = true
+    // A glide of our own, frame by frame: the browser's smooth scroll stopped short while the run panel appeared
+    // above (the page moved under it). Each frame sets where the page should be, so it always ends at the top.
+    const ease = (x: number) => 1 - Math.pow(1 - x, 3)
+    // where it starts is read in the first frame, once the run panel above is laid out
+    let from = 0
+    let duration = 0
+    // the glide's own clock: a frame moves it at most 20ms on, so a slow frame (the run panel being built) pauses
+    // the glide for a moment instead of making it leap
+    let clock = 0
+    let last = 0
+    const step = (now: number) => {
+      if (!last) {
+        from = read()
+        duration = Math.min(700, 300 + from * 0.25)
+      } else clock += Math.min(now - last, 20)
+      last = now
+      const p = duration ? Math.min(1, clock / duration) : 1
+      write(Math.round(from * (1 - ease(p))))
+      if (p < 1) return void requestAnimationFrame(step)
+      gliding = false
+    }
+    requestAnimationFrame(step)
   })
 }
 
