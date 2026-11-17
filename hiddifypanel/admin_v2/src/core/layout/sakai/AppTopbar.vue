@@ -4,7 +4,8 @@ import { useI18n } from 'vue-i18n'
 import { syncThemeColor, useLayout } from './composables/layout'
 import AppearanceMenu from './AppearanceMenu.vue'
 import NotificationsMenu from './NotificationsMenu.vue'
-import { getPanelLogoUrl, getPanelVersion } from '@/core/panel-branding'
+import { getPanelVersion } from '@/core/panel-branding'
+import HiddifyLogo from '@/shared/components/HiddifyLogo.vue'
 import { isChildPanel, submitPostForm } from '@/core/panelShell'
 import { getRouterBase } from '@/core/api/client'
 
@@ -19,7 +20,6 @@ function signOut() {
   const here = window.location.pathname + window.location.search + window.location.hash
   submitPostForm(`${getRouterBase().replace(/admin\/v2\/?$/, '')}logout/?next=${encodeURIComponent(here)}`)
 }
-const panelLogoUrl = computed(() => getPanelLogoUrl())
 
 /** The panel's name only when it fits whole: where it would end in "…" (a narrow phone), only the logo stays. */
 const topbarEl = ref<HTMLElement | null>(null)
@@ -51,13 +51,8 @@ watch(() => t('appTitle'), () => nextTick(fitName))
         <i class="pi pi-bars" />
       </button>
       <router-link to="/" class="layout-topbar-logo" :aria-label="t('appTitle')">
-        <img
-          v-if="panelLogoUrl"
-          :src="panelLogoUrl"
-          alt="Hiddify"
-          class="layout-topbar-logo-image"
-        />
-        <i v-else class="pi pi-shield" />
+        <!-- the hexagon app icon, its ring and logo in the theme's colour -->
+        <HiddifyLogo class="layout-topbar-logo-hex" />
         <span ref="logoTextEl" class="layout-topbar-logo-text">
           <span ref="titleEl" class="layout-topbar-title">{{ t('appTitle') }}</span>
           <span v-if="panelVersion" class="layout-topbar-version ltr">{{ panelVersion }}</span>
