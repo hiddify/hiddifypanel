@@ -64,6 +64,13 @@ const TEXTS = __TEXTS__, RTL = ['fa', 'ar', 'ur', 'ps'];
   const fail = (text) => { document.getElementById('s').remove(); msg.className = 'err'; msg.textContent = text; };
   if (!tg || !tg.initData) return fail(L.open_in_bot);
   tg.ready(); tg.expand();
+  // On a phone the panel (or the person's page) opens full screen; this tab is marked as opened from Telegram, so
+  // the next page can fit Telegram's buttons without any of Telegram's data in its address
+  try { sessionStorage.setItem('hiddify.tg', '1'); } catch (e) {}
+  const phone = tg.platform === 'ios' || tg.platform === 'android';
+  if (phone && tg.isVersionAtLeast && tg.isVersionAtLeast('8.0') && tg.requestFullscreen && !tg.isFullscreen) {
+    try { tg.requestFullscreen(); } catch (e) {}
+  }
   try {
     const res = await fetch('login/', {method: 'POST', credentials: 'same-origin',
       headers: {'Content-Type': 'application/json'}, body: JSON.stringify({init_data: tg.initData})});

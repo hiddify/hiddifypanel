@@ -72,6 +72,11 @@ class DestinationTests(unittest.TestCase):
         self.assertEqual((kind, account), ("none", None))
         self.assertNotIn("redirect", answer)
 
+    def test_the_page_asks_for_full_screen_on_a_phone_and_marks_the_tab(self):
+        self.assertIn("sessionStorage.setItem('hiddify.tg', '1')", webapp.PAGE)
+        self.assertIn("tg.requestFullscreen()", webapp.PAGE)
+        self.assertIn("tg.platform === 'ios' || tg.platform === 'android'", webapp.PAGE)
+
     def test_the_page_passes_telegrams_data_only_where_allowed(self):
         self.assertIn("body.keep_telegram ? body.redirect.split('#')[0] + location.hash : body.redirect", webapp.PAGE)
 
