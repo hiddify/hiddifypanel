@@ -361,7 +361,8 @@ export function useChartTheme() {
             callback: (value: number | string, index: number, ticks: { value: number }[]) => {
               const label = format(Number(value))
               const before = index > 0 ? format(Number(ticks[index - 1]?.value)) : undefined
-              return label === before ? '' : label
+              // Isolated left-to-right: in a right-to-left page the canvas would turn "5.00 Mb/s" into "Mb/s 5.00"
+              return label === before ? '' : `\u2066${label}\u2069`
             },
           },
         },
