@@ -6,7 +6,8 @@
 - reverse DNS: this server's resolver;
 - Tor exit: the Tor Project's Onionoo service (its data is CC0);
 - hosting / datacenter networks: brianhama/bad-asn-list (MIT), plus the AS name;
-- the company's logo: the favicon of the company's own website.
+- the company's logo: the favicon of the company's own website (its SVG icon when it has one); the admin UI draws
+  well-known companies' logos as vectors of its own.
 
 An address's answer is kept 7 days (``TTL``), so opening the sheet again does not ask anyone; the lists and the
 registries' bootstrap files are kept as long.
@@ -210,7 +211,7 @@ _ICON_LINK = re.compile(r"<link\b[^>]*>", re.I)
 
 
 def _icon_links(domain: str) -> list[str]:
-    """The icons the website's home page names (<link rel="icon" / "apple-touch-icon">), the biggest first."""
+    """The icons the website's home page names (<link rel="icon" / "apple-touch-icon">), a vector one first, then the biggest."""
     try:
         res = requests.get(f"https://{domain}/", timeout=6, headers={"User-Agent": "Mozilla/5.0 (HiddifyPanel)"}, stream=True)
         html = res.raw.read(300_000, decode_content=True).decode(errors="ignore") if res.ok else ""
@@ -224,6 +225,9 @@ def _icon_links(domain: str) -> list[str]:
             continue
         sizes = re.search(r'sizes=["\'](\d+)', tag, re.I)
         size = int(sizes.group(1)) if sizes else (180 if "apple" in rel.group(1).lower() else 32)
+        # a vector icon is sharp at any size: before every bitmap
+        if re.search(r'type=["\']image/svg', tag, re.I) or re.search(r"\.svg(\?|#|$)", href.group(1), re.I):
+            size = 10_000
         found.append((size, urljoin(res.url, href.group(1))))
     return [url for _, url in sorted(found, key=lambda x: -x[0])]
 
