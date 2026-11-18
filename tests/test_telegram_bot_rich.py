@@ -48,6 +48,8 @@ class SmartDateAndDisabledTests(unittest.TestCase):
         noon = int(datetime.datetime(2026, 12, 10, 12, 0).timestamp())
         self.assertIn(f'unix="{noon}"', ui.tg_time(datetime.date(2026, 12, 10), "D", "2026-12-10"))  # a day alone: at noon
         self.assertEqual(ui.tg_time(None, "D", "<x>"), "&lt;x&gt;")
+        far = datetime.datetime.now() + datetime.timedelta(days=10 * 365)  # a 10-year package: Telegram refuses that
+        self.assertEqual(ui.tg_time(far, "D", "2036-10-27"), "2036-10-27")
 
     def test_a_disabled_button_greyed_out_in_both_forms(self):
         from hiddifypanel.panel.commercial.telegrambot import ui
@@ -62,11 +64,13 @@ class GuardTests(unittest.TestCase):
     def setUp(self):
         self.calls = []
         self.refuse = set()
+        self.refuse_code = 400
 
         def request(token, method_name, method="get", params=None, files=None):
             self.calls.append((method_name, params))
             if method_name in self.refuse:
-                raise apihelper.ApiTelegramException(method_name, None, {"error_code": 400, "description": "Bad Request: refused"})
+                code = self.refuse_code
+                raise apihelper.ApiTelegramException(method_name, None, {"error_code": code, "description": "Not Found: method not found" if code == 404 else "Bad Request: RICH_MESSAGE_DATE_INVALID"})
             return {"message_id": 9, "chat": {"id": 5}}
 
         for p in (mock.patch.object(apihelper, "_make_request", request), mock.patch.object(rich, "_off", lambda: False), mock.patch.object(rich, "_turn_off")):
@@ -84,11 +88,14 @@ class GuardTests(unittest.TestCase):
         self.assertIn('style="primary">Go</tg-button>', json.loads(params["rich_message"])["html"])
 
     def test_refused_it_goes_classic_without_blue(self):
-        self.refuse = {"sendRichMessage"}
+        self.refuse = {"sendRichMessage"}  # refused for what it holds: this message only
         apihelper._make_request("t", "sendMessage", "post", {"chat_id": 5, "text": "Hi", "reply_markup": self.keys})
         method, params = self.calls[-1]
         self.assertEqual(method, "sendMessage")
         self.assertNotIn("style", json.loads(params["reply_markup"])["inline_keyboard"][0][0])  # blue on blue: none
+        rich._turn_off.assert_not_called()
+        self.refuse_code = 404  # Telegram does not know rich messages: off for a while
+        apihelper._make_request("t", "sendMessage", "post", {"chat_id": 5, "text": "Hi", "reply_markup": self.keys})
         rich._turn_off.assert_called_once()
 
     def test_an_older_classic_message_is_edited_classic(self):

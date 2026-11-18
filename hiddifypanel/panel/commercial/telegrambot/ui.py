@@ -119,6 +119,10 @@ def off_btn(text: str, style: Style | None = None) -> types.InlineKeyboardButton
     return types.InlineKeyboardButton(disabled=types.DisabledButton(), **_decorated(text, style))
 
 
+#: Telegram takes smart dates up to about 3 years ahead (5 years: RICH_MESSAGE_DATE_INVALID); later ones stay text
+SMART_DATE_AHEAD = datetime.timedelta(days=3 * 365)
+
+
 def tg_time(moment: datetime.datetime | datetime.date | None, fmt: str, text: str) -> str:
     """A date or time each person sees in their own language and time zone (Telegram's date_time entity). ``fmt``:
     r relative ("2 hours ago"), or any of w (weekday), d / D (short / long date), t / T (short / long time). ``text``
@@ -127,6 +131,8 @@ def tg_time(moment: datetime.datetime | datetime.date | None, fmt: str, text: st
         return h(text)
     if not isinstance(moment, datetime.datetime):
         moment = datetime.datetime.combine(moment, datetime.time(12))
+    if moment > datetime.datetime.now() + SMART_DATE_AHEAD:  # Telegram refuses a date that far (a 10-year package)
+        return h(text)
     return f'<tg-time unix="{int(moment.timestamp())}" format="{fmt}">{h(text)}</tg-time>'
 
 

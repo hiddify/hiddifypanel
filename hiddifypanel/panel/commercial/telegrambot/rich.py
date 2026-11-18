@@ -125,6 +125,12 @@ def _off() -> bool:
         return False
 
 
+def _refuses_rich(error: object) -> bool:
+    """Telegram does not know rich messages at all (an older self-hosted Bot API server): only then they go off for a
+    while. A message refused for what it holds (a date too far, a button) just goes classic itself."""
+    return getattr(error, "error_code", None) == 404 or "method not found" in str(error).lower()
+
+
 def _turn_off(reason: object) -> None:
     logger.warning(f"tgbot: Telegram refused a rich message ({reason}); classic keyboards for an hour")
     try:
@@ -174,7 +180,10 @@ def send_card(chat_id: int, text: str, markup: dict[str, Any] | None, png: bytes
     except apihelper.ApiTelegramException as e:
         if effect and "effect" in str(e).lower():  # no confetti here: the card all the same
             return send_card(chat_id, text, markup, png)
-        _turn_off(e)
+        if _refuses_rich(e):
+            _turn_off(e)
+        else:
+            logger.info(f"tgbot: this card went classic ({e})")
         return None
 
 
@@ -244,8 +253,10 @@ def install() -> None:
         except apihelper.ApiTelegramException as e:
             if "not modified" in str(e):
                 raise
-            if method_name == "sendMessage":
+            if method_name == "sendMessage" and _refuses_rich(e):
                 _turn_off(e)
+            elif method_name == "sendMessage":
+                logger.info(f"tgbot: this message went classic ({e})")
             else:  # an older (classic) message cannot become rich in place: edit it as it is
                 logger.debug(f"tgbot: rich edit refused ({e}); classic edit")
             return original(token, method_name, method, classic(params), files)
