@@ -51,6 +51,8 @@ def _style(button: dict[str, Any]) -> str | None:
     style = button.get("style")
     if style in ("success", "danger", "primary"):
         return style
+    if "disabled" in button:
+        return None
     if "callback_data" in button:
         return "link"
     if "url" in button:
@@ -62,7 +64,9 @@ def button_html(button: dict[str, Any]) -> str | None:
     """One inline keyboard button as a rich <tg-button>, or None for a kind rich buttons do not take."""
     label = html.escape(str(button.get("text") or ""), quote=False)
     attrs: list[tuple[str, str]]
-    if "callback_data" in button:
+    if "disabled" in button:  # greyed out, does nothing
+        attrs = [("type", "disabled")]
+    elif "callback_data" in button:
         attrs = [("type", "callback_data"), ("data", button["callback_data"])]
     elif "url" in button:
         attrs = [("type", "url"), ("url", button["url"])]

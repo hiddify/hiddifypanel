@@ -14,7 +14,7 @@ import hiddifypanel
 from hiddifypanel.models import AdminMode, DailyUsage
 
 from .texts import T
-from .ui import RULE, Cb, Ctx, Screen, bar, btn, duration, fmt_bytes, fmt_gb, h, keyboard, level_dot, route
+from .ui import RULE, bar, btn, Cb, Ctx, duration, fmt_bytes, fmt_gb, h, keyboard, level_dot, route, Screen, tg_time
 
 
 def _meter(label: str, percent: float, detail: str) -> list[str]:
@@ -141,7 +141,8 @@ def status_screen(ctx: Ctx) -> Screen:
             logger.warning(f"tgbot: system stats failed: {e}")
         lines += ["", *_services_lines(ctx), ""]
     lines += _users_lines(ctx)
-    lines.append(f"<i>{ctx.tr(T.updated_at, time=datetime.datetime.now().strftime('%H:%M:%S'))}</i>")
+    now = datetime.datetime.now()
+    lines.append(f"<i>{ctx.tr(T.updated_at, time=tg_time(now, 'T', now.strftime('%H:%M:%S')))}</i>")
     return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.status), btn(ctx.tr(T.back), Cb.back)]))
 
 

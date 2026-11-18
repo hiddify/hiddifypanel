@@ -75,9 +75,9 @@ class LanguageScreenTests(unittest.TestCase):
         screen = settings.language_screen(ctx("fa", user=SimpleNamespace()))
         buttons = self.buttons(screen)
         self.assertFalse([b for b in buttons if b.get("style")])  # no blue: unreadable in some themes
-        marked = [b["callback_data"] for b in buttons if b["text"].startswith(ui.SELECTED)]
-        self.assertEqual(marked, ["lg:fa"])
-        self.assertEqual({b["callback_data"] for b in buttons if b["callback_data"].startswith("lg:")}, {f"lg:{c}" for c in texts.LANGUAGES})
+        marked = [b for b in buttons if b["text"].startswith(ui.SELECTED)]
+        self.assertEqual([("disabled" in b, b["text"]) for b in marked], [(True, ui.SELECTED + texts.LANGUAGES["fa"])])  # the one spoken: greyed out
+        self.assertEqual({b["callback_data"] for b in buttons if b.get("callback_data", "").startswith("lg:")}, {f"lg:{c}" for c in texts.LANGUAGES if c != "fa"})
         self.assertEqual(buttons[-1]["callback_data"], "bb")  # one step back (to settings)
 
     def test_back_is_one_step_for_an_admin_and_nowhere_for_a_stranger(self):

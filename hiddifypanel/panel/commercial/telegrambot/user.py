@@ -13,7 +13,7 @@ from hiddifypanel.models import User
 from . import accounts, bot
 from .accounts import Status
 from .texts import T, t
-from .ui import BRAND, Cb, Ctx, Screen, Style, ago, app_row, bar, btn, can_open_as_app, fmt_gb, h, keyboard, route, url_btn
+from .ui import BRAND, ago, ago_html, app_row, bar, btn, can_open_as_app, Cb, Ctx, fmt_gb, h, keyboard, route, Screen, Style, tg_time, url_btn
 
 _STATUS_TEXT: dict[Status, T] = {
     Status.active: T.status_active,
@@ -49,7 +49,7 @@ def account_card(user: User, lang: str, *, note: str | None = None) -> str:
         time = [
             f"⏳ <b>{t(T.time, lang)}</b>",
             f"<code>{bar(left / days_total if days_total else 0, BAR)}</code>  <b>{round(left / days_total * 100) if days_total else 0}%</b>",
-            t(T.days_left, lang, left=left, total=days_total, date=end.isoformat()),
+            t(T.days_left, lang, left=left, total=days_total, date=tg_time(end, "D", end.isoformat())),
         ]
 
     lines = [f"✨ <b>{h(user.name)}</b>", head, "", "<blockquote>" + "\n".join(data) + "\n\n" + "\n".join(time) + "</blockquote>"]
@@ -57,7 +57,7 @@ def account_card(user: User, lang: str, *, note: str | None = None) -> str:
     if isinstance(reset, int) and 0 <= reset < 500 and user.mode != "no_reset":
         lines.append(f"🔁 {t(T.resets_in, lang, n=reset)}")
     if not online:
-        lines.append(f"🕒 {t(T.last_online, lang)}  ·  {ago(user.last_online, lang)}")
+        lines.append(f"🕒 {t(T.last_online, lang)}  ·  {ago_html(user.last_online, lang)}")
     links = accounts.links(user)
     lines += ["", f'🔗 <a href="{h(links.page)}">{t(T.link_home, lang)}</a>  ·  <a href="{h(links.sub)}">{t(T.link_sub, lang)}</a>']
     if note:

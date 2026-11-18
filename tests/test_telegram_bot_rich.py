@@ -37,6 +37,27 @@ class BodyTests(unittest.TestCase):
         self.assertIsNone(rich.rich_html("x", {"inline_keyboard": [[{"text": "Pay", "pay": True}]]}))
 
 
+class SmartDateAndDisabledTests(unittest.TestCase):
+    def test_a_smart_date(self):
+        import datetime
+
+        from hiddifypanel.panel.commercial.telegrambot import ui
+
+        moment = datetime.datetime(2026, 11, 18, 9, 30)
+        self.assertEqual(ui.tg_time(moment, "t", "09:30"), f'<tg-time unix="{int(moment.timestamp())}" format="t">09:30</tg-time>')
+        noon = int(datetime.datetime(2026, 12, 10, 12, 0).timestamp())
+        self.assertIn(f'unix="{noon}"', ui.tg_time(datetime.date(2026, 12, 10), "D", "2026-12-10"))  # a day alone: at noon
+        self.assertEqual(ui.tg_time(None, "D", "<x>"), "&lt;x&gt;")
+
+    def test_a_disabled_button_greyed_out_in_both_forms(self):
+        from hiddifypanel.panel.commercial.telegrambot import ui
+
+        with mock.patch("hiddifypanel.panel.commercial.telegrambot.icons.enabled", lambda: False):
+            button = ui.off_btn("2 / 5").to_dict()
+        self.assertEqual(button, {"text": "2 / 5", "disabled": {}})
+        self.assertEqual(rich.button_html(button), '<tg-button type="disabled">2 / 5</tg-button>')
+
+
 class GuardTests(unittest.TestCase):
     def setUp(self):
         self.calls = []

@@ -17,7 +17,7 @@ from hiddifypanel.models.message import Conversation, FreeStatus, Sender
 from . import bot
 from . import user as user_screens
 from .texts import T, t
-from .ui import BRAND, RULE, Cb, Ctx, Screen, Style, btn, fmt_data, h, keyboard, lang_of, route, send_card
+from .ui import BRAND, RULE, btn, Cb, Ctx, fmt_data, h, keyboard, lang_of, off_btn, route, Screen, send_card, Style
 
 #: Messages a chat may send to an admin per minute.
 RATE_PER_MINUTE = 10
@@ -55,9 +55,9 @@ def offer_screen(conv: Conversation, lang: str) -> Screen:
         "",
     ]
     if conv.free_status == FreeStatus.pending:
-        return Screen("\n".join([*head, f"⏳ <b>{t(T.free_pending, lang)}</b>", t(T.free_wait, lang)]), keyboard([btn(t(T.refresh, lang), Cb.free, conv.id)], [write]))
-    if not free_test.can_ask(conv):
-        return Screen("\n".join([*head, f"✖️ {t(T.free_declined, lang)}"]), keyboard([write]))
+        return Screen("\n".join([*head, f"⏳ <b>{t(T.free_pending, lang)}</b>", t(T.free_wait, lang)]), keyboard([off_btn(f"⏳ {t(T.free_pending, lang)}")], [btn(t(T.refresh, lang), Cb.free, conv.id)], [write]))
+    if not free_test.can_ask(conv):  # the offer is there, closed for this chat
+        return Screen("\n".join([*head, f"✖️ {t(T.free_declined, lang)}"]), keyboard([off_btn(t(T.free_get, lang))], [write]))
     if not free_test.is_first_time(conv):
         rows = [[btn(t(T.free_again, lang), Cb.free_ask, conv.id, style=Style.primary)], [write]]
         if free_test.has_account(conv.telegram_id):

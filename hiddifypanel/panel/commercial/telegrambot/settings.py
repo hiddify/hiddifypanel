@@ -12,7 +12,7 @@ from hiddifypanel.models import AdminUser, Lang, User
 
 from . import bot
 from .texts import LANGUAGES, T, supported, t
-from .ui import SELECTED, Cb, Ctx, Screen, Style, btn, keyboard, lang_of, route
+from .ui import SELECTED, btn, Cb, Ctx, keyboard, lang_of, off_btn, route, Screen, Style
 
 _CHAT_LANG = "tgbot:lang:{}"
 _CHAT_LANG_TTL = 180 * 24 * 3600
@@ -47,7 +47,7 @@ def person_lang(chat_id: int, account: AdminUser | User | None = None) -> str:
 
 def language_screen(ctx: Ctx) -> Screen:
     """Every language in its own name, two to a row; the one spoken now is blue."""
-    buttons = [btn(SELECTED + name if code == ctx.lang else name, Cb.lang, code) for code, name in LANGUAGES.items()]
+    buttons = [off_btn(SELECTED + name) if code == ctx.lang else btn(name, Cb.lang, code) for code, name in LANGUAGES.items()]
     rows = [buttons[i : i + 2] for i in range(0, len(buttons), 2)]
     back = Cb.back if (ctx.admin or ctx.user) else None
     if back:

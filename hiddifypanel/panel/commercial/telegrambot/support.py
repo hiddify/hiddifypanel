@@ -26,7 +26,7 @@ from hiddifypanel.models.message import Conversation, Message, Sender
 
 from . import bot
 from .texts import T, t
-from .ui import Cb, Ctx, Screen, Style, btn, h, keyboard, lang_of, route
+from .ui import btn, Cb, Ctx, h, keyboard, lang_of, route, Screen, Style, tg_time
 
 #: A message's receipt can still change this long after it was sent.
 _PENDING_TTL = 7 * 24 * 3600
@@ -183,7 +183,7 @@ def _day_items(messages: list[Message], lang: str) -> list[tuple[datetime.date |
         body = h((m.text or "").strip())
         if len(body) > 600:
             body = body[:600] + "…"
-        items.append((m.created_at.date() if m.created_at else None, f"<b>{who}</b> · {m.created_at.strftime('%H:%M') if m.created_at else ''}\n{body}"))
+        items.append((m.created_at.date() if m.created_at else None, f"<b>{who}</b> · {tg_time(m.created_at, 't', m.created_at.strftime('%H:%M')) if m.created_at else ''}\n{body}"))
     return items
 
 

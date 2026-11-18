@@ -12,7 +12,7 @@ from hiddifypanel.models import User
 from hiddifypanel.models.message import Conversation, Message, Sender
 
 from .texts import T
-from .ui import Cb, Ctx, Screen, Style, btn, h, keyboard, route
+from .ui import btn, Cb, Ctx, h, keyboard, route, Screen, Style, tg_time
 
 PAGE_SIZE = 8
 #: A history page stays well under Telegram's 4096 characters.
@@ -23,7 +23,9 @@ _MARK = {"fa": "‏", "ar": "‏", "ur": "‏", "ps": "‏"}
 def _when(moment: datetime.datetime | None) -> str:
     if not moment:
         return ""
-    return moment.strftime("%H:%M") if moment.date() == datetime.date.today() else moment.strftime("%m-%d")
+    if moment.date() == datetime.date.today():
+        return tg_time(moment, "t", moment.strftime("%H:%M"))
+    return tg_time(moment, "d", moment.strftime("%m-%d"))
 
 
 def _iso(text: str) -> str:
@@ -84,7 +86,7 @@ def day_pages(items: list[tuple[datetime.date | None, str]], page_chars: int = P
         days[-1][1].append(bubble)
 
     def block(day: datetime.date | None, bubbles: list[str]) -> str:
-        head = f"📅 <b>{day.isoformat()}</b>" if day else "📅"
+        head = f"📅 <b>{tg_time(day, 'wD', day.isoformat())}</b>" if day else "📅"
         return f"{head}\n<blockquote expandable>" + "\n\n".join(bubbles) + "</blockquote>"
 
     pages: list[str] = []
@@ -130,7 +132,7 @@ def _bubble(conv: Conversation, m: Message, tr) -> str:
     body = f"<i>{tr(kind)}</i>" if kind else h((m.text or "").strip())
     if len(body) > 600:
         body = body[:600] + "…"
-    at = m.created_at.strftime("%H:%M") if m.created_at else ""
+    at = tg_time(m.created_at, "t", m.created_at.strftime("%H:%M")) if m.created_at else ""
     return f"<b>{who}</b> · {at}\n{body}"
 
 

@@ -10,6 +10,13 @@ from hiddifypanel.panel.commercial.telegrambot import admin, bandwidth, broadcas
 from hiddifypanel.panel.commercial.telegrambot.texts import T, t
 
 
+
+def plain(text):
+    """The text as an older app shows it: a smart date's own text."""
+    import re
+
+    return re.sub(r"<tg-time [^>]*>(.*?)</tg-time>", r"\1", text)
+
 class FakeState:
     def __init__(self, **values):
         self.values = dict(values)
@@ -263,6 +270,8 @@ class ConversationTests(unittest.TestCase):
         ]
         conv = SimpleNamespace(name="Sara", messages=msgs)
         (page,) = chats.conversation_pages(conv, "en", lambda key, **kw: t(key, "en", **kw))
+        self.assertIn('<tg-time unix="', page)  # dates and times each person sees in their own zone
+        page = plain(page)
         self.assertEqual(page.count("<blockquote expandable>"), 2)
         day_two = page.split("📅 <b>2026-11-17</b>\n<blockquote expandable>")[1]
         self.assertTrue(day_two.split("\n")[1].startswith("first of day two"))  # the box opens with the day's first message
@@ -275,7 +284,7 @@ class ConversationTests(unittest.TestCase):
         msgs = [SimpleNamespace(sender="user", kind="text", text="x" * 500, created_at=day) for _ in range(20)]
         pages = chats.conversation_pages(SimpleNamespace(name="A", messages=msgs), "en", lambda key, **kw: t(key, "en", **kw))
         self.assertGreater(len(pages), 1)
-        self.assertTrue(all(p.startswith("📅 <b>2026-11-17</b>") and len(p) < 4000 for p in pages))
+        self.assertTrue(all(plain(p).startswith("📅 <b>2026-11-17</b>") and len(p) < 4000 for p in pages))
 
 
 class MainAppTests(Base):

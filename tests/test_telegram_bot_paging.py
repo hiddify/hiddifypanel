@@ -122,7 +122,8 @@ class PagerTests(unittest.TestCase):
             self.assertEqual(labels(3, 6), ["«", "‹", "4 / 6", "›", "»"])
             self.assertEqual(labels(5, 6), ["«", "‹", "6 / 6"])
             sorted_ = [b.callback_data for b in admin._pager(ui.Cb.users, ["a"], 1, 3, ["u"])]
-            self.assertEqual(sorted_, ["ul:a:0:u", "ul:a:1:u", "ul:a:2:u"])  # the order stays when paging
+            self.assertEqual(sorted_, ["ul:a:0:u", None, "ul:a:2:u"])  # the order stays when paging; the page shown does nothing
+            self.assertIn("disabled", admin._pager(ui.Cb.users, ["a"], 1, 3, ["u"])[1].to_dict())
 
 
 class ListTests(unittest.TestCase):

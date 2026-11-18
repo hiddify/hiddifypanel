@@ -18,7 +18,7 @@ from hiddifypanel.models import AdminUser
 from . import bot
 from .chart import _FONTS
 from .texts import T
-from .ui import SELECTED, Cb, Ctx, Screen, btn, chat_action, fmt_bytes, keyboard, route, show_picture
+from .ui import SELECTED, btn, Cb, chat_action, Ctx, fmt_bytes, keyboard, off_btn, route, Screen, show_picture, tg_time
 
 #: period → (how many slots, hours or days)
 PERIODS: dict[str, tuple[int, str]] = {"h24": (24, "h"), "d7": (7, "d"), "d15": (15, "d"), "d30": (30, "d")}
@@ -233,7 +233,8 @@ def caption(ctx: Ctx, series: Series) -> str:
             lines.append(f"<i>{ctx.tr(T.bw_hours_note)}</i>")
         return "\n".join(lines)
     peak_i = max(range(len(totals)), key=totals.__getitem__)
-    when = series.slots[peak_i].when.strftime("%H:%M" if hours else "%Y-%m-%d")
+    peak_at = series.slots[peak_i].when
+    when = tg_time(peak_at, "t", peak_at.strftime("%H:%M")) if hours else tg_time(peak_at.date(), "D", peak_at.strftime("%Y-%m-%d"))
     lines += [
         f"📦 {ctx.tr(T.chart_total)}: <b>{fmt_bytes(total, ctx.lang)}</b>",
         f"〰️ {ctx.tr(T.bw_avg_hour if hours else T.chart_avg)}: <b>{fmt_bytes(total / len(totals), ctx.lang)}</b>",
@@ -253,7 +254,7 @@ def caption(ctx: Ctx, series: Series) -> str:
 
 
 def _markup(ctx: Ctx, period: str) -> types.InlineKeyboardMarkup:
-    tabs = [btn((SELECTED if key == period else "") + ctx.tr(_PERIOD_TEXT[key]), Cb.bandwidth, key, "r") for key in PERIODS]
+    tabs = [off_btn(SELECTED + ctx.tr(_PERIOD_TEXT[key])) if key == period else btn(ctx.tr(_PERIOD_TEXT[key]), Cb.bandwidth, key, "r") for key in PERIODS]
     return keyboard(tabs[:2], tabs[2:], [btn(ctx.tr(T.refresh), Cb.bandwidth, period, "r"), btn(ctx.tr(T.back), Cb.back)])
 
 

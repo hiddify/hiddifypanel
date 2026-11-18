@@ -16,7 +16,7 @@ from hiddifypanel.models import AdminUser, ConfigEnum, User, hconfig
 
 from . import bot, doctor
 from .texts import T, t
-from .ui import Cb, Style, btn, h, keyboard, lang_of, with_retry
+from .ui import btn, Cb, h, keyboard, lang_of, Style, tg_time, with_retry
 
 #: A service down this long is an outage (an Apply or a restart takes less).
 GRACE = 5 * 60
@@ -77,7 +77,8 @@ def _declare(units: tuple[str, ...], since: float) -> None:
 
     redis_client.set(_ON, json.dumps({"since": since, "units": list(units)}), ex=_KEEP)
     told: list[int] = []
-    when = datetime.datetime.fromtimestamp(since).strftime("%H:%M")
+    since_at = datetime.datetime.fromtimestamp(since)
+    when = tg_time(since_at, "t", since_at.strftime("%H:%M"))
     for admin in _admins():
         lang = lang_of(admin, admin=True)
         text = f"🚨 {t(T.out_admin, lang, units=h(', '.join(units)), time=when)}"

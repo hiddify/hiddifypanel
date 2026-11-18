@@ -16,7 +16,7 @@ from hiddifypanel.models import AdminMode, AdminUser, User
 from . import accounts, bot
 from .accounts import Filter, Sort
 from .texts import T
-from .ui import SELECTED, RULE, Cb, Ctx, Screen, Style, ago, background, bar, btn, fmt_gb, h, keyboard, route, send_card, with_retry
+from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, with_retry
 from .user import account_card, links_screen, share_screen
 
 PAGE_SIZE = 8
@@ -101,7 +101,7 @@ def _user_lines(ctx: Ctx, users: list[User], start: int, sort: Sort = Sort.new) 
         else:
             days = ctx.tr(T.lst_left, n=u.remaining_days)
         used = f"{u.current_usage_GB:.1f}/{u.usage_limit_GB:g} {ctx.tr(T.gb)}"
-        seen = f" · 🕒 {ago(u.last_online, ctx.lang)}" if sort is Sort.seen and not online else ""
+        seen = f" · 🕒 {ago_html(u.last_online, ctx.lang)}" if sort is Sort.seen and not online else ""
         head = f"<b>{i}.</b> {accounts.STATUS_ICON[st]} <b>{_iso(h((u.name or '-')[:32]))}</b>" + (" ⚡️" if online else "")
         mark = _dir(ctx.lang)
         out.append(f"{mark}{head}\n{mark}<code>{bar(accounts.usage_ratio(u), _LIST_BAR)}</code> {used} · {days}{seen}")
@@ -133,7 +133,7 @@ def _pager(kind: Cb, prefix: list[object], page: int, pages: int, suffix: list[o
         row.append(btn("«", kind, *prefix, 0, *tail))
     if page > 0:
         row.append(btn("‹", kind, *prefix, page - 1, *tail))
-    row.append(btn(f"{page + 1} / {pages}", kind, *prefix, page, *tail))
+    row.append(off_btn(f"{page + 1} / {pages}"))  # the page shown: nothing to press
     if page < pages - 1:
         row.append(btn("›", kind, *prefix, page + 1, *tail))
     if page < pages - 2 and pages > 3:
@@ -164,7 +164,7 @@ def users_screen(ctx: Ctx, f: Filter, page: int, sort: Sort = Sort.new) -> Scree
     ctx.state.update(back=[Cb.users.value, f.value, page, sort.value])
     n = accounts.counts(admin)
     # The tabs: an icon and a count each, the chosen one ticked (a segmented control)
-    tabs = [btn((SELECTED if x is f else "") + f"{_FILTER_ICON[x]} {n[x]}", Cb.users, x.value, 0, sort.value) for x in Filter]
+    tabs = [off_btn(SELECTED + f"{_FILTER_ICON[x]} {n[x]}") if x is f else btn(f"{_FILTER_ICON[x]} {n[x]}", Cb.users, x.value, 0, sort.value) for x in Filter]
     sorts = list(Sort)
     after = sorts[(sorts.index(sort) + 1) % len(sorts)]
     title = f"👥 <b>{ctx.tr(T.users_title)}</b>  ·  {_FILTER_ICON[f]} {ctx.tr(_FILTER_TEXT[f])}"

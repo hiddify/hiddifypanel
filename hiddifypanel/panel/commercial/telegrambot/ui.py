@@ -114,6 +114,28 @@ def btn(text: str, kind: Cb, *args: object, style: Style | None = None) -> types
     return types.InlineKeyboardButton(callback_data=cb(kind, *args), **_decorated(text, style))
 
 
+def off_btn(text: str, style: Style | None = None) -> types.InlineKeyboardButton:
+    """A button that does nothing, greyed out by Telegram: the page shown, the choice already made, an offer used."""
+    return types.InlineKeyboardButton(disabled=types.DisabledButton(), **_decorated(text, style))
+
+
+def tg_time(moment: datetime.datetime | datetime.date | None, fmt: str, text: str) -> str:
+    """A date or time each person sees in their own language and time zone (Telegram's date_time entity). ``fmt``:
+    r relative ("2 hours ago"), or any of w (weekday), d / D (short / long date), t / T (short / long time). ``text``
+    is what an older app shows. A day alone is set at noon, so no time zone moves it to the day before or after."""
+    if moment is None:
+        return h(text)
+    if not isinstance(moment, datetime.datetime):
+        moment = datetime.datetime.combine(moment, datetime.time(12))
+    return f'<tg-time unix="{int(moment.timestamp())}" format="{fmt}">{h(text)}</tg-time>'
+
+
+def ago_html(when: datetime.datetime | None, lang: str) -> str:
+    """``ago`` as a smart date ("2 hours ago" in the person's language), when there is a real moment."""
+    text = ago(when, lang)
+    return tg_time(when, "r", text) if when and when.year >= 1971 else h(text)
+
+
 def url_btn(text: str, url: str, style: Style | None = None) -> types.InlineKeyboardButton:
     return types.InlineKeyboardButton(url=url, **_decorated(text, style))
 

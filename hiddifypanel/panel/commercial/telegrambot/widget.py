@@ -19,7 +19,7 @@ from hiddifypanel.models import BotPref, ConfigEnum, User, hconfig
 from . import accounts, bot
 from .accounts import Status
 from .texts import T, t
-from .ui import Cb, Ctx, bar, fmt_gb, h, lang_of, route
+from .ui import bar, Cb, Ctx, fmt_gb, h, lang_of, route, tg_time
 
 HTML_MAX = 32768
 HTML_ZIPPED_MAX = 4096
@@ -160,7 +160,7 @@ def text_card(user: User, lang: str, now: datetime.datetime | None = None) -> st
     state_line = f"{accounts.STATUS_ICON[st]} {t(_STATUS_TEXT[st], lang)}"
     if accounts.is_online(user):
         state_line += f"  ·  ⚡️ {t(T.online_now, lang)}"
-    lines += ["", state_line, f"<i>{t(T.wg_updated, lang)} {now.strftime('%H:%M')}  ·  {t(T.wg_caption, lang)}</i>"]
+    lines += ["", state_line, f"<i>{t(T.wg_updated, lang)} {tg_time(now, 't', now.strftime('%H:%M'))}  ·  {t(T.wg_caption, lang)}</i>"]
     return "\n".join(lines)
 
 

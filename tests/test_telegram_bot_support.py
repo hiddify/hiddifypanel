@@ -11,6 +11,13 @@ from hiddifypanel.panel.commercial.telegrambot import free, support, ui
 from hiddifypanel.panel.commercial.telegrambot.texts import T, t
 
 
+
+def plain(text):
+    """The text as an older app shows it: a smart date's own text."""
+    import re
+
+    return re.sub(r"<tg-time [^>]*>(.*?)</tg-time>", r"\1", text)
+
 class FakeRedis:
     def __init__(self):
         self.data = {}
@@ -101,7 +108,7 @@ class ScreenTests(Base):
 
         old_day = [at(Sender.user, "yesterday's question", 16, 0)]
         today = [at(Sender.user, f"hello {i} <x>", 17, i) for i in range(5)] + [at(Sender.admin, "Try again", 17, 30)]
-        text = self.screen(conv(messages=old_day + today, unread=0)).text
+        text = plain(self.screen(conv(messages=old_day + today, unread=0)).text)
         self.assertNotIn("yesterday", text)  # the days before are in the history
         self.assertIn("📅 <b>2026-11-17</b>", text)
         self.assertEqual(text.count("<blockquote expandable>"), 1)
@@ -378,6 +385,7 @@ class HistoryTests(Base):
             conv(messages=[self.at(Sender.user, "first", 15, 8), self.at(Sender.user, "", 15, 9), self.at(Sender.user, "req", 15, 9, kind="request")]),
         ]
         (page,) = support.history_pages(500, "en")
+        page = plain(page)
         self.assertLess(page.index("first"), page.index("second"))
         self.assertLess(page.index("second"), page.index("answer"))
         self.assertEqual(page.count("📅"), 2)

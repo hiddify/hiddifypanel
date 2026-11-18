@@ -16,7 +16,7 @@ from telebot import types
 from telebot.apihelper import ApiTelegramException
 
 from .texts import T, t
-from .ui import RULE, Style, fmt_bytes, keyboard, lang_of, url_btn
+from .ui import RULE, fmt_bytes, keyboard, lang_of, Style, tg_time, url_btn
 
 #: How the panel names its backup files on disk
 DISK_NAME = "%Y_%m_%d__%H_%M_%S.json"
@@ -71,7 +71,7 @@ def caption(lang: str, when: datetime.datetime, size: int | None) -> str:
     facts = [
         f"🏷 {tr(T.bk_panel)}: <b>{html.escape(_panel_name())}</b>",
         f"🧩 {tr(T.bk_version)}: <code>v{html.escape(hiddifypanel.__version__)}</code>",
-        f"📅 {tr(T.bk_date)}: <b>{when:%Y-%m-%d}</b>  ·  🕒 <b>{when:%H:%M}</b>",
+        f"📅 {tr(T.bk_date)}: <b>{tg_time(when.date(), 'D', f'{when:%Y-%m-%d}')}</b>  ·  🕒 <b>{tg_time(when, 't', f'{when:%H:%M}')}</b>",
     ]
     more = []
     if size:

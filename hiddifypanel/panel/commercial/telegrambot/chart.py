@@ -16,7 +16,7 @@ from hiddifypanel.models.usage import UserDailyUsage
 
 from . import bot
 from .texts import T
-from .ui import Cb, Ctx, Style, btn, chat_action, fmt_bytes, h, keyboard, route, show_picture
+from .ui import btn, Cb, chat_action, Ctx, fmt_bytes, h, keyboard, route, show_picture, Style, tg_time
 
 DAYS = 30
 W, H = 1200, 675
@@ -113,7 +113,7 @@ def caption(lang_ctx: Ctx, user: User, days: list[tuple[datetime.date, int]]) ->
     lines += [
         f"{tr(T.chart_total)}: <b>{fmt_bytes(total, lang_ctx.lang)}</b>",
         f"{tr(T.chart_avg)}: <b>{fmt_bytes(total / len(values), lang_ctx.lang)}</b>",
-        f"{tr(T.chart_peak)}: <b>{fmt_bytes(busiest, lang_ctx.lang)}</b> ({busiest_day.isoformat()})",
+        f"{tr(T.chart_peak)}: <b>{fmt_bytes(busiest, lang_ctx.lang)}</b> ({tg_time(busiest_day, "D", busiest_day.isoformat())})",
         f"{tr(T.chart_today)}: <b>{fmt_bytes(values[-1], lang_ctx.lang)}</b>",
     ]
     return "\n".join(lines)
