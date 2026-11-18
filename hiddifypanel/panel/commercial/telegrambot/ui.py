@@ -71,6 +71,7 @@ class Cb(StrEnum):
     broadcast = "bc"  # bc  write a message to all users; bc:go  send it; bc:x  drop it
     admin_settings = "as"  # the admin's settings: language, backup, sound
     silent = "sl"  # sl:<1|0>  the bot's messages to this chat without (or with) a sound
+    advanced = "av"  # av:<switch>:<1|0>  the owner turns Advanced (or a feature inside it) on or off
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 
@@ -114,8 +115,13 @@ def btn(text: str, kind: Cb, *args: object, style: Style | None = None) -> types
     return types.InlineKeyboardButton(callback_data=cb(kind, *args), **_decorated(text, style))
 
 
-def off_btn(text: str, style: Style | None = None) -> types.InlineKeyboardButton:
-    """A button that does nothing, greyed out by Telegram: the page shown, the choice already made, an offer used."""
+def off_btn(text: str, style: Style | None = None, *, otherwise: types.InlineKeyboardButton | None = None) -> types.InlineKeyboardButton | None:
+    """A button that does nothing, greyed out by Telegram: the page shown, the choice already made, an offer used.
+    Advanced mode only: without it, ``otherwise`` (the button as it was), or nothing."""
+    from . import advanced
+
+    if not advanced.is_on():
+        return otherwise
     return types.InlineKeyboardButton(disabled=types.DisabledButton(), **_decorated(text, style))
 
 
@@ -127,7 +133,9 @@ def tg_time(moment: datetime.datetime | datetime.date | None, fmt: str, text: st
     """A date or time each person sees in their own language and time zone (Telegram's date_time entity). ``fmt``:
     r relative ("2 hours ago"), or any of w (weekday), d / D (short / long date), t / T (short / long time). ``text``
     is what an older app shows. A day alone is set at noon, so no time zone moves it to the day before or after."""
-    if moment is None:
+    from . import advanced
+
+    if moment is None or not advanced.is_on():  # Advanced mode only
         return h(text)
     if not isinstance(moment, datetime.datetime):
         moment = datetime.datetime.combine(moment, datetime.time(12))
@@ -186,8 +194,10 @@ def app_row(text: str, url: str | None, style: Style | None = None) -> list[type
     return [app_btn(text, url, style)] if can_open_as_app(url) else []
 
 
-def keyboard(*rows: Sequence[types.InlineKeyboardButton]) -> types.InlineKeyboardMarkup:
-    return types.InlineKeyboardMarkup(keyboard=[list(r) for r in rows if r])
+def keyboard(*rows: Sequence[types.InlineKeyboardButton | None]) -> types.InlineKeyboardMarkup:
+    """Rows of buttons; a button left out (None) and a row left empty are dropped."""
+    kept = [[b for b in r if b is not None] for r in rows if r]
+    return types.InlineKeyboardMarkup(keyboard=[r for r in kept if r])
 
 
 # --------------------------------------------------------------------------- chat state

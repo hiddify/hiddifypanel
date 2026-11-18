@@ -254,7 +254,10 @@ def caption(ctx: Ctx, series: Series) -> str:
 
 
 def _markup(ctx: Ctx, period: str) -> types.InlineKeyboardMarkup:
-    tabs = [off_btn(SELECTED + ctx.tr(_PERIOD_TEXT[key])) if key == period else btn(ctx.tr(_PERIOD_TEXT[key]), Cb.bandwidth, key, "r") for key in PERIODS]
+    tabs = [
+        off_btn(SELECTED + ctx.tr(_PERIOD_TEXT[key]), otherwise=btn(SELECTED + ctx.tr(_PERIOD_TEXT[key]), Cb.bandwidth, key, "r")) if key == period else btn(ctx.tr(_PERIOD_TEXT[key]), Cb.bandwidth, key, "r")
+        for key in PERIODS
+    ]
     return keyboard(tabs[:2], tabs[2:], [btn(ctx.tr(T.refresh), Cb.bandwidth, period, "r"), btn(ctx.tr(T.back), Cb.back)])
 
 

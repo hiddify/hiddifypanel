@@ -71,6 +71,7 @@ class LanguageScreenTests(unittest.TestCase):
     def buttons(self, screen):
         return [b.to_dict() for row in screen.markup.keyboard for b in row]
 
+    @mock.patch("hiddifypanel.panel.commercial.telegrambot.advanced.is_on", lambda: True)
     def test_the_language_spoken_now_is_blue_and_every_language_is_there(self):
         screen = settings.language_screen(ctx("fa", user=SimpleNamespace()))
         buttons = self.buttons(screen)

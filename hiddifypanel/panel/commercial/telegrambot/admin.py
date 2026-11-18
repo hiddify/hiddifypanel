@@ -133,7 +133,7 @@ def _pager(kind: Cb, prefix: list[object], page: int, pages: int, suffix: list[o
         row.append(btn("«", kind, *prefix, 0, *tail))
     if page > 0:
         row.append(btn("‹", kind, *prefix, page - 1, *tail))
-    row.append(off_btn(f"{page + 1} / {pages}"))  # the page shown: nothing to press
+    row.append(off_btn(f"{page + 1} / {pages}", otherwise=btn(f"{page + 1} / {pages}", kind, *prefix, page, *tail)))  # the page shown
     if page < pages - 1:
         row.append(btn("›", kind, *prefix, page + 1, *tail))
     if page < pages - 2 and pages > 3:
@@ -164,7 +164,10 @@ def users_screen(ctx: Ctx, f: Filter, page: int, sort: Sort = Sort.new) -> Scree
     ctx.state.update(back=[Cb.users.value, f.value, page, sort.value])
     n = accounts.counts(admin)
     # The tabs: an icon and a count each, the chosen one ticked (a segmented control)
-    tabs = [off_btn(SELECTED + f"{_FILTER_ICON[x]} {n[x]}") if x is f else btn(f"{_FILTER_ICON[x]} {n[x]}", Cb.users, x.value, 0, sort.value) for x in Filter]
+    tabs = [
+        off_btn(SELECTED + f"{_FILTER_ICON[x]} {n[x]}", otherwise=btn(SELECTED + f"{_FILTER_ICON[x]} {n[x]}", Cb.users, x.value, 0, sort.value)) if x is f else btn(f"{_FILTER_ICON[x]} {n[x]}", Cb.users, x.value, 0, sort.value)
+        for x in Filter
+    ]
     sorts = list(Sort)
     after = sorts[(sorts.index(sort) + 1) % len(sorts)]
     title = f"👥 <b>{ctx.tr(T.users_title)}</b>  ·  {_FILTER_ICON[f]} {ctx.tr(_FILTER_TEXT[f])}"

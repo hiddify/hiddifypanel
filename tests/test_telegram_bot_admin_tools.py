@@ -258,6 +258,7 @@ class BroadcastTests(Base):
 
 
 class ConversationTests(unittest.TestCase):
+    @mock.patch("hiddifypanel.panel.commercial.telegrambot.advanced.is_on", lambda: True)
     def test_each_day_is_one_folded_box_starting_with_its_first_message(self):
         from hiddifypanel.panel.commercial.telegrambot import chats
 
@@ -298,6 +299,48 @@ class MainAppTests(Base):
             agent = admin_settings.settings_screen(self.ctx).text
         self.assertIn("<code>https://panel.example.com/p/api/v1/tgbot/app/</code>", owner)
         self.assertNotIn("tgbot/app", agent)
+
+
+class AdvancedTests(Base):
+    def test_off_the_bot_is_as_it_was(self):
+        import datetime
+
+        from hiddifypanel.panel.commercial.telegrambot import admin, advanced
+
+        with mock.patch.object(advanced, "is_on", lambda: False):
+            self.assertEqual(ui.tg_time(datetime.datetime(2026, 11, 18, 9, 30), "t", "09:30"), "09:30")  # plain text
+            middle = admin._pager(ui.Cb.users, ["a"], 1, 3, ["u"])[1].to_dict()
+            self.assertEqual(middle.get("callback_data"), "ul:a:1:u")  # the page number refreshes, as before
+            self.assertIsNone(ui.off_btn("x"))  # an only-greyed button is left out
+            self.assertEqual(len(ui.keyboard([ui.off_btn("x")], [ui.btn("y", ui.Cb.home)]).keyboard), 1)
+
+    def test_only_the_owner_sees_and_turns_the_switches(self):
+        from hiddifypanel.panel.commercial.telegrambot import admin_settings, advanced
+
+        saved = {}
+        with (
+            mock.patch.object(admin_settings.silence, "is_silent", lambda chat: False),
+            mock.patch.object(advanced, "_read", lambda key: saved.get(key, False)),
+            mock.patch.object(advanced, "set_switch", lambda key, on: saved.__setitem__(key, on)),
+            mock.patch.object(admin_settings, "db"),
+            mock.patch.object(ui.Ctx, "show"),
+            mock.patch.object(ui.Ctx, "toast") as toast,
+            mock.patch("hiddifypanel.panel.commercial.telegrambot.accounts.panel_app_url", lambda: None),
+        ):
+            self.ctx.admin = SimpleNamespace(id=1, mode="super_admin")
+            owner = self.data(admin_settings.settings_screen(self.ctx))
+            self.assertIn("av:advanced:1", owner)
+            self.assertNotIn("av:adv_resellers:1", owner)  # inside Advanced only
+            admin_settings.set_advanced(self.ctx, ["advanced", "1"])
+            owner_on = self.data(admin_settings.settings_screen(self.ctx))
+            self.assertIn("av:adv_resellers:1", owner_on)
+            self.assertIn("av:adv_guard:1", owner_on)
+            self.assertFalse(advanced.feature(advanced.RESELLER_BOTS))  # off by default
+            self.ctx.admin = SimpleNamespace(id=2, mode="agent")
+            self.assertFalse([d for d in self.data(admin_settings.settings_screen(self.ctx)) if d.startswith("av:")])
+            admin_settings.set_advanced(self.ctx, ["advanced", "0"])
+            self.assertTrue(saved["advanced"])  # an agent cannot turn it off
+            toast.assert_called_with(t(T.not_allowed, "en"), alert=True)
 
 
 class BackupMessageTests(unittest.TestCase):

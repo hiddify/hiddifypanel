@@ -38,6 +38,7 @@ class BodyTests(unittest.TestCase):
 
 
 class SmartDateAndDisabledTests(unittest.TestCase):
+    @mock.patch("hiddifypanel.panel.commercial.telegrambot.advanced.is_on", lambda: True)
     def test_a_smart_date(self):
         import datetime
 
@@ -51,6 +52,7 @@ class SmartDateAndDisabledTests(unittest.TestCase):
         far = datetime.datetime.now() + datetime.timedelta(days=10 * 365)  # a 10-year package: Telegram refuses that
         self.assertEqual(ui.tg_time(far, "D", "2036-10-27"), "2036-10-27")
 
+    @mock.patch("hiddifypanel.panel.commercial.telegrambot.advanced.is_on", lambda: True)
     def test_a_disabled_button_greyed_out_in_both_forms(self):
         from hiddifypanel.panel.commercial.telegrambot import ui
 

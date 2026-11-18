@@ -4,6 +4,7 @@ kept (telegrambot/accounts.py: users_page, search_page, summary)."""
 import datetime
 import unittest
 from types import SimpleNamespace
+from unittest import mock
 
 from apiflask import APIFlask
 
@@ -107,6 +108,7 @@ class PagingTests(unittest.TestCase):
 
 
 class PagerTests(unittest.TestCase):
+    @mock.patch("hiddifypanel.panel.commercial.telegrambot.advanced.is_on", lambda: True)
     def test_no_blank_arrows(self):
         from unittest import mock
 

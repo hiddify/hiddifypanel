@@ -47,7 +47,7 @@ def person_lang(chat_id: int, account: AdminUser | User | None = None) -> str:
 
 def language_screen(ctx: Ctx) -> Screen:
     """Every language in its own name, two to a row; the one spoken now is blue."""
-    buttons = [off_btn(SELECTED + name) if code == ctx.lang else btn(name, Cb.lang, code) for code, name in LANGUAGES.items()]
+    buttons = [off_btn(SELECTED + name, otherwise=btn(SELECTED + name, Cb.lang, code)) if code == ctx.lang else btn(name, Cb.lang, code) for code, name in LANGUAGES.items()]
     rows = [buttons[i : i + 2] for i in range(0, len(buttons), 2)]
     back = Cb.back if (ctx.admin or ctx.user) else None
     if back:
