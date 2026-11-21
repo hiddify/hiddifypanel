@@ -143,7 +143,9 @@ def status_screen(ctx: Ctx) -> Screen:
     lines += _users_lines(ctx)
     now = datetime.datetime.now()
     lines.append(f"<i>{ctx.tr(T.updated_at, time=tg_time(now, 'T', now.strftime('%H:%M:%S')))}</i>")
-    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.status), btn(ctx.tr(T.back), Cb.back)]))
+    from .servers import status_rows
+
+    return Screen("\n".join(lines), keyboard(*status_rows(ctx), [btn(ctx.tr(T.refresh), Cb.status), btn(ctx.tr(T.back), Cb.back)]))
 
 
 @route(Cb.status, admin=True)

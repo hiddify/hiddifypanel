@@ -72,6 +72,9 @@ class Cb(StrEnum):
     admin_settings = "as"  # the admin's settings: language, backup, sound
     silent = "sl"  # sl:<1|0>  the bot's messages to this chat without (or with) a sound
     advanced = "av"  # av:<switch>:<1|0>  the owner turns Advanced (or a feature inside it) on or off
+    nodes = "nd"  # the panel's servers (Advanced)
+    domains = "dm"  # the panel's domains: DNS and certificates (Advanced)
+    morning = "mr"  # mr:<1|0>  the admin's morning report on or off (Advanced)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 

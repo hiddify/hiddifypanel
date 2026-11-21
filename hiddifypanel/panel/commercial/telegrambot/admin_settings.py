@@ -25,6 +25,11 @@ def settings_screen(ctx: Ctx) -> Screen:
     ]
     toggle = btn(ctx.tr(T.as_turn_sound_on if quiet else T.as_turn_sound_off), Cb.silent, 0 if quiet else 1, style=Style.success if quiet else None)
     rows = [[btn(ctx.tr(T.language), Cb.lang)], [toggle]]
+    from .servers import settings_lines, settings_rows
+
+    if more := settings_lines(ctx):  # the morning report (Advanced)
+        lines += ["", *more]
+        rows += settings_rows(ctx)
     if admin.mode == AdminMode.super_admin:
         rows.append([btn(ctx.tr(T.btn_backup), Cb.backup)])
         lines += ["", *_advanced_lines(ctx)]
