@@ -4,6 +4,7 @@ import string
 from apiflask import abort
 from flask import request
 from flask.views import MethodView
+from loguru import logger
 from sqlalchemy.orm import selectinload
 
 from hiddifypanel import current_app as app
@@ -336,6 +337,8 @@ class CustomProxyValidateApi(MethodView):
         try:
             return validate_proxy_payload(data, child_id=_child_id(), proxy_id=data.get("id"))
         except Exception as e:
+            # The panel's own fault, not the proxy's: the traceback goes to the log for a bug report
+            logger.exception("custom proxy validation failed")
             return {
                 "ok": False,
                 "errors": [{"code": "validate_internal", "message": str(e)}],
@@ -359,6 +362,8 @@ class CustomProxyValidateByIdApi(MethodView):
             sections = (data or {}).get("sections") or ["general", "server", "client"]
             return validate_proxy_payload(merged, child_id=_child_id(), proxy_id=proxy_id, sections=sections)
         except Exception as e:
+            # The panel's own fault, not the proxy's: the traceback goes to the log for a bug report
+            logger.exception("custom proxy validation failed")
             return {
                 "ok": False,
                 "errors": [{"code": "validate_internal", "message": str(e)}],

@@ -257,7 +257,7 @@ async function runValidate() {
     toast.add({
       severity: 'error',
       summary: t('common.validationFailed'),
-      detail: validationToastDetail(validation.value),
+      detail: validationToastDetail(validation.value, 5, t),
       life: 8000,
     })
   }

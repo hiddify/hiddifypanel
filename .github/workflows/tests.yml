@@ -1,0 +1,36 @@
+name: Tests
+
+# The unit tests on every pull request and push to dev: a renamed constant that some code still uses (e.g.
+# tls_fragment.DEFAULT_SIZE) fails here instead of in a released beta.
+on:
+  pull_request:
+    branches: [dev]
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    # Importing the panel needs REDIS_URI_MAIN (hiddifypanel/cache.py); a Redis service backs it
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+    env:
+      REDIS_URI_MAIN: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - name: System libraries (mysqlclient)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends default-libmysqlclient-dev pkg-config
+      - name: Install the panel
+        run: pip install -e .
+      - name: Run the tests
+        run: python -m unittest discover -s tests -v
