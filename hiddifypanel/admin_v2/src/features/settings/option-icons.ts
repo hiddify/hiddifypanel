@@ -54,6 +54,7 @@ export const OPTION_ICONS: Record<string, Record<string, OptionIcon>> = {
   package_mode: {
     release: { icon: 'pi pi-verified', color: GREEN },
     beta: { icon: 'pi pi-wrench', color: AMBER },
+    develop: { icon: 'pi pi-code', color: RED },
   },
   common_proxy_core: {
     xray: { brand: 'xray', color: GRAY },

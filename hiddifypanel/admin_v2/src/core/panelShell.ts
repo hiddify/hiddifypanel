@@ -71,11 +71,14 @@ export interface AdminMenuGroup {
 }
 
 export interface PanelNotice {
-  severity: 'success' | 'info' | 'warn' | 'error'
+  /** ``update``: a newer panel release (a green notice, and a green dot on the bell) */
+  severity: 'success' | 'info' | 'warn' | 'error' | 'update'
   summary: string
   detail?: string
   toast?: boolean
   id?: string
+  /** An ``update`` notice's versions */
+  version?: { latest: string; current: string }
 }
 
 /** `panel_mode` hconfig: `standalone` | `parent` | `child`. */

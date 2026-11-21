@@ -27,17 +27,32 @@
             <span class="ap-card__time" v-tooltip.top="t('apply.takes')"><i class="pi pi-stopwatch" />{{ t('apply.minutes', { n: a.meta.minutes }) }}</span>
           </header>
           <p class="ap-card__desc">{{ t(`apply.action.${a.key}.desc`) }}</p>
+          <PanelVersionBox v-if="a.key === 'update'" />
           <p v-if="a.when" class="ap-card__last"><i class="pi" :class="a.last?.finished ? 'pi-check-circle ap-ok' : 'pi-info-circle'" />{{ t('apply.lastRun', { when: a.when }) }}</p>
-          <Button
-            :label="t(`apply.action.${a.key}.button`)"
-            :icon="a.meta.icon"
-            :severity="a.meta.danger ? 'danger' : undefined"
-            :outlined="a.key !== 'apply'"
-            :loading="starting === a.key"
-            :disabled="blocked"
-            class="ap-card__btn"
-            @click="ask(a.key)"
-          />
+          <div class="ap-card__btns" :class="{ 'ap-card__btns--pair': a.key === 'update' }">
+            <Button
+              :label="t(`apply.action.${a.key}.button`)"
+              :icon="a.meta.icon"
+              :severity="a.meta.danger ? 'danger' : undefined"
+              :outlined="a.key !== 'apply'"
+              :loading="starting === a.key"
+              :disabled="blocked"
+              class="ap-card__btn"
+              @click="ask(a.key)"
+            />
+            <!-- beside Update: is there a newer panel? -->
+            <Button
+              v-if="a.key === 'update'"
+              :label="panelCheck.checking ? t('apply.version.checkingShort') : t('apply.version.checkShort')"
+              v-tooltip.top="t('apply.version.check')"
+              outlined
+              class="ap-card__btn ap-card__btn--check"
+              :disabled="panelCheck.checking"
+              @click="checkPanelUpdate"
+            >
+              <template #icon><UpdateGlyph kind="check" :spinning="panelCheck.checking" size="1rem" /></template>
+            </Button>
+          </div>
         </article>
       </div>
 
@@ -67,7 +82,9 @@
               <small>{{ ago(f.mtime) }} · {{ formatSize(f.size) }}</small>
             </button>
             <Button icon="pi pi-eye" text rounded size="small" :aria-label="t('apply.logs.view')" v-tooltip.top="t('apply.logs.view')" @click="openLog(f)" />
-            <a :href="applyApi.downloadUrl(f.name)" download :aria-label="t('apply.log.download')"><Button icon="pi pi-download" text rounded size="small" severity="secondary" v-tooltip.top="t('apply.log.download')" /></a>
+            <a :href="applyApi.downloadUrl(f.name)" download :aria-label="t('apply.log.download')"
+              ><Button icon="pi pi-download" text rounded size="small" severity="secondary" v-tooltip.top="t('apply.log.download')"
+            /></a>
             <!-- To my Telegram, through the panel's bot (only when the panel has one) -->
             <span v-if="state?.telegram?.bot" v-tooltip.top="state.telegram.connected ? t('apply.log.telegram') : t('apply.log.telegramConnect')">
               <Button
@@ -109,6 +126,9 @@ import LogViewerDialog from '@/features/apply/components/LogViewerDialog.vue'
 import RunPanel from '@/features/apply/components/RunPanel.vue'
 import PublicPortsDialog from '@/features/actions/components/PublicPortsDialog.vue'
 import WsTestDialog from '@/features/apply/components/WsTestDialog.vue'
+import PanelVersionBox from '@/features/apply/components/PanelVersionBox.vue'
+import UpdateGlyph from '@/shared/components/UpdateGlyph.vue'
+import { checkPanelUpdate, panelCheck } from '@/shared/composables/usePanelUpdate'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { ACTIONS, ACTION_LOG, ACTION_META, LOG_ICON, applyApi, formatSize, preferredAdminRedirect, type ApplyAction, type ApplyState, type LogFile, type StartedRun } from '@/features/apply/api'
 
@@ -292,7 +312,12 @@ function clearAll() {
       try {
         const out = await applyApi.clearAll()
         const kept = out.skipped.length ? ` · ${t('apply.logs.clearSkipped', { n: out.skipped.length })}` : ''
-        toast.add({ severity: out.failed.length ? 'warn' : 'success', summary: out.failed.length ? t('apply.logs.clearFailed') : t('apply.logs.clearedAll'), detail: (out.failed.join(', ') + kept).replace(/^ · /, '') || undefined, life: 4000 })
+        toast.add({
+          severity: out.failed.length ? 'warn' : 'success',
+          summary: out.failed.length ? t('apply.logs.clearFailed') : t('apply.logs.clearedAll'),
+          detail: (out.failed.join(', ') + kept).replace(/^ · /, '') || undefined,
+          life: 4000,
+        })
         await refresh(true)
       } catch (err) {
         toast.add({ severity: 'error', summary: t('apply.logs.clearFailed'), detail: apiErrorMessage(err), life: 5000 })
@@ -476,6 +501,25 @@ onBeforeUnmount(() => feed?.stop())
 .ap-ok {
   color: var(--p-green-500, #22c55e);
 }
+.ap-card__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+/* Update and Check side by side, half each, on every screen */
+.ap-card__btns--pair {
+  flex-wrap: nowrap;
+}
+.ap-card__btns--pair > .ap-card__btn {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+}
+.ap-card__btn--check {
+  gap: 0.45rem;
+  color: var(--p-primary-color);
+  border-color: color-mix(in srgb, var(--p-primary-color) 35%, transparent);
+}
 .ap-card__btn {
   align-self: flex-start;
 }
@@ -629,9 +673,10 @@ onBeforeUnmount(() => feed?.stop())
   .ap-card--main {
     grid-column: auto;
   }
-  .ap-card__btn {
-    width: 100%;
+  .ap-card__btns > .ap-card__btn {
+    flex: 1 1 100%;
   }
+
   .ap-files {
     grid-template-columns: minmax(0, 1fr);
   }
