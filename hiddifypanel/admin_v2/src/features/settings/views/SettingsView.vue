@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
+    <LoadErrorCard v-else-if="loadError" :error="loadError.error" @retry="load" />
 
     <div v-else class="settings-layout">
       <!-- Category navigation: sidebar on desktop, scrollable chips on mobile -->
@@ -143,6 +143,7 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import ApplyNotice from '@/shared/components/ApplyNotice.vue'
 import StickySaveBar from '@/shared/components/StickySaveBar.vue'
+import LoadErrorCard from '@/shared/components/LoadErrorCard.vue'
 import SettingFieldRow from '@/features/settings/components/SettingFieldRow.vue'
 import { isDnsValue } from '@/features/settings/dns-presets'
 import { apiErrorMessage } from '@/core/api/client'
@@ -199,7 +200,8 @@ const termsOpen = ref(false)
 const pendingWarpMode = ref<string | null>(null)
 let fillingDraft = false
 const loading = ref(true)
-const loadError = ref<string | null>(null)
+/** Kept whole (not just its text): the card tells what went wrong and how to fix it */
+const loadError = ref<{ error: unknown } | null>(null)
 const saving = ref(false)
 const search = ref('')
 const showAdvanced = ref(readStoredAdvanced())
@@ -472,7 +474,7 @@ async function load() {
     warpTermsAccepted.value = listed.warp_tos_accepted === true
     resetDraft()
   } catch (error) {
-    loadError.value = apiErrorMessage(error) || t('common.loadFailed')
+    loadError.value = { error }
   } finally {
     loading.value = false
   }
