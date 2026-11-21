@@ -4,6 +4,7 @@ or many users, and backups. Everything happens in one message that the buttons e
 from __future__ import annotations
 
 import datetime
+import io
 from collections.abc import Sequence
 
 from loguru import logger
@@ -13,10 +14,10 @@ from hiddifypanel.database import db
 from hiddifypanel.models import AdminMode, AdminUser, User
 
 from . import accounts, bot
-from .accounts import Filter
+from .accounts import Filter, Sort
 from .texts import T
-from .ui import RULE, Cb, Ctx, Screen, app_row, background, btn, fmt_gb, h, keyboard, route, send_card, with_retry
-from .user import account_card, links_text, share_screen
+from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, with_retry
+from .user import account_card, links_screen, share_screen
 
 PAGE_SIZE = 8
 GB_CHOICES = (1, 5, 10, 20, 30, 50, 100, 200)
@@ -41,23 +42,16 @@ def _int(args: list[str], i: int, default: int = 0) -> int:
 def home_screen(ctx: Ctx) -> Screen:
     admin = ctx.admin
     assert admin
-    users = accounts.visible_users(admin)
-    active = sum(accounts.status(u) is accounts.Status.active for u in users)
-    online = sum(accounts.is_online(u) for u in users)
-    expiring = sum(accounts.is_expiring(u) for u in users)
+    counts = accounts.summary(admin)
     text = "\n".join(
         [
             ctx.tr(T.admin_hello, name=h(admin.name)),
             RULE,
-            ctx.tr(T.admin_summary, total=len(users), active=active, online=online, expiring=expiring),
+            ctx.tr(T.admin_summary, total=counts.total, active=counts.active, online=counts.online, expiring=counts.expiring),
         ]
     )
-    rows: list[Sequence[types.InlineKeyboardButton]] = [
-        [btn(ctx.tr(T.btn_users), Cb.users, Filter.all.value, 0), btn(ctx.tr(T.btn_new), Cb.new, 0, 0, 0)],
-        [btn(ctx.tr(T.btn_status), Cb.status)] + ([btn(ctx.tr(T.btn_check), Cb.check)] if admin.mode != AdminMode.agent else []),
-    ]
-    rows.append([btn(ctx.tr(T.btn_free), Cb.free_link)] + ([btn(ctx.tr(T.btn_backup), Cb.backup)] if admin.mode == AdminMode.super_admin else []))
-    rows.append(app_row(ctx.tr(T.btn_panel), accounts.panel_app_url()))
+    # Every action is a key of the keyboard by the message box (menukey.ADMIN_ROWS); the panel app is the menu button
+    rows: list[Sequence[types.InlineKeyboardButton]] = [[btn(ctx.tr(T.refresh), Cb.home)]]
     return Screen(text, keyboard(*rows))
 
 
@@ -71,49 +65,120 @@ def show_home(ctx: Ctx, _args: list[str]) -> None:
 # --------------------------------------------------------------------------- users list
 
 
-def _user_button(ctx: Ctx, user: User) -> types.InlineKeyboardButton:
-    icon = accounts.STATUS_ICON[accounts.status(user)]
-    online = "⚡️" if accounts.is_online(user) else ""
-    days = f"{user.remaining_days}{ctx.tr(T.unit_d)}" if user.start_date else f"{user.package_days}{ctx.tr(T.unit_d)}"
-    label = f"{icon}{online} {user.name or '-'} · {user.current_usage_GB:.1f}/{user.usage_limit_GB:g} · {days}"
-    return btn(label[:60], Cb.card, user.id)
+#: The list's tabs: an icon and how many users each keeps (the same icons as the admin's home).
+_FILTER_ICON: dict[Filter, str] = {Filter.all: "👥", Filter.active: "🟢", Filter.expiring: "⏳", Filter.ended: "🔴", Filter.online: "⚡️"}
+_SORT_TEXT: dict[Sort, T] = {Sort.new: T.sort_new, Sort.usage: T.sort_usage, Sort.days: T.sort_days, Sort.seen: T.sort_seen, Sort.name: T.sort_name}
+_LIST_BAR = 8
 
 
-def _pager(kind: Cb, prefix: list[object], page: int, pages: int) -> list[types.InlineKeyboardButton]:
+_RTL = {"fa", "ar", "ur", "ps"}
+
+
+def _dir(lang: str) -> str:
+    """An invisible mark that sets a line's direction (the chat's language), so every row lines up the same way: the
+    icon always on the same side, whatever script the name is in (Telegram guesses each line's direction from its
+    first letter otherwise)."""
+    return "\u200f" if lang in _RTL else "\u200e"
+
+
+def _iso(text: str) -> str:
+    """A name in its own direction: a Persian name in an English line (or the other way) keeps its place."""
+    return f"\u2068{text}\u2069"
+
+
+def _user_lines(ctx: Ctx, users: list[User], start: int, sort: Sort = Sort.new) -> str:
+    """Each user in two lines: number, state and name; then the data bar, data and days (and when last seen)."""
+    out = []
+    for i, u in enumerate(users, start + 1):
+        st = accounts.status(u)
+        online = accounts.is_online(u)
+        if not u.enable:
+            days = ctx.tr(T.lst_off)
+        elif st is accounts.Status.expired:
+            days = ctx.tr(T.lst_ended)
+        elif u.start_date is None:
+            days = ctx.tr(T.lst_not_started)
+        else:
+            days = ctx.tr(T.lst_left, n=u.remaining_days)
+        used = f"{u.current_usage_GB:.1f}/{u.usage_limit_GB:g} {ctx.tr(T.gb)}"
+        seen = f" · 🕒 {ago_html(u.last_online, ctx.lang)}" if sort is Sort.seen and not online else ""
+        head = f"<b>{i}.</b> {accounts.STATUS_ICON[st]} <b>{_iso(h((u.name or '-')[:32]))}</b>" + (" ⚡️" if online else "")
+        mark = _dir(ctx.lang)
+        out.append(f"{mark}{head}\n{mark}<code>{bar(accounts.usage_ratio(u), _LIST_BAR)}</code> {used} · {days}{seen}")
+    return "\n".join(out)
+
+
+def _user_grid(ctx: Ctx, users: list[User]) -> list[list[types.InlineKeyboardButton]]:
+    """A button per user, two to a row, in the order of the lines above; every one in the chat's direction. The
+    button's colour is the account's state (green active, red ended, soft grey off), ⚡️ when online."""
+    mark = _dir(ctx.lang)
+    buttons = [
+        btn(f"{mark}{_iso((u.name or '-')[:22])}" + (" ⚡️" if accounts.is_online(u) else ""), Cb.card, u.id, style=_STATE_STYLE.get(accounts.status(u)))
+        for u in users
+    ]
+    return [buttons[i : i + 2] for i in range(0, len(buttons), 2)]
+
+
+#: A user's button colour by the account's state (off: no colour, the soft grey)
+_STATE_STYLE = {accounts.Status.active: Style.success, accounts.Status.expired: Style.danger, accounts.Status.no_data: Style.danger}
+
+
+def _pager(kind: Cb, prefix: list[object], page: int, pages: int, suffix: list[object] | None = None) -> list[types.InlineKeyboardButton]:
     if pages <= 1:
         return []
-    return [
-        btn("‹" if page > 0 else " ", kind, *prefix, max(page - 1, 0)),
-        btn(f"{page + 1} / {pages}", kind, *prefix, page),
-        btn("›" if page < pages - 1 else " ", kind, *prefix, min(page + 1, pages - 1)),
-    ]
+    tail = suffix or []
+    # No arrow where there is no page to go to (a blank button is refused by Telegram)
+    row = []
+    if page > 1 and pages > 3:
+        row.append(btn("«", kind, *prefix, 0, *tail))
+    if page > 0:
+        row.append(btn("‹", kind, *prefix, page - 1, *tail))
+    row.append(off_btn(f"{page + 1} / {pages}", otherwise=btn(f"{page + 1} / {pages}", kind, *prefix, page, *tail)))  # the page shown
+    if page < pages - 1:
+        row.append(btn("›", kind, *prefix, page + 1, *tail))
+    if page < pages - 2 and pages > 3:
+        row.append(btn("»", kind, *prefix, pages - 1, *tail))
+    return row
 
 
-def _page(users: list[User], page: int) -> tuple[list[User], int, int]:
-    pages = max((len(users) + PAGE_SIZE - 1) // PAGE_SIZE, 1)
-    page = min(max(page, 0), pages - 1)
-    return users[page * PAGE_SIZE : (page + 1) * PAGE_SIZE], page, pages
+def _list_text(ctx: Ctx, title: str, found: accounts.Page, sort: Sort | None) -> str:
+    lines = [title]
+    info = [ctx.tr(T.users_count, n=found.total)]
+    if sort is not None:
+        info.append(ctx.tr(T.lst_sorted, by=ctx.tr(_SORT_TEXT[sort])))
+    if found.pages > 1:
+        info.append(ctx.tr(T.lst_page, page=found.page + 1, pages=found.pages))
+    lines.append(f"<i>{'  ·  '.join(info)}</i>")
+    if found.total:
+        lines += ["", "<blockquote>" + _user_lines(ctx, found.users, found.page * PAGE_SIZE, sort or Sort.new) + "</blockquote>", f"<i>{ctx.tr(T.lst_hint)}</i>"]
+    else:
+        lines += ["", f"<i>{ctx.tr(T.users_empty)}</i>"]
+    return "\n".join(lines)
 
 
-def users_screen(ctx: Ctx, f: Filter, page: int) -> Screen:
+def users_screen(ctx: Ctx, f: Filter, page: int, sort: Sort = Sort.new) -> Screen:
     admin = ctx.admin
     assert admin
-    users = [u for u in accounts.visible_users(admin) if accounts.matches(u, f)]
-    shown, page, pages = _page(users, page)
-    ctx.state.update(back=[Cb.users.value, f.value, page])
-
-    tabs = [btn(("• " if x is f else "") + ctx.tr(_FILTER_TEXT[x]), Cb.users, x.value, 0) for x in Filter]
-    text = f"👥 <b>{ctx.tr(T.users_title)}</b> · {ctx.tr(_FILTER_TEXT[f])}\n{ctx.tr(T.users_count, n=len(users))}"
-    if not users:
-        text += f"\n\n<i>{ctx.tr(T.users_empty)}</i>"
+    found = accounts.list_page(admin, f, sort, page, PAGE_SIZE)
+    page = found.page
+    ctx.state.update(back=[Cb.users.value, f.value, page, sort.value])
+    n = accounts.counts(admin)
+    # The tabs: an icon and a count each, the chosen one ticked (a segmented control)
+    tabs = [
+        off_btn(SELECTED + f"{_FILTER_ICON[x]} {n[x]}", otherwise=btn(SELECTED + f"{_FILTER_ICON[x]} {n[x]}", Cb.users, x.value, 0, sort.value)) if x is f else btn(f"{_FILTER_ICON[x]} {n[x]}", Cb.users, x.value, 0, sort.value)
+        for x in Filter
+    ]
+    sorts = list(Sort)
+    after = sorts[(sorts.index(sort) + 1) % len(sorts)]
+    title = f"👥 <b>{ctx.tr(T.users_title)}</b>  ·  {_FILTER_ICON[f]} {ctx.tr(_FILTER_TEXT[f])}"
     return Screen(
-        text,
+        _list_text(ctx, title, found, sort),
         keyboard(
-            tabs[:3],
-            tabs[3:],
-            *([_user_button(ctx, u)] for u in shown),
-            _pager(Cb.users, [f.value], page, pages),
-            [btn(ctx.tr(T.search), Cb.search_ask), btn(ctx.tr(T.menu), Cb.home)],
+            tabs,
+            *_user_grid(ctx, found.users),
+            _pager(Cb.users, [f.value], page, found.pages, [sort.value]),
+            [btn(ctx.tr(T.search), Cb.search_ask), btn(ctx.tr(T.sort_by, by=ctx.tr(_SORT_TEXT[after])), Cb.users, f.value, 0, after.value)],
+            [btn(ctx.tr(T.back), Cb.back)],
         ),
     )
 
@@ -124,7 +189,11 @@ def show_users(ctx: Ctx, args: list[str]) -> None:
         f = Filter(args[0])
     except (IndexError, ValueError):
         f = Filter.all
-    ctx.show(users_screen(ctx, f, _int(args, 1)))
+    try:
+        sort = Sort(args[2])
+    except (IndexError, ValueError):
+        sort = Sort.new
+    ctx.show(users_screen(ctx, f, _int(args, 1), sort))
     ctx.toast()
 
 
@@ -138,21 +207,18 @@ def ask_search(ctx: Ctx, _args: list[str]) -> None:
 def search_screen(ctx: Ctx, query: str, page: int) -> Screen:
     admin = ctx.admin
     assert admin
-    found = accounts.find_users(admin, query)
-    if len(found) == 1 and page == 0:
-        return card_screen(ctx, found[0])
-    shown, page, pages = _page(found, page)
+    found = accounts.search_page(admin, query, page, PAGE_SIZE)
+    if found.total == 1 and page == 0:
+        return card_screen(ctx, found.users[0])
+    page, pages = found.page, found.pages
     ctx.state.update(back=[Cb.search.value, page], query=query)
-    text = f"🔍 <b>{ctx.tr(T.search_results, q=h(query))}</b>\n{ctx.tr(T.users_count, n=len(found))}"
-    if not found:
-        text += f"\n\n<i>{ctx.tr(T.users_empty)}</i>"
     return Screen(
-        text,
+        _list_text(ctx, f"🔍 <b>{ctx.tr(T.search_results, q=h(query))}</b>", found, None),
         keyboard(
-            *([_user_button(ctx, u)] for u in shown),
+            *_user_grid(ctx, found.users),
             _pager(Cb.search, [], page, pages),
             [btn(ctx.tr(T.search), Cb.search_ask), btn(ctx.tr(T.search_clear), Cb.users, Filter.all.value, 0)],
-            [btn(ctx.tr(T.menu), Cb.home)],
+            [btn(ctx.tr(T.back), Cb.back)],
         ),
     )
 
@@ -197,15 +263,16 @@ def card_screen(ctx: Ctx, user: User, note: str | None = None) -> Screen:
     if note:
         lines += ["", f"✅ <i>{h(note)}</i>"]
     uid = user.id
-    toggle = btn(ctx.tr(T.disable), Cb.act, uid, "off") if user.enable else btn(ctx.tr(T.enable), Cb.act, uid, "on")
+    toggle = btn(ctx.tr(T.disable), Cb.act, uid, "off", style=Style.danger) if user.enable else btn(ctx.tr(T.enable), Cb.act, uid, "on", style=Style.success)
     return Screen(
         "\n".join(lines),
         keyboard(
             [btn(ctx.tr(T.links), Cb.links, uid), btn(ctx.tr(T.qr), Cb.qr, uid)],
+            [btn(ctx.tr(T.chart), Cb.chart, uid)],
             [btn(ctx.tr(T.add_days), Cb.act, uid, "days"), btn(ctx.tr(T.add_gb), Cb.act, uid, "gb")],
-            [btn(ctx.tr(T.renew), Cb.act, uid, "renew"), btn(ctx.tr(T.reset_usage), Cb.act, uid, "reset")],
-            [toggle, btn(ctx.tr(T.delete), Cb.act, uid, "del")],
-            [_back_btn(ctx), btn(ctx.tr(T.refresh), Cb.card, uid)],
+            [btn(ctx.tr(T.renew), Cb.act, uid, "renew", style=Style.success), btn(ctx.tr(T.reset_usage), Cb.act, uid, "reset")],
+            [toggle, btn(ctx.tr(T.delete), Cb.act, uid, "del", style=Style.danger)],
+            [btn(ctx.tr(T.back), Cb.back), btn(ctx.tr(T.refresh), Cb.card, uid)],
         ),
     )
 
@@ -229,7 +296,7 @@ def show_card(ctx: Ctx, args: list[str]) -> None:
 @route(Cb.links, admin=True)
 def show_links(ctx: Ctx, args: list[str]) -> None:
     if user := _visible_user(ctx, args):
-        ctx.show(Screen(links_text(user, ctx.lang), keyboard([btn(ctx.tr(T.qr), Cb.qr, user.id)], [btn(ctx.tr(T.back), Cb.card, user.id)])))
+        ctx.show(links_screen(user, ctx.lang, [btn(ctx.tr(T.qr), Cb.qr, user.id)], [btn(ctx.tr(T.back), Cb.back)]))
         ctx.toast()
 
 
@@ -273,7 +340,7 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             ctx.show(Screen(head + ctx.tr(T.pick_gb), _choices(ctx, user, "gb", ADD_GB_CHOICES, ctx.tr(T.gb))))
             return ctx.toast()
         case "del", 0:
-            ctx.show(Screen(head + ctx.tr(T.delete_confirm), keyboard([btn(ctx.tr(T.delete), Cb.act, user.id, "del", 1), btn(ctx.tr(T.cancel), Cb.card, user.id)])))
+            ctx.show(Screen(head + ctx.tr(T.delete_confirm), keyboard([btn(ctx.tr(T.delete), Cb.act, user.id, "del", 1, style=Style.danger), btn(ctx.tr(T.cancel), Cb.card, user.id)])))
             return ctx.toast()
         case "del", _:
             if User.query.filter(User.deleted.is_(False)).count() <= 1:
@@ -322,51 +389,95 @@ def _default_name(admin: AdminUser) -> str:
     return f"{admin.name or 'tg'} {datetime.date.today():%m-%d}"
 
 
+#: The most users made at once (a custom count)
+MAX_BATCH = 100
+#: Quick picks on the "how many" question
+COUNT_PICKS = (5, 10, 20, 50)
+
+
+def names_preview(name: str, count: int) -> str:
+    """How the users will be called: NAME, or NAME-01 … NAME-10."""
+    if count <= 1:
+        return name
+    w = max(2, len(str(count)))
+    return f"{name}-{1:0{w}d}, {name}-{2:0{w}d} … {name}-{count:0{w}d}" if count > 2 else f"{name}-{1:0{w}d}, {name}-{2:0{w}d}"
+
+
 def new_screen(ctx: Ctx, gb: int, days: int, count: int) -> Screen:
+    """One step at a time: one user or how many, then the data, the days, (for many) their name, then Create."""
     admin = ctx.admin
     assert admin
+    head = f"➕ <b>{ctx.tr(T.new_title)}</b>\n{RULE}\n"
+    if not count:
+        return Screen(
+            f"{head}{ctx.tr(T.new_how)}",
+            keyboard([btn(ctx.tr(T.new_one), Cb.new, 0, 0, 1, style=Style.success)], [btn(ctx.tr(T.new_many), Cb.new_count)], [btn(ctx.tr(T.back), Cb.back)]),
+        )
     name = str(ctx.state.get("new_name") or _default_name(admin))
     summary = ctx.tr(
         T.new_summary,
         gb=fmt_gb(gb, ctx.lang) if gb else "—",
         days=f"{days} {ctx.tr(T.unit_d)}" if days else "—",
-        count=count or "—",
-        name=h(name),
+        count=count,
+        name=h(names_preview(name, count)) if ctx.state.get("new_name") or count == 1 else "—",
     )
-    text = f"➕ <b>{ctx.tr(T.new_title)}</b>\n{RULE}\n{summary}\n\n"
+    text = f"{head}{summary}\n\n"
     rows: list[Sequence[types.InlineKeyboardButton]] = []
     if not gb:
         text += ctx.tr(T.new_gb)
         b = [btn(f"{v} {ctx.tr(T.gb)}", Cb.new, v, days, count) for v in GB_CHOICES]
-        rows += [b[:4], b[4:]]
+        rows += [b[:4], b[4:], [btn(ctx.tr(T.back), Cb.new, 0, 0, 0)]]
     elif not days:
         text += ctx.tr(T.new_days)
         b = [btn(f"{v} {ctx.tr(T.unit_d)}", Cb.new, gb, v, count) for v in DAY_CHOICES]
-        rows += [b[:4], b[4:], [btn(ctx.tr(T.back), Cb.new, 0, 0, 0)]]
-    elif not count:
-        text += ctx.tr(T.new_count)
-        b = [btn(f"× {v}", Cb.new, gb, days, v) for v in COUNT_CHOICES]
-        rows += [b[:4], b[4:], [btn(ctx.tr(T.back), Cb.new, gb, 0, 0)]]
+        rows += [b[:4], b[4:], [btn(ctx.tr(T.back), Cb.new, 0, 0, count)]]
+    elif count > 1 and not ctx.state.get("new_name"):
+        # Many users: their name comes first (typed), each gets its number after it
+        ctx.state.update(awaiting="new_name", new_args=[gb, days, count])
+        text += f"✏️ {ctx.tr(T.new_many_name, example=h(names_preview('Hiddify', count)))}"
+        rows += [[btn(ctx.tr(T.new_use_name, name=name[:30]), Cb.new_name, gb, days, count, "d")], [btn(ctx.tr(T.back), Cb.new, gb, 0, count)]]
     else:
         rows += [
-            [btn(ctx.tr(T.new_create), Cb.new_go, gb, days, count)],
-            [btn(ctx.tr(T.new_name), Cb.new_name, gb, days, count), btn(ctx.tr(T.back), Cb.new, gb, days, 0)],
+            [btn(ctx.tr(T.new_create_n, n=count) if count > 1 else ctx.tr(T.new_create), Cb.new_go, gb, days, count, style=Style.success)],
+            [btn(ctx.tr(T.new_name), Cb.new_name, gb, days, count), btn(ctx.tr(T.back), Cb.new, gb, 0, count)],
         ]
-    rows.append([btn(ctx.tr(T.cancel), Cb.home)])
     return Screen(text, keyboard(*rows))
 
 
 @route(Cb.new, admin=True)
 def show_new(ctx: Ctx, args: list[str]) -> None:
-    gb, days, count = _int(args, 0), _int(args, 1), _int(args, 2)
-    if not (gb or days or count):
+    gb, days, count = _int(args, 0), _int(args, 1), min(_int(args, 2), MAX_BATCH)
+    if not (gb or days):
         ctx.state.update(new_name=None, awaiting=None)
     ctx.show(new_screen(ctx, gb, days, count))
     ctx.toast()
 
 
+@route(Cb.new_count, admin=True)
+def ask_count(ctx: Ctx, _args: list[str], error: bool = False) -> None:
+    """How many users: typed, or one of the quick picks."""
+    ctx.state.update(awaiting="new_count", new_name=None)
+    picks = [btn(f"× {v}", Cb.new, 0, 0, v) for v in COUNT_PICKS]
+    text = f"➕ <b>{ctx.tr(T.new_title)}</b>\n{RULE}\n🔢 {ctx.tr(T.new_count_prompt, max=MAX_BATCH)}"
+    if error:
+        text += f"\n\n⚠️ <i>{ctx.tr(T.new_count_bad, max=MAX_BATCH)}</i>"
+    ctx.show(Screen(text, keyboard(picks, [btn(ctx.tr(T.back), Cb.new, 0, 0, 0)])))
+    ctx.toast()
+
+
+def parse_count(text: str) -> int | None:
+    """A typed count (Persian and Arabic digits too), or None."""
+    digits = text.strip().translate(str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789"))
+    return int(digits) if digits.isdigit() and 1 <= int(digits) <= MAX_BATCH else None
+
+
 @route(Cb.new_name, admin=True)
 def ask_new_name(ctx: Ctx, args: list[str]) -> None:
+    if args[3:4] == ["d"]:  # the suggested name
+        assert ctx.admin
+        ctx.state.update(new_name=_default_name(ctx.admin), awaiting=None)
+        ctx.show(new_screen(ctx, _int(args, 0), _int(args, 1), _int(args, 2)))
+        return ctx.toast()
     ctx.state.update(awaiting="new_name", new_args=[_int(args, 0), _int(args, 1), _int(args, 2)])
     ctx.show(Screen(f"✏️ {ctx.tr(T.new_name_prompt)}", keyboard([btn(ctx.tr(T.back), Cb.new, *args[:3])])))
     ctx.toast()
@@ -378,7 +489,7 @@ def create_users(ctx: Ctx, args: list[str]) -> None:
     assert admin
     gb = min(max(_int(args, 0), 1), accounts.MAX_USAGE_GB)
     days = min(max(_int(args, 1), 1), accounts.MAX_PACKAGE_DAYS)
-    count = min(max(_int(args, 2), 1), max(COUNT_CHOICES))
+    count = min(max(_int(args, 2), 1), MAX_BATCH)
     if accounts.is_read_only():
         return ctx.toast(ctx.tr(T.read_only_node), alert=True)
     if not admin.can_have_more_users():
@@ -393,17 +504,27 @@ def create_users(ctx: Ctx, args: list[str]) -> None:
     background(lambda: _send_cards(chat_id, lang, ids, gb=gb, days=days))
 
 
+#: Up to this many new users each get a card; more get one file of names and links
+CARDS_AT_MOST = 10
+
+
 def _send_cards(chat_id: int, lang: str, user_ids: list[int], *, gb: int, days: int) -> None:
     """One card per new user (forwardable, refreshable), then the panel again under them."""
     ctx = Ctx(chat_id, lang, admin=AdminUser.query.filter(AdminUser.telegram_id == chat_id).first())
-    for user in User.query.filter(User.id.in_(user_ids)).order_by(User.id).all():
-        screen = share_screen(lang, user)
-        with_retry(lambda: send_card(chat_id, screen))
+    users = User.query.filter(User.id.in_(user_ids)).order_by(User.id).all()
+    if len(users) <= CARDS_AT_MOST:
+        for user in users:
+            screen = share_screen(lang, user)
+            with_retry(lambda: send_card(chat_id, screen))
+    else:  # many: one file with every user's name and link, not a flood of cards
+        lines = [f"{u.name}\t{accounts.links(u).sub}" for u in users]
+        data = ("\n".join(lines) + "\n").encode()
+        with_retry(lambda: bot.send_document(chat_id, types.InputFile(io.BytesIO(data), file_name=f"{users[0].name.rsplit('-', 1)[0]}-{len(users)}-users.txt"), caption=ctx.tr(T.new_file_caption, n=len(users))))
     done = ctx.tr(T.new_done_one) if len(user_ids) == 1 else ctx.tr(T.new_done_many, n=len(user_ids), gb=gb, days=days)
     ctx.show(
         Screen(
             f"✅ {done}",
-            keyboard([btn(ctx.tr(T.btn_users), Cb.users, Filter.all.value, 0), btn(ctx.tr(T.btn_new), Cb.new, 0, 0, 0)], [btn(ctx.tr(T.menu), Cb.home)]),
+            keyboard([btn(ctx.tr(T.btn_users), Cb.users, Filter.all.value, 0, style=Style.primary), btn(ctx.tr(T.btn_new), Cb.new, 0, 0, 0, style=Style.success)]),
         )
     )
 
@@ -416,6 +537,12 @@ def on_text(ctx: Ctx, text: str) -> None:
         from . import free
 
         return free.admin_reply(ctx, text)
+    if awaiting == "new_count":
+        n = parse_count(text)
+        if n is None:
+            return ask_count(ctx, [], error=True)
+        ctx.show(new_screen(ctx, 0, 0, n))
+        return
     if awaiting == "new_name":
         ctx.state.update(new_name=text.strip()[:60])
         args = ctx.state.get("new_args") or [0, 0, 0]
@@ -437,9 +564,11 @@ def send_backup(ctx: Ctx, _args: list[str]) -> None:
     try:
         from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import write_backup_file
 
+        from . import backup_msg
+
         path = write_backup_file()
         with path.open("rb") as fp:
-            bot.send_document(ctx.chat_id, types.InputFile(fp, file_name=path.name), caption=ctx.tr(T.backup_caption), reply_markup=keyboard([btn(ctx.tr(T.close), Cb.close)]))
+            backup_msg.send(ctx.chat_id, fp, path.name, admin, size=path.stat().st_size, tail=[btn(ctx.tr(T.close), Cb.close)])
     except Exception as e:
         logger.exception(e)
         bot.send_message(ctx.chat_id, f"⚠️ {ctx.tr(T.backup_failed)}\n<code>{h(e)}</code>")

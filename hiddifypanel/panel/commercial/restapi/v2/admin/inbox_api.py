@@ -149,6 +149,10 @@ class ConversationApi(MethodView):
         if conv.unread:
             conv.unread = 0
             db.session.commit()
+            if _bot_username():  # the person's messages get 👀
+                from hiddifypanel.panel.commercial.telegrambot import support
+
+                support.seen(conv)
         return _thread_out(conv)
 
     def post(self, conversation_id: int):

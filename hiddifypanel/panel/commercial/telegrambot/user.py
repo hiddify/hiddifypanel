@@ -13,7 +13,7 @@ from hiddifypanel.models import User
 from . import accounts, bot
 from .accounts import Status
 from .texts import T, t
-from .ui import Cb, Ctx, Screen, ago, app_row, bar, btn, can_open_as_app, fmt_gb, h, keyboard, route
+from .ui import BRAND, ago, ago_html, app_row, bar, btn, can_open_as_app, Cb, Ctx, fmt_gb, h, keyboard, route, Screen, Style, tg_time, url_btn
 
 _STATUS_TEXT: dict[Status, T] = {
     Status.active: T.status_active,
@@ -49,7 +49,7 @@ def account_card(user: User, lang: str, *, note: str | None = None) -> str:
         time = [
             f"⏳ <b>{t(T.time, lang)}</b>",
             f"<code>{bar(left / days_total if days_total else 0, BAR)}</code>  <b>{round(left / days_total * 100) if days_total else 0}%</b>",
-            t(T.days_left, lang, left=left, total=days_total, date=end.isoformat()),
+            t(T.days_left, lang, left=left, total=days_total, date=tg_time(end, "D", end.isoformat())),
         ]
 
     lines = [f"✨ <b>{h(user.name)}</b>", head, "", "<blockquote>" + "\n".join(data) + "\n\n" + "\n".join(time) + "</blockquote>"]
@@ -57,7 +57,7 @@ def account_card(user: User, lang: str, *, note: str | None = None) -> str:
     if isinstance(reset, int) and 0 <= reset < 500 and user.mode != "no_reset":
         lines.append(f"🔁 {t(T.resets_in, lang, n=reset)}")
     if not online:
-        lines.append(f"🕒 {t(T.last_online, lang)}  ·  {ago(user.last_online, lang)}")
+        lines.append(f"🕒 {t(T.last_online, lang)}  ·  {ago_html(user.last_online, lang)}")
     links = accounts.links(user)
     lines += ["", f'🔗 <a href="{h(links.page)}">{t(T.link_home, lang)}</a>  ·  <a href="{h(links.sub)}">{t(T.link_sub, lang)}</a>']
     if note:
@@ -65,24 +65,20 @@ def account_card(user: User, lang: str, *, note: str | None = None) -> str:
     return "\n".join(lines)
 
 
-def links_text(user: User, lang: str) -> str:
+def links_screen(user: User, lang: str, *tail: list) -> Screen:
+    """The account's links, each folded in its own box (Telegram's expandable quote: its title and the start of the
+    link show, a tap opens it, a tap on the link copies it), told apart by a coloured mark (a bot cannot colour a
+    quote). ``tail``: the rows under it."""
     links = accounts.links(user)
-    return "\n".join(
-        [
-            f"🔗 <b>{t(T.links_title, lang)}</b>  ·  {h(user.name)}",
-            "",
-            f"🌐 <b>{t(T.link_home, lang)}</b>",
-            f"<code>{h(links.page)}</code>",
-            "",
-            f"📥 <b>{t(T.link_sub, lang)}</b>",
-            f"<code>{h(links.sub)}</code>",
-            "",
-            f"📱 <b>{t(T.link_hiddify, lang)}</b>",
-            f"<code>{h(links.hiddify)}</code>",
-            "",
-            f"<i>{t(T.links_hint, lang)}</i>",
-        ]
-    )
+    boxes = [
+        ("🔵", T.link_sub, T.lk_sub_for, links.sub),
+        ("🟢", T.link_hiddify, T.lk_app_for, links.hiddify),
+        ("🟣", T.link_home, T.lk_page_for, links.page),
+    ]
+    lines = [f"🔗 <b>{t(T.links_title, lang)}</b>  ·  {h(user.name)}", f"<i>{t(T.links_hint, lang)}</i>", ""]
+    lines += [f"<blockquote expandable>{mark} <b>{t(title, lang)}</b> · {t(use, lang)}\n<code>{h(value)}</code></blockquote>" for mark, title, use, value in boxes]
+    page_row = [url_btn(t(T.lk_open_page, lang), links.page)] if links.page.startswith("https://") else []
+    return Screen("\n".join(lines), keyboard(page_row, *tail))
 
 
 # --------------------------------------------------------------------------- the card an admin shares
@@ -95,7 +91,7 @@ def share_screen(lang: str, user: User, note: str | None = None) -> Screen:
         account_card(user, lang, note=note),
         keyboard(
             [btn(t(T.refresh, lang), Cb.share, user.id), btn(t(T.manage, lang), Cb.card, user.id)],
-            app_row(t(T.my_page, lang), links.home),
+            app_row(BRAND, links.home, Style.primary),
         ),
         qr=links.sub,
     )
@@ -110,9 +106,11 @@ def home(ctx: Ctx, note: str | None = None) -> Screen:
     links = accounts.links(user)
     return Screen(
         account_card(user, ctx.lang, note=note),
+        # The everyday screens are on the keyboard by the message box (menukey), and the page on the Hiddify
+        # button beside it: the card keeps only what is about the card itself.
         keyboard(
             [btn(ctx.tr(T.refresh), Cb.me), btn(ctx.tr(T.links), Cb.me_links)],
-            app_row(ctx.tr(T.my_page), links.home),
+            [btn(ctx.tr(T.wg_button), Cb.widget)],
         ),
         qr=links.sub,
     )
@@ -127,7 +125,7 @@ def show_home(ctx: Ctx, _args: list[str]) -> None:
 @route(Cb.me_links, admin=False)
 def show_links(ctx: Ctx, _args: list[str]) -> None:
     assert ctx.user
-    ctx.show(Screen(links_text(ctx.user, ctx.lang), keyboard([btn(ctx.tr(T.back), Cb.me)]), qr=accounts.links(ctx.user).sub))
+    ctx.show(links_screen(ctx.user, ctx.lang, [btn(ctx.tr(T.back), Cb.back)]))
     ctx.toast()
 
 

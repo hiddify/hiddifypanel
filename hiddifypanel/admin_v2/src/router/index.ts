@@ -96,6 +96,13 @@ const routes = [
         beforeEnter: notForAgents,
       },
       {
+        // The panel's Telegram bot: its health, a test message, the webhook and the animated icons (owner only).
+        path: 'telegram-bot',
+        name: 'telegram-bot',
+        component: () => import('@/features/telegram-bot/views/TelegramBotView.vue'),
+        beforeEnter: () => (isSuperAdmin.value && !isChildPanel.value ? true : { name: 'dashboard' }),
+      },
+      {
         path: 'backup',
         name: 'backup',
         component: () => import('@/features/backup/views/BackupView.vue'),

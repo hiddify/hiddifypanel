@@ -62,6 +62,7 @@ export function useAdminMenu() {
   // Their own entries in Settings (not inside the proxy editor).
   const protocols = computed<AdminMenuItem>(() => ({ label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' }))
   const outbounds = computed<AdminMenuItem>(() => ({ label: t('menu.outbounds'), icon: 'pi pi-fw pi-directions', to: '/outbounds' }))
+  const telegramBot = computed<AdminMenuItem>(() => ({ label: t('menu.telegramBot'), icon: 'pi pi-fw pi-telegram', to: '/telegram-bot' }))
 
   const menuGroups = computed<AdminMenuGroup[]>(() => {
     // Same-origin classic pages open inside the new shell (legacy frame); external links stay as they are.
@@ -88,6 +89,8 @@ export function useAdminMenu() {
           ...(isAgent.value ? [] : [protocols.value]),
           ...(hasCapability('modify_outbounds') ? [outbounds.value] : []),
           first('/settings'),
+          // The bot is the whole server's (its token): the owner's, and the parent panel's
+          ...(isSuperAdmin.value && !isChildPanel.value ? [telegramBot.value] : []),
           ...(isAgent.value ? [] : [proxyEditor.value]),
         ]
         const placed = new Set(lead)

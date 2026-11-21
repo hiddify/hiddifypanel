@@ -16,6 +16,10 @@ import { createAppRouter } from './router'
 import { i18n, primeVueLocale, setLocale } from './core/i18n'
 import { initApiClient, getRouterBase } from './core/api/client'
 import { stripEmoji } from '@/shared/utils/emoji-icons'
+import { setupTelegramMiniApp } from './core/telegramMiniApp'
+
+// Opened from the Telegram bot: full screen on a phone (nothing happens in a plain browser)
+setupTelegramMiniApp()
 
 async function bootstrap() {
   await initApiClient()

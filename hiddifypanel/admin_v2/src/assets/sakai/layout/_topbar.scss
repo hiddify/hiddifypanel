@@ -13,6 +13,12 @@
     }
 }
 
+/* Opened from the Telegram bot in full screen (src/core/telegramMiniApp.ts): Telegram's close and menu buttons float
+   over the top of the page, below the notch; Telegram gives both heights. The topbar's blue runs up behind them. */
+html.tg-fullscreen {
+    --safe-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px));
+}
+
 .layout-topbar {
     /* The same vivid blue as the buttons, with a light sweep so the bar feels alive */
     --topbar-bg: linear-gradient(100deg, var(--p-primary-700) 0%, var(--p-primary-600) 45%, var(--p-primary-500) 100%);

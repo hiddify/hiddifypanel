@@ -8,7 +8,7 @@ from hiddifypanel.models import Domain, User
 
 from .texts import T, t
 from . import accounts
-from .ui import Cb, app_row, btn, keyboard, lang_of
+from .ui import BRAND, Cb, app_row, btn, keyboard, lang_of
 from .user import account_card
 
 
@@ -24,5 +24,5 @@ def user_keyboard(uuid: str) -> types.InlineKeyboardMarkup:
     lang = lang_of(user, admin=False)
     rows = [[btn(t(T.refresh, lang), Cb.me), btn(t(T.links, lang), Cb.me_links)]]
     if user:
-        rows.append(app_row(t(T.my_page, lang), accounts.links(user).home))
+        rows.append(app_row(BRAND, accounts.links(user).home))
     return keyboard(*rows)

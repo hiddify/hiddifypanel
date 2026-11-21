@@ -23,7 +23,31 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 209
+MAX_DB_VERSION = 212
+
+
+def _v212(child_id):
+    """Settings people make in the Telegram bot (bot_pref): usage alerts on or off."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.bot_pref import BotPref
+
+    BotPref.__table__.create(db.engine, checkfirst=True)
+
+
+def _v211(child_id):
+    """Each user's traffic per day (user_daily_usage), for the usage chart in the Telegram bot."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.usage import UserDailyUsage
+
+    UserDailyUsage.__table__.create(db.engine, checkfirst=True)
+
+
+def _v210(child_id):
+    """The Telegram bot's animated button icons: off (they need the bot owner's Premium), from the built-in sets."""
+    add_config_if_not_exist(ConfigEnum.telegram_bot_animated_icons, False, child_id)
+    add_config_if_not_exist(ConfigEnum.telegram_bot_icon_sets, "", child_id)
 
 
 def _v209(child_id):

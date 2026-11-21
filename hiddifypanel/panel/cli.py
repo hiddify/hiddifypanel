@@ -1,9 +1,6 @@
 import datetime
-import html
-import ipaddress
 import json
 import os
-import re
 import uuid
 
 import click
@@ -55,11 +52,12 @@ def backup_task():
         if not bot.username:
             register_bot(True)
 
-        for admin in db.session.query(AdminUser).filter(AdminUser.mode == AdminMode.super_admin, AdminUser.telegram_id is not None, AdminUser.telegram_id != 0).all():
-            caption = backup_caption()
+        from hiddifypanel.panel.commercial.telegrambot import backup_msg
+
+        for admin in db.session.query(AdminUser).filter(AdminUser.mode == AdminMode.super_admin, AdminUser.telegram_id.isnot(None), AdminUser.telegram_id != 0).all():
             with open(dst, "rb") as document:
                 try:
-                    bot.send_document(admin.telegram_id, document, visible_file_name=dst.split("backup/")[-1], caption=caption, parse_mode="HTML")
+                    backup_msg.send(admin.telegram_id, document, dst, admin, size=os.path.getsize(dst))
                 except Exception as e:
                     logger.exception(e)
 
@@ -106,40 +104,6 @@ def remove_old_backups(dst_dir: str):
                 os.remove(os.path.join(dst_dir, name))
             except OSError as e:
                 logger.warning(f"backup: could not remove {name}: {e}")
-
-
-def backup_caption() -> str:
-    """The Telegram backup message (HTML): one clickable line per panel link; kept under the 1024-char caption limit."""
-    owner = AdminUser.get_super_admin()
-
-    def kind(d: Domain) -> str:
-        try:
-            return f"IPv{ipaddress.ip_address(d.domain.strip('[]')).version}"
-        except ValueError:
-            return "CDN" if d.mode == DomainType.cdn else "Relay" if d.mode == DomainType.relay else "Domain"
-
-    def link(title: str, url: str) -> str:
-        return f'<a href="{html.escape(url)}">{title}</a>'
-
-    # Which panel and when: the branding title (tags stripped) or the product name, the version, the backup time.
-    name = re.sub(r"<[^>]+>", "", hconfig(ConfigEnum.branding_title) or "").strip() or "HiddifyManager"
-    blocks = [f"📀 <b>Backup</b> · {html.escape(name)} v{html.escape(hiddifypanel.__version__)}\n🕒 {datetime.datetime.now():%Y-%m-%d %H:%M}"]
-    for d in Domain.get_domains():
-        k = kind(d)
-        if k == "IPv6":  # an IPv6 admin link does not open from most networks: not sent
-            continue
-        # 🔒 the server's own address or domain, 🔐 through a CDN
-        blocks.append(("🔐 " if k == "CDN" else "🔒 ") + link(f"Secure {k}", hiddify.get_account_panel_link(owner, d.domain)))
-    # The not-secure link last: the secure ones are the ones to open (and the first to keep under the limit).
-    server_ip = hutils.network.get_ip_str(4)
-    if server_ip:
-        blocks.append("⚠️ " + link("Not Secure IPv4", hiddify.get_account_panel_link(owner, server_ip, is_https=False)))
-    caption = blocks[0]
-    for b in blocks[1:]:
-        if len(caption) + len(b) + 2 > 1024:
-            break
-        caption += "\n\n" + b
-    return caption
 
 
 def admin_path():

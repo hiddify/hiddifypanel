@@ -17,7 +17,7 @@ from hiddifypanel.models.message import Conversation, FreeStatus, Sender
 from . import bot
 from . import user as user_screens
 from .texts import T, t
-from .ui import RULE, Cb, Ctx, Screen, btn, fmt_data, h, keyboard, lang_of, route, send_card
+from .ui import BRAND, RULE, btn, Cb, Ctx, fmt_data, h, keyboard, lang_of, off_btn, route, Screen, send_card, Style
 
 #: Messages a chat may send to an admin per minute.
 RATE_PER_MINUTE = 10
@@ -55,17 +55,17 @@ def offer_screen(conv: Conversation, lang: str) -> Screen:
         "",
     ]
     if conv.free_status == FreeStatus.pending:
-        return Screen("\n".join([*head, f"⏳ <b>{t(T.free_pending, lang)}</b>", t(T.free_wait, lang)]), keyboard([btn(t(T.refresh, lang), Cb.free, conv.id)], [write]))
-    if not free_test.can_ask(conv):
-        return Screen("\n".join([*head, f"✖️ {t(T.free_declined, lang)}"]), keyboard([write]))
+        return Screen("\n".join([*head, f"⏳ <b>{t(T.free_pending, lang)}</b>", t(T.free_wait, lang)]), keyboard([off_btn(f"⏳ {t(T.free_pending, lang)}")], [btn(t(T.refresh, lang), Cb.free, conv.id)], [write]))
+    if not free_test.can_ask(conv):  # the offer is there, closed for this chat
+        return Screen("\n".join([*head, f"✖️ {t(T.free_declined, lang)}"]), keyboard([off_btn(t(T.free_get, lang))], [write]))
     if not free_test.is_first_time(conv):
-        rows = [[btn(t(T.free_again, lang), Cb.free_ask, conv.id)], [write]]
+        rows = [[btn(t(T.free_again, lang), Cb.free_ask, conv.id, style=Style.primary)], [write]]
         if free_test.has_account(conv.telegram_id):
-            rows.insert(0, [btn(t(T.account_title, lang), Cb.me)])
+            rows.insert(0, [btn(t(T.account_title, lang), Cb.me, style=Style.primary)])
         return Screen("\n".join([*head, f"<i>{t(T.free_hint_used, lang)}</i>"]), keyboard(*rows))
     if package.approval == "auto":
-        return Screen("\n".join([*head, f"<i>{t(T.free_hint_auto, lang)}</i>"]), keyboard([btn(t(T.free_get, lang), Cb.free_ask, conv.id)], [write]))
-    return Screen("\n".join([*head, f"<i>{t(T.free_hint_manual, lang)}</i>"]), keyboard([btn(t(T.free_request, lang), Cb.free_ask, conv.id)], [write]))
+        return Screen("\n".join([*head, f"<i>{t(T.free_hint_auto, lang)}</i>"]), keyboard([btn(t(T.free_get, lang), Cb.free_ask, conv.id, style=Style.success)], [write]))
+    return Screen("\n".join([*head, f"<i>{t(T.free_hint_manual, lang)}</i>"]), keyboard([btn(t(T.free_request, lang), Cb.free_ask, conv.id, style=Style.primary)], [write]))
 
 
 def open_offer(ctx: Ctx, admin: AdminUser, tg_user: types.User | None, package_id: str | None = None) -> None:
@@ -95,7 +95,10 @@ def show_offer(ctx: Ctx, args: list[str]) -> None:
 
 @route(Cb.free_write, admin=False, anyone=True)
 def show_write_hint(ctx: Ctx, args: list[str]) -> None:
-    ctx.toast(ctx.tr(T.free_write_hint), alert=True)
+    """"Write a message" on the free test offer: the same writing as from the support screen."""
+    from . import support
+
+    support.ask_message(ctx, args)
 
 
 @route(Cb.free_ask, admin=False, anyone=True)
@@ -125,16 +128,24 @@ def send_account(conv: Conversation, account: User) -> None:
     lang = lang_of(account, admin=False)
     screen = user_screens.home(Ctx(conv.telegram_id, lang, user=account), note=t(T.free_ready, lang))
     try:
-        send_card(conv.telegram_id, screen)
+        send_card(conv.telegram_id, screen, festive=True)
         from . import accounts
 
-        user_screens.set_menu_button(conv.telegram_id, t(T.my_page, lang), accounts.links(account).home)
+        user_screens.set_menu_button(conv.telegram_id, BRAND, accounts.links(account).home)
     except Exception as e:
         logger.warning(f"tgbot: free test account not sent to {conv.telegram_id}: {e}")
 
 
+def _conv_lang(conv: Conversation) -> str:
+    """The language this chat is written to in: its account's, else the one the person chose or speaks."""
+    from . import settings
+
+    account = User.by_uuid(conv.user_uuid) if conv.user_uuid else None
+    return settings.person_lang(conv.telegram_id, account)
+
+
 def tell_declined(conv: Conversation) -> None:
-    lang = lang_of(None, admin=False)
+    lang = _conv_lang(conv)
     try:
         bot.send_message(conv.telegram_id, f"✖️ {t(T.free_declined, lang)}", reply_markup=keyboard([btn(t(T.free_write, lang), Cb.free_write, conv.id)]))
     except Exception as e:
@@ -142,7 +153,14 @@ def tell_declined(conv: Conversation) -> None:
 
 
 def on_user_text(ctx: Ctx, message: types.Message) -> bool:
-    """Text from someone who is not an admin goes to the admin they talk to. False when they talk to nobody yet."""
+    """Text from someone who is not an admin goes to the admin they talk to, only while they write one (after
+    "Write a Message"). False when it is not a message for support."""
+    from . import support
+
+    if support.cancelled(ctx, message.text or ""):
+        return True
+    if not support.writing(ctx):  # typed anywhere else: it stays here (the caller says how to write to support)
+        return False
     conv = free_test.current_conversation(ctx.chat_id, ctx.user)
     if conv is None:
         return False
@@ -163,7 +181,11 @@ def on_user_text(ctx: Ctx, message: types.Message) -> bool:
     free_test.add_message(conv, Sender.user, text)
     db.session.commit()
     notify_message(conv, text)
-    _acknowledge(ctx, message)
+    reacted = support.sent(conv, message)
+    if support.writing(ctx):  # from "Write a Message": the keyboard goes, with a line saying it arrived
+        support.done_writing(ctx)
+    elif not reacted:  # no reactions here: a line of text says it went
+        _acknowledge(ctx, message)
     return True
 
 
@@ -195,7 +217,7 @@ def _notify(conv: Conversation, build) -> None:
 
 
 def _reply_row(conv: Conversation, lang: str) -> list[types.InlineKeyboardButton]:
-    return [btn(t(T.reply, lang), Cb.reply, conv.id)]
+    return [btn(t(T.reply, lang), Cb.reply, conv.id, style=Style.primary)]
 
 
 def notify_request(conv: Conversation, *, given: bool = False) -> None:
@@ -210,14 +232,16 @@ def notify_request(conv: Conversation, *, given: bool = False) -> None:
             lines.append(f"<i>{t(T.free_hint_used, lang)}</i>")
         if not admin.can_have_more_users():
             lines.append(f"⚠️ {t(T.req_no_room, lang)}")
-        buttons = [btn(t(T.req_approve, lang), Cb.free_answer, conv.id, "a"), btn(t(T.req_decline, lang), Cb.free_answer, conv.id, "d")]
+        buttons = [btn(t(T.req_approve, lang), Cb.free_answer, conv.id, "a", style=Style.success), btn(t(T.req_decline, lang), Cb.free_answer, conv.id, "d", style=Style.danger)]
         return "\n".join(lines), keyboard(buttons, _reply_row(conv, lang))
 
     _notify(conv, build)
 
 
 def notify_message(conv: Conversation, text: str) -> None:
-    _notify(conv, lambda _admin, lang: (f"💬 {t(T.msg_new, lang, name=_who(conv))}\n\n{h(text)}", keyboard(_reply_row(conv, lang))))
+    from . import support
+
+    _notify(conv, lambda _admin, lang: (support.notice(conv, text, lang), support.admin_buttons(conv, lang)))
 
 
 def _mine(ctx: Ctx, args: list[str]) -> Conversation | None:
@@ -266,18 +290,41 @@ def ask_reply(ctx: Ctx, args: list[str]) -> None:
     if conv is None:
         return ctx.toast(ctx.tr(T.gone), alert=True)
     ctx.state.update(awaiting="reply", reply_to=conv.id)
-    ctx.toast(ctx.tr(T.reply_prompt, name=conv.name), alert=True)
+    ctx.toast()
+    # Telegram's reply field opens with a hint, and the person sees "Support is typing…"
+    from . import support
+
+    try:
+        # Not a forced reply: it hides the Menu key and quotes the hint; a Cancel key carries the hint instead
+        from . import menukey
+
+        prompt = menukey.prompt(ctx, f"↩️ {ctx.tr(T.reply_prompt, name=h(conv.name))}", ctx.tr(T.sp_reply_placeholder, name=conv.name))
+        ctx.state.update(reply_prompt=prompt.message_id)
+    except Exception as e:
+        logger.debug(f"tgbot: reply prompt not sent: {e}")
+    conv.unread = 0
+    db.session.commit()
+    support.seen(conv)
+    support.typing(conv, _conv_lang(conv))
 
 
 def deliver(conv: Conversation, text: str) -> None:
     """The admin's message to the chat (from the inbox or from Telegram), kept in the conversation. Raises when Telegram
     refuses it (the person blocked the bot). Commits."""
-    lang = lang_of(None, admin=False)
+    lang = _conv_lang(conv)
     # The person is never shown who the admin is: the answer comes from "support".
-    bot.send_message(conv.telegram_id, f"💬 <b>{t(T.msg_from, lang)}</b>\n\n{h(text)}")
+    from . import topics
+
+    from . import support
+
+    sent = topics.deliver(conv.telegram_id, "support", lang, lambda x: bot.send_message(conv.telegram_id, f"🛟 <b>{t(T.msg_from, lang)}</b>\n\n{h(text)}", reply_markup=support.answer_buttons(lang), **x))
+    support.remember(conv.telegram_id, sent)
     free_test.add_message(conv, Sender.admin, text)
     conv.unread = 0
     db.session.commit()
+    from . import support
+
+    support.answered(conv)
 
 
 def admin_reply(ctx: Ctx, text: str) -> None:
@@ -285,15 +332,26 @@ def admin_reply(ctx: Ctx, text: str) -> None:
     admin = ctx.admin
     conv = db.session.get(Conversation, int(ctx.state.get("reply_to") or 0))
     ctx.state.update(reply_to=None)
-    menu = keyboard([btn(ctx.tr(T.menu), Cb.home)])
+    if prompt := ctx.state.get("reply_prompt"):  # the reply field's hint is done
+        ctx.state.update(reply_prompt=None)
+        try:
+            bot.delete_message(ctx.chat_id, int(prompt))
+        except Exception:
+            pass
+    from . import menukey
+
+    # Each outcome is a line that brings the Menu key back (the Cancel key replaced it while answering)
+    if text.strip() == ctx.tr(T.sp_cancel):
+        return menukey.tell(ctx, f"✖️ {ctx.tr(T.sp_cancelled)}")
     if admin is None or conv is None or conv.admin_id != admin.id:
-        return ctx.show(Screen(f"⚠️ {ctx.tr(T.gone)}", menu))
+        return menukey.tell(ctx, f"⚠️ {ctx.tr(T.gone)}")
     try:
         deliver(conv, text.strip()[: free_test.MAX_TEXT])
     except Exception as e:
         db.session.rollback()
-        return ctx.show(Screen(f"⚠️ {ctx.tr(T.reply_failed, name=h(conv.name))}\n<code>{h(e)}</code>", menu))
-    ctx.show(Screen(f"✅ {ctx.tr(T.reply_sent, name=h(conv.name))}", menu))
+        logger.info(f"tgbot: reply to {conv.telegram_id} not delivered: {e}")
+        return menukey.tell(ctx, f"⚠️ {ctx.tr(T.reply_failed, name=h(conv.name))}")
+    menukey.tell(ctx, f"✅ {ctx.tr(T.reply_sent, name=h(conv.name))}")
 
 
 def link_of(admin: AdminUser) -> str | None:
@@ -317,5 +375,5 @@ def show_link(ctx: Ctx, _args: list[str]) -> None:
     waiting = free_test.counts(admin)["pending"]
     if waiting:
         lines += ["", f"📨 {ctx.tr(T.free_link_waiting, n=waiting)}"]
-    ctx.show(Screen("\n".join(lines), keyboard([btn(ctx.tr(T.menu), Cb.home)])))
+    ctx.show(Screen("\n".join(lines), keyboard([btn(ctx.tr(T.back), Cb.back)])))
     ctx.toast()

@@ -155,7 +155,6 @@ def send_backup_to_telegram(chat_id: int) -> str:
     (built in memory, no file on the server). The caption is the one of the automatic backups. Returns the file name."""
     from telebot.apihelper import ApiTelegramException
 
-    from hiddifypanel.panel.cli import backup_caption
     from hiddifypanel.panel.commercial.telegrambot import bot
 
     data = json.dumps(hiddify.dump_db_to_dict(), indent=2, sort_keys=True, default=str).encode()
@@ -165,8 +164,10 @@ def send_backup_to_telegram(chat_id: int) -> str:
         abort(400, "The backup is larger than 50 MB, the most a Telegram bot can send: download it instead")
     document = io.BytesIO(data)
     document.name = name
+    from hiddifypanel.panel.commercial.telegrambot import backup_msg
+
     try:
-        bot.send_document(chat_id, document, visible_file_name=name, caption=backup_caption(), parse_mode="HTML")
+        backup_msg.send(chat_id, document, name, g.account, size=len(data))
     except ApiTelegramException as e:
         logger.warning(f"backup: sending to Telegram failed: {e}")
         abort(400, f"Telegram did not take the backup: {e.description}")

@@ -11,7 +11,7 @@ from sqlalchemy import bindparam, func, update
 from hiddifypanel import cache, hutils
 from hiddifypanel.database import db
 from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import AdminUser, AppliedUsageBatch, ConfigEnum, DailyUsage, UnsyncedUsage, UsageData, User, UserMode, hconfig, set_hconfig
+from hiddifypanel.models import AdminUser, AppliedUsageBatch, ConfigEnum, DailyUsage, UnsyncedUsage, UsageData, User, UserDailyUsage, UserMode, hconfig, set_hconfig
 
 to_gig_d = 1024**3
 
@@ -205,6 +205,7 @@ def _save_usage(usage_map: dict[str, UsageData], child_id: int, batch_id: str | 
     if clear_unsynced:
         UnsyncedUsage.query.delete()
     users: list[User] = []
+    usage_by_admin: dict[int | None, int] = {}  # bytes per admin of the users: added to the admins (and those above) at once
     if usage_map:
         table = User.__table__
         db.session.execute(
@@ -220,14 +221,31 @@ def _save_usage(usage_map: dict[str, UsageData], child_id: int, batch_id: str | 
         )
         # The update above is SQL: load the users again so is_active sees the new usage
         users = db.session.query(User).filter(User.uuid.in_(usage_map.keys())).populate_existing().all()
-        usage_by_admin: dict[int | None, int] = {}  # bytes per admin of the users: added to the admins (and those above) at once
         for user in users:
             used = usage_map[user.uuid].usage
             daily_usage.get(user.added_by, daily_usage[1]).usage += used
             usage_by_admin[user.added_by] = usage_by_admin.get(user.added_by, 0) + used
         AdminUser.add_usages(usage_by_admin, today)
+        # Each user's day, for their usage chart (the same transaction: kept with the usage or not at all)
+        UserDailyUsage.add(today, {user.id: usage_map[user.uuid].usage for user in users})
     db.session.commit()
+    _prune_user_daily(today)
+    # The hour's traffic, for the bot's "last 24 hours" chart (after the commit: only usage that was kept)
+    from hiddifypanel.hutils import hourly_usage
+
+    hourly_usage.record(usage_by_admin, cur_time)
     return users
+
+
+def _prune_user_daily(today: datetime.date) -> None:
+    """Once a day, after the usage is saved: a failure here never touches it."""
+    try:
+        if cache.redis_client.set(f"usage:user-daily:pruned:{today}", 1, nx=True, ex=2 * 24 * 3600):
+            UserDailyUsage.prune(today)
+            db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.warning(f"usage: old daily usage not pruned: {e}")
 
 
 def _sync_cores(users: list[User], usage_map: dict[str, UsageData], before_enabled_users: dict[str, int]) -> bool:
@@ -291,6 +309,13 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int, batch_id: 
 
             changes.publish(["user"])
         apply_changes = _sync_cores(users, usage_map, before_enabled_users) or apply_changes
+        if users and hconfig(ConfigEnum.telegram_bot_token) and any(u.telegram_id for u in users):
+            from hiddifypanel.panel.commercial.telegrambot import notify
+
+            notify.usage_alerts([u for u in users if u.telegram_id])
+            from hiddifypanel.panel.commercial.telegrambot import widget
+
+            widget.refresh_all([u for u in users if u.telegram_id])
         if apply_changes:
             hutils.apply_users.quick_apply_users(users_only=True)
     except Exception:
@@ -406,17 +431,9 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int, batch_id: 
 
 
 def send_bot_message(user):
-    if not (hconfig(ConfigEnum.telegram_bot_token) or hutils.node.is_child()):
+    """The user hears in Telegram that their account went on or off (in their language, with their card)."""
+    if not user.telegram_id or not hconfig(ConfigEnum.telegram_bot_token):
         return
-    if not user.telegram_id:
-        return
-    from flask_babel import gettext as _
+    from hiddifypanel.panel.commercial.telegrambot import notify
 
-    from hiddifypanel.panel.commercial.telegrambot import Usage, bot
-
-    try:
-        msg = Usage.get_usage_msg(user.uuid)
-        msg = _("User activated!") if user.is_active else _("Package ended!") + "\n" + msg
-        bot.send_message(user.telegram_id, msg, reply_markup=Usage.user_keyboard(user.uuid))
-    except BaseException:
-        pass
+    notify.status_changed(user)
