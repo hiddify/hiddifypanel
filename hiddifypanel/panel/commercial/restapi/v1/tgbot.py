@@ -239,11 +239,12 @@ class TGManagedBotResource(Resource):
             abort(404)
         from hiddifypanel.panel.commercial.telegrambot import resellers
 
+        # Answered as they are (apiflask's abort inside a flask-restful resource comes out as a 500)
         managed = resellers.find(bot_id)
         if managed is None or not resellers.allowed():
-            abort(404)
+            return {"error": "not_found"}, 404
         if not hmac.compare_digest(request.headers.get("X-Telegram-Bot-Api-Secret-Token", ""), resellers.webhook_secret(managed.token)):
-            abort(403)
+            return {"error": "forbidden"}, 403
         try:
             import telebot
 
