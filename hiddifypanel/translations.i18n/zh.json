@@ -3568,7 +3568,14 @@
     "gd_connected": "本群现在是订阅者群组：只有活跃用户能进入，套餐到期的用户会被移出。",
     "gd_join": "👥 加入订阅者群组",
     "gd_declined": "该群组仅限活跃订阅者。请先在机器人中打开你的面板链接（向它发送 /start），然后再申请。",
-    "gd_removed": "你的套餐已到期，因此你已退出订阅者群组。续费后即可重新加入。"
+    "gd_removed": "你的套餐已到期，因此你已退出订阅者群组。续费后即可重新加入。",
+    "oa_missing": "机器人的“Open”按钮尚未设置。",
+    "oa_setup": "🚀 设置 Open 按钮",
+    "oa_ok": "Open 按钮已设置。",
+    "oa_steps": "Telegram 只允许通过 @BotFather 添加：\n1. 打开 @BotFather 并发送 /mybots\n2. 选择 {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (新版 BotFather 应用: Mini Apps → Main App → Enable)\n3. 把这个链接发给它：",
+    "oa_copy": "📋 复制链接",
+    "oa_check": "🔄 重新检查",
+    "oa_still_missing": "尚未设置：@BotFather 操作后 Telegram 可能需要一分钟。"
   },
   "cdn": "🔀 CDN（Cloudflare 代理，...）",
   "cf-delete": {

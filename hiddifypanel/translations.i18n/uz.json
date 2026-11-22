@@ -4794,7 +4794,14 @@
     "gd_connected": "Bu guruh endi obunachilar guruhi: faqat faol foydalanuvchilar kiradi, paketi tugaganlar chiqib ketadi.",
     "gd_join": "👥 Obunachilar guruhiga qo‘shilish",
     "gd_declined": "Guruh faqat faol obunachilar uchun. Avval botda panel havolangizni oching (unga /start yuboring), so‘ng qayta so‘rang.",
-    "gd_removed": "Paketingiz tugadi, shuning uchun obunachilar guruhidan chiqdingiz. Uni yangilang, qayta qo‘shila olasiz."
+    "gd_removed": "Paketingiz tugadi, shuning uchun obunachilar guruhidan chiqdingiz. Uni yangilang, qayta qo‘shila olasiz.",
+    "oa_missing": "Botning «Open» tugmasi hali sozlanmagan.",
+    "oa_setup": "🚀 Open tugmasini sozlash",
+    "oa_ok": "Open tugmasi sozlandi.",
+    "oa_steps": "Telegram uni faqat @BotFather orqali qo‘shishga ruxsat beradi:\n1. @BotFather’ni oching va /mybots yuboring\n2. {bot} ni tanlang → Bot Settings → Configure Mini App → Enable Mini App\n   (yangi BotFather ilovasi: Mini Apps → Main App → Enable)\n3. Unga shu havolani yuboring:",
+    "oa_copy": "📋 Havolani nusxalash",
+    "oa_check": "🔄 Qayta tekshirish",
+    "oa_still_missing": "Hali sozlanmagan: @BotFather’dan keyin Telegram bir daqiqa olishi mumkin."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

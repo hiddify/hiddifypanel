@@ -4794,7 +4794,14 @@
     "gd_connected": "ይህ ቡድን አሁን የተመዝጋቢዎች ቡድን ነው፤ ንቁ ተጠቃሚዎች ብቻ ይገባሉ፣ ጥቅላቸው ያለቀባቸው ይወጣሉ።",
     "gd_join": "👥 የተመዝጋቢዎች ቡድንን ተቀላቀል",
     "gd_declined": "ቡድኑ ለንቁ ተመዝጋቢዎች ብቻ ነው። መጀመሪያ የፓነል ሊንክዎን በቦቱ ውስጥ ይክፈቱ (ከሱ /start ይላኩ)፣ ከዚያ እንደገና ይጠይቁ።",
-    "gd_removed": "ጥቅልዎ ስላለቀ ከተመዝጋቢዎች ቡድን ወጥተዋል። ያድሱት እና እንደገና መቀላቀል ይችላሉ።"
+    "gd_removed": "ጥቅልዎ ስላለቀ ከተመዝጋቢዎች ቡድን ወጥተዋል። ያድሱት እና እንደገና መቀላቀል ይችላሉ።",
+    "oa_missing": "የቦቱ «Open» አዝራር ገና አልተዘጋጀም።",
+    "oa_setup": "🚀 የ Open አዝራርን አዘጋጅ",
+    "oa_ok": "የ Open አዝራር ተዘጋጅቷል።",
+    "oa_steps": "ቴሌግራም የሚፈቅደው በ @BotFather ብቻ ነው፦\n1. @BotFather ን ክፈቱና /mybots ላኩ\n2. {bot} ን ምረጡ → Bot Settings → Configure Mini App → Enable Mini App\n   (አዲሱ BotFather መተግበሪያ: Mini Apps → Main App → Enable)\n3. ይህን ሊንክ ላኩለት፦",
+    "oa_copy": "📋 ሊንኩን ቅዳ",
+    "oa_check": "🔄 እንደገና አረጋግጥ",
+    "oa_still_missing": "ገና አልተዘጋጀም፦ ከ @BotFather በኋላ ቴሌግራም አንድ ደቂቃ ሊወስድ ይችላል።"
   },
   "cdn": "🔀 CDN (Cloudflare ፕሮክሲ፣ ...)",
   "cf-delete": {

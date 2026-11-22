@@ -4794,7 +4794,14 @@
     "gd_connected": "Bu topar indi abonentler topary: diňe aktiw ulanyjylar girýär, paketi gutaranlar çykýar.",
     "gd_join": "👥 Abonentler topara goşulmak",
     "gd_declined": "Topar diňe aktiw abonentler üçin. Ilki bilen botda panel baglanyşygyňyzy açyň (oňa /start iberiň), soň ýene soraň.",
-    "gd_removed": "Paketiňiz gutardy, şol sebäpli abonentler topardan çykdyňyz. Uzaldyň, ýene goşulyp bilersiňiz."
+    "gd_removed": "Paketiňiz gutardy, şol sebäpli abonentler topardan çykdyňyz. Uzaldyň, ýene goşulyp bilersiňiz.",
+    "oa_missing": "Botuň «Open» düwmesi entek sazlanmandyr.",
+    "oa_setup": "🚀 Open düwmesini sazla",
+    "oa_ok": "Open düwmesi sazlandy.",
+    "oa_steps": "Telegram ony diňe @BotFather arkaly goşmaga rugsat berýär:\n1. @BotFather-i açyň we /mybots iberiň\n2. {bot} saýlaň → Bot Settings → Configure Mini App → Enable Mini App\n   (täze BotFather programmasy: Mini Apps → Main App → Enable)\n3. Oňa şu linki iberiň:",
+    "oa_copy": "📋 Linki göçür",
+    "oa_check": "🔄 Ýene barla",
+    "oa_still_missing": "Entek sazlanmady: @BotFather-den soň Telegram bir minut alyp biler."
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

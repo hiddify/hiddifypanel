@@ -4794,7 +4794,14 @@
     "gd_connected": "Bu qrup artıq abunəçilər qrupudur: yalnız aktiv istifadəçilər daxil olur, paketi bitənlər çıxır.",
     "gd_join": "👥 Abunəçilər qrupuna qoşul",
     "gd_declined": "Qrup yalnız aktiv abunəçilər üçündür. Əvvəlcə panel linkinizi botda açın (oradan /start göndərin), sonra yenidən cəhd edin.",
-    "gd_removed": "Paketiniz bitdi, ona görə abunəçilər qrupundan çıxdınız. Yeniləyin və yenidən qoşula bilərsiniz."
+    "gd_removed": "Paketiniz bitdi, ona görə abunəçilər qrupundan çıxdınız. Yeniləyin və yenidən qoşula bilərsiniz.",
+    "oa_missing": "Botun «Open» düyməsi hələ qurulmayıb.",
+    "oa_setup": "🚀 Open düyməsini qur",
+    "oa_ok": "Open düyməsi qurulub.",
+    "oa_steps": "Telegram onu yalnız @BotFather vasitəsilə əlavə etməyə icazə verir:\n1. @BotFather-i açın və /mybots göndərin\n2. {bot} seçin → Bot Settings → Configure Mini App → Enable Mini App\n   (yeni BotFather tətbiqi: Mini Apps → Main App → Enable)\n3. Ona bu linki göndərin:",
+    "oa_copy": "📋 Linki kopyala",
+    "oa_check": "🔄 Yenidən yoxla",
+    "oa_still_missing": "Hələ qurulmayıb: @BotFather-dən sonra Telegram bir dəqiqə çəkə bilər."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4794,7 +4794,14 @@
     "gd_connected": "Questo gruppo è ora il gruppo degli abbonati: entrano solo utenti attivi, e chi ha il pacchetto scaduto ne esce.",
     "gd_join": "👥 Entra nel gruppo degli abbonati",
     "gd_declined": "Il gruppo è solo per abbonati attivi. Apri prima il link del tuo pannello nel bot (invia /start da lì), poi richiedi di nuovo.",
-    "gd_removed": "Il tuo pacchetto è scaduto, quindi sei uscito dal gruppo degli abbonati. Rinnovalo e potrai rientrare."
+    "gd_removed": "Il tuo pacchetto è scaduto, quindi sei uscito dal gruppo degli abbonati. Rinnovalo e potrai rientrare.",
+    "oa_missing": "Il pulsante «Open» del bot non è ancora configurato.",
+    "oa_setup": "🚀 Configura il pulsante Open",
+    "oa_ok": "Il pulsante Open è configurato.",
+    "oa_steps": "Telegram permette di aggiungerlo solo tramite @BotFather:\n1. Apri @BotFather e invia /mybots\n2. Scegli {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (nuova app BotFather: Mini Apps → Main App → Enable)\n3. Mandagli questo link:",
+    "oa_copy": "📋 Copia il link",
+    "oa_check": "🔄 Controlla di nuovo",
+    "oa_still_missing": "Non ancora configurato: Telegram può impiegare un minuto dopo @BotFather."
   },
   "cdn": "🔀 CDN (proxy Cloudflare, ...)",
   "cf-delete": {

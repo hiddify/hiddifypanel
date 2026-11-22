@@ -4794,7 +4794,14 @@
     "gd_connected": "Diese Gruppe ist jetzt die Abonnentengruppe: Nur aktive Nutzer kommen hinein, Nutzer mit abgelaufenem Paket verlassen sie.",
     "gd_join": "👥 Der Abonnentengruppe beitreten",
     "gd_declined": "Die Gruppe ist nur für aktive Abonnenten. Öffne zuerst deinen Panel-Link im Bot (sende dort /start) und frage dann erneut an.",
-    "gd_removed": "Dein Paket ist abgelaufen, daher hast du die Abonnentengruppe verlassen. Verlängere es, dann kannst du wieder beitreten."
+    "gd_removed": "Dein Paket ist abgelaufen, daher hast du die Abonnentengruppe verlassen. Verlängere es, dann kannst du wieder beitreten.",
+    "oa_missing": "Die „Open“-Schaltfläche des Bots ist noch nicht eingerichtet.",
+    "oa_setup": "🚀 Open-Schaltfläche einrichten",
+    "oa_ok": "Die Open-Schaltfläche ist eingerichtet.",
+    "oa_steps": "Telegram erlaubt das Hinzufügen nur über @BotFather:\n1. Öffne @BotFather und sende /mybots\n2. Wähle {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (neue BotFather-App: Mini Apps → Main App → Enable)\n3. Sende ihm diesen Link:",
+    "oa_copy": "📋 Link kopieren",
+    "oa_check": "🔄 Erneut prüfen",
+    "oa_still_missing": "Noch nicht eingerichtet: Telegram braucht nach @BotFather evtl. eine Minute."
   },
   "cdn": "🔀 CDN (Cloudflare-Proxy, ...)",
   "cf-delete": {

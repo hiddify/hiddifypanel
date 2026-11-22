@@ -3559,7 +3559,14 @@
     "gd_connected": "Este grupo agora é o grupo de assinantes: só usuários ativos entram, e quem teve o pacote encerrado sai.",
     "gd_join": "👥 Entrar no grupo de assinantes",
     "gd_declined": "O grupo é só para assinantes ativos. Abra primeiro o link do seu painel no bot (envie /start nele) e peça de novo.",
-    "gd_removed": "Seu pacote terminou, então você saiu do grupo de assinantes. Renove e poderá entrar novamente."
+    "gd_removed": "Seu pacote terminou, então você saiu do grupo de assinantes. Renove e poderá entrar novamente.",
+    "oa_missing": "O botão «Open» do bot ainda não está configurado.",
+    "oa_setup": "🚀 Configurar o botão Open",
+    "oa_ok": "O botão Open está configurado.",
+    "oa_steps": "O Telegram só permite adicioná-lo pelo @BotFather:\n1. Abra o @BotFather e envie /mybots\n2. Escolha {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (novo app do BotFather: Mini Apps → Main App → Enable)\n3. Envie a ele este link:",
+    "oa_copy": "📋 Copiar o link",
+    "oa_check": "🔄 Verificar de novo",
+    "oa_still_missing": "Ainda não configurado: o Telegram pode demorar um minuto após o @BotFather."
   },
   "cdn": "CDN (Cloudflare Proxy, ...)",
   "cf-delete": {
