@@ -178,9 +178,20 @@ def users_screen(ctx: Ctx, f: Filter, page: int, sort: Sort = Sort.new) -> Scree
             *_user_grid(ctx, found.users),
             _pager(Cb.users, [f.value], page, found.pages, [sort.value]),
             [btn(ctx.tr(T.search), Cb.search_ask), btn(ctx.tr(T.sort_by, by=ctx.tr(_SORT_TEXT[after])), Cb.users, f.value, 0, after.value)],
+            _advanced_row(ctx),
             [btn(ctx.tr(T.back), Cb.back)],
         ),
     )
+
+
+def _advanced_row(ctx: Ctx) -> list:
+    """Bulk actions and the admins (Advanced)."""
+    from . import admins, bulk
+
+    row = bulk.list_row(ctx)
+    if admins.allowed(ctx):
+        row.append(btn(ctx.tr(T.am_title), Cb.admins))
+    return row
 
 
 @route(Cb.users, admin=True)
@@ -543,6 +554,10 @@ def on_text(ctx: Ctx, text: str) -> None:
             return ask_count(ctx, [], error=True)
         ctx.show(new_screen(ctx, 0, 0, n))
         return
+    if awaiting == "agent_name":
+        from . import admins
+
+        return admins.on_name(ctx, text)
     if awaiting == "new_name":
         ctx.state.update(new_name=text.strip()[:60])
         args = ctx.state.get("new_args") or [0, 0, 0]

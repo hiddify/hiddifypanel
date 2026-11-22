@@ -75,6 +75,10 @@ class Cb(StrEnum):
     nodes = "nd"  # the panel's servers (Advanced)
     domains = "dm"  # the panel's domains: DNS and certificates (Advanced)
     morning = "mr"  # mr:<1|0>  the admin's morning report on or off (Advanced)
+    bulk = "bu"  # bu[:<filter>[:<action>:<value>[:1]]]  one action on many users (Advanced)
+    admins = "ad"  # ad[:<page>]  the admin's sub-admins and agents (Advanced)
+    admin_card = "ac"  # ac:<admin id>[:<action>:<value>]  one of them (Advanced)
+    agent_new = "an"  # ask the name of a new agent (Advanced)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 
