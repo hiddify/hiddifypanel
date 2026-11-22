@@ -3600,7 +3600,14 @@
     "bc_one_admin_many": "找到 {n} 位管理员。是哪一位？（✉️ 已有机器人）",
     "bc_confirm_admins": "发送给 {n} 位管理员？",
     "bc_send_admins": "📤 发送给 {n} 位管理员",
-    "bc_sending_admins": "正在发送给 {n} 位管理员…"
+    "bc_sending_admins": "正在发送给 {n} 位管理员…",
+    "free_link_what": "他们得到什么",
+    "free_link_how": "如何发放",
+    "free_link_invite": "你的邀请链接",
+    "free_link_invite_hint": "发给任何人：对方打开后会看到这个套餐，并在机器人中申请。点按链接即可复制。",
+    "free_copy": "📋 复制链接",
+    "free_share": "📤 分享链接",
+    "free_share_text": "🎁 免费试用：打开此链接，在机器人中申请。"
   },
   "cdn": "🔀 CDN（Cloudflare 代理，...）",
   "cf-delete": {

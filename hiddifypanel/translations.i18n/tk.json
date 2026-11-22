@@ -4826,7 +4826,14 @@
     "bc_one_admin_many": "{n} administrator tapyldy. Haýsy? (✉️ boty bar)",
     "bc_confirm_admins": "{n} administratora iberilsinmi?",
     "bc_send_admins": "📤 {n} Administratora Iber",
-    "bc_sending_admins": "{n} administratora iberilýär…"
+    "bc_sending_admins": "{n} administratora iberilýär…",
+    "free_link_what": "Näme alýarlar",
+    "free_link_how": "Nähili berilýär",
+    "free_link_invite": "Çakylyk salgyňyz",
+    "free_link_invite_hint": "Ony islendik adama iberiň: ol açýar, bu paketi görýär we botda soraýar. Göçürmek üçin salgya basyň.",
+    "free_copy": "📋 Salgyny göçür",
+    "free_share": "📤 Salgyny paýlaş",
+    "free_share_text": "🎁 Mugt synag: bu salgyny açyň we botda soraň."
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

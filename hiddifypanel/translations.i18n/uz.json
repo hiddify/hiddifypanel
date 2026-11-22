@@ -4826,7 +4826,14 @@
     "bc_one_admin_many": "{n} ta admin topildi. Qaysi biri? (✉️ botga ega)",
     "bc_confirm_admins": "{n} ta adminga yuborilsinmi?",
     "bc_send_admins": "📤 {n} ta adminga yuborish",
-    "bc_sending_admins": "{n} ta adminga yuborilmoqda…"
+    "bc_sending_admins": "{n} ta adminga yuborilmoqda…",
+    "free_link_what": "Ular nima oladi",
+    "free_link_how": "Qanday beriladi",
+    "free_link_invite": "Sizning taklif havolangiz",
+    "free_link_invite_hint": "Uni xohlagan kishiga yuboring: u ochadi, bu paketni ko'radi va botda so'raydi. Nusxalash uchun havolani bosing.",
+    "free_copy": "📋 Havolani nusxalash",
+    "free_share": "📤 Havolani ulashish",
+    "free_share_text": "🎁 Bepul test: bu havolani oching va botda so'rang."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

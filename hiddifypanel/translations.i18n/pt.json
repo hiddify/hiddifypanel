@@ -3591,7 +3591,14 @@
     "bc_one_admin_many": "{n} administradores encontrados. Qual? (✉️ tem o bot)",
     "bc_confirm_admins": "Enviar para {n} administradores?",
     "bc_send_admins": "📤 Enviar para {n} administradores",
-    "bc_sending_admins": "Enviando para {n} administradores…"
+    "bc_sending_admins": "Enviando para {n} administradores…",
+    "free_link_what": "O que recebem",
+    "free_link_how": "Como é entregue",
+    "free_link_invite": "Seu link de convite",
+    "free_link_invite_hint": "Envie para qualquer pessoa: ela abre, vê este pacote e o solicita no bot. Toque no link para copiá-lo.",
+    "free_copy": "📋 Copiar link",
+    "free_share": "📤 Compartilhar link",
+    "free_share_text": "🎁 Um teste grátis: abra este link e peça no bot."
   },
   "cdn": "CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4826,7 +4826,14 @@
     "bc_one_admin_many": "{n} yönetici bulundu. Hangisi? (✉️ botu var)",
     "bc_confirm_admins": "{n} yöneticiye gönderilsin mi?",
     "bc_send_admins": "📤 {n} Yöneticiye Gönder",
-    "bc_sending_admins": "{n} yöneticiye gönderiliyor…"
+    "bc_sending_admins": "{n} yöneticiye gönderiliyor…",
+    "free_link_what": "Ne alırlar",
+    "free_link_how": "Nasıl verilir",
+    "free_link_invite": "Davet bağlantınız",
+    "free_link_invite_hint": "Herkese gönderin: bağlantıyı açar, bu paketi görür ve botta ister. Kopyalamak için bağlantıya dokunun.",
+    "free_copy": "📋 Bağlantıyı Kopyala",
+    "free_share": "📤 Bağlantıyı Paylaş",
+    "free_share_text": "🎁 Ücretsiz bir test: bu bağlantıyı açın ve botta isteyin."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

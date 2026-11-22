@@ -4826,7 +4826,14 @@
     "bc_one_admin_many": "{n} administrateurs trouvés. Lequel ? (✉️ a le bot)",
     "bc_confirm_admins": "L'envoyer à {n} administrateurs ?",
     "bc_send_admins": "📤 Envoyer à {n} administrateurs",
-    "bc_sending_admins": "Envoi à {n} administrateurs…"
+    "bc_sending_admins": "Envoi à {n} administrateurs…",
+    "free_link_what": "Ce qu'ils reçoivent",
+    "free_link_how": "Comment c'est attribué",
+    "free_link_invite": "Votre lien d'invitation",
+    "free_link_invite_hint": "Envoyez-le à qui vous voulez : la personne l'ouvre, voit ce forfait et le demande dans le bot. Touchez le lien pour le copier.",
+    "free_copy": "📋 Copier le lien",
+    "free_share": "📤 Partager le lien",
+    "free_share_text": "🎁 Un test gratuit : ouvrez ce lien et demandez-le dans le bot."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

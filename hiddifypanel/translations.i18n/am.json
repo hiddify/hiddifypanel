@@ -4826,7 +4826,14 @@
     "bc_one_admin_many": "{n} አስተዳዳሪዎች ተገኝተዋል። የትኛው? (✉️ ቦት አለው)",
     "bc_confirm_admins": "ለ{n} አስተዳዳሪዎች ይላክ?",
     "bc_send_admins": "📤 ለ{n} አስተዳዳሪዎች ላክ",
-    "bc_sending_admins": "ለ{n} አስተዳዳሪዎች በመላክ ላይ…"
+    "bc_sending_admins": "ለ{n} አስተዳዳሪዎች በመላክ ላይ…",
+    "free_link_what": "የሚያገኙት",
+    "free_link_how": "እንዴት እንደሚሰጥ",
+    "free_link_invite": "የእርስዎ የመጋበዣ አገናኝ",
+    "free_link_invite_hint": "ለማንኛውም ሰው ይላኩት፦ ይከፍቱታል፣ ይህን ጥቅል ያያሉ እና በቦቱ ውስጥ ይጠይቁታል። ለመቅዳት አገናኙን ይንኩ።",
+    "free_copy": "📋 አገናኝ ቅዳ",
+    "free_share": "📤 አገናኝ አጋራ",
+    "free_share_text": "🎁 ነጻ ሙከራ፦ ይህን አገናኝ ከፍተው በቦቱ ውስጥ ይጠይቁት።"
   },
   "cdn": "🔀 CDN (Cloudflare ፕሮክሲ፣ ...)",
   "cf-delete": {

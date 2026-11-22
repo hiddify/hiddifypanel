@@ -4826,7 +4826,14 @@
     "bc_one_admin_many": "관리자 {n}명을 찾았습니다. 누구인가요? (✉️ 봇 있음)",
     "bc_confirm_admins": "{n}명의 관리자에게 보낼까요?",
     "bc_send_admins": "📤 관리자 {n}명에게 보내기",
-    "bc_sending_admins": "관리자 {n}명에게 보내는 중…"
+    "bc_sending_admins": "관리자 {n}명에게 보내는 중…",
+    "free_link_what": "받는 혜택",
+    "free_link_how": "제공 방식",
+    "free_link_invite": "내 초대 링크",
+    "free_link_invite_hint": "누구에게나 보내세요. 링크를 열면 이 패키지가 보이고 봇에서 신청할 수 있습니다. 링크를 탭하면 복사됩니다.",
+    "free_copy": "📋 링크 복사",
+    "free_share": "📤 링크 공유",
+    "free_share_text": "🎁 무료 체험: 이 링크를 열고 봇에서 신청하세요."
   },
   "cdn": "🔀 CDN (Cloudflare 프록시 등)",
   "cf-delete": {
