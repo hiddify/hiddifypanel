@@ -52,7 +52,10 @@ def home_screen(ctx: Ctx) -> Screen:
     )
     # Every action is a key of the keyboard by the message box (menukey.ADMIN_ROWS); the panel app is the menu button
     rows: list[Sequence[types.InlineKeyboardButton]] = [[btn(ctx.tr(T.refresh), Cb.home)]]
-    return Screen(text, keyboard(*rows))
+    from .openbutton import home_notice
+
+    more, keys = home_notice(ctx)  # the owner: the bot's "Open" button is not set up yet
+    return Screen("\n".join([text, *more]), keyboard(*keys, *rows))
 
 
 @route(Cb.home, admin=True)

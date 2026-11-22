@@ -292,13 +292,20 @@ class MainAppTests(Base):
     def test_the_owner_sees_the_link_for_botfather(self):
         from hiddifypanel.panel.commercial.telegrambot import accounts, admin_settings
 
-        with mock.patch.object(admin_settings.silence, "is_silent", lambda chat: False), mock.patch.object(accounts, "panel_app_url", lambda: "https://panel.example.com/p/api/v1/tgbot/app/"):
+        from hiddifypanel.panel.commercial.telegrambot import openbutton
+
+        with mock.patch.object(admin_settings.silence, "is_silent", lambda chat: False), mock.patch.object(accounts, "panel_app_url", lambda: "https://panel.example.com/p/api/v1/tgbot/app/"), mock.patch.object(
+            openbutton, "has_open_button", lambda fresh=False: False
+        ):
             self.ctx.admin = SimpleNamespace(id=1, mode="super_admin")
-            owner = admin_settings.settings_screen(self.ctx).text
+            owner = admin_settings.settings_screen(self.ctx)
             self.ctx.admin = SimpleNamespace(id=2, mode="agent")
-            agent = admin_settings.settings_screen(self.ctx).text
-        self.assertIn("<code>https://panel.example.com/p/api/v1/tgbot/app/</code>", owner)
-        self.assertNotIn("tgbot/app", agent)
+            agent = admin_settings.settings_screen(self.ctx)
+            steps = openbutton.help_screen(ui.Ctx(5, "en", admin=SimpleNamespace(id=1, mode="super_admin"))).text
+        self.assertIn(t(T.oa_missing, "en"), owner.text)  # the state, and a key to the steps
+        self.assertIn("oh", self.data(owner))
+        self.assertNotIn("oh", self.data(agent))
+        self.assertIn("<code>https://panel.example.com/p/api/v1/tgbot/app/</code>", steps)
 
 
 class AdvancedTests(Base):

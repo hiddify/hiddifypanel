@@ -39,10 +39,11 @@ def settings_screen(ctx: Ctx) -> Screen:
         rows.append([btn(ctx.tr(T.btn_backup), Cb.backup)])
         lines += ["", *_advanced_lines(ctx)]
         rows += _advanced_rows(ctx)
-        from .accounts import panel_app_url
+        from .openbutton import settings_line
 
-        if url := panel_app_url():  # the bot's "Open" button (BotFather only: Telegram has no API for it)
-            lines += ["", f"🚀 <b>{ctx.tr(T.as_main_app)}</b>", f"<i>{ctx.tr(T.as_main_app_how)}</i>", f"<code>{h(url)}</code>"]
+        if more := settings_line(ctx):  # the bot's "Open" button (BotFather only: Telegram has no API for it)
+            lines += more
+            rows.append([btn(ctx.tr(T.as_main_app), Cb.open_help)])
     rows.append([btn(ctx.tr(T.back), Cb.back)])
     return Screen("\n".join(lines), keyboard(*rows))
 

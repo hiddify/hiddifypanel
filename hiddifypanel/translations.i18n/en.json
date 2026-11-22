@@ -5213,7 +5213,14 @@
     "gd_connected": "This group is now the subscribers group: only active users get in, and users whose package ended leave it.",
     "gd_join": "👥 Join the subscribers group",
     "gd_declined": "The group is for active subscribers only. Open your panel link in the bot first (send /start from it), then ask again.",
-    "gd_removed": "Your package ended, so you left the subscribers group. Renew it and you can join again."
+    "gd_removed": "Your package ended, so you left the subscribers group. Renew it and you can join again.",
+    "oa_missing": "The bot's “Open” button is not set up yet.",
+    "oa_setup": "🚀 Set up the Open button",
+    "oa_ok": "The Open button is set up.",
+    "oa_steps": "Telegram lets only @BotFather add it:\n1. Open @BotFather and send /mybots\n2. Choose {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (new BotFather app: Mini Apps → Main App → Enable)\n3. Send it this link:",
+    "oa_copy": "📋 Copy the link",
+    "oa_check": "🔄 Check again",
+    "oa_still_missing": "Not set yet: Telegram can take a minute after @BotFather."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

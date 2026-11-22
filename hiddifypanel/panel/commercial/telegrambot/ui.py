@@ -84,6 +84,7 @@ class Cb(StrEnum):
     lock = "lk"  # lk[:<action>:<1|0>]  which actions need the admin's biometrics (Advanced)
     cfgfile = "cf"  # cf[:<format>]  the user's configs as a file (Advanced)
     reseller_bot = "rb"  # the agent's own bot (Advanced, its own switch)
+    open_help = "oh"  # oh[:check]  how to set the bot's "Open" button in @BotFather (the owner)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 

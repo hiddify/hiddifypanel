@@ -174,6 +174,14 @@ class T(StrEnum):
     gd_join = "gd_join"
     gd_declined = "gd_declined"
     gd_removed = "gd_removed"
+    # the bot's Open button (Main Mini App)
+    oa_missing = "oa_missing"
+    oa_setup = "oa_setup"
+    oa_ok = "oa_ok"
+    oa_steps = "oa_steps"
+    oa_copy = "oa_copy"
+    oa_check = "oa_check"
+    oa_still_missing = "oa_still_missing"
     # Advanced: nodes, domains, morning report
     nd_title = "nd_title"
     nd_this = "nd_this"
