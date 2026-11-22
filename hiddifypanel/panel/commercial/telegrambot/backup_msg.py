@@ -1,7 +1,7 @@
 """The backup message, the same wherever it comes from (the daily backup, the panel's "send to Telegram", the bot's
 Backup key): the file named by its date and time (2026.11.17_18.00.json), a tidy card (the panel, its version, the
-date, the time, the size, the users) and the panel's links as buttons: green the secure ones (🔒 the server's own, 🔐 through a CDN),
-red the not secure one (only if the others do not open). The keys never show the address itself."""
+date, the time, the size, the users) and the panel's links as buttons: green the secure ones (🔒 a valid certificate, 🔐 through a CDN),
+red the not secure ones (no valid certificate; only if the others do not open). The keys never show the address."""
 
 from __future__ import annotations
 
@@ -41,31 +41,34 @@ def _panel_name() -> str:
 
 
 def links(owner) -> list[tuple[str, str, str]]:
-    """(kind, address, url) of every way into the panel: "secure" (the server's own address or domain), "cdn", and
-    last "insecure" (plain http to each own domain and to the IPv4). IPv6 is left out: it does not open from most
-    networks."""
+    """(kind, address, url) of every way into the panel, by the panel's own view of each domain's certificate:
+    "secure" (a valid certificate), "cdn" (through a CDN, which brings its own), and last "insecure" (no valid
+    certificate: missing, self-signed, expired; and the server's bare IPv4 over plain http). IPv6 is left out: it does
+    not open from most networks."""
     from hiddifypanel import hutils
     from hiddifypanel.models import Domain, DomainType
     from hiddifypanel.panel import hiddify
 
-    out = []
+    secure, cdn, insecure = [], [], []
     for d in Domain.get_domains():
+        address = d.domain.strip()
+        if not address or "*" in address:
+            continue
         try:
-            if ipaddress.ip_address(d.domain.strip("[]")).version == 6:
+            if ipaddress.ip_address(address.strip("[]")).version == 6:
                 continue
         except ValueError:
             pass
-        kind = "cdn" if d.mode == DomainType.cdn else "secure"
-        out.append((kind, d.domain, hiddify.get_account_panel_link(owner, d.domain)))
-    out.sort(key=lambda x: x[0] == "cdn")  # the server's own first, then the CDNs
-    # Plain http last, only if the others do not open: each of the server's own domains, then its IPv4
-    for d in Domain.get_domains():
-        if d.mode != DomainType.cdn and not _is_ip(d.domain) and "*" not in d.domain:
-            out.append(("insecure", d.domain, hiddify.get_account_panel_link(owner, d.domain, is_https=False)))
+        if d.mode == DomainType.cdn:
+            cdn.append(("cdn", address, hiddify.get_account_panel_link(owner, address)))
+        elif getattr(d, "tls_status", "") == "valid":
+            secure.append(("secure", address, hiddify.get_account_panel_link(owner, address)))
+        else:  # no certificate a browser trusts: plain http opens it (it may move on to https with a warning)
+            insecure.append(("insecure", address, hiddify.get_account_panel_link(owner, address, is_https=False)))
     ip = hutils.network.get_ip_str(4)
-    if ip:
-        out.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip, is_https=False)))
-    return out
+    if ip and ip not in {a for _k, a, _u in secure + insecure}:
+        insecure.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip, is_https=False)))
+    return secure + cdn + insecure
 
 
 def caption(lang: str, when: datetime.datetime, size: int | None) -> str:
@@ -103,8 +106,8 @@ def _is_ip(address: str) -> bool:
 
 
 def button_label(kind: str, address: str) -> str:
-    """A link's key says how it opens, never the address itself (the message may be forwarded or shown): the server's
-    own address 🔒, through a CDN 🔐 (both green), plain http ⚠️ (red)."""
+    """A link's key says how it opens, never the address itself (the message may be forwarded or shown): a valid
+    certificate 🔒, through a CDN 🔐 (both green), no valid certificate ⚠️ (red)."""
     if kind == "insecure":
         return "⚠️ Not Secure IPv4" if _is_ip(address) else "⚠️ Not Secure"
     if kind == "cdn":

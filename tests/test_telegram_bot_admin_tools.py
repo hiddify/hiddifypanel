@@ -372,24 +372,26 @@ class BackupMessageTests(unittest.TestCase):
         self.assertFalse(any("example.com" in r[0]["text"] for r in rows))  # never the address itself
         self.assertEqual(len(plain), 2)  # without the plain http one
 
-    def test_plain_http_for_each_own_domain_and_the_ip(self):
+    def test_secure_means_a_valid_certificate(self):
         from hiddifypanel.models import DomainType
         from hiddifypanel.panel.commercial.telegrambot import backup_msg
 
         ip = ".".join(["198", "51", "100", "7"])
         domains = [
-            SimpleNamespace(domain="panel.example.com", mode=DomainType.direct),
-            SimpleNamespace(domain="cdn.example.com", mode=DomainType.cdn),
+            SimpleNamespace(domain="old.example.com", mode=DomainType.direct, tls_status="expired"),
+            SimpleNamespace(domain="panel.example.com", mode=DomainType.direct, tls_status="valid"),
+            SimpleNamespace(domain="cdn.example.com", mode=DomainType.cdn, tls_status="missing"),
+            SimpleNamespace(domain="self.example.com", mode=DomainType.relay, tls_status="self_signed"),
         ]
         with mock.patch("hiddifypanel.models.Domain.get_domains", lambda: domains), mock.patch(
             "hiddifypanel.panel.hiddify.get_account_panel_link", lambda owner, host, is_https=True: ("https" if is_https else "http") + f"://{host}/p/"
         ), mock.patch("hiddifypanel.hutils.network.get_ip_str", lambda v: ip):
             found = backup_msg.links(None)
         self.assertEqual(
-            [(k, u) for k, _a, u in found],
-            [("secure", "https://panel.example.com/p/"), ("cdn", "https://cdn.example.com/p/"), ("insecure", "http://panel.example.com/p/"), ("insecure", f"http://{ip}/p/")],
+            [(k, a) for k, a, _u in found],
+            [("secure", "panel.example.com"), ("cdn", "cdn.example.com"), ("insecure", "old.example.com"), ("insecure", "self.example.com"), ("insecure", ip)],
         )
-        self.assertEqual([backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure IPv4"])
+        self.assertEqual([backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure", "⚠️ Not Secure IPv4"])
 
     def test_the_labels_by_kind(self):
         from hiddifypanel.panel.commercial.telegrambot import backup_msg
