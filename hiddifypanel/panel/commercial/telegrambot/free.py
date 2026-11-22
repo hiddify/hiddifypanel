@@ -4,6 +4,8 @@ replies, and its own link."""
 
 from __future__ import annotations
 
+from urllib.parse import urlencode
+
 from loguru import logger
 from telebot import types
 
@@ -17,7 +19,7 @@ from hiddifypanel.models.message import Conversation, FreeStatus, Sender
 from . import bot
 from . import user as user_screens
 from .texts import T, t
-from .ui import BRAND, RULE, btn, Cb, Ctx, fmt_data, h, keyboard, lang_of, off_btn, route, Screen, send_card, Style
+from .ui import BRAND, RULE, btn, Cb, copy_btn, Ctx, fmt_data, h, keyboard, lang_of, off_btn, route, Screen, send_card, Style, url_btn
 
 #: Messages a chat may send to an admin per minute.
 RATE_PER_MINUTE = 10
@@ -363,17 +365,25 @@ def show_link(ctx: Ctx, _args: list[str]) -> None:
     admin = ctx.admin
     assert admin
     package = free_test.package_of(admin)
-    lines = [f"🎁 <b>{ctx.tr(T.free_link_title)}</b>  ·  🏷 <b>{ctx.tr(T.free_tag)}</b>", RULE]
-    if not package.enabled:
-        lines.append(f"⚪️ {ctx.tr(T.free_link_off)}")
+    on = package.enabled
+    state = f"🟢 {ctx.tr(T.on)}" if on else f"⚪️ {ctx.tr(T.off)}"
+    lines = [f"🎁 <b>{ctx.tr(T.free_link_title)}</b>  ·  {state}", RULE]
+    rows: list = []
+    if not on:
+        lines.append(ctx.tr(T.free_link_off))
     else:
-        lines += [_package_lines(package, ctx.lang), ctx.tr(T.free_link_auto if package.approval == "auto" else T.free_link_manual)]
+        # What the person gets, how it is given, then the link to hand out (a tap on it, or the key, copies it)
+        lines += [f"📦 <b>{ctx.tr(T.free_link_what)}</b>", _package_lines(package, ctx.lang)]
+        lines += [f"⚙️ <b>{ctx.tr(T.free_link_how)}</b>", ctx.tr(T.free_link_auto if package.approval == "auto" else T.free_link_manual)]
         if package.owner is not None and package.owner.id != admin.id:
-            lines.append(ctx.tr(T.free_link_inherited, name=h(package.owner.name)))
+            lines.append(f"<i>{ctx.tr(T.free_link_inherited, name=h(package.owner.name))}</i>")
         if link := link_of(admin):
-            lines += ["", f"🔗 <code>{h(link)}</code>", f"<i>{ctx.tr(T.free_link_share)}</i>"]
+            lines += ["", f"🔗 <b>{ctx.tr(T.free_link_invite)}</b>", f"<i>{ctx.tr(T.free_link_invite_hint)}</i>", f"<code>{h(link)}</code>"]
+            share = "https://t.me/share/url?" + urlencode({"url": link, "text": ctx.tr(T.free_share_text)})
+            rows.append([copy_btn(ctx.tr(T.free_copy), link, Style.primary), url_btn(ctx.tr(T.free_share), share, Style.success)])
     waiting = free_test.counts(admin)["pending"]
     if waiting:
         lines += ["", f"📨 {ctx.tr(T.free_link_waiting, n=waiting)}"]
-    ctx.show(Screen("\n".join(lines), keyboard([btn(ctx.tr(T.back), Cb.back)])))
+    rows.append([btn(ctx.tr(T.back), Cb.back)])
+    ctx.show(Screen("\n".join(lines), keyboard(*rows)))
     ctx.toast()

@@ -5245,7 +5245,14 @@
     "bc_one_admin_many": "{n} admins found. Which one? (✉️ has the bot)",
     "bc_confirm_admins": "Send it to {n} admins?",
     "bc_send_admins": "📤 Send to {n} Admins",
-    "bc_sending_admins": "Sending to {n} admins…"
+    "bc_sending_admins": "Sending to {n} admins…",
+    "free_link_what": "What they get",
+    "free_link_how": "How it is given",
+    "free_link_invite": "Your invite link",
+    "free_link_invite_hint": "Send it to anyone: they open it, see this package and ask for it in the bot. Tap the link to copy it.",
+    "free_copy": "📋 Copy Link",
+    "free_share": "📤 Share Link",
+    "free_share_text": "🎁 A free test: open this link and ask for it in the bot."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

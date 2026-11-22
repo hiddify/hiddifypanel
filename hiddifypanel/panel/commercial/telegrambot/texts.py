@@ -209,6 +209,14 @@ class T(StrEnum):
     bc_confirm_admins = "bc_confirm_admins"
     bc_send_admins = "bc_send_admins"
     bc_sending_admins = "bc_sending_admins"
+    # the admin's free test screen
+    free_link_what = "free_link_what"
+    free_link_how = "free_link_how"
+    free_link_invite = "free_link_invite"
+    free_link_invite_hint = "free_link_invite_hint"
+    free_copy = "free_copy"
+    free_share = "free_share"
+    free_share_text = "free_share_text"
     # Advanced: nodes, domains, morning report
     nd_title = "nd_title"
     nd_this = "nd_this"
