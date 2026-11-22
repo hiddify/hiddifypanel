@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Backup-Verlauf",
     "bk_history_title": "Backup-Verlauf",
     "bk_history_count": "{n} Backups auf dem Server, neueste zuerst (⌄ antippen, um alle zu sehen):",
-    "bk_history_none": "Noch keine Backups auf dem Server."
+    "bk_history_none": "Noch keine Backups auf dem Server.",
+    "bk_history_month": "{n} Backups der letzten 30 Tage, neueste zuerst (⌄ antippen für alle, Namen antippen zum Herunterladen):",
+    "bk_history_none_month": "Keine Backups in den letzten 30 Tagen.",
+    "bk_file_hint": "Von wo herunterladen (die Links funktionieren eine Stunde):"
   },
   "cdn": "🔀 CDN (Cloudflare-Proxy, ...)",
   "cf-delete": {

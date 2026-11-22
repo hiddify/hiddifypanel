@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Ätiýaçlyk nusga taryhy",
     "bk_history_title": "Ätiýaçlyk nusga taryhy",
     "bk_history_count": "Serwerde {n} ätiýaçlyk nusga saklanýar, iň täzesi ilki (hemmesini görmek üçin ⌄ basyň):",
-    "bk_history_none": "Serwerde heniz ätiýaçlyk nusga ýok."
+    "bk_history_none": "Serwerde heniz ätiýaçlyk nusga ýok.",
+    "bk_history_month": "Soňky 30 günden {n} ätiýaçlyk nusga, ilki iň täzeleri (hemmesini görmek üçin ⌄ basyň, ýüklemek üçin adyna basyň):",
+    "bk_history_none_month": "Soňky 30 günde ätiýaçlyk nusga ýok.",
+    "bk_file_hint": "Nireden ýüklemeli (baglanyşyklar bir sagat işleýär):"
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

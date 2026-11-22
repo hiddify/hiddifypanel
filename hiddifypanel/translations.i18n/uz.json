@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Zaxira tarixi",
     "bk_history_title": "Zaxira tarixi",
     "bk_history_count": "Serverda {n} ta zaxira nusxa saqlanmoqda, eng yangisi birinchi (hammasini ko'rish uchun ⌄ ni bosing):",
-    "bk_history_none": "Serverda hali zaxira nusxa yo'q."
+    "bk_history_none": "Serverda hali zaxira nusxa yo'q.",
+    "bk_history_month": "Oxirgi 30 kundagi {n} ta zaxira nusxa, yangilari birinchi (hammasini ko‘rish uchun ⌄ ni bosing, yuklab olish uchun nomini bosing):",
+    "bk_history_none_month": "Oxirgi 30 kunda zaxira nusxa yo‘q.",
+    "bk_file_hint": "Qayerdan yuklab olinsin (havolalar bir soat ishlaydi):"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -3572,7 +3572,10 @@
     "bk_history": "🗂 Histórico de backups",
     "bk_history_title": "Histórico de backups",
     "bk_history_count": "{n} backups guardados no servidor, os mais recentes primeiro (toque em ⌄ para ver todos):",
-    "bk_history_none": "Ainda não há backups no servidor."
+    "bk_history_none": "Ainda não há backups no servidor.",
+    "bk_history_month": "{n} backups dos últimos 30 dias, os mais recentes primeiro (toque em ⌄ para ver todos, toque num nome para baixar):",
+    "bk_history_none_month": "Nenhum backup nos últimos 30 dias.",
+    "bk_file_hint": "De onde baixar (os links funcionam por uma hora):"
   },
   "cdn": "CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

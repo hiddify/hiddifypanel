@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Ehtiyat nüsxə tarixçəsi",
     "bk_history_title": "Ehtiyat nüsxə tarixçəsi",
     "bk_history_count": "Serverdə {n} ehtiyat nüsxə saxlanılır, ən yenisi birincidir (hamısını görmək üçün ⌄ toxunun):",
-    "bk_history_none": "Serverdə hələ ehtiyat nüsxə yoxdur."
+    "bk_history_none": "Serverdə hələ ehtiyat nüsxə yoxdur.",
+    "bk_history_month": "Son 30 gündən {n} ehtiyat nüsxə, əvvəlcə ən yenisi (hamısını görmək üçün ⌄ toxunun, yükləmək üçün adına toxunun):",
+    "bk_history_none_month": "Son 30 gündə ehtiyat nüsxə yoxdur.",
+    "bk_file_hint": "Haradan yüklənsin (keçidlər bir saat işləyir):"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

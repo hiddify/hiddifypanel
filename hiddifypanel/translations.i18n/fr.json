@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Historique des sauvegardes",
     "bk_history_title": "Historique des sauvegardes",
     "bk_history_count": "{n} sauvegardes conservées sur le serveur, les plus récentes d'abord (touchez ⌄ pour tout voir) :",
-    "bk_history_none": "Aucune sauvegarde sur le serveur pour le moment."
+    "bk_history_none": "Aucune sauvegarde sur le serveur pour le moment.",
+    "bk_history_month": "{n} sauvegardes des 30 derniers jours, les plus récentes d'abord (touchez ⌄ pour tout voir, touchez un nom pour la télécharger) :",
+    "bk_history_none_month": "Aucune sauvegarde ces 30 derniers jours.",
+    "bk_file_hint": "D'où la télécharger (les liens fonctionnent pendant une heure) :"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

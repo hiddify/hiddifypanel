@@ -3581,7 +3581,10 @@
     "bk_history": "🗂 备份历史",
     "bk_history_title": "备份历史",
     "bk_history_count": "服务器上保留了 {n} 个备份，最新的在前（点按 ⌄ 查看全部）：",
-    "bk_history_none": "服务器上暂无备份。"
+    "bk_history_none": "服务器上暂无备份。",
+    "bk_history_month": "最近 30 天的 {n} 个备份，最新的在前（点按 ⌄ 查看全部，点按名称下载）：",
+    "bk_history_none_month": "最近 30 天没有备份。",
+    "bk_file_hint": "从哪里下载（链接一小时内有效）："
   },
   "cdn": "🔀 CDN（Cloudflare 代理，...）",
   "cf-delete": {

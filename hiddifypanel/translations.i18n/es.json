@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Historial de copias",
     "bk_history_title": "Historial de copias de seguridad",
     "bk_history_count": "{n} copias guardadas en el servidor, las más recientes primero (toca ⌄ para ver todas):",
-    "bk_history_none": "Aún no hay copias de seguridad en el servidor."
+    "bk_history_none": "Aún no hay copias de seguridad en el servidor.",
+    "bk_history_month": "{n} copias de seguridad de los últimos 30 días, las más recientes primero (toca ⌄ para ver todas, toca un nombre para descargarla):",
+    "bk_history_none_month": "No hay copias de seguridad en los últimos 30 días.",
+    "bk_file_hint": "Desde dónde descargar (los enlaces funcionan durante una hora):"
   },
   "cdn": "🔀 CDN (proxy de Cloudflare, ...)",
   "cf-delete": {

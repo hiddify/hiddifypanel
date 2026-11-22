@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Back-upgeschiedenis",
     "bk_history_title": "Back-upgeschiedenis",
     "bk_history_count": "{n} back-ups op de server, nieuwste eerst (tik op ⌄ om alles te zien):",
-    "bk_history_none": "Nog geen back-ups op de server."
+    "bk_history_none": "Nog geen back-ups op de server.",
+    "bk_history_month": "{n} back-ups van de afgelopen 30 dagen, nieuwste eerst (tik op ⌄ voor alle, tik op een naam om te downloaden):",
+    "bk_history_none_month": "Geen back-ups in de afgelopen 30 dagen.",
+    "bk_file_hint": "Waarvandaan downloaden (de links werken een uur):"
   },
   "cdn": "🔀 CDN (Cloudflare-proxy, ...)",
   "cf-delete": {

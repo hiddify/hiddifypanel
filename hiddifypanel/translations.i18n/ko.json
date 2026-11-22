@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 백업 기록",
     "bk_history_title": "백업 기록",
     "bk_history_count": "서버에 백업 {n}개가 보관되어 있습니다. 최신순 (모두 보려면 ⌄ 를 누르세요):",
-    "bk_history_none": "서버에 아직 백업이 없습니다."
+    "bk_history_none": "서버에 아직 백업이 없습니다.",
+    "bk_history_month": "최근 30일간 백업 {n}개, 최신순 (전체 보기는 ⌄ 탭, 다운로드는 이름 탭):",
+    "bk_history_none_month": "최근 30일간 백업이 없습니다.",
+    "bk_file_hint": "어디서 다운로드할까요 (링크는 1시간 동안 유효):"
   },
   "cdn": "🔀 CDN (Cloudflare 프록시 등)",
   "cf-delete": {

@@ -4807,7 +4807,10 @@
     "bk_history": "🗂 Yedek geçmişi",
     "bk_history_title": "Yedek geçmişi",
     "bk_history_count": "Sunucuda {n} yedek tutuluyor, en yeni en üstte (tümünü görmek için ⌄ simgesine dokunun):",
-    "bk_history_none": "Sunucuda henüz yedek yok."
+    "bk_history_none": "Sunucuda henüz yedek yok.",
+    "bk_history_month": "Son 30 günden {n} yedek, en yeniler önce (tümünü görmek için ⌄ simgesine, indirmek için ada dokunun):",
+    "bk_history_none_month": "Son 30 günde yedek yok.",
+    "bk_file_hint": "Nereden indirilsin (bağlantılar bir saat çalışır):"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {
