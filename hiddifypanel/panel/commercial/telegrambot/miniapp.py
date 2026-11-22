@@ -58,9 +58,30 @@ def page_url(kind: str, token: str, **extra: object) -> str | None:
     return url if can_open_as_app(url) else None
 
 
+def _bot_id() -> int:
+    """The agent's bot this runs in (its Mini App pages are signed with that bot's token), 0 for the panel's."""
+    from hiddifypanel.panel.commercial.restapi.v1.tgbot import managed_bot
+
+    m = managed_bot.get()
+    return m.bot_id if m else 0
+
+
 def new_token(chat_id: int, kind: str, **data: object) -> str:
     token = secrets.token_urlsafe(18)
-    redis_client.set(_PENDING_KEY.format(token), json.dumps({"chat": chat_id, "kind": kind, **data}), ex=TOKEN_TTL)
+    redis_client.set(_PENDING_KEY.format(token), json.dumps({"chat": chat_id, "kind": kind, "bot": _bot_id(), **data}), ex=TOKEN_TTL)
+    return token
+
+
+def lasting_token(chat_id: int, kind: str, **data: object) -> str:
+    """A token for a key drawn again and again (the users list, a user's card): the same one while it is unused,
+    so redrawing a screen does not leave a new token behind each time."""
+    last = f"tgbot:act:last:{_bot_id()}:{chat_id}:{kind}"
+    token = redis_client.get(last)
+    token = token.decode() if isinstance(token, bytes) else token
+    if token and redis_client.get(_PENDING_KEY.format(token)):
+        return token
+    token = new_token(chat_id, kind, **data)
+    redis_client.set(last, token, ex=TOKEN_TTL - 60)
     return token
 
 
@@ -169,7 +190,7 @@ def show_lock(ctx: Ctx, args: list[str]) -> None:
 def scan_button(ctx: Ctx) -> types.InlineKeyboardButton | None:
     if not advanced.is_on():
         return None
-    url = page_url("scan", new_token(ctx.chat_id, "scan", lang=ctx.lang))
+    url = page_url("scan", lasting_token(ctx.chat_id, "scan", lang=ctx.lang))
     return app_btn(ctx.tr(T.qs_button), url) if url else None
 
 
@@ -206,7 +227,7 @@ def status_button(ctx: Ctx) -> types.InlineKeyboardButton | None:
         return None
     days = user.remaining_days if user.start_date else user.package_days
     days = max(1, min(int(days or 1), MAX_STATUS_DAYS))
-    url = page_url("emoji", new_token(ctx.chat_id, "emoji", lang=ctx.lang), e=emoji_id, d=days * 86400)
+    url = page_url("emoji", lasting_token(ctx.chat_id, "emoji", lang=ctx.lang), e=emoji_id, d=days * 86400)
     return app_btn(ctx.tr(T.es_button), url) if url else None
 
 
@@ -215,15 +236,25 @@ def status_button(ctx: Ctx) -> types.InlineKeyboardButton | None:
 
 def answer(init_data: str, body: dict, bot_token: str) -> tuple[dict, int]:
     """The page's result: signed by Telegram, for the token's own chat."""
+    from hiddifypanel.panel.commercial.restapi.v1.tgbot import managed_bot
+
+    from . import resellers
     from .webapp import telegram_user_id
 
-    tg_id = telegram_user_id(init_data, bot_token)
+    pending = take_token(str(body.get("t") or ""))
+    if pending is None:
+        return {"error": "expired"}, 403
+    # The page was opened from the bot that made the token: Telegram signed it with that bot's token
+    managed = resellers.find(int(pending.get("bot") or 0)) if pending.get("bot") else None
+    if pending.get("bot") and managed is None:
+        return {"error": "expired"}, 403
+    tg_id = telegram_user_id(init_data, managed.token if managed else bot_token)
     if tg_id is None:
         return {"error": "invalid_sign_in"}, 403
-    pending = take_token(str(body.get("t") or ""))
-    if pending is None or int(pending.get("chat") or 0) != tg_id:
+    if int(pending.get("chat") or 0) != tg_id:
         return {"error": "expired"}, 403
     kind = pending.get("kind")
+    mark = managed_bot.set(managed)  # the answer comes from that same bot
     try:
         if kind == "lock" and body.get("ok") is True:
             _unlocked(pending)
@@ -236,6 +267,8 @@ def answer(init_data: str, body: dict, bot_token: str) -> tuple[dict, int]:
     except Exception as e:
         logger.exception(f"tgbot: mini app {kind} failed: {e}")
         return {"error": "failed"}, 500
+    finally:
+        managed_bot.reset(mark)
     return {"ok": True}, 200
 
 

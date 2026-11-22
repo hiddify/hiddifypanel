@@ -108,6 +108,31 @@ class LockTests(Base):
         self.assertEqual(miniapp.locked(5), set())
 
 
+class ManagedBotTests(Base):
+    def test_an_agents_bot_page_is_checked_with_that_bots_token(self):
+        from hiddifypanel.panel.commercial.restapi.v1.tgbot import managed_bot
+        from hiddifypanel.panel.commercial.telegrambot import resellers
+
+        m = resellers.Managed(77, "agent", 4, "shop_bot")
+        mark = managed_bot.set(m)
+        try:
+            token = miniapp.new_token(5, "lock", data="ap:go", action="apply", lang="en")
+        finally:
+            managed_bot.reset(mark)
+        seen = []
+        with mock.patch.object(resellers, "find", lambda i: m if i == 77 else None), mock.patch(
+            "hiddifypanel.panel.commercial.telegrambot.webapp.telegram_user_id", lambda data, key: seen.append(key) or 5
+        ):
+            self.assertEqual(miniapp.answer("data", {"t": token, "ok": True}, "panel")[1], 200)
+        self.assertEqual(seen, ["agent"])
+
+    def test_a_redrawn_screen_reuses_its_token(self):
+        a = miniapp.lasting_token(5, "scan", lang="en")
+        self.assertEqual(miniapp.lasting_token(5, "scan", lang="en"), a)
+        miniapp.take_token(a)
+        self.assertNotEqual(miniapp.lasting_token(5, "scan", lang="en"), a)
+
+
 class ScanTests(Base):
     def test_only_their_own_users(self):
         uid = "6f1c2b8e-1111-4a2b-9c3d-0123456789ab"

@@ -23,9 +23,20 @@ def user(i, enable=True):
     return FakeUser(id=i, name=f"u{i}", enable=enable, package_days=30, usage_limit_GB=10, current_usage=5, start_date=None, deleted=False)
 
 
+class FakeState(dict):
+    def update(self, **values):
+        for k, v in values.items():
+            if v is None:
+                self.pop(k, None)
+            else:
+                self[k] = v
+
+
 class Base(unittest.TestCase):
     def setUp(self):
+        self.state = FakeState()
         for p in (
+            mock.patch.object(ui.Ctx, "state", property(lambda _s: self.state)),
             mock.patch("hiddifypanel.panel.commercial.telegrambot.icons.enabled", lambda: False),
             mock.patch(ADV, lambda: True),
             mock.patch.object(bulk.accounts, "is_read_only", lambda: False),
@@ -51,6 +62,7 @@ class BulkTests(Base):
     def setUp(self):
         super().setUp()
         self.users = [user(1), user(2, enable=False), user(3, enable=False)]
+        self.admin.recursive_users_query = lambda: mock.MagicMock(**{"filter.return_value.order_by.return_value.all.return_value": list(self.users)})
         for p in (
             mock.patch.object(bulk, "targets", lambda ctx, f: list(self.users)),
             mock.patch.object(bulk.db, "session", mock.MagicMock()),
@@ -87,6 +99,21 @@ class BulkTests(Base):
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.deleted for u in self.users], [True, True, False])
 
+    def test_renew_keeps_the_active_limit(self):
+        done, skipped = bulk.run(self.ctx, Filter.all, "renew", 0)  # room for 1 of the 2 disabled
+        self.assertEqual((done, skipped), (2, 1))
+        self.assertEqual([u.enable for u in self.users], [True, True, False])
+
+    def test_the_confirmed_users_are_the_ones_changed(self):
+        bulk.confirm_screen(self.ctx, Filter.all, "days", 30)
+        self.assertEqual(self.state["bulk"]["ids"], [1, 2, 3])
+        shown = [self.users[0]]  # the list changed after the confirm: only the shown ones still there
+        query = mock.MagicMock(**{"filter.return_value.order_by.return_value.all.return_value": shown})
+        self.admin.recursive_users_query = lambda: query
+        done, _ = bulk.run(self.ctx, Filter.all, "days", 30)
+        self.assertEqual(done, 1)
+        self.assertNotIn("bulk", self.state)
+
     def test_off_while_advanced_is_off(self):
         with mock.patch(ADV, lambda: False):
             bulk.show_bulk(self.ctx, [])
@@ -95,6 +122,29 @@ class BulkTests(Base):
 
 
 class AdminsTests(Base):
+    def test_a_super_admin_is_only_a_super_admins(self):
+        owner = SimpleNamespace(id=1, mode="super_admin")
+        people = [SimpleNamespace(id=2, mode="super_admin"), SimpleNamespace(id=3, mode="agent")]
+        model = mock.MagicMock()
+        model.get_super_admin.return_value = owner
+        model.query.filter.return_value.order_by.return_value.all.return_value = people
+        actor = SimpleNamespace(id=5, mode="admin", recursive_sub_admins_ids=lambda: [5, 2, 3])
+        with mock.patch.object(admins, "AdminUser", model):
+            self.assertEqual([a.id for a in admins.under(ui.Ctx(5, "en", admin=actor))], [3])
+            actor.mode = "super_admin"
+            self.assertEqual([a.id for a in admins.under(ui.Ctx(5, "en", admin=actor))], [2, 3])
+
+    def test_a_new_agent_gets_nothing_its_creator_lacks(self):
+        from hiddifypanel import admin_capabilities as caps
+
+        made = {}
+        model = mock.MagicMock(side_effect=lambda **kw: made.update(kw) or SimpleNamespace(**kw))
+        with mock.patch.object(admins, "AdminUser", model), mock.patch.object(admins.db, "session", mock.MagicMock()), mock.patch(
+            "hiddifypanel.hutils.node.parent.notify_childs_users_changed"
+        ), mock.patch.object(caps, "of", lambda a: {k: False for k in caps.ALL}):
+            admins.create_agent(self.ctx, "Shop")
+        self.assertFalse(any(made["capabilities"].values()))
+
     def test_agents_do_not_get_it(self):
         agent = ui.Ctx(6, "en", admin=SimpleNamespace(id=2, name="Bo", mode="agent", telegram_id=6))
         self.assertFalse(admins.allowed(agent))

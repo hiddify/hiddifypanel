@@ -74,6 +74,18 @@ class ScopeTests(unittest.TestCase):
         self.assertEqual(len(resellers.webhook_secret("a:1")), 48)
 
 
+class SharedStateTests(unittest.TestCase):
+    def test_no_icons_or_topics_in_an_agents_bot(self):
+        from hiddifypanel.panel.commercial.telegrambot import icons, topics
+
+        mark = managed_bot.set(M)
+        try:
+            self.assertFalse(icons.enabled())
+            self.assertFalse(topics.enabled())
+        finally:
+            managed_bot.reset(mark)
+
+
 class SwitchTests(unittest.TestCase):
     def test_needs_its_own_switch(self):
         with mock.patch("hiddifypanel.panel.commercial.telegrambot.advanced.feature", lambda key: False):

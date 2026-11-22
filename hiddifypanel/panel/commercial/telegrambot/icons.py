@@ -53,6 +53,10 @@ def sets() -> tuple[str, ...]:
 
 
 def enabled() -> bool:
+    from hiddifypanel.panel.commercial.restapi.v1.tgbot import managed_bot
+
+    if managed_bot.get() is not None:  # an agent's bot: the switch and the refusal mark are the panel bot's
+        return False
     return bool(hconfig(ConfigEnum.telegram_bot_animated_icons)) and not redis_client.get(_REFUSED_KEY)
 
 

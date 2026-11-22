@@ -236,7 +236,7 @@ class TGManagedBotResource(Resource):
 
     def post(self, bot_id: int):
         if not hconfig(ConfigEnum.telegram_bot_token):
-            abort(404)
+            return {"error": "not_found"}, 404
         from hiddifypanel.panel.commercial.telegrambot import resellers
 
         # Answered as they are (apiflask's abort inside a flask-restful resource comes out as a 500)
@@ -270,7 +270,7 @@ class TGAppActResource(Resource):
 
     def get(self):
         if not hconfig(ConfigEnum.telegram_bot_token):
-            abort(404)
+            return {"error": "not_found"}, 404
         from flask import make_response
 
         from hiddifypanel.panel.commercial.telegrambot.miniapp import page
@@ -283,7 +283,7 @@ class TGAppActResource(Resource):
     def post(self):
         token = hconfig(ConfigEnum.telegram_bot_token)
         if not token:
-            abort(404)
+            return {"error": "not_found"}, 404
         from hiddifypanel.panel.commercial.telegrambot.miniapp import answer
 
         body = request.get_json(silent=True) or {}
@@ -299,10 +299,24 @@ class TGAppLoginResource(Resource):
         from hiddifypanel.panel.commercial.telegrambot.webapp import destination, telegram_user_id
 
         body = request.get_json(silent=True) or {}
-        tg_id = telegram_user_id(str(body.get("init_data") or ""), token)
+        init_data = str(body.get("init_data") or "")
+        tg_id = telegram_user_id(init_data, token)
+        managed = None
+        if tg_id is None:  # opened from an agent's own bot: signed with that bot's token
+            from hiddifypanel.panel.commercial.telegrambot import resellers
+
+            if resellers.allowed():
+                for candidate in resellers.all_bots():
+                    if (tg_id := telegram_user_id(init_data, candidate.token)) is not None:
+                        managed = candidate
+                        break
         if tg_id is None:
             return {"error": "invalid_sign_in"}, 403
-        kind, account, answer = destination(tg_id, request.host, str(body.get("to") or "")[:40])
+        mark = managed_bot.set(managed)  # an agent's bot signs in its own people only
+        try:
+            kind, account, answer = destination(tg_id, request.host, str(body.get("to") or "")[:40])
+        finally:
+            managed_bot.reset(mark)
         # Whoever opened it before on this device is signed out first: an admin's session never stays for someone else
         logout_user()
         if kind == "admin":

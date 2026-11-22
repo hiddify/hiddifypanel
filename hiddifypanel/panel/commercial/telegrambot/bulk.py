@@ -30,10 +30,28 @@ def targets(ctx: Ctx, f: Filter) -> list[User]:
     """The admin's users the tab keeps (no more than MAX_BULK)."""
     admin = ctx.admin
     assert admin
-    query = admin.recursive_users_query()
+    import datetime
+
+    query = admin.recursive_users_query().order_by(User.id)
     if f is Filter.all:
-        return query.order_by(User.id).limit(MAX_BULK).all()
-    return [u for u in query.order_by(User.id).all() if accounts.matches(u, f)][:MAX_BULK]
+        return query.limit(MAX_BULK).all()
+    # The database narrows it first (as the list does): online by the last connection, the rest are switched on
+    if f is Filter.online:
+        query = query.filter(User.last_online >= datetime.datetime.now() - accounts.ONLINE_WINDOW)
+    else:
+        query = query.filter(User.enable.is_(True))
+    return [u for u in query.all() if accounts.matches(u, f)][:MAX_BULK]
+
+
+def _confirmed(ctx: Ctx, f: Filter, action: str, value: int) -> list[User] | None:
+    """The users the confirm screen showed (still the admin's), when it was for this very action."""
+    saved = ctx.state.get("bulk") or {}
+    if saved.get("key") != f"{f.value}:{action}:{value}" or not isinstance(saved.get("ids"), list):
+        return None
+    admin = ctx.admin
+    assert admin
+    ids = [int(i) for i in saved["ids"] if str(i).isdigit()]
+    return admin.recursive_users_query().filter(User.id.in_(ids)).order_by(User.id).all() if ids else []
 
 
 def _filter(args: list[str]) -> Filter | None:
@@ -92,6 +110,7 @@ def _what(ctx: Ctx, action: str, value: int) -> str:
 def confirm_screen(ctx: Ctx, f: Filter, action: str, value: int) -> Screen:
     icon, text = _icons()
     users = targets(ctx, f)
+    ctx.state.update(bulk={"key": f"{f.value}:{action}:{value}", "ids": [u.id for u in users]})
     names = ", ".join(h(u.name) for u in users[:8]) + (" …" if len(users) > 8 else "")
     lines = [
         f"🧰 <b>{ctx.tr(T.bu_title)}</b>",
@@ -109,7 +128,10 @@ def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
     """Does it: (users changed, users skipped by a limit)."""
     admin = ctx.admin
     assert admin
-    users = targets(ctx, f)
+    users = _confirmed(ctx, f, action, value)
+    if users is None:
+        users = targets(ctx, f)
+    ctx.state.update(bulk=None)
     skipped = 0
     if action == "del":
         left = User.query.filter(User.deleted.is_(False)).count()
@@ -129,6 +151,12 @@ def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
         room = admin.room_to_activate(len(off))
         skipped = len(off) - room
         users = off[:room]
+    elif action == "renew":  # renewing turns a disabled user on: the same active-user limit as "on"
+        off = [u for u in users if not u.enable]
+        room = admin.room_to_activate(len(off))
+        skipped = len(off) - room
+        allowed_off = {u.id for u in off[:room]}
+        users = [u for u in users if u.enable or u.id in allowed_off]
     changed = []
     for u in users:
         match action:

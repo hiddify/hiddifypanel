@@ -27,6 +27,10 @@ TOPICS: dict[str, tuple[T, int]] = {
 
 def enabled() -> bool:
     """The bot has topic mode in private chats (getMe, checked once an hour)."""
+    from hiddifypanel.panel.commercial.restapi.v1.tgbot import managed_bot
+
+    if managed_bot.get() is not None:  # an agent's bot: the cached mode and thread ids are the panel bot's
+        return False
     try:
         cached = redis_client.get(_ENABLED)
     except Exception as e:  # without redis, no topics (and no getMe on every message)

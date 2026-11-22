@@ -313,13 +313,6 @@ def on_guard(message) -> None:
     guard.connect(message)
 
 
-@bot.channel_post_handler(commands=["guard"])
-def on_guard_channel(message) -> None:
-    from . import guard
-
-    guard.connect(message)
-
-
 @bot.chat_join_request_handler()
 def on_join_request(request) -> None:
     from . import guard

@@ -82,7 +82,7 @@ class SweepTests(Base):
     def test_ended_users_leave(self):
         ended = SimpleNamespace(id=1, telegram_id=11, lang=None)
         active = SimpleNamespace(id=2, telegram_id=12, lang=None)
-        users = mock.MagicMock(**{"query.filter.return_value.limit.return_value.all.return_value": [ended, active]})
+        users = mock.MagicMock(**{"query.filter.return_value.order_by.return_value.all.return_value": [active, ended]})
         admins = mock.MagicMock(**{"query.filter.return_value.first.return_value": None})
         status = {1: guard.accounts.Status.expired, 2: guard.accounts.Status.active}
         with mock.patch.object(guard, "User", users), mock.patch.object(guard, "AdminUser", admins), mock.patch.object(guard.accounts, "status", lambda u: status[u.id]), mock.patch.object(

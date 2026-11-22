@@ -94,7 +94,11 @@ def destination(tg_id: int, host: str, to: str = "") -> tuple[str, object | None
     from hiddifypanel.models import AdminUser, ConfigEnum, User, hconfig
     from hiddifypanel.panel import hiddify
 
+    from .resellers import admin_in_scope, user_in_scope
+
     admin = AdminUser.query.filter(AdminUser.telegram_id == tg_id, AdminUser.deleted.is_(False)).first()
+    if admin is not None and not admin_in_scope(admin):  # opened from an agent's bot: not one of theirs
+        admin = None
     if admin is not None:
         from .ops import APP_PAGES
 
@@ -104,6 +108,8 @@ def destination(tg_id: int, host: str, to: str = "") -> tuple[str, object | None
 
         return "admin", admin, {"redirect": f"/{hconfig(ConfigEnum.proxy_path_admin)}/admin/v2/{page}", "haptics": advanced.is_on()}
     user = User.query.filter(User.telegram_id == tg_id, User.deleted.is_(False)).first()
+    if user is not None and not user_in_scope(user):
+        user = None
     if user is not None:
         return "user", user, {"redirect": hiddify.get_account_panel_link(user, host), "keep_telegram": True}
     return "none", None, {"error": "This Telegram account is not linked to the panel. Send /start from the panel link first."}

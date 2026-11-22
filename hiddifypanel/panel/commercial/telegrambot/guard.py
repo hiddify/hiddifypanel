@@ -1,5 +1,5 @@
-"""Advanced mode, its own switch: the subscribers group. A Telegram group (or channel) only the panel's active users
-are in.
+"""Advanced mode, its own switch: the subscribers group. A Telegram group only the panel's active users are in (a
+channel cannot be one: its posts do not say who sent them, so the owner cannot be checked).
 
 - The owner makes the bot an admin of the group (with "add members" and "ban users"), turns on "Approve new
   members", and sends /guard there: that group is the subscribers group from then on.
@@ -56,7 +56,7 @@ def connect(message: types.Message) -> None:
     """/guard in a group: only the panel's owner (their linked Telegram account) can make it the subscribers group."""
     from hiddifypanel.database import db
 
-    if not allowed() or message.chat.type not in ("group", "supergroup", "channel"):
+    if not allowed() or message.chat.type not in ("group", "supergroup"):
         return
     owner = AdminUser.get_super_admin()
     sender = message.from_user.id if message.from_user else 0
@@ -117,10 +117,9 @@ def sweep() -> None:
     if gid is None or not redis_client.set(f"tgbot:guard:{datetime.date.today()}", 1, nx=True, ex=36 * 3600):
         return
     removed = 0
-    users = User.query.filter(User.deleted.is_(False), User.telegram_id.isnot(None), User.telegram_id != 0).limit(MAX_CHECKS).all()
-    for user in users:
-        if accounts.status(user) is accounts.Status.active:
-            continue
+    linked = User.query.filter(User.deleted.is_(False), User.telegram_id.isnot(None), User.telegram_id != 0).order_by(User.id).all()
+    ended = [u for u in linked if accounts.status(u) is not accounts.Status.active][:MAX_CHECKS]
+    for user in ended:
         if AdminUser.query.filter(AdminUser.telegram_id == user.telegram_id, AdminUser.deleted.is_(False)).first():
             continue  # an admin who is also a user stays
         try:

@@ -40,7 +40,9 @@ def under(ctx: Ctx) -> list[AdminUser]:
     assert admin
     ids = set(admin.recursive_sub_admins_ids()) - {admin.id}
     owner = AdminUser.get_super_admin()
-    return [a for a in AdminUser.query.filter(AdminUser.id.in_(ids)).order_by(AdminUser.name).all() if a.id != owner.id] if ids else []
+    people = AdminUser.query.filter(AdminUser.id.in_(ids)).order_by(AdminUser.name).all() if ids else []
+    # As the panel: the owner is nobody's to manage, and a super admin only a super admin's
+    return [a for a in people if a.id != owner.id and (admin.mode == AdminMode.super_admin or a.mode != AdminMode.super_admin)]
 
 
 def visible(ctx: Ctx, admin_id: int) -> AdminUser | None:
@@ -113,7 +115,18 @@ def card_screen(ctx: Ctx, a: AdminUser, note: str | None = None) -> Screen:
 def create_agent(ctx: Ctx, name: str) -> AdminUser:
     admin = ctx.admin
     assert admin
-    agent = AdminUser(name=name.strip()[:60] or "Agent", mode=AdminMode.agent, parent_admin_id=admin.id, can_add_admin=False, max_users=100, max_active_users=100)
+    from hiddifypanel import admin_capabilities as caps
+
+    # As the panel's Admins page: a new admin starts with no capability, and never one its creator lacks
+    agent = AdminUser(
+        name=name.strip()[:60] or "Agent",
+        mode=AdminMode.agent,
+        parent_admin_id=admin.id,
+        can_add_admin=False,
+        capabilities=caps.merge_for_actor(admin, {}, existing=None, creating=True),
+        max_users=100,
+        max_active_users=100,
+    )
     db.session.add(agent)
     db.session.commit()
     from hiddifypanel import hutils
