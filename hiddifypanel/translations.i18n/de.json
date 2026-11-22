@@ -4539,7 +4539,7 @@
     "bk_version": "Version",
     "bk_date": "Datum",
     "bk_size": "Größe",
-    "bk_links": "Panel öffnen: 🟢 sicher · 🟠 über ein CDN · 🔴 nicht sicher, nur wenn die anderen sich nicht öffnen",
+    "bk_links": "Panel öffnen: 🟢 sicher · 🔐 über ein CDN · 🔴 nicht sicher, nur wenn die anderen sich nicht öffnen",
     "bk_insecure": "Nicht sicher",
     "btn_bandwidth": "📈 Bandbreite",
     "btn_chats": "💬 Support-Verlauf",

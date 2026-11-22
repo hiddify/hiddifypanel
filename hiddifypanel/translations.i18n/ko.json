@@ -4539,7 +4539,7 @@
     "bk_version": "버전",
     "bk_date": "날짜",
     "bk_size": "크기",
-    "bk_links": "패널 열기: 🟢 보안 연결 · 🟠 CDN 경유 · 🔴 비보안, 다른 링크가 열리지 않을 때만",
+    "bk_links": "패널 열기: 🟢 보안 연결 · 🔐 CDN 경유 · 🔴 비보안, 다른 링크가 열리지 않을 때만",
     "bk_insecure": "비보안",
     "btn_bandwidth": "📈 대역폭",
     "btn_chats": "💬 지원 기록",

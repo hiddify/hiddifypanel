@@ -4539,7 +4539,7 @@
     "bk_version": "Versie",
     "bk_date": "Datum",
     "bk_size": "Grootte",
-    "bk_links": "Open het paneel: 🟢 veilig · 🟠 via een CDN · 🔴 niet veilig, alleen als de andere niet openen",
+    "bk_links": "Open het paneel: 🟢 veilig · 🔐 via een CDN · 🔴 niet veilig, alleen als de andere niet openen",
     "bk_insecure": "Niet veilig",
     "btn_bandwidth": "📈 Bandbreedte",
     "btn_chats": "💬 Supportgeschiedenis",

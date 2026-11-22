@@ -3304,7 +3304,7 @@
     "bk_version": "Versão",
     "bk_date": "Data",
     "bk_size": "Tamanho",
-    "bk_links": "Abrir o painel: 🟢 seguro · 🟠 por uma CDN · 🔴 não seguro, só se os outros não abrirem",
+    "bk_links": "Abrir o painel: 🟢 seguro · 🔐 por uma CDN · 🔴 não seguro, só se os outros não abrirem",
     "bk_insecure": "Não seguro",
     "btn_bandwidth": "📈 Tráfego",
     "btn_chats": "💬 Histórico do suporte",

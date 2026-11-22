@@ -367,9 +367,20 @@ class BackupMessageTests(unittest.TestCase):
             rows = json.loads(backup_msg.markup("en", None).to_json())["inline_keyboard"]
             plain = json.loads(backup_msg.markup("en", None, plain_http=False).to_json())["inline_keyboard"]
         styles = [r[0].get("style") for r in rows]
-        self.assertEqual(styles, ["success", None, "danger"])
-        self.assertTrue(rows[1][0]["text"].startswith("🟠"))
+        self.assertEqual(styles, ["success", "success", "danger"])  # secure and CDN green, not secure red
+        self.assertEqual([r[0]["text"] for r in rows], ["🔒 Secure", "🔐 Secure", "⚠️ Not Secure IPv4"])
+        self.assertFalse(any("example.com" in r[0]["text"] for r in rows))  # never the address itself
         self.assertEqual(len(plain), 2)  # without the plain http one
+
+    def test_the_labels_by_kind(self):
+        from hiddifypanel.panel.commercial.telegrambot import backup_msg
+
+        ip = ".".join(["198", "51", "100", "7"])
+        self.assertEqual(backup_msg.button_label("secure", ip), "🔒 Secure IPv4")
+        self.assertEqual(backup_msg.button_label("secure", "panel.example.com"), "🔒 Secure")
+        self.assertEqual(backup_msg.button_label("cdn", "cdn.example.com"), "🔐 Secure")
+        self.assertEqual(backup_msg.button_label("insecure", ip), "⚠️ Not Secure IPv4")
+        self.assertEqual(backup_msg.button_label("insecure", "panel.example.com"), "⚠️ Not Secure")
 
 
 if __name__ == "__main__":

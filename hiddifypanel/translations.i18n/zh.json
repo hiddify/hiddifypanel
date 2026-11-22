@@ -3313,7 +3313,7 @@
     "bk_version": "版本",
     "bk_date": "日期",
     "bk_size": "大小",
-    "bk_links": "打开面板：🟢 安全 · 🟠 通过 CDN · 🔴 不安全，仅在其他链接打不开时使用",
+    "bk_links": "打开面板：🟢 安全 · 🔐 通过 CDN · 🔴 不安全，仅在其他链接打不开时使用",
     "bk_insecure": "不安全",
     "btn_bandwidth": "📈 流量",
     "btn_chats": "💬 客服记录",

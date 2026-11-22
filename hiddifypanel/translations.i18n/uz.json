@@ -4539,7 +4539,7 @@
     "bk_version": "Versiya",
     "bk_date": "Sana",
     "bk_size": "Hajm",
-    "bk_links": "Panelni ochish: 🟢 xavfsiz · 🟠 CDN orqali · 🔴 xavfsiz emas, faqat boshqalari ochilmasa",
+    "bk_links": "Panelni ochish: 🟢 xavfsiz · 🔐 CDN orqali · 🔴 xavfsiz emas, faqat boshqalari ochilmasa",
     "bk_insecure": "Xavfsiz emas",
     "btn_bandwidth": "📈 Trafik",
     "btn_chats": "💬 Yordam tarixi",

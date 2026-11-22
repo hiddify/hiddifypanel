@@ -4539,7 +4539,7 @@
     "bk_version": "Versiya",
     "bk_date": "Tarix",
     "bk_size": "Ölçü",
-    "bk_links": "Paneli açın: 🟢 təhlükəsiz · 🟠 CDN vasitəsilə · 🔴 təhlükəsiz deyil, yalnız digərləri açılmasa",
+    "bk_links": "Paneli açın: 🟢 təhlükəsiz · 🔐 CDN vasitəsilə · 🔴 təhlükəsiz deyil, yalnız digərləri açılmasa",
     "bk_insecure": "Təhlükəsiz deyil",
     "btn_bandwidth": "📈 Bant genişliyi",
     "btn_chats": "💬 Dəstək tarixçəsi",

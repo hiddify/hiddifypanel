@@ -4875,7 +4875,7 @@
     "bk_version": "Version",
     "bk_date": "Date",
     "bk_size": "Size",
-    "bk_links": "Open the panel: 🟢 secure · 🟠 through a CDN · 🔴 not secure, only if the others do not open",
+    "bk_links": "Open the panel: 🟢 secure · 🔐 through a CDN · 🔴 not secure, only if the others do not open",
     "bk_insecure": "Not Secure",
     "btn_bandwidth": "📈 Bandwidth",
     "btn_chats": "💬 Support History",

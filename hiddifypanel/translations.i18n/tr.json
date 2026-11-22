@@ -4539,7 +4539,7 @@
     "bk_version": "Sürüm",
     "bk_date": "Tarih",
     "bk_size": "Boyut",
-    "bk_links": "Paneli aç: 🟢 güvenli · 🟠 CDN üzerinden · 🔴 güvenli değil, yalnızca diğerleri açılmazsa",
+    "bk_links": "Paneli aç: 🟢 güvenli · 🔐 CDN üzerinden · 🔴 güvenli değil, yalnızca diğerleri açılmazsa",
     "bk_insecure": "Güvenli Değil",
     "btn_bandwidth": "📈 Trafik",
     "btn_chats": "💬 Destek Geçmişi",

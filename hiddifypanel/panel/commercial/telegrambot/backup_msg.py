@@ -1,7 +1,7 @@
 """The backup message, the same wherever it comes from (the daily backup, the panel's "send to Telegram", the bot's
 Backup key): the file named by its date and time (2026.11.17_18.00.json), a tidy card (the panel, its version, the
-date, the time, the size, the users) and the panel's links as buttons: green the secure ones, 🟠 those through a CDN,
-red the not secure one (only if the others do not open)."""
+date, the time, the size, the users) and the panel's links as buttons: green the secure ones (🔒 the server's own, 🔐 through a CDN),
+red the not secure one (only if the others do not open). The keys never show the address itself."""
 
 from __future__ import annotations
 
@@ -89,16 +89,30 @@ def _kb(size: int) -> str:
     return f"{size / 1024**2:.1f} MB" if size >= 1024**2 else f"{size / 1024:.0f} KB"
 
 
+def _is_ip(address: str) -> bool:
+    try:
+        ipaddress.ip_address(address.strip("[]"))
+        return True
+    except ValueError:
+        return False
+
+
+def button_label(kind: str, address: str) -> str:
+    """A link's key says how it opens, never the address itself (the message may be forwarded or shown): the server's
+    own address 🔒, through a CDN 🔐 (both green), plain http ⚠️ (red)."""
+    if kind == "insecure":
+        return "⚠️ Not Secure IPv4" if _is_ip(address) else "⚠️ Not Secure"
+    if kind == "cdn":
+        return "🔐 Secure"
+    return "🔒 Secure IPv4" if _is_ip(address) else "🔒 Secure"
+
+
 def markup(lang: str, owner, *, plain_http: bool = True, tail: list | None = None) -> types.InlineKeyboardMarkup:
     rows = []
     for kind, address, url in links(owner)[:12]:
-        if kind == "insecure":
-            if plain_http:
-                rows.append([url_btn(f"⚠️ {t(T.bk_insecure, lang)} · {address}", url, style=Style.danger)])
-        elif kind == "cdn":
-            rows.append([url_btn(f"🟠 CDN · {address}", url)])
-        else:
-            rows.append([url_btn(f"🔒 {address}", url, style=Style.success)])
+        if kind == "insecure" and not plain_http:
+            continue
+        rows.append([url_btn(button_label(kind, address), url, style=Style.danger if kind == "insecure" else Style.success)])
     if tail:
         rows.append(tail)
     return keyboard(*rows)
