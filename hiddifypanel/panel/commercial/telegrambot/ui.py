@@ -83,6 +83,7 @@ class Cb(StrEnum):
     cfgtest = "ct"  # ct[:go]  the config test: the last result, or a new one (Advanced, super admins)
     lock = "lk"  # lk[:<action>:<1|0>]  which actions need the admin's biometrics (Advanced)
     cfgfile = "cf"  # cf[:<format>]  the user's configs as a file (Advanced)
+    reseller_bot = "rb"  # the agent's own bot (Advanced, its own switch)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 
@@ -220,7 +221,9 @@ class ChatState:
     TTL = 3600
 
     def __init__(self, chat_id: int):
-        self._key = f"tgbot:state:{chat_id}"
+        from .resellers import state_prefix
+
+        self._key = f"tgbot:state:{state_prefix()}{chat_id}"
 
     def load(self) -> dict[str, Any]:
         raw = redis_client.get(self._key)
@@ -423,6 +426,10 @@ def background(fn: Callable[[], None]) -> None:
 
     app = current_app._get_current_object()  # ty: ignore[unresolved-attribute]
 
+    import contextvars
+
+    context = contextvars.copy_context()  # an agent's bot stays the sender in the thread (resellers.current)
+
     def run() -> None:
         with app.app_context():
             try:
@@ -430,7 +437,7 @@ def background(fn: Callable[[], None]) -> None:
             except Exception:
                 logger.exception("tgbot: background job failed")
 
-    threading.Thread(target=run, daemon=True, name="tgbot-send").start()
+    threading.Thread(target=lambda: context.run(run), daemon=True, name="tgbot-send").start()
 
 
 def with_retry(call: Callable[[], Any], attempts: int = 5) -> Any:

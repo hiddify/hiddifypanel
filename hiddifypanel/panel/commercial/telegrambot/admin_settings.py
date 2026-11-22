@@ -30,6 +30,11 @@ def settings_screen(ctx: Ctx) -> Screen:
     if more := settings_lines(ctx):  # the morning report (Advanced)
         lines += ["", *more]
         rows += settings_rows(ctx)
+    from . import resellers
+
+    if more := resellers.settings_lines(ctx):  # an agent's own bot (Advanced, its own switch)
+        lines += ["", *more]
+        rows += resellers.settings_rows(ctx)
     if admin.mode == AdminMode.super_admin:
         rows.append([btn(ctx.tr(T.btn_backup), Cb.backup)])
         lines += ["", *_advanced_lines(ctx)]

@@ -160,6 +160,13 @@ class T(StrEnum):
     cf_pick = "cf_pick"
     cf_working = "cf_working"
     cf_hint = "cf_hint"
+    # Advanced: an agent's own bot
+    rb_title = "rb_title"
+    rb_hint = "rb_hint"
+    rb_how = "rb_how"
+    rb_create_key = "rb_create_key"
+    rb_ready = "rb_ready"
+    rb_not_enabled = "rb_not_enabled"
     # Advanced: nodes, domains, morning report
     nd_title = "nd_title"
     nd_this = "nd_this"

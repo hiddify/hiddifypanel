@@ -14,7 +14,7 @@ from hiddifypanel.models import AdminUser, User
 
 from hiddifypanel import free_test
 
-from . import accounts, admin, admin_settings, admins, bulk, cfgfile, miniapp, ops, bandwidth, bot, broadcast, chart, chats, doctor, free, groups, guide, menukey, nav, servers, settings, status, support, user, usernames, widget  # noqa: F401  (they register their routes)
+from . import accounts, admin, admin_settings, admins, bulk, cfgfile, miniapp, ops, resellers, bandwidth, bot, broadcast, chart, chats, doctor, free, groups, guide, menukey, nav, servers, settings, status, support, user, usernames, widget  # noqa: F401  (they register their routes)
 from .texts import T, t
 from .ui import BRAND, ROUTES, Cb, Ctx, Screen, btn, keyboard, lang_of
 
@@ -24,9 +24,14 @@ _UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 def context(chat_id: int, message_id: int | None = None, call_id: str | None = None, telegram_lang: str | None = None) -> Ctx:
     """The admin linked to this chat, else the user, else a stranger. ``telegram_lang`` is the person's Telegram
     language (their ``language_code``): spoken when no language was chosen for them."""
-    if found_admin := AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.deleted.is_(False)).first():
+    from .resellers import admin_in_scope, user_in_scope
+
+    found_admin = AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.deleted.is_(False)).first()
+    if found_admin and admin_in_scope(found_admin):
         return Ctx(chat_id, lang_of(found_admin, admin=True, telegram=telegram_lang), admin=found_admin, message_id=message_id, call_id=call_id)
     found_user = User.query.filter(User.telegram_id == chat_id, User.deleted.is_(False)).first()
+    if found_user is not None and not user_in_scope(found_user):  # an agent's bot: not one of theirs
+        found_user = None
     if found_user is None:
         settings.remember_telegram_lang(chat_id, telegram_lang)
         telegram_lang = settings.chat_lang(chat_id) or telegram_lang
@@ -40,7 +45,11 @@ def _tg_lang(person: types.User | None) -> str | None:
 def _link_admin(chat_id: int, uuid: str) -> AdminUser | None:
     """One chat is one admin: linking here unlinks it from any other admin (the bot would otherwise keep answering
     as whichever admin it found first)."""
+    from .resellers import admin_in_scope
+
     found = AdminUser.by_uuid(uuid)
+    if found and not admin_in_scope(found):
+        return None
     if found:
         AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.id != found.id).update({AdminUser.telegram_id: None})
         found.telegram_id = chat_id
@@ -50,7 +59,11 @@ def _link_admin(chat_id: int, uuid: str) -> AdminUser | None:
 
 def _link_user(chat_id: int, uuid: str) -> User | None:
     """One chat is one user account, the same way."""
+    from .resellers import user_in_scope
+
     found = User.by_uuid(uuid)
+    if found and not user_in_scope(found):
+        return None
     if found:
         User.query.filter(User.telegram_id == chat_id, User.id != found.id).update({User.telegram_id: None})
         found.telegram_id = chat_id
@@ -261,3 +274,30 @@ def on_other(message: types.Message) -> None:
     else:
         return _how_to_write(ctx, message.message_id)
     bot.send_message(message.chat.id, t(T.unknown, ctx.lang), reply_markup=keyboard([btn(ctx.tr(T.menu), Cb.home if ctx.admin else Cb.me)]))
+
+
+# --------------------------------------------------------------------------- agents' own bots (resellers.py)
+
+
+class _Made:
+    """Who made which bot (the update and the service message say it the same way)."""
+
+    def __init__(self, user, made):
+        self.user, self.bot = user, made
+
+
+@bot.managed_bot_handler()
+def on_managed_bot(update) -> None:
+    from . import resellers
+
+    resellers.on_managed_bot(update)
+
+
+@bot.message_handler(content_types=["managed_bot_created"], chat_types=["private"])
+def on_managed_bot_created(message) -> None:
+    """The service message in the agent's chat (it comes even when the update above is not sent)."""
+    from . import resellers
+
+    created = getattr(message, "managed_bot_created", None)
+    if created is not None and resellers.find(created.bot.id) is None:
+        resellers.on_managed_bot(_Made(message.from_user, created.bot))

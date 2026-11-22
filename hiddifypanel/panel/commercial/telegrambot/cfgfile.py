@@ -17,6 +17,8 @@ from .ui import RULE, Cb, Ctx, Screen, btn, h, keyboard, route
 
 #: format → (the subscription's path under the user page, file extension)
 FORMATS = {"singbox": ("singbox/", "json"), "clash": ("clash/", "yaml"), "links": ("sub/", "txt")}
+#: The panel answers known apps only, each in its own form: the file is fetched as that app
+_AGENT = {"singbox": "SFA/1.11.0 (Android)", "clash": "ClashMeta/1.18", "links": "v2rayNG/1.9"}
 _LABEL = {"singbox": "sing-box (JSON)", "clash": "Clash (YAML)", "links": "V2Ray / Xray (TXT)"}
 MAX_BYTES = 8 * 1024 * 1024
 
@@ -25,9 +27,9 @@ def _is_ip(host: str) -> bool:
     return bool(re.fullmatch(r"[\d.]+|\[?[0-9a-fA-F:]+\]?", host or ""))
 
 
-def fetch(home: str, path: str) -> bytes:
+def fetch(home: str, path: str, agent: str) -> bytes:
     host = home.split("/")[2] if home.count("/") >= 2 else ""
-    res = requests.get(home + path, timeout=20, verify=not _is_ip(host), headers={"User-Agent": "HiddifyBot"})
+    res = requests.get(home + path, timeout=20, verify=not _is_ip(host), headers={"User-Agent": agent})
     res.raise_for_status()
     if len(res.content) > MAX_BYTES:
         raise ValueError("too big")
@@ -52,7 +54,7 @@ def send_file(ctx: Ctx, args: list[str]) -> None:
     path, ext = FORMATS[args[0]]
     ctx.toast(ctx.tr(T.cf_working))
     try:
-        content = fetch(accounts.links(user).home, path)
+        content = fetch(accounts.links(user).home, path, _AGENT[args[0]])
     except Exception as e:
         logger.warning(f"tgbot: config file {args[0]} not made: {e}")
         return ctx.toast(ctx.tr(T.error_generic), alert=True)

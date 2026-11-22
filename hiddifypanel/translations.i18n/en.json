@@ -5201,7 +5201,13 @@
     "bl_ok": "Confirmed. Press the key below to do it (within 2 minutes).",
     "bl_page": "Confirm with your fingerprint or face.",
     "bl_no_bio": "This device has no fingerprint or face sign-in for Telegram.",
-    "bl_denied": "Not confirmed."
+    "bl_denied": "Not confirmed.",
+    "rb_title": "My own bot",
+    "rb_hint": "A bot with your own name for you and your users (Telegram makes it; the panel runs it).",
+    "rb_how": "Press the key below: Telegram asks you for your bot's name and username, then hands it to this panel. Your users can then use your bot.",
+    "rb_create_key": "🤖 Make my bot",
+    "rb_ready": "Your bot {name} is ready: your users can start it with their link.",
+    "rb_not_enabled": "The panel's bot cannot make bots yet: the panel's owner turns on “Bot Management Mode” for it in @BotFather."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

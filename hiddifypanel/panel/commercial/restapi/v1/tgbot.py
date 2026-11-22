@@ -1,3 +1,4 @@
+import contextvars
 import hashlib
 import hmac
 import time
@@ -9,6 +10,10 @@ from loguru import logger
 
 from hiddifypanel.cache import cache, redis_client
 from hiddifypanel.models import *
+
+
+#: The agent's own bot an update runs for (telegrambot/resellers.py); None: the panel's bot
+managed_bot: contextvars.ContextVar = contextvars.ContextVar("tgbot_managed", default=None)
 
 
 class _LazyBot:
@@ -47,7 +52,29 @@ class _LazyBot:
 
                     return False  # Don't retry for unknown errors
 
-            real = telebot.TeleBot("1:2", parse_mode="HTML", threaded=False, exception_handler=ExceptionHandler())
+            class PanelBot(telebot.TeleBot):
+                """The panel's bot; during an update of an agent's own bot (telegrambot/resellers.py) its token and
+                username are that bot's, so the shared code answers from it."""
+
+                @property
+                def token(self):
+                    managed = managed_bot.get()
+                    return managed.token if managed else self.__dict__.get("_panel_token", "")
+
+                @token.setter
+                def token(self, value):
+                    self.__dict__["_panel_token"] = value
+
+                @property
+                def username(self):
+                    managed = managed_bot.get()
+                    return managed.username if managed else self.__dict__.get("_panel_username", "")
+
+                @username.setter
+                def username(self, value):
+                    self.__dict__["_panel_username"] = value
+
+            real = PanelBot("1:2", parse_mode="HTML", threaded=False, exception_handler=ExceptionHandler())
             real.username = ""
             # Animated button icons that Telegram refuses are sent again as plain emoji (telegrambot/icons.py)
             from hiddifypanel.panel.commercial.telegrambot.icons import install_refusal_guard
@@ -202,6 +229,39 @@ class TGAppResource(Resource):
         res.headers["Content-Type"] = "text/html; charset=utf-8"
         res.headers["Cache-Control"] = "no-store"
         return res
+
+
+class TGManagedBotResource(Resource):
+    """Updates of an agent's own bot (telegrambot/resellers.py): the same handlers, that bot's token."""
+
+    def post(self, bot_id: int):
+        if not hconfig(ConfigEnum.telegram_bot_token):
+            abort(404)
+        from hiddifypanel.panel.commercial.telegrambot import resellers
+
+        managed = resellers.find(bot_id)
+        if managed is None or not resellers.allowed():
+            abort(404)
+        if not hmac.compare_digest(request.headers.get("X-Telegram-Bot-Api-Secret-Token", ""), resellers.webhook_secret(managed.token)):
+            abort(403)
+        try:
+            import telebot
+
+            import hiddifypanel.panel.commercial.telegrambot  # noqa: F401  (registers the handlers)
+
+            update = telebot.types.Update.de_json(request.get_data().decode("utf-8"))
+            if not redis_client.set(f"tgbot:update:m{bot_id}:{update.update_id}", 1, nx=True, ex=3600):
+                return ""
+            if not bot.token:  # the panel's own token, for the shared object (the agent's comes from the context)
+                bot.token = hconfig(ConfigEnum.telegram_bot_token)
+            mark = resellers.current.set(managed)
+            try:
+                bot.process_new_updates([update])
+            finally:
+                resellers.current.reset(mark)
+        except Exception:
+            logger.exception("Telegram update of an agent's bot failed")
+        return ""
 
 
 class TGAppActResource(Resource):
