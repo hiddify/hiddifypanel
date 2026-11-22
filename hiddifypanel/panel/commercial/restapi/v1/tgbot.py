@@ -212,10 +212,11 @@ class TGAppLoginResource(Resource):
         from hiddifypanel.auth import login_user, logout_user
         from hiddifypanel.panel.commercial.telegrambot.webapp import destination, telegram_user_id
 
-        tg_id = telegram_user_id(str((request.get_json(silent=True) or {}).get("init_data") or ""), token)
+        body = request.get_json(silent=True) or {}
+        tg_id = telegram_user_id(str(body.get("init_data") or ""), token)
         if tg_id is None:
             return {"error": "invalid_sign_in"}, 403
-        kind, account, answer = destination(tg_id, request.host)
+        kind, account, answer = destination(tg_id, request.host, str(body.get("to") or "")[:40])
         # Whoever opened it before on this device is signed out first: an admin's session never stays for someone else
         logout_user()
         if kind == "admin":

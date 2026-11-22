@@ -73,7 +73,7 @@ const TEXTS = __TEXTS__, RTL = ['fa', 'ar', 'ur', 'ps'];
   }
   try {
     const res = await fetch('login/', {method: 'POST', credentials: 'same-origin',
-      headers: {'Content-Type': 'application/json'}, body: JSON.stringify({init_data: tg.initData})});
+      headers: {'Content-Type': 'application/json'}, body: JSON.stringify({init_data: tg.initData, to: new URLSearchParams(location.search).get('to') || ''})});
     const body = await res.json();
     if (!res.ok || !body.redirect) return fail(L.failed);
     // A person's own page gets Telegram's data (the #tgWebApp… part), so it knows it is inside Telegram; the admin
@@ -85,7 +85,7 @@ const TEXTS = __TEXTS__, RTL = ['fa', 'ar', 'ur', 'ps'];
 """
 
 
-def destination(tg_id: int, host: str) -> tuple[str, object | None, dict]:
+def destination(tg_id: int, host: str, to: str = "") -> tuple[str, object | None, dict]:
     """Where the Telegram account ``tg_id`` (proved by Telegram's signature) may go: ("admin", the admin, answer) to
     the admin panel, ("user", the user, answer) to that person's own page, ("none", None, answer) for an account
     linked to nothing. Only the account linked to that very Telegram id: nobody reaches another one's panel or page."""
@@ -94,7 +94,11 @@ def destination(tg_id: int, host: str) -> tuple[str, object | None, dict]:
 
     admin = AdminUser.query.filter(AdminUser.telegram_id == tg_id, AdminUser.deleted.is_(False)).first()
     if admin is not None:
-        return "admin", admin, {"redirect": f"/{hconfig(ConfigEnum.proxy_path_admin)}/admin/v2/"}
+        from .ops import APP_PAGES
+
+        # A page of the panel the bot's button asked for (only the known ones: nothing else gets into the address)
+        page = APP_PAGES.get(to or "", "")
+        return "admin", admin, {"redirect": f"/{hconfig(ConfigEnum.proxy_path_admin)}/admin/v2/{page}"}
     user = User.query.filter(User.telegram_id == tg_id, User.deleted.is_(False)).first()
     if user is not None:
         return "user", user, {"redirect": hiddify.get_account_panel_link(user, host), "keep_telegram": True}

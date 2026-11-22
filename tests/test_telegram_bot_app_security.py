@@ -57,6 +57,11 @@ class DestinationTests(unittest.TestCase):
             p.start()
             self.addCleanup(p.stop)
 
+    def test_only_known_panel_pages_get_into_the_address(self):
+        self.assertEqual(webapp.destination(7, "panel.example.com", "scanner")[2]["redirect"], "/admin-path/admin/v2/scanner")
+        self.assertEqual(webapp.destination(7, "panel.example.com", "../../evil")[2]["redirect"], "/admin-path/admin/v2/")
+        self.assertNotIn("scanner", webapp.destination(8, "panel.example.com", "scanner")[2]["redirect"])  # a person: their own page
+
     def test_each_one_reaches_only_their_own(self):
         kind, account, answer = webapp.destination(7, "panel.example.com")
         self.assertEqual((kind, account.id), ("admin", 1))

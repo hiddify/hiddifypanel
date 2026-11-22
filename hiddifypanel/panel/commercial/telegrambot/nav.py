@@ -10,7 +10,7 @@ from .ui import ROUTES, Cb, Ctx, route
 #: The screens a person moves between (actions, like a setting or sending a card, are not steps).
 SCREENS = {Cb.me_links, Cb.guide, Cb.doctor, Cb.chart, Cb.support, Cb.history, Cb.settings, Cb.lang}
 #: An admin's screens (the user list with its filters, a user, the status, the chats…)
-ADMIN_SCREENS = {Cb.users, Cb.search, Cb.card, Cb.links, Cb.status, Cb.bandwidth, Cb.chats, Cb.chat, Cb.admin_settings, Cb.lang, Cb.free_link, Cb.new, Cb.new_count, Cb.broadcast, Cb.nodes, Cb.domains, Cb.bulk, Cb.admins, Cb.admin_card}
+ADMIN_SCREENS = {Cb.users, Cb.search, Cb.card, Cb.links, Cb.status, Cb.bandwidth, Cb.chats, Cb.chat, Cb.admin_settings, Cb.lang, Cb.free_link, Cb.new, Cb.new_count, Cb.broadcast, Cb.nodes, Cb.domains, Cb.bulk, Cb.admins, Cb.admin_card, Cb.apply, Cb.cfgtest}
 DEPTH = 12
 #: Screens whose arguments only choose what they show (a filter, a page, an order): any of them is the same step
 VIEWS = {Cb.users, Cb.search, Cb.chats, Cb.history}

@@ -192,7 +192,9 @@ def status_rows(ctx: Ctx) -> list[list]:
     """The status screen's keys to these screens (Advanced, operators)."""
     if not advanced.is_on() or not _operator(ctx.admin):
         return []
-    return [[btn(ctx.tr(T.nd_title), Cb.nodes), btn(ctx.tr(T.nd_domains), Cb.domains)]]
+    from .ops import status_rows as ops_rows
+
+    return [[btn(ctx.tr(T.nd_title), Cb.nodes), btn(ctx.tr(T.nd_domains), Cb.domains)], *ops_rows(ctx)]
 
 
 # --------------------------------------------------------------------------- node alerts

@@ -79,6 +79,8 @@ class Cb(StrEnum):
     admins = "ad"  # ad[:<page>]  the admin's sub-admins and agents (Advanced)
     admin_card = "ac"  # ac:<admin id>[:<action>:<value>]  one of them (Advanced)
     agent_new = "an"  # ask the name of a new agent (Advanced)
+    apply = "ap"  # ap[:ask|go]  apply the configs (Advanced, super admins)
+    cfgtest = "ct"  # ct[:go]  the config test: the last result, or a new one (Advanced, super admins)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 
