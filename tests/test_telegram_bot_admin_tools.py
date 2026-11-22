@@ -382,6 +382,7 @@ class BackupMessageTests(unittest.TestCase):
             SimpleNamespace(domain="panel.example.com", mode=DomainType.direct, tls_status="valid"),
             SimpleNamespace(domain="cdn.example.com", mode=DomainType.cdn, tls_status="missing"),
             SimpleNamespace(domain="self.example.com", mode=DomainType.relay, tls_status="self_signed"),
+            SimpleNamespace(domain=ip, mode=DomainType.direct, tls_status="valid"),
         ]
         with mock.patch("hiddifypanel.models.Domain.get_domains", lambda: domains), mock.patch(
             "hiddifypanel.panel.hiddify.get_account_panel_link", lambda owner, host, is_https=True: ("https" if is_https else "http") + f"://{host}/p/"
@@ -389,9 +390,12 @@ class BackupMessageTests(unittest.TestCase):
             found = backup_msg.links(None)
         self.assertEqual(
             [(k, a) for k, a, _u in found],
-            [("secure", "panel.example.com"), ("cdn", "cdn.example.com"), ("insecure", "old.example.com"), ("insecure", "self.example.com"), ("insecure", ip)],
+            [("secure", "panel.example.com"), ("secure", ip), ("cdn", "cdn.example.com"), ("insecure", "old.example.com"), ("insecure", "self.example.com"), ("insecure", ip)],
+        )  # the IP both ways: secure (https) and over plain http
+        self.assertEqual(
+            [backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔒 Secure IPv4", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure", "⚠️ Not Secure IPv4"]
         )
-        self.assertEqual([backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure", "⚠️ Not Secure IPv4"])
+        self.assertTrue(found[-1][2].startswith("http://") and found[1][2].startswith("https://"))
 
     def test_the_labels_by_kind(self):
         from hiddifypanel.panel.commercial.telegrambot import backup_msg

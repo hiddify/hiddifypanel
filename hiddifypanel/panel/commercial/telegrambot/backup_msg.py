@@ -65,8 +65,9 @@ def links(owner) -> list[tuple[str, str, str]]:
             secure.append(("secure", address, hiddify.get_account_panel_link(owner, address)))
         else:  # no certificate a browser trusts: plain http opens it (it may move on to https with a warning)
             insecure.append(("insecure", address, hiddify.get_account_panel_link(owner, address, is_https=False)))
+    # The server's IPv4 over plain http, always (also next to its secure key): some networks only let http through
     ip = hutils.network.get_ip_str(4)
-    if ip and ip not in {a for _k, a, _u in secure + insecure}:
+    if ip and ip not in {a for _k, a, _u in insecure}:
         insecure.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip, is_https=False)))
     return secure + cdn + insecure
 
