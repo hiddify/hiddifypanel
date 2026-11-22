@@ -192,3 +192,14 @@ class BrandTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StatusKeyRenameTests(unittest.TestCase):
+    def test_new_and_old_labels_open_the_status(self):
+        from hiddifypanel.panel.commercial.telegrambot import menukey
+        from hiddifypanel.panel.commercial.telegrambot.ui import Cb
+
+        actions = menukey._actions(True)
+        self.assertEqual(actions["📊 Action & Status"][0], Cb.status)
+        self.assertEqual(actions["📊 Server Status"][0], Cb.status)  # a chat may still show the old keyboard
+        self.assertEqual(actions["📊 عملیات و وضعیت"][0], Cb.status)

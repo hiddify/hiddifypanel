@@ -20,7 +20,7 @@ from .ui import Cb
 PREF = "menu_key"
 HINT_PREF = "menu_key_msg"
 #: Raise it to send the keyboard again to every chat (a new look).
-VERSION = "12"  # 12: the Menu key is blue
+VERSION = "13"  # 13: Server Status is now Action & Status
 #: The line that carries the keyboard (the same in every language: Hiddify's tagline)
 TAGLINE = "🎉 Hiddify, Internet Freedom Solution"
 
@@ -77,6 +77,8 @@ def keyboard_for(lang: str, person: bool = False, admin_mode: str | None = None)
 
 #: Keys renamed since: their old text still opens their screen
 _OLD_LABELS = {"💬 Chats": Cb.chats, "💬 گفتگوها": Cb.chats, "📣 Message All": Cb.broadcast, "📣 پیام به همه": Cb.broadcast}
+#: "Server Status" in every language before it became "Action & Status" (2026-11)
+_OLD_LABELS.update(dict.fromkeys(("📊 Estado del servidor", "📊 Server Status", "📊 Server holati", "📊 Server vəziyyəti", "📊 Serverstatus", "📊 Servidor", "📊 Serwer ýagdaýy", "📊 Stato del server", "📊 Sunucu durumu", "📊 État du serveur", "📊 Сервер", "📊 Сервер күйі", "📊 Сервердин абалы", "📊 Стан сервера", "📊 Ҳолати сервер", "📊 Սերվերի կարգավիճակ", "📊 حالة الخادم", "📊 د سرور حالت", "📊 سرور کی اسٹیٹس", "📊 وضعیت سرور", "📊 सर्वर की स्थिति", "📊 সার্ভারের অবস্থা", "📊 ဆာဗာအခြေအနေ", "📊 የሰርቨር ሁኔታ", "📊 服务器状态", "📊 서버 상태"), Cb.status))
 
 
 @cache
