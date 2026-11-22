@@ -12,6 +12,9 @@ SCREENS = {Cb.me_links, Cb.guide, Cb.doctor, Cb.chart, Cb.support, Cb.history, C
 #: An admin's screens (the user list with its filters, a user, the status, the chats…)
 ADMIN_SCREENS = {Cb.users, Cb.search, Cb.card, Cb.links, Cb.status, Cb.bandwidth, Cb.chats, Cb.chat, Cb.admin_settings, Cb.lang, Cb.free_link, Cb.new, Cb.new_count, Cb.broadcast, Cb.nodes, Cb.domains, Cb.bulk, Cb.admins, Cb.admin_card, Cb.apply, Cb.cfgtest, Cb.lock, Cb.reseller_bot, Cb.open_help}
 DEPTH = 12
+#: Screens whose first argument is the step itself (Send Message: users / admins / all / one; Backup: history / one
+#: backup): another first argument is a step further, the same one with other arguments (a page) takes its place
+BY_FIRST_ARG = {Cb.broadcast, Cb.backup}
 #: Screens whose arguments only choose what they show (a filter, a page, an order): any of them is the same step
 VIEWS = {Cb.users, Cb.search, Cb.chats, Cb.history}
 
@@ -54,7 +57,7 @@ def push(ctx: Ctx, kind: Cb, args: list[str]) -> None:
     entry = [kind.value, [str(a) for a in args]]
     if entry in path:
         path = path[: path.index(entry) + 1]
-    elif path and path[-1][0] == kind.value and (len(path[-1][1]) == len(args) or kind in VIEWS):
+    elif path and path[-1][0] == kind.value and (path[-1][1][:1] == entry[1][:1] if kind in BY_FIRST_ARG else (len(path[-1][1]) == len(args) or kind in VIEWS)):
         path[-1] = entry
     else:
         path.append(entry)

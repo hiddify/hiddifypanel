@@ -189,8 +189,9 @@ class BroadcastTests(Base):
         from hiddifypanel.panel.commercial.telegrambot.ui import Cb
 
         nav.reset(self.ctx, Cb.broadcast, [])  # the Send Message key
+        nav.push(self.ctx, Cb.broadcast, ["u"])  # to users
         nav.push(self.ctx, Cb.broadcast, ["all"])
-        self.assertEqual(self.state.get("nav"), [["bc", []], ["bc", ["all"]]])
+        self.assertEqual(self.state.get("nav"), [["bc", []], ["bc", ["u"]], ["bc", ["all"]]])
         fake_bot = mock.MagicMock()
         fake_bot.send_message.side_effect = [SimpleNamespace(message_id=90), SimpleNamespace(message_id=91)]
         with mock.patch.object(menukey, "bot", fake_bot):
