@@ -651,19 +651,22 @@ def backup_menu(ctx: Ctx) -> Screen:
     )
 
 
-def backup_history(ctx: Ctx) -> Screen:
+def backup_history(ctx: Ctx, page: int = 0) -> Screen:
     """The backups kept on the server, newest first, in a box that opens: closed, it shows the newest one only (each
     backup takes two lines and a blank one, the lines a closed box shows)."""
     from . import backup_msg
 
     files = _recent_backups()
+    pages = max((len(files) + MAX_BACKUPS_LISTED - 1) // MAX_BACKUPS_LISTED, 1)
+    page = min(max(page, 0), pages - 1)
     lines = [f"🗂 <b>{ctx.tr(T.bk_history_title)}</b>", RULE]
     if not files:
         lines.append(ctx.tr(T.bk_history_none_month))
     else:
         lines.append(ctx.tr(T.bk_history_month, n=len(files)))
         entries = []
-        for i, f in enumerate(files[:MAX_BACKUPS_LISTED]):
+        start = page * MAX_BACKUPS_LISTED
+        for i, f in enumerate(files[start : start + MAX_BACKUPS_LISTED], start):
             when = backup_msg.when_of(f["name"])
             mark = "🆕" if i == 0 else "💾"
             name = backup_msg.file_name(when).removesuffix(".json")
@@ -673,10 +676,17 @@ def backup_history(ctx: Ctx) -> Screen:
             # A tap on the name opens that backup in the bot (a /start link: a quote's text cannot hold the bot's keys)
             title = f'<a href="https://t.me/{bot.username}?start=bk_{stem}">{h(name)}</a>' if bot.username and _STEM.match(stem) else h(name)
             entries.append(f"{mark} <b>{title}</b>\n📅 {day} · 🕒 {hour} · 📦 {backup_msg._kb(int(f['size']))}")
-        more = len(files) - MAX_BACKUPS_LISTED
-        body = "\n\n".join(entries) + (f"\n\n… +{more}" if more > 0 else "")
+        body = "\n\n".join(entries)
         lines.append(f"<blockquote expandable>{body}</blockquote>")
-    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.bk_now), Cb.backup, "now", style=Style.success)], [btn(ctx.tr(T.back), Cb.back)]))
+    # Older backups of the month on further pages (a message holds about 40 of them)
+    pager = []
+    if pages > 1:
+        pager = [
+            btn("«", Cb.backup, "hist", max(page - 1, 0)),
+            btn(f"{page + 1}/{pages}", Cb.backup, "hist", page),
+            btn("»", Cb.backup, "hist", min(page + 1, pages - 1)),
+        ]
+    return Screen("\n".join(lines), keyboard(pager, [btn(ctx.tr(T.bk_now), Cb.backup, "now", style=Style.success)], [btn(ctx.tr(T.back), Cb.back)]))
 
 
 @route(Cb.backup, admin=True)
@@ -691,7 +701,7 @@ def send_backup(ctx: Ctx, args: list[str]) -> None:
         return show_backup_file(ctx, args[1])
     if step == "hist":
         ctx.toast()
-        return ctx.show(backup_history(ctx))
+        return ctx.show(backup_history(ctx, _int(args, 1)))
     if step != "now":
         ctx.toast()
         return ctx.show(backup_menu(ctx))

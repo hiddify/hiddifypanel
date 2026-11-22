@@ -49,6 +49,17 @@ class BackupMenuTests(Base):
         self.assertIn(f"https://t.me/hiddify_bot?start=bk_{stem}", first)  # a tap opens that backup
         self.assertNotIn(files[2]["name"].removesuffix(".json"), box)
 
+    def test_the_rest_of_the_month_on_further_pages(self):
+        files = self.files(*[d / 10 for d in range(1, 90)])  # 89 backups, all of this month
+        with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: files), mock.patch.object(admin, "bot", SimpleNamespace(username="b")):
+            admin.send_backup(self.ctx, ["hist"])
+            first = self.shown[-1]
+            admin.send_backup(self.ctx, ["hist", "2"])
+            last = self.shown[-1]
+        self.assertIn("bk:hist:1", self.data(first))
+        self.assertEqual(last.text.count("?start=bk_"), 89 - 2 * admin.MAX_BACKUPS_LISTED)
+        self.assertIn(files[-1]["name"].removesuffix(".json"), last.text)
+
     def test_no_backups_in_the_last_month(self):
         with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: self.files(40)):
             admin.send_backup(self.ctx, ["hist"])
