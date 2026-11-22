@@ -42,7 +42,8 @@ def _panel_name() -> str:
 
 def links(owner) -> list[tuple[str, str, str]]:
     """(kind, address, url) of every way into the panel: "secure" (the server's own address or domain), "cdn", and
-    last "insecure" (plain http to the IPv4). IPv6 is left out: it does not open from most networks."""
+    last "insecure" (plain http to each own domain and to the IPv4). IPv6 is left out: it does not open from most
+    networks."""
     from hiddifypanel import hutils
     from hiddifypanel.models import Domain, DomainType
     from hiddifypanel.panel import hiddify
@@ -57,6 +58,10 @@ def links(owner) -> list[tuple[str, str, str]]:
         kind = "cdn" if d.mode == DomainType.cdn else "secure"
         out.append((kind, d.domain, hiddify.get_account_panel_link(owner, d.domain)))
     out.sort(key=lambda x: x[0] == "cdn")  # the server's own first, then the CDNs
+    # Plain http last, only if the others do not open: each of the server's own domains, then its IPv4
+    for d in Domain.get_domains():
+        if d.mode != DomainType.cdn and not _is_ip(d.domain) and "*" not in d.domain:
+            out.append(("insecure", d.domain, hiddify.get_account_panel_link(owner, d.domain, is_https=False)))
     ip = hutils.network.get_ip_str(4)
     if ip:
         out.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip, is_https=False)))
@@ -109,7 +114,7 @@ def button_label(kind: str, address: str) -> str:
 
 def markup(lang: str, owner, *, plain_http: bool = True, tail: list | None = None) -> types.InlineKeyboardMarkup:
     rows = []
-    for kind, address, url in links(owner)[:12]:
+    for kind, address, url in links(owner)[:20]:
         if kind == "insecure" and not plain_http:
             continue
         rows.append([url_btn(button_label(kind, address), url, style=Style.danger if kind == "insecure" else Style.success)])
