@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "Herkese gönderin: bağlantıyı açar, bu paketi görür ve botta ister. Kopyalamak için bağlantıya dokunun.",
     "free_copy": "📋 Bağlantıyı Kopyala",
     "free_share": "📤 Bağlantıyı Paylaş",
-    "free_share_text": "🎁 Ücretsiz bir test: bu bağlantıyı açın ve botta isteyin."
+    "free_share_text": "🎁 Ücretsiz bir test: bu bağlantıyı açın ve botta isteyin.",
+    "free_stats": "📊 İstatistikler",
+    "free_stats_title": "Ücretsiz Test İstatistikleri",
+    "free_stats_received": "Ücretsiz test alan",
+    "free_stats_using": "Kullanıyor",
+    "free_stats_online": "şu an çevrimiçi",
+    "free_stats_waiting": "Henüz bağlanmadı",
+    "free_stats_ended": "Sona erdi",
+    "free_stats_hint": "Sona erdi: günleri veya kotası bitti, ya da hesap kapatıldı veya silindi."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

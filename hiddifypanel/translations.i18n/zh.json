@@ -3607,7 +3607,15 @@
     "free_link_invite_hint": "发给任何人：对方打开后会看到这个套餐，并在机器人中申请。点按链接即可复制。",
     "free_copy": "📋 复制链接",
     "free_share": "📤 分享链接",
-    "free_share_text": "🎁 免费试用：打开此链接，在机器人中申请。"
+    "free_share_text": "🎁 免费试用：打开此链接，在机器人中申请。",
+    "free_stats": "📊 统计",
+    "free_stats_title": "免费试用统计",
+    "free_stats_received": "已领取免费试用",
+    "free_stats_using": "使用中",
+    "free_stats_online": "当前在线",
+    "free_stats_waiting": "尚未连接",
+    "free_stats_ended": "已结束",
+    "free_stats_hint": "已结束：天数或流量已用完，或账号已被关闭或删除。"
   },
   "cdn": "🔀 CDN（Cloudflare 代理，...）",
   "cf-delete": {

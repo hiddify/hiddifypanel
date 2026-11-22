@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "Ony islendik adama iberiň: ol açýar, bu paketi görýär we botda soraýar. Göçürmek üçin salgya basyň.",
     "free_copy": "📋 Salgyny göçür",
     "free_share": "📤 Salgyny paýlaş",
-    "free_share_text": "🎁 Mugt synag: bu salgyny açyň we botda soraň."
+    "free_share_text": "🎁 Mugt synag: bu salgyny açyň we botda soraň.",
+    "free_stats": "📊 Statistika",
+    "free_stats_title": "Mugt synag statistikasy",
+    "free_stats_received": "Mugt synag alanlar",
+    "free_stats_using": "Ulanýar",
+    "free_stats_online": "häzir onlaýn",
+    "free_stats_waiting": "Entek birleşmedi",
+    "free_stats_ended": "Gutardy",
+    "free_stats_hint": "Gutardy: günleri ýa-da traffigi gutardy, ýa-da hasap öçürildi ýa-da pozuldy."
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

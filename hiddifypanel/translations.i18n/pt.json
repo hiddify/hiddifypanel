@@ -3598,7 +3598,15 @@
     "free_link_invite_hint": "Envie para qualquer pessoa: ela abre, vê este pacote e o solicita no bot. Toque no link para copiá-lo.",
     "free_copy": "📋 Copiar link",
     "free_share": "📤 Compartilhar link",
-    "free_share_text": "🎁 Um teste grátis: abra este link e peça no bot."
+    "free_share_text": "🎁 Um teste grátis: abra este link e peça no bot.",
+    "free_stats": "📊 Estatísticas",
+    "free_stats_title": "Estatísticas do teste grátis",
+    "free_stats_received": "Receberam teste grátis",
+    "free_stats_using": "Estão usando",
+    "free_stats_online": "online agora",
+    "free_stats_waiting": "Ainda não conectaram",
+    "free_stats_ended": "Encerrados",
+    "free_stats_hint": "Encerrados: os dias ou os dados acabaram, ou a conta foi desativada ou excluída."
   },
   "cdn": "CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "Stuur hem naar wie je wilt: ze openen hem, zien dit pakket en vragen het aan in de bot. Tik op de link om hem te kopiëren.",
     "free_copy": "📋 Link kopiëren",
     "free_share": "📤 Link delen",
-    "free_share_text": "🎁 Een gratis test: open deze link en vraag hem aan in de bot."
+    "free_share_text": "🎁 Een gratis test: open deze link en vraag hem aan in de bot.",
+    "free_stats": "📊 Statistieken",
+    "free_stats_title": "Statistieken gratis test",
+    "free_stats_received": "Gratis test ontvangen",
+    "free_stats_using": "Gebruiken het",
+    "free_stats_online": "nu online",
+    "free_stats_waiting": "Nog niet verbonden",
+    "free_stats_ended": "Afgelopen",
+    "free_stats_hint": "Afgelopen: dagen of data zijn op, of het account is uitgezet of verwijderd."
   },
   "cdn": "🔀 CDN (Cloudflare-proxy, ...)",
   "cf-delete": {

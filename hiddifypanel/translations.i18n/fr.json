@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "Envoyez-le à qui vous voulez : la personne l'ouvre, voit ce forfait et le demande dans le bot. Touchez le lien pour le copier.",
     "free_copy": "📋 Copier le lien",
     "free_share": "📤 Partager le lien",
-    "free_share_text": "🎁 Un test gratuit : ouvrez ce lien et demandez-le dans le bot."
+    "free_share_text": "🎁 Un test gratuit : ouvrez ce lien et demandez-le dans le bot.",
+    "free_stats": "📊 Statistiques",
+    "free_stats_title": "Statistiques de l'essai gratuit",
+    "free_stats_received": "Ont reçu un essai gratuit",
+    "free_stats_using": "L'utilisent",
+    "free_stats_online": "en ligne maintenant",
+    "free_stats_waiting": "Pas encore connectés",
+    "free_stats_ended": "Terminés",
+    "free_stats_hint": "Terminés : jours ou données épuisés, ou compte désactivé ou supprimé."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

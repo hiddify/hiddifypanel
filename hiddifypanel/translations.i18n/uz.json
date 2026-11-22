@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "Uni xohlagan kishiga yuboring: u ochadi, bu paketni ko'radi va botda so'raydi. Nusxalash uchun havolani bosing.",
     "free_copy": "📋 Havolani nusxalash",
     "free_share": "📤 Havolani ulashish",
-    "free_share_text": "🎁 Bepul test: bu havolani oching va botda so'rang."
+    "free_share_text": "🎁 Bepul test: bu havolani oching va botda so'rang.",
+    "free_stats": "📊 Statistika",
+    "free_stats_title": "Bepul test statistikasi",
+    "free_stats_received": "Bepul test olganlar",
+    "free_stats_using": "Foydalanmoqda",
+    "free_stats_online": "hozir onlayn",
+    "free_stats_waiting": "Hali ulanmagan",
+    "free_stats_ended": "Tugagan",
+    "free_stats_hint": "Tugagan: kunlari yoki trafigi tugadi, yoki akkaunt o‘chirildi yoki o‘chirib tashlandi."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

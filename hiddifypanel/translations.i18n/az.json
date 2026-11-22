@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "Hər kəsə göndərin: açır, bu paketi görür və botda tələb edir. Kopyalamaq üçün linkə toxunun.",
     "free_copy": "📋 Linki kopyala",
     "free_share": "📤 Linki paylaş",
-    "free_share_text": "🎁 Pulsuz test: bu linki açın və botda tələb edin."
+    "free_share_text": "🎁 Pulsuz test: bu linki açın və botda tələb edin.",
+    "free_stats": "📊 Statistika",
+    "free_stats_title": "Pulsuz test statistikası",
+    "free_stats_received": "Pulsuz test alanlar",
+    "free_stats_using": "İstifadə edir",
+    "free_stats_online": "indi onlayn",
+    "free_stats_waiting": "Hələ qoşulmayıb",
+    "free_stats_ended": "Bitib",
+    "free_stats_hint": "Bitib: günləri və ya trafiki bitib, yaxud hesab söndürülüb və ya silinib."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "누구에게나 보내세요. 링크를 열면 이 패키지가 보이고 봇에서 신청할 수 있습니다. 링크를 탭하면 복사됩니다.",
     "free_copy": "📋 링크 복사",
     "free_share": "📤 링크 공유",
-    "free_share_text": "🎁 무료 체험: 이 링크를 열고 봇에서 신청하세요."
+    "free_share_text": "🎁 무료 체험: 이 링크를 열고 봇에서 신청하세요.",
+    "free_stats": "📊 통계",
+    "free_stats_title": "무료 체험 통계",
+    "free_stats_received": "무료 체험 받음",
+    "free_stats_using": "사용 중",
+    "free_stats_online": "현재 온라인",
+    "free_stats_waiting": "아직 연결 안 됨",
+    "free_stats_ended": "종료됨",
+    "free_stats_hint": "종료됨: 기간이나 데이터를 모두 사용했거나, 계정이 꺼졌거나 삭제됨."
   },
   "cdn": "🔀 CDN (Cloudflare 프록시 등)",
   "cf-delete": {

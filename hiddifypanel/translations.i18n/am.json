@@ -4833,7 +4833,15 @@
     "free_link_invite_hint": "ለማንኛውም ሰው ይላኩት፦ ይከፍቱታል፣ ይህን ጥቅል ያያሉ እና በቦቱ ውስጥ ይጠይቁታል። ለመቅዳት አገናኙን ይንኩ።",
     "free_copy": "📋 አገናኝ ቅዳ",
     "free_share": "📤 አገናኝ አጋራ",
-    "free_share_text": "🎁 ነጻ ሙከራ፦ ይህን አገናኝ ከፍተው በቦቱ ውስጥ ይጠይቁት።"
+    "free_share_text": "🎁 ነጻ ሙከራ፦ ይህን አገናኝ ከፍተው በቦቱ ውስጥ ይጠይቁት።",
+    "free_stats": "📊 ስታቲስቲክስ",
+    "free_stats_title": "የነጻ ሙከራ ስታቲስቲክስ",
+    "free_stats_received": "ነጻ ሙከራ ያገኙ",
+    "free_stats_using": "እየተጠቀሙ ያሉ",
+    "free_stats_online": "አሁን ኦንላይን",
+    "free_stats_waiting": "ገና ያልተገናኙ",
+    "free_stats_ended": "አልቋል",
+    "free_stats_hint": "አልቋል፦ ቀናቸው ወይም ዳታቸው አልቋል፣ ወይም አካውንቱ ጠፍቷል ወይም ተሰርዟል።"
   },
   "cdn": "🔀 CDN (Cloudflare ፕሮክሲ፣ ...)",
   "cf-delete": {
