@@ -22,6 +22,9 @@ class FakeRedis:
         self.values[key] = value
         return True
 
+    def expire(self, key, _seconds):
+        return key in self.values
+
     def delete(self, *keys):
         for k in keys:
             self.values.pop(k, None)
@@ -90,9 +93,19 @@ class LockTests(Base):
         token = miniapp.new_token(5, "lock", data="ap:go", action="apply", lang="en")
         with self.signed(6):
             self.assertEqual(miniapp.answer("data", {"t": token, "ok": True}, "tok")[1], 403)
-        with self.signed(5):  # the other chat's try used it up
-            self.assertEqual(miniapp.answer("data", {"t": token, "ok": True}, "tok")[1], 403)
         self.assertEqual(self.sent, [])
+        with self.signed(5):  # a foreign try does not burn it: its own chat still can, once
+            self.assertEqual(miniapp.answer("data", {"t": token, "ok": True}, "tok")[1], 200)
+            self.assertEqual(miniapp.answer("data", {"t": token, "ok": True}, "tok")[1], 403)
+        self.assertEqual(len(self.sent), 1)
+
+    def test_an_agents_token_after_the_switch_is_off(self):
+        from hiddifypanel.panel.commercial.telegrambot import resellers
+
+        token = miniapp.new_token(5, "lock", data="ap:go", action="apply", lang="en")
+        self.redis.values[miniapp._PENDING_KEY.format(token)] = json.dumps({"chat": 5, "kind": "lock", "bot": 77, "data": "ap:go"})
+        with mock.patch.object(resellers, "find", lambda i: resellers.Managed(77, "agent", 4, "b")), mock.patch.object(resellers, "allowed", lambda: False), self.signed(5):
+            self.assertEqual(miniapp.answer("data", {"t": token, "ok": True}, "tok")[1], 403)
 
     def test_bad_signature(self):
         token = miniapp.new_token(5, "lock", data="ap:go")
@@ -110,6 +123,11 @@ class LockTests(Base):
 
 class ManagedBotTests(Base):
     def test_an_agents_bot_page_is_checked_with_that_bots_token(self):
+        from hiddifypanel.panel.commercial.telegrambot import resellers as _r
+
+        allowed = mock.patch.object(_r, "allowed", lambda: True)
+        allowed.start()
+        self.addCleanup(allowed.stop)
         from hiddifypanel.panel.commercial.restapi.v1.tgbot import managed_bot
         from hiddifypanel.panel.commercial.telegrambot import resellers
 

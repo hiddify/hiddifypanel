@@ -1,5 +1,6 @@
 """Advanced mode: bulk actions on users and the admins' screens."""
 
+import json
 import unittest
 from types import SimpleNamespace
 from unittest import mock
@@ -20,7 +21,7 @@ class FakeUser(SimpleNamespace):
 
 
 def user(i, enable=True):
-    return FakeUser(id=i, name=f"u{i}", enable=enable, package_days=30, usage_limit_GB=10, current_usage=5, start_date=None, deleted=False)
+    return FakeUser(id=i, name=f"u{i}", enable=enable, is_active=enable, package_days=30, usage_limit_GB=10, current_usage=5, start_date=None, deleted=False)
 
 
 class FakeState(dict):
@@ -32,10 +33,24 @@ class FakeState(dict):
                 self[k] = v
 
 
+class FakeRedis(dict):
+    def get(self, key):
+        return dict.get(self, key)
+
+    def set(self, key, value, **_kw):
+        self[key] = value
+
+    def delete(self, *keys):
+        for k in keys:
+            self.pop(k, None)
+
+
 class Base(unittest.TestCase):
     def setUp(self):
         self.state = FakeState()
+        self.redis = FakeRedis()
         for p in (
+            mock.patch("hiddifypanel.cache.redis_client", self.redis),
             mock.patch.object(ui.Ctx, "state", property(lambda _s: self.state)),
             mock.patch("hiddifypanel.panel.commercial.telegrambot.icons.enabled", lambda: False),
             mock.patch(ADV, lambda: True),
@@ -72,6 +87,7 @@ class BulkTests(Base):
             self.addCleanup(p.stop)
 
     def test_steps_pick_confirm_do(self):
+        self.admin.room_to_activate = lambda n: n  # room for everyone here
         bulk.show_bulk(self.ctx, ["a"])
         self.assertIn("bu:a:days:30", self.data(self.shown[-1]))
         bulk.show_bulk(self.ctx, ["a", "days", "30"])
@@ -99,20 +115,29 @@ class BulkTests(Base):
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.deleted for u in self.users], [True, True, False])
 
+    def test_more_days_for_ended_packages_keep_the_active_limit(self):
+        for u in self.users:
+            u.is_active = u.enable  # the switched-off ones are the inactive ones here
+        done, skipped = bulk.run(self.ctx, Filter.all, "days", 30)  # room for 1 of the 2 inactive
+        self.assertEqual((done, skipped), (2, 1))
+        self.assertEqual([u.package_days for u in self.users], [60, 60, 30])
+
     def test_renew_keeps_the_active_limit(self):
+        for u in self.users:
+            u.is_active = u.enable
         done, skipped = bulk.run(self.ctx, Filter.all, "renew", 0)  # room for 1 of the 2 disabled
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.enable for u in self.users], [True, True, False])
 
     def test_the_confirmed_users_are_the_ones_changed(self):
         bulk.confirm_screen(self.ctx, Filter.all, "days", 30)
-        self.assertEqual(self.state["bulk"]["ids"], [1, 2, 3])
+        self.assertEqual(json.loads(self.redis["tgbot:bulk:5"])["ids"], [1, 2, 3])
         shown = [self.users[0]]  # the list changed after the confirm: only the shown ones still there
         query = mock.MagicMock(**{"filter.return_value.order_by.return_value.all.return_value": shown})
         self.admin.recursive_users_query = lambda: query
         done, _ = bulk.run(self.ctx, Filter.all, "days", 30)
         self.assertEqual(done, 1)
-        self.assertNotIn("bulk", self.state)
+        self.assertNotIn("tgbot:bulk:5", self.redis)  # read once
 
     def test_off_while_advanced_is_off(self):
         with mock.patch(ADV, lambda: False):

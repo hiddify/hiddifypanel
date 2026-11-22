@@ -182,11 +182,11 @@ def init_app(app):
 class TGBotResource(Resource):
     def post(self):
         if not hconfig(ConfigEnum.telegram_bot_token):
-            abort(404)
+            return {"error": "not_found"}, 404
         if not hmac.compare_digest(request.headers.get("X-Telegram-Bot-Api-Secret-Token", ""), webhook_secret()):
-            abort(403)
+            return {"error": "forbidden"}, 403
         if request.headers.get("content-type") != "application/json":
-            abort(415)
+            return {"error": "unsupported_media_type"}, 415
         try:
             import telebot
 
@@ -220,7 +220,7 @@ class TGAppResource(Resource):
 
     def get(self):
         if not hconfig(ConfigEnum.telegram_bot_token):
-            abort(404)
+            return {"error": "not_found"}, 404
         from flask import make_response
 
         from hiddifypanel.panel.commercial.telegrambot.webapp import page
@@ -294,7 +294,7 @@ class TGAppLoginResource(Resource):
     def post(self):
         token = hconfig(ConfigEnum.telegram_bot_token)
         if not token:
-            abort(404)
+            return {"error": "not_found"}, 404
         from hiddifypanel.auth import login_user, logout_user
         from hiddifypanel.panel.commercial.telegrambot.webapp import destination, telegram_user_id
 

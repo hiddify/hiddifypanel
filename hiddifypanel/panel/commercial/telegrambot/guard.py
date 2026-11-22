@@ -26,6 +26,7 @@ from .ui import lang_of, url_btn, with_retry
 _PANEL = 0
 _CHAT = "adv_guard_chat"
 _LINK = "adv_guard_link"
+_CURSOR = "tgbot:guard:cursor"
 #: Users checked in the group each day at most (one Telegram call each)
 MAX_CHECKS = 2000
 
@@ -117,8 +118,18 @@ def sweep() -> None:
     if gid is None or not redis_client.set(f"tgbot:guard:{datetime.date.today()}", 1, nx=True, ex=36 * 3600):
         return
     removed = 0
-    linked = User.query.filter(User.deleted.is_(False), User.telegram_id.isnot(None), User.telegram_id != 0).order_by(User.id).all()
-    ended = [u for u in linked if accounts.status(u) is not accounts.Status.active][:MAX_CHECKS]
+    # A few thousand checks a day at most, going round the users: each day starts where the last one stopped, so
+    # every ended user is reached in turn (newly ended ones too); the users are read in batches, not all at once.
+    start = int(redis_client.get(_CURSOR) or 0)
+    query = User.query.filter(User.deleted.is_(False), User.telegram_id.isnot(None), User.telegram_id != 0, User.id > start).order_by(User.id)
+    ended, last = [], 0
+    for u in query.yield_per(500):
+        last = u.id
+        if accounts.status(u) is not accounts.Status.active:
+            ended.append(u)
+            if len(ended) >= MAX_CHECKS:
+                break
+    redis_client.set(_CURSOR, last if len(ended) >= MAX_CHECKS else 0)  # the end reached: from the start tomorrow
     for user in ended:
         if AdminUser.query.filter(AdminUser.telegram_id == user.telegram_id, AdminUser.deleted.is_(False)).first():
             continue  # an admin who is also a user stays

@@ -8,6 +8,8 @@ panel never loses its last user.
 
 from __future__ import annotations
 
+import json
+
 from loguru import logger
 
 from hiddifypanel.database import db
@@ -21,31 +23,47 @@ from .ui import RULE, Cb, Ctx, Screen, Style, btn, h, keyboard, route
 #: At most this many users in one bulk action (a bigger panel does it in steps, from the panel).
 MAX_BULK = 3000
 DAY_CHOICES = (7, 30, 90)
+#: How long a confirm screen's users are kept for its confirm press
+CONFIRM_TTL = 10 * 60
 GB_CHOICES = (10, 50, 100)
 #: action -> (label, needs a value)
 ACTIONS = ("days", "gb", "renew", "reset", "on", "off", "del")
 
 
 def targets(ctx: Ctx, f: Filter) -> list[User]:
-    """The admin's users the tab keeps (no more than MAX_BULK)."""
+    """The admin's users the tab keeps (no more than MAX_BULK), by the users list's own rule."""
     admin = ctx.admin
     assert admin
-    import datetime
-
-    query = admin.recursive_users_query().order_by(User.id)
-    if f is Filter.all:
+    query = accounts.narrowed(admin, f).order_by(User.id)
+    if f in (Filter.all, Filter.online):
         return query.limit(MAX_BULK).all()
-    # The database narrows it first (as the list does): online by the last connection, the rest are switched on
-    if f is Filter.online:
-        query = query.filter(User.last_online >= datetime.datetime.now() - accounts.ONLINE_WINDOW)
-    else:
-        query = query.filter(User.enable.is_(True))
     return [u for u in query.all() if accounts.matches(u, f)][:MAX_BULK]
 
 
+def _ids_key(ctx: Ctx) -> str:
+    from .resellers import state_prefix
+
+    return f"tgbot:bulk:{state_prefix()}{ctx.chat_id}"
+
+
+def _remember(ctx: Ctx, f: Filter, action: str, value: int, users: list[User]) -> None:
+    """The users the confirm screen shows: the press that confirms changes exactly these (ten minutes)."""
+    from hiddifypanel.cache import redis_client
+
+    redis_client.set(_ids_key(ctx), json.dumps({"key": f"{f.value}:{action}:{value}", "ids": [u.id for u in users]}), ex=CONFIRM_TTL)
+
+
 def _confirmed(ctx: Ctx, f: Filter, action: str, value: int) -> list[User] | None:
-    """The users the confirm screen showed (still the admin's), when it was for this very action."""
-    saved = ctx.state.get("bulk") or {}
+    """The users the confirm screen showed (still the admin's), when it was for this very action; read once."""
+    from hiddifypanel.cache import redis_client
+
+    key = _ids_key(ctx)
+    raw = redis_client.get(key)
+    redis_client.delete(key)
+    try:
+        saved = json.loads(raw) if raw else {}
+    except ValueError:
+        saved = {}
     if saved.get("key") != f"{f.value}:{action}:{value}" or not isinstance(saved.get("ids"), list):
         return None
     admin = ctx.admin
@@ -110,7 +128,7 @@ def _what(ctx: Ctx, action: str, value: int) -> str:
 def confirm_screen(ctx: Ctx, f: Filter, action: str, value: int) -> Screen:
     icon, text = _icons()
     users = targets(ctx, f)
-    ctx.state.update(bulk={"key": f"{f.value}:{action}:{value}", "ids": [u.id for u in users]})
+    _remember(ctx, f, action, value, users)
     names = ", ".join(h(u.name) for u in users[:8]) + (" …" if len(users) > 8 else "")
     lines = [
         f"🧰 <b>{ctx.tr(T.bu_title)}</b>",
@@ -124,6 +142,17 @@ def confirm_screen(ctx: Ctx, f: Filter, action: str, value: int) -> Screen:
     return Screen("\n".join(x for x in lines if x), keyboard([go, btn(ctx.tr(T.cancel), Cb.bulk, f.value)]))
 
 
+def _within_active_limit(admin, users: list[User], *, only_off: bool) -> tuple[list[User], int]:
+    """``users`` cut to the admin's room for active users: the active ones always, the inactive ones while they fit.
+    ``only_off``: only the switched-off ones are wanted (turning on)."""
+    inactive = [u for u in users if not u.enable] if only_off else [u for u in users if not u.is_active]
+    room = admin.room_to_activate(len(inactive))
+    allowed = {u.id for u in inactive[:room]}
+    if only_off:
+        return [u for u in inactive if u.id in allowed], len(inactive) - len(allowed)
+    return [u for u in users if u.is_active or u.id in allowed], len(inactive) - len(allowed)
+
+
 def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
     """Does it: (users changed, users skipped by a limit)."""
     admin = ctx.admin
@@ -131,7 +160,6 @@ def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
     users = _confirmed(ctx, f, action, value)
     if users is None:
         users = targets(ctx, f)
-    ctx.state.update(bulk=None)
     skipped = 0
     if action == "del":
         left = User.query.filter(User.deleted.is_(False)).count()
@@ -146,17 +174,10 @@ def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
         hutils.apply_users.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return len(users), skipped
-    if action == "on":
-        off = [u for u in users if not u.enable]
-        room = admin.room_to_activate(len(off))
-        skipped = len(off) - room
-        users = off[:room]
-    elif action == "renew":  # renewing turns a disabled user on: the same active-user limit as "on"
-        off = [u for u in users if not u.enable]
-        room = admin.room_to_activate(len(off))
-        skipped = len(off) - room
-        allowed_off = {u.id for u in off[:room]}
-        users = [u for u in users if u.enable or u.id in allowed_off]
+    # Any user not active now that this can turn on (on, renew, more days or data for an ended package) counts
+    # against the admin's active-user limit: the first ones that fit are changed, the others are left as they are.
+    if action in ("on", "renew", "days", "gb"):
+        users, skipped = _within_active_limit(admin, users, only_off=action == "on")
     changed = []
     for u in users:
         match action:

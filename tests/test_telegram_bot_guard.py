@@ -82,11 +82,12 @@ class SweepTests(Base):
     def test_ended_users_leave(self):
         ended = SimpleNamespace(id=1, telegram_id=11, lang=None)
         active = SimpleNamespace(id=2, telegram_id=12, lang=None)
-        users = mock.MagicMock(**{"query.filter.return_value.order_by.return_value.all.return_value": [active, ended]})
+        users = mock.MagicMock(**{"query.filter.return_value.order_by.return_value.yield_per.return_value": [active, ended]})
+        users.id.__gt__.return_value = True
         admins = mock.MagicMock(**{"query.filter.return_value.first.return_value": None})
         status = {1: guard.accounts.Status.expired, 2: guard.accounts.Status.active}
         with mock.patch.object(guard, "User", users), mock.patch.object(guard, "AdminUser", admins), mock.patch.object(guard.accounts, "status", lambda u: status[u.id]), mock.patch.object(
-            guard, "redis_client", SimpleNamespace(set=lambda *a, **k: True)
+            guard, "redis_client", SimpleNamespace(set=lambda *a, **k: True, get=lambda k: None)
         ), mock.patch.object(guard, "lang_of", lambda *a, **k: "en"):
             guard.sweep()
         self.assertEqual(self.names(), ["get_chat_member", "ban_chat_member", "unban_chat_member", "send_message"])

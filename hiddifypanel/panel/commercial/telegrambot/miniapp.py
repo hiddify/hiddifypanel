@@ -75,14 +75,26 @@ def new_token(chat_id: int, kind: str, **data: object) -> str:
 def lasting_token(chat_id: int, kind: str, **data: object) -> str:
     """A token for a key drawn again and again (the users list, a user's card): the same one while it is unused,
     so redrawing a screen does not leave a new token behind each time."""
-    last = f"tgbot:act:last:{_bot_id()}:{chat_id}:{kind}"
+    last = f"tgbot:act:last:{_bot_id()}:{chat_id}:{kind}:{data.get('lang', '')}"
     token = redis_client.get(last)
     token = token.decode() if isinstance(token, bytes) else token
-    if token and redis_client.get(_PENDING_KEY.format(token)):
+    if token and redis_client.expire(_PENDING_KEY.format(token), TOKEN_TTL):  # still unused: ten more minutes
+        redis_client.expire(last, TOKEN_TTL)
         return token
     token = new_token(chat_id, kind, **data)
-    redis_client.set(last, token, ex=TOKEN_TTL - 60)
+    redis_client.set(last, token, ex=TOKEN_TTL)
     return token
+
+
+def peek_token(token: str) -> dict | None:
+    """The token's data, left in place."""
+    if not token or len(token) > 64:
+        return None
+    raw = redis_client.get(_PENDING_KEY.format(token))
+    try:
+        return json.loads(raw) if raw else None
+    except ValueError:
+        return None
 
 
 def take_token(token: str) -> dict | None:
@@ -241,17 +253,19 @@ def answer(init_data: str, body: dict, bot_token: str) -> tuple[dict, int]:
     from . import resellers
     from .webapp import telegram_user_id
 
-    pending = take_token(str(body.get("t") or ""))
+    token = str(body.get("t") or "")
+    pending = peek_token(token)
     if pending is None:
         return {"error": "expired"}, 403
     # The page was opened from the bot that made the token: Telegram signed it with that bot's token
-    managed = resellers.find(int(pending.get("bot") or 0)) if pending.get("bot") else None
-    if pending.get("bot") and managed is None:
+    bot_id = int(pending.get("bot") or 0)
+    managed = resellers.find(bot_id) if bot_id else None
+    if bot_id and (managed is None or not resellers.allowed()):
         return {"error": "expired"}, 403
     tg_id = telegram_user_id(init_data, managed.token if managed else bot_token)
-    if tg_id is None:
+    if tg_id is None or int(pending.get("chat") or 0) != tg_id:  # a forged or foreign answer leaves the token as it was
         return {"error": "invalid_sign_in"}, 403
-    if int(pending.get("chat") or 0) != tg_id:
+    if take_token(token) is None:  # used a moment ago by another answer
         return {"error": "expired"}, 403
     kind = pending.get("kind")
     mark = managed_bot.set(managed)  # the answer comes from that same bot
