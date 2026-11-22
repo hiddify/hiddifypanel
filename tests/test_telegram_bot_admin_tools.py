@@ -390,12 +390,10 @@ class BackupMessageTests(unittest.TestCase):
             found = backup_msg.links(None)
         self.assertEqual(
             [(k, a) for k, a, _u in found],
-            [("secure", "panel.example.com"), ("secure", ip), ("cdn", "cdn.example.com"), ("insecure", "old.example.com"), ("insecure", "self.example.com"), ("insecure", ip)],
-        )  # the IP both ways: secure (https) and over plain http
-        self.assertEqual(
-            [backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔒 Secure IPv4", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure", "⚠️ Not Secure IPv4"]
+            [("secure", "panel.example.com"), ("secure", ip), ("cdn", "cdn.example.com"), ("insecure", "old.example.com"), ("insecure", "self.example.com")],
         )
-        self.assertTrue(found[-1][2].startswith("http://") and found[1][2].startswith("https://"))
+        self.assertEqual([backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔒 Secure IPv4", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure"])
+        self.assertTrue(all(u.startswith("https://") for _k, _a, u in found))  # never over plain http
 
     def test_the_labels_by_kind(self):
         from hiddifypanel.panel.commercial.telegrambot import backup_msg

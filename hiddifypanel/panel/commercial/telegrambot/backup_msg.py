@@ -43,9 +43,8 @@ def _panel_name() -> str:
 def links(owner) -> list[tuple[str, str, str]]:
     """(kind, address, url) of every way into the panel, by the panel's own view of each domain's certificate:
     "secure" (a valid certificate), "cdn" (through a CDN, which brings its own), and last "insecure" (no valid
-    certificate: missing, self-signed, expired; and the server's bare IPv4 over plain http). IPv6 is left out: it does
-    not open from most networks."""
-    from hiddifypanel import hutils
+    certificate: missing, self-signed, expired). Always https: the admin link holds the sign-in key, never sent in
+    cleartext. IPv6 is left out: it does not open from most networks."""
     from hiddifypanel.models import Domain, DomainType
     from hiddifypanel.panel import hiddify
 
@@ -63,12 +62,8 @@ def links(owner) -> list[tuple[str, str, str]]:
             cdn.append(("cdn", address, hiddify.get_account_panel_link(owner, address)))
         elif getattr(d, "tls_status", "") == "valid":
             secure.append(("secure", address, hiddify.get_account_panel_link(owner, address)))
-        else:  # no certificate a browser trusts: plain http opens it (it may move on to https with a warning)
-            insecure.append(("insecure", address, hiddify.get_account_panel_link(owner, address, is_https=False)))
-    # The server's IPv4 over plain http, always (also next to its secure key): some networks only let http through
-    ip = hutils.network.get_ip_str(4)
-    if ip and ip not in {a for _k, a, _u in insecure}:
-        insecure.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip, is_https=False)))
+        else:  # no certificate a browser trusts: still https (the browser warns); the panel is never offered over http
+            insecure.append(("insecure", address, hiddify.get_account_panel_link(owner, address)))
     return secure + cdn + insecure
 
 
