@@ -341,15 +341,21 @@ def morning_report() -> None:
 def settings_lines(ctx: Ctx) -> list[str]:
     if not advanced.is_on() or ctx.admin is None:
         return []
+    from .miniapp import locked
+
     on = morning_on(ctx.admin)
-    return [f"☀️ {ctx.tr(T.mr_title)}: <b>{ctx.tr(T.on if on else T.off)}</b>", f"<i>{ctx.tr(T.mr_hint, hour=f'{MORNING_HOUR:02d}:00')}</i>"]
+    return [
+        f"☀️ {ctx.tr(T.mr_title)}: <b>{ctx.tr(T.on if on else T.off)}</b>",
+        f"<i>{ctx.tr(T.mr_hint, hour=f'{MORNING_HOUR:02d}:00')}</i>",
+        f"🔐 {ctx.tr(T.bl_title)}: <b>{len(locked(ctx.chat_id))}</b>",
+    ]
 
 
 def settings_rows(ctx: Ctx) -> list[list]:
     if not advanced.is_on() or ctx.admin is None:
         return []
     on = morning_on(ctx.admin)
-    return [[btn(f"{ctx.tr(T.mr_title)}: {ctx.tr(T.turn_off if on else T.turn_on)}", Cb.morning, 0 if on else 1, style=None if on else Style.success)]]
+    return [[btn(f"{ctx.tr(T.mr_title)}: {ctx.tr(T.turn_off if on else T.turn_on)}", Cb.morning, 0 if on else 1, style=None if on else Style.success)], [btn(ctx.tr(T.bl_title), Cb.lock)]]
 
 
 @route(Cb.morning, admin=True)

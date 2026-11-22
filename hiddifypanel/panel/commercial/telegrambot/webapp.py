@@ -76,6 +76,8 @@ const TEXTS = __TEXTS__, RTL = ['fa', 'ar', 'ur', 'ps'];
       headers: {'Content-Type': 'application/json'}, body: JSON.stringify({init_data: tg.initData, to: new URLSearchParams(location.search).get('to') || ''})});
     const body = await res.json();
     if (!res.ok || !body.redirect) return fail(L.failed);
+    // Advanced mode: the panel's buttons tap the phone (admin_v2 telegramMiniApp.ts)
+    try { if (body.haptics) sessionStorage.setItem('hiddify.tg.haptics', '1'); else sessionStorage.removeItem('hiddify.tg.haptics'); } catch (e) {}
     // A person's own page gets Telegram's data (the #tgWebApp… part), so it knows it is inside Telegram; the admin
     // panel never does: its address must not carry anything that could sign someone in.
     location.replace(body.keep_telegram ? body.redirect.split('#')[0] + location.hash : body.redirect);
@@ -98,7 +100,9 @@ def destination(tg_id: int, host: str, to: str = "") -> tuple[str, object | None
 
         # A page of the panel the bot's button asked for (only the known ones: nothing else gets into the address)
         page = APP_PAGES.get(to or "", "")
-        return "admin", admin, {"redirect": f"/{hconfig(ConfigEnum.proxy_path_admin)}/admin/v2/{page}"}
+        from . import advanced
+
+        return "admin", admin, {"redirect": f"/{hconfig(ConfigEnum.proxy_path_admin)}/admin/v2/{page}", "haptics": advanced.is_on()}
     user = User.query.filter(User.telegram_id == tg_id, User.deleted.is_(False)).first()
     if user is not None:
         return "user", user, {"redirect": hiddify.get_account_panel_link(user, host), "keep_telegram": True}

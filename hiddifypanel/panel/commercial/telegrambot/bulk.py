@@ -177,6 +177,10 @@ def show_bulk(ctx: Ctx, args: list[str]) -> None:
     if args[3:4] != ["1"]:
         ctx.toast()
         return ctx.show(confirm_screen(ctx, f, action, value))
+    from .miniapp import needs_unlock
+
+    if needs_unlock(ctx, "bulk", ":".join([Cb.bulk.value, *args])):
+        return
     ctx.toast(ctx.tr(T.bu_working))
     try:
         done, skipped = run(ctx, f, action, value)

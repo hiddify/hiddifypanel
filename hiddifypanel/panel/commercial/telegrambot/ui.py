@@ -81,6 +81,8 @@ class Cb(StrEnum):
     agent_new = "an"  # ask the name of a new agent (Advanced)
     apply = "ap"  # ap[:ask|go]  apply the configs (Advanced, super admins)
     cfgtest = "ct"  # ct[:go]  the config test: the last result, or a new one (Advanced, super admins)
+    lock = "lk"  # lk[:<action>:<1|0>]  which actions need the admin's biometrics (Advanced)
+    cfgfile = "cf"  # cf[:<format>]  the user's configs as a file (Advanced)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 

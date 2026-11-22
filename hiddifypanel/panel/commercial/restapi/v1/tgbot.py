@@ -204,6 +204,31 @@ class TGAppResource(Resource):
         return res
 
 
+class TGAppActResource(Resource):
+    """The bot's small Mini App page: biometric confirm, QR scan, emoji status (telegrambot/miniapp.py)."""
+
+    def get(self):
+        if not hconfig(ConfigEnum.telegram_bot_token):
+            abort(404)
+        from flask import make_response
+
+        from hiddifypanel.panel.commercial.telegrambot.miniapp import page
+
+        res = make_response(page())
+        res.headers["Content-Type"] = "text/html; charset=utf-8"
+        res.headers["Cache-Control"] = "no-store"
+        return res
+
+    def post(self):
+        token = hconfig(ConfigEnum.telegram_bot_token)
+        if not token:
+            abort(404)
+        from hiddifypanel.panel.commercial.telegrambot.miniapp import answer
+
+        body = request.get_json(silent=True) or {}
+        return answer(str(body.get("init_data") or ""), body, token)
+
+
 class TGAppLoginResource(Resource):
     def post(self):
         token = hconfig(ConfigEnum.telegram_bot_token)

@@ -18,6 +18,7 @@ interface TelegramWebApp {
   requestFullscreen?(): void
   disableVerticalSwipes?(): void
   onEvent?(event: string, handler: () => void): void
+  HapticFeedback?: { impactOccurred(style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft'): void }
 }
 
 declare global {
@@ -37,7 +38,27 @@ export function openedFromTelegram(): boolean {
   }
 }
 
+/** Advanced mode (the bot's sign-in page sets the mark): every button, link and switch taps the phone lightly. */
+function haptics(app: TelegramWebApp): void {
+  let on = false
+  try {
+    on = sessionStorage.getItem('hiddify.tg.haptics') === '1'
+  } catch {
+    on = false
+  }
+  if (!on || !app.HapticFeedback) return
+  document.addEventListener(
+    'click',
+    (event) => {
+      const target = event.target as Element | null
+      if (target?.closest('button, a, [role="button"], [role="switch"], [role="tab"], .p-button, .p-toggleswitch')) app.HapticFeedback?.impactOccurred('light')
+    },
+    { capture: true, passive: true },
+  )
+}
+
 function fit(app: TelegramWebApp): void {
+  haptics(app)
   app.ready()
   app.expand()
   if (app.isVersionAtLeast('7.7')) app.disableVerticalSwipes?.()

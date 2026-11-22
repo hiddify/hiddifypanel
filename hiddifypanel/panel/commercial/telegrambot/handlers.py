@@ -14,7 +14,7 @@ from hiddifypanel.models import AdminUser, User
 
 from hiddifypanel import free_test
 
-from . import accounts, admin, admin_settings, admins, bulk, ops, bandwidth, bot, broadcast, chart, chats, doctor, free, groups, guide, menukey, nav, servers, settings, status, support, user, usernames, widget  # noqa: F401  (they register their routes)
+from . import accounts, admin, admin_settings, admins, bulk, cfgfile, miniapp, ops, bandwidth, bot, broadcast, chart, chats, doctor, free, groups, guide, menukey, nav, servers, settings, status, support, user, usernames, widget  # noqa: F401  (they register their routes)
 from .texts import T, t
 from .ui import BRAND, ROUTES, Cb, Ctx, Screen, btn, keyboard, lang_of
 

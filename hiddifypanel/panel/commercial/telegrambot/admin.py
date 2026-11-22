@@ -188,9 +188,13 @@ def _advanced_row(ctx: Ctx) -> list:
     """Bulk actions and the admins (Advanced)."""
     from . import admins, bulk
 
+    from .miniapp import scan_button
+
     row = bulk.list_row(ctx)
     if admins.allowed(ctx):
         row.append(btn(ctx.tr(T.am_title), Cb.admins))
+    if scan := scan_button(ctx):
+        row.append(scan)
     return row
 
 
@@ -354,6 +358,10 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             ctx.show(Screen(head + ctx.tr(T.delete_confirm), keyboard([btn(ctx.tr(T.delete), Cb.act, user.id, "del", 1, style=Style.danger), btn(ctx.tr(T.cancel), Cb.card, user.id)])))
             return ctx.toast()
         case "del", _:
+            from .miniapp import needs_unlock
+
+            if needs_unlock(ctx, "del", ":".join([Cb.act.value, str(user.id), "del", str(value)])):
+                return
             if User.query.filter(User.deleted.is_(False)).count() <= 1:
                 return ctx.toast(ctx.tr(T.last_user), alert=True)
             name = user.name
@@ -575,6 +583,10 @@ def send_backup(ctx: Ctx, _args: list[str]) -> None:
     assert admin
     if admin.mode != AdminMode.super_admin:
         return ctx.toast(ctx.tr(T.not_allowed), alert=True)
+    from .miniapp import needs_unlock
+
+    if needs_unlock(ctx, "backup", Cb.backup.value):
+        return
     ctx.toast(ctx.tr(T.backup_working))
     try:
         from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import write_backup_file

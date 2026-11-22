@@ -144,6 +144,10 @@ def show_admin_card(ctx: Ctx, args: list[str]) -> None:
         return ctx.show(card_screen(ctx, a))
     if accounts.is_read_only():
         return ctx.toast(ctx.tr(T.read_only_node), alert=True)
+    from .miniapp import needs_unlock
+
+    if needs_unlock(ctx, "admin", ":".join([Cb.admin_card.value, *args])):
+        return
     action, value = args[1], int(args[2]) if args[2].isdigit() else 0
     match action:
         case "on":

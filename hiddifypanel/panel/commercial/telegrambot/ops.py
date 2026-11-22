@@ -106,6 +106,10 @@ def show_apply(ctx: Ctx, args: list[str]) -> None:
         ctx.toast()
         return ctx.show(Screen(f"🛠 <b>{ctx.tr(T.op_apply_title)}</b>\n{RULE}\n{ctx.tr(T.op_apply_confirm)}", keyboard([btn(ctx.tr(T.confirm), Cb.apply, "go", style=Style.success), btn(ctx.tr(T.cancel), Cb.apply)])))
     if step == "go":
+        from .miniapp import needs_unlock
+
+        if needs_unlock(ctx, "apply", "ap:go"):
+            return
         api = _apply_api()
         try:
             api.start_action("apply")
