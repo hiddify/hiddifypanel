@@ -66,5 +66,14 @@ class OpenButtonTests(Base):
         self.assertIn("oh:check", [b.callback_data for row in screen.markup.keyboard for b in row if b.callback_data])
 
 
+class ToastTests(unittest.TestCase):
+    def test_a_toast_without_text(self):
+        answered = []
+        fake = SimpleNamespace(answer_callback_query=lambda call_id, text=None, show_alert=False, cache_time=0: answered.append(text))
+        with mock.patch.object(ui, "bot", fake):
+            ui.Ctx(5, "en", call_id="1").toast(None)  # the Open button's screen passed None: it crashed
+        self.assertEqual(answered, [None])
+
+
 if __name__ == "__main__":
     unittest.main()

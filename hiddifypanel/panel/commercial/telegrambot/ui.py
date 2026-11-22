@@ -410,11 +410,11 @@ class Ctx:
         self.message_id = self.state.get("upanel")
         self.on_photo = bool(self.state.get("upanel_photo"))
 
-    def toast(self, text: str = "", alert: bool = False) -> None:
+    def toast(self, text: str | None = "", alert: bool = False) -> None:
         if self.call_id and not self._answered:
             self._answered = True
             try:
-                bot.answer_callback_query(self.call_id, text=text[:200] or None, show_alert=alert, cache_time=0)
+                bot.answer_callback_query(self.call_id, text=(text or "")[:200] or None, show_alert=alert, cache_time=0)
             except ApiTelegramException:
                 pass
 
