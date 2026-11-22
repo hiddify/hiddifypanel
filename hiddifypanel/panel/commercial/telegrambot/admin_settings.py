@@ -62,6 +62,7 @@ def _advanced_lines(ctx: Ctx) -> list[str]:
             f"<i>{ctx.tr(T.adv_resellers_hint)}</i>",
             f"🚪 {ctx.tr(T.adv_guard)}: <b>{_state(ctx, advanced.feature(advanced.SUBSCRIBERS_GROUP))}</b>",
             f"<i>{ctx.tr(T.adv_guard_hint)}</i>",
+            *([f"<i>{ctx.tr(T.gd_how)}</i>"] if advanced.feature(advanced.SUBSCRIBERS_GROUP) else []),
         ]
     return lines
 

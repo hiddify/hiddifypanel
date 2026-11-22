@@ -301,3 +301,27 @@ def on_managed_bot_created(message) -> None:
     created = getattr(message, "managed_bot_created", None)
     if created is not None and resellers.find(created.bot.id) is None:
         resellers.on_managed_bot(_Made(message.from_user, created.bot))
+
+
+# --------------------------------------------------------------------------- the subscribers group (guard.py)
+
+
+@bot.message_handler(commands=["guard"], chat_types=["group", "supergroup"])
+def on_guard(message) -> None:
+    from . import guard
+
+    guard.connect(message)
+
+
+@bot.channel_post_handler(commands=["guard"])
+def on_guard_channel(message) -> None:
+    from . import guard
+
+    guard.connect(message)
+
+
+@bot.chat_join_request_handler()
+def on_join_request(request) -> None:
+    from . import guard
+
+    guard.on_join_request(request)

@@ -69,4 +69,6 @@ def home_rows(ctx: Ctx) -> list[list]:
 
     if not advanced.is_on() or ctx.user is None:
         return []
-    return [[btn(ctx.tr(T.cf_title), Cb.cfgfile), status_button(ctx)]]
+    from .guard import join_row
+
+    return [[btn(ctx.tr(T.cf_title), Cb.cfgfile), status_button(ctx)], join_row(ctx.lang, ctx.user)]

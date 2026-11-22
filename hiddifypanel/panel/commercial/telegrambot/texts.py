@@ -167,6 +167,13 @@ class T(StrEnum):
     rb_create_key = "rb_create_key"
     rb_ready = "rb_ready"
     rb_not_enabled = "rb_not_enabled"
+    # Advanced: the subscribers group
+    gd_how = "gd_how"
+    gd_need_admin = "gd_need_admin"
+    gd_connected = "gd_connected"
+    gd_join = "gd_join"
+    gd_declined = "gd_declined"
+    gd_removed = "gd_removed"
     # Advanced: nodes, domains, morning report
     nd_title = "nd_title"
     nd_this = "nd_this"

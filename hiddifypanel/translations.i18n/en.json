@@ -5207,7 +5207,13 @@
     "rb_how": "Press the key below: Telegram asks you for your bot's name and username, then hands it to this panel. Your users can then use your bot.",
     "rb_create_key": "🤖 Make my bot",
     "rb_ready": "Your bot {name} is ready: your users can start it with their link.",
-    "rb_not_enabled": "The panel's bot cannot make bots yet: the panel's owner turns on “Bot Management Mode” for it in @BotFather."
+    "rb_not_enabled": "The panel's bot cannot make bots yet: the panel's owner turns on “Bot Management Mode” for it in @BotFather.",
+    "gd_how": "To connect your group: make this bot an admin there (add members, ban users), turn on “Approve new members”, then send /guard in the group.",
+    "gd_need_admin": "Make the bot an admin of this group with “Add members” (and “Ban users”), then send /guard again.",
+    "gd_connected": "This group is now the subscribers group: only active users get in, and users whose package ended leave it.",
+    "gd_join": "👥 Join the subscribers group",
+    "gd_declined": "The group is for active subscribers only. Open your panel link in the bot first (send /start from it), then ask again.",
+    "gd_removed": "Your package ended, so you left the subscribers group. Renew it and you can join again."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {
