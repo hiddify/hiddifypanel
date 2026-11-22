@@ -85,6 +85,7 @@ class Cb(StrEnum):
     cfgfile = "cf"  # cf[:<format>]  the user's configs as a file (Advanced)
     reseller_bot = "rb"  # the agent's own bot (Advanced, its own switch)
     open_help = "oh"  # oh[:check]  how to set the bot's "Open" button in @BotFather (the owner)
+    update = "up"  # up[:<server id>[:go]]  update the panel of this server or of a node (Advanced, super admins)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 

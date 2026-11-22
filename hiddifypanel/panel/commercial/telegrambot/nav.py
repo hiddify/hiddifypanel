@@ -10,7 +10,7 @@ from .ui import ROUTES, Cb, Ctx, route
 #: The screens a person moves between (actions, like a setting or sending a card, are not steps).
 SCREENS = {Cb.me_links, Cb.guide, Cb.doctor, Cb.chart, Cb.support, Cb.history, Cb.settings, Cb.lang}
 #: An admin's screens (the user list with its filters, a user, the status, the chats…)
-ADMIN_SCREENS = {Cb.users, Cb.search, Cb.card, Cb.links, Cb.status, Cb.bandwidth, Cb.chats, Cb.chat, Cb.admin_settings, Cb.lang, Cb.free_link, Cb.new, Cb.new_count, Cb.broadcast, Cb.nodes, Cb.domains, Cb.bulk, Cb.admins, Cb.admin_card, Cb.apply, Cb.cfgtest, Cb.lock, Cb.reseller_bot, Cb.open_help}
+ADMIN_SCREENS = {Cb.users, Cb.search, Cb.card, Cb.links, Cb.status, Cb.bandwidth, Cb.chats, Cb.chat, Cb.admin_settings, Cb.lang, Cb.free_link, Cb.new, Cb.new_count, Cb.broadcast, Cb.nodes, Cb.domains, Cb.bulk, Cb.admins, Cb.admin_card, Cb.apply, Cb.cfgtest, Cb.lock, Cb.reseller_bot, Cb.open_help, Cb.update}
 DEPTH = 12
 #: Screens whose first argument is the step itself (Send Message: users / admins / all / one; Backup: history / one
 #: backup): another first argument is a step further, the same one with other arguments (a page) takes its place
@@ -36,6 +36,8 @@ def is_admin_screen(kind: Cb, args: list[str]) -> bool:
         return args[:1] not in (["go"], ["x"])  # sending or dropping the message is not a step
     if kind is Cb.backup:
         return args[:1] != ["now"]  # the menu and the history are steps; taking a backup is not
+    if kind is Cb.update:
+        return args[1:2] != ["go"]  # the servers and the question are steps; starting the update is not
     return kind in ADMIN_SCREENS
 
 
