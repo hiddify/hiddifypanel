@@ -29,25 +29,56 @@ class BackupMenuTests(Base):
         admin.send_backup(self.ctx, [])
         self.assertEqual(self.data(self.shown[-1]), ["bk:now", "bk:hist", "bb"])
 
-    def test_history_newest_first_in_a_box(self):
-        files = [
-            {"name": "2026_11_22__22_41_10.json", "size": 564_300, "created": "2026-11-22T19:11:10+00:00"},
-            {"name": "2026_11_21__18_00_01.json", "size": 550_000, "created": "2026-11-21T14:30:01+00:00"},
-        ]
-        with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: files):
+    def files(self, *days_ago):
+        import datetime
+
+        now = datetime.datetime.now().replace(microsecond=0)
+        return [{"name": (now - datetime.timedelta(days=d)).strftime("%Y_%m_%d__%H_%M_%S.json"), "size": 564_300, "created": ""} for d in days_ago]
+
+    def test_history_last_month_newest_first_in_a_box(self):
+        files = self.files(1, 3, 45)  # the 45-day-old one is left out
+        with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: files), mock.patch.object(admin, "bot", SimpleNamespace(username="hiddify_bot")):
             admin.send_backup(self.ctx, ["hist"])
         text = self.shown[-1].text
-        self.assertIn(t(T.bk_history_count, "en", n=2), text)
+        self.assertIn(t(T.bk_history_month, "en", n=2), text)
         box = text[text.index("<blockquote expandable>") :]
-        self.assertLess(box.index("2026.11.22_22.41"), box.index("2026.11.21_18.00"))  # newest first
         first = box.split("\n\n")[0]
         self.assertEqual(first.count("\n"), 1)  # the newest takes the two lines a closed box shows
         self.assertIn("🆕", first)
+        stem = files[0]["name"].removesuffix(".json")
+        self.assertIn(f"https://t.me/hiddify_bot?start=bk_{stem}", first)  # a tap opens that backup
+        self.assertNotIn(files[2]["name"].removesuffix(".json"), box)
 
-    def test_no_backups_yet(self):
-        with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: []):
+    def test_no_backups_in_the_last_month(self):
+        with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: self.files(40)):
             admin.send_backup(self.ctx, ["hist"])
-        self.assertIn(t(T.bk_history_none, "en"), self.shown[-1].text)
+        self.assertIn(t(T.bk_history_none_month, "en"), self.shown[-1].text)
+
+    def test_a_backup_offers_a_key_per_domain_with_a_one_file_link(self):
+        files = self.files(1)
+        stem = files[0]["name"].removesuffix(".json")
+        saved = {}
+        links = [("secure", "panel.example.com", ""), ("insecure", "old.example.com", "")]
+        with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: files), mock.patch(
+            "hiddifypanel.cache.redis_client", SimpleNamespace(set=lambda k, v, ex=0: saved.update({k: v}), get=lambda k: None)
+        ), mock.patch("hiddifypanel.panel.commercial.telegrambot.backup_msg.links", lambda owner: links), mock.patch(
+            "hiddifypanel.models.hconfig", lambda key: "adminpath"
+        ), mock.patch("hiddifypanel.panel.commercial.telegrambot.advanced.is_on", lambda: False):
+            admin.send_backup(self.ctx, ["f", stem])
+        screen = self.shown[-1]
+        urls = [b.url for row in screen.markup.keyboard for b in row if b.url]
+        key = next(iter(saved)).rsplit(":", 1)[1]
+        self.assertEqual(list(saved.values()), [files[0]["name"]])  # the key gives that one file
+        self.assertEqual(urls, [f"https://panel.example.com/adminpath/api/v1/tgbot/backup/{key}/", f"https://old.example.com/adminpath/api/v1/tgbot/backup/{key}/"])
+        styles = [b.to_dict().get("style") for row in screen.markup.keyboard for b in row if b.url]
+        self.assertEqual(styles, ["success", "danger"])
+
+    def test_an_unknown_or_old_backup_is_gone(self):
+        with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: self.files(45)), mock.patch(
+            "hiddifypanel.panel.commercial.telegrambot.advanced.is_on", lambda: False
+        ):
+            self.assertIsNone(admin.backup_file_screen(self.ctx, "2020_01_01__00_00_00"))
+            self.assertIsNone(admin.backup_file_screen(self.ctx, "../../etc/passwd"))
 
     def test_owner_only(self):
         agent = ui.Ctx(6, "en", admin=SimpleNamespace(id=2, name="Bo", mode="agent"))

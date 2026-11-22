@@ -5226,7 +5226,10 @@
     "bk_history": "🗂 Backup History",
     "bk_history_title": "Backup History",
     "bk_history_count": "{n} backups kept on the server, newest first (tap ⌄ to see all):",
-    "bk_history_none": "No backups on the server yet."
+    "bk_history_none": "No backups on the server yet.",
+    "bk_history_month": "{n} backups from the last 30 days, newest first (tap ⌄ to see all, tap a name to download it):",
+    "bk_history_none_month": "No backups in the last 30 days.",
+    "bk_file_hint": "Where to download it from (the links work for an hour):"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

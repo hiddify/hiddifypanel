@@ -4,6 +4,7 @@ or many users, and backups. Everything happens in one message that the buttons e
 from __future__ import annotations
 
 import datetime
+import re
 import io
 from collections.abc import Sequence
 
@@ -16,7 +17,7 @@ from hiddifypanel.models import AdminMode, AdminUser, User
 from . import accounts, bot
 from .accounts import Filter, Sort
 from .texts import T
-from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, tg_time, with_retry
+from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, tg_time, url_btn, with_retry
 from .user import account_card, links_screen, share_screen
 
 PAGE_SIZE = 8
@@ -580,8 +581,67 @@ def on_text(ctx: Ctx, text: str) -> None:
 # --------------------------------------------------------------------------- backup
 
 
-#: The newest backups listed (a message holds about 4000 characters)
+#: The newest backups listed (a message holds about 4000 characters), from this many days back
 MAX_BACKUPS_LISTED = 40
+HISTORY_DAYS = 30
+#: A backup's download links work this long (a random key for that one file: api/v1/tgbot/backup/<key>/)
+DOWNLOAD_TTL = 3600
+_DOWNLOAD_KEY = "tgbot:bkdl:{}"
+_STEM = re.compile(r"^\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}$")
+
+
+def _recent_backups() -> list[dict]:
+    from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import list_files
+
+    from . import backup_msg
+
+    since = datetime.datetime.now() - datetime.timedelta(days=HISTORY_DAYS)
+    return [f for f in list_files() if backup_msg.when_of(f["name"]) >= since]
+
+
+def backup_file_screen(ctx: Ctx, stem: str) -> Screen | None:
+    """One backup: where to download it from, a key per domain or IP (green with a valid certificate, red without),
+    each a link that works for an hour and gives that one file only."""
+    import secrets
+
+    from hiddifypanel.cache import redis_client
+    from hiddifypanel.models import ConfigEnum, hconfig
+
+    from . import backup_msg
+
+    found = next((f for f in _recent_backups() if f["name"] == f"{stem}.json"), None) if _STEM.match(stem or "") else None
+    if found is None:
+        return None
+    key = secrets.token_urlsafe(18)
+    redis_client.set(_DOWNLOAD_KEY.format(key), found["name"], ex=DOWNLOAD_TTL)
+    when = backup_msg.when_of(found["name"])
+    path = hconfig(ConfigEnum.proxy_path_admin)
+    rows = []
+    for kind, address, _url in backup_msg.links(ctx.admin)[:20]:
+        host = f"[{address}]" if ":" in address else address
+        url = f"https://{host}/{path}/api/v1/tgbot/backup/{key}/"
+        rows.append([url_btn(backup_msg.button_label(kind, address), url, style=Style.danger if kind == "insecure" else Style.success)])
+    rows.append([btn(ctx.tr(T.back), Cb.backup, "hist")])
+    lines = [
+        f"💾 <b>{h(backup_msg.file_name(when).removesuffix('.json'))}</b>",
+        RULE,
+        f"📅 {tg_time(when.date(), 'D', f'{when:%Y-%m-%d}')} · 🕒 {tg_time(when, 't', f'{when:%H:%M}')} · 📦 {backup_msg._kb(int(found['size']))}",
+        "",
+        f"🔗 <i>{ctx.tr(T.bk_file_hint)}</i>",
+    ]
+    return Screen("\n".join(lines), keyboard(*rows))
+
+
+def show_backup_file(ctx: Ctx, stem: str) -> None:
+    from .miniapp import needs_unlock
+
+    if needs_unlock(ctx, "backup", f"{Cb.backup.value}:f:{stem}"):
+        return
+    screen = backup_file_screen(ctx, stem)
+    if screen is None:
+        return ctx.toast(ctx.tr(T.gone), alert=True) if ctx.call_id else ctx.show(Screen(ctx.tr(T.gone), keyboard([btn(ctx.tr(T.back), Cb.backup, "hist")])))
+    ctx.toast()
+    ctx.show(screen)
 
 
 def backup_menu(ctx: Ctx) -> Screen:
@@ -594,16 +654,14 @@ def backup_menu(ctx: Ctx) -> Screen:
 def backup_history(ctx: Ctx) -> Screen:
     """The backups kept on the server, newest first, in a box that opens: closed, it shows the newest one only (each
     backup takes two lines and a blank one, the lines a closed box shows)."""
-    from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import list_files
-
     from . import backup_msg
 
-    files = list_files()
+    files = _recent_backups()
     lines = [f"🗂 <b>{ctx.tr(T.bk_history_title)}</b>", RULE]
     if not files:
-        lines.append(ctx.tr(T.bk_history_none))
+        lines.append(ctx.tr(T.bk_history_none_month))
     else:
-        lines.append(ctx.tr(T.bk_history_count, n=len(files)))
+        lines.append(ctx.tr(T.bk_history_month, n=len(files)))
         entries = []
         for i, f in enumerate(files[:MAX_BACKUPS_LISTED]):
             when = backup_msg.when_of(f["name"])
@@ -611,7 +669,10 @@ def backup_history(ctx: Ctx) -> Screen:
             name = backup_msg.file_name(when).removesuffix(".json")
             day = tg_time(when.date(), "D", f"{when:%Y-%m-%d}")
             hour = tg_time(when, "t", f"{when:%H:%M}")
-            entries.append(f"{mark} <b>{h(name)}</b>\n📅 {day} · 🕒 {hour} · 📦 {backup_msg._kb(int(f['size']))}")
+            stem = f["name"].removesuffix(".json")
+            # A tap on the name opens that backup in the bot (a /start link: a quote's text cannot hold the bot's keys)
+            title = f'<a href="https://t.me/{bot.username}?start=bk_{stem}">{h(name)}</a>' if bot.username and _STEM.match(stem) else h(name)
+            entries.append(f"{mark} <b>{title}</b>\n📅 {day} · 🕒 {hour} · 📦 {backup_msg._kb(int(f['size']))}")
         more = len(files) - MAX_BACKUPS_LISTED
         body = "\n\n".join(entries) + (f"\n\n… +{more}" if more > 0 else "")
         lines.append(f"<blockquote expandable>{body}</blockquote>")
@@ -626,6 +687,8 @@ def send_backup(ctx: Ctx, args: list[str]) -> None:
     if admin.mode != AdminMode.super_admin:
         return ctx.toast(ctx.tr(T.not_allowed), alert=True)
     step = args[0] if args else ""
+    if step == "f" and len(args) > 1:
+        return show_backup_file(ctx, args[1])
     if step == "hist":
         ctx.toast()
         return ctx.show(backup_history(ctx))

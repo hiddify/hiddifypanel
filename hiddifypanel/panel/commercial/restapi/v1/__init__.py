@@ -4,7 +4,7 @@ from marshmallow import Schema, fields
 
 from apiflask import APIBlueprint
 from flask_restful import Api
-from .tgbot import bot, register_bot, register_bot_cached, TGBotResource, TGAppResource, TGAppLoginResource, TGAppActResource, TGManagedBotResource
+from .tgbot import bot, register_bot, register_bot_cached, TGBotResource, TGAppResource, TGAppLoginResource, TGAppActResource, TGBackupResource, TGManagedBotResource
 from . import tgbot
 from .tgmsg import SendMsgResource
 from .resources import *
@@ -22,6 +22,7 @@ def init_app(app):
     api.add_resource(TGAppResource, "/tgbot/app/")
     api.add_resource(TGAppLoginResource, "/tgbot/app/login/")
     api.add_resource(TGAppActResource, "/tgbot/app/act/")
+    api.add_resource(TGBackupResource, "/tgbot/backup/<string:key>/")
     api.add_resource(TGManagedBotResource, "/tgbot/m/<int:bot_id>/")
     api.add_resource(SendMsgResource, "/send_msg/")
 

@@ -189,6 +189,9 @@ class T(StrEnum):
     bk_history_title = "bk_history_title"
     bk_history_count = "bk_history_count"
     bk_history_none = "bk_history_none"
+    bk_history_month = "bk_history_month"
+    bk_history_none_month = "bk_history_none_month"
+    bk_file_hint = "bk_file_hint"
     # Advanced: nodes, domains, morning report
     nd_title = "nd_title"
     nd_this = "nd_this"

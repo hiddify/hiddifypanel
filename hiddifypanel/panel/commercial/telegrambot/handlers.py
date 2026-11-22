@@ -10,7 +10,7 @@ from telebot import types
 from telebot.apihelper import ApiTelegramException
 
 from hiddifypanel.database import db
-from hiddifypanel.models import AdminUser, User
+from hiddifypanel.models import AdminMode, AdminUser, User
 
 from hiddifypanel import free_test
 
@@ -154,6 +154,11 @@ def on_start(message: types.Message) -> None:
         host, package_id = free_test.resolve_payload(payload.removeprefix("free_"))
         if host:
             return free.open_offer(context(chat_id, telegram_lang=_tg_lang(message.from_user)), host, message.from_user, package_id)
+    if payload.startswith("bk_"):
+        # A backup in the owner's Backup History (its name is a link here): that backup's download keys
+        ctx = context(chat_id, telegram_lang=_tg_lang(message.from_user))
+        if ctx.admin and ctx.admin.mode == AdminMode.super_admin:
+            return admin.show_backup_file(ctx, payload.removeprefix("bk_"))
     if payload.startswith("admin_") and (match := _UUID.search(payload)):
         _link_admin(chat_id, match.group(0).lower())
     elif match := _UUID.search(payload):

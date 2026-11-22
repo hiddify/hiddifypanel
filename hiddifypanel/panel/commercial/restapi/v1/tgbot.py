@@ -265,6 +265,24 @@ class TGManagedBotResource(Resource):
         return ""
 
 
+class TGBackupResource(Resource):
+    """A backup from the bot's Backup History: a random key (an hour) for that one file, made for the owner's chat."""
+
+    def get(self, key: str):
+        if not hconfig(ConfigEnum.telegram_bot_token) or not key or len(key) > 64:
+            return {"error": "not_found"}, 404
+        name = redis_client.get(f"tgbot:bkdl:{key}")
+        name = name.decode() if isinstance(name, bytes) else name
+        if not name:
+            return {"error": "expired"}, 404
+        from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import FILE_RE, _json_attachment, backup_dir
+
+        path = backup_dir() / name
+        if not FILE_RE.match(name) or not path.is_file():
+            return {"error": "not_found"}, 404
+        return _json_attachment(path.read_text(encoding="utf-8"), f"hiddify-{name}")
+
+
 class TGAppActResource(Resource):
     """The bot's small Mini App page: biometric confirm, QR scan, emoji status (telegrambot/miniapp.py)."""
 
