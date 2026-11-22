@@ -39,6 +39,7 @@ class FreeLinkTests(unittest.TestCase):
         self.assertEqual(first[0].copy_text.text, LINK)
         share = parse_qs(urlparse(first[1].url).query)
         self.assertEqual(share["url"], [LINK])  # Telegram's share window with the link
+        self.assertEqual([b.callback_data for b in screen.markup.keyboard[-2]], ["fl:stats"])
         self.assertEqual(screen.markup.keyboard[-1][0].callback_data, "bb")
 
     def test_off_says_how_to_turn_it_on(self):
@@ -47,7 +48,29 @@ class FreeLinkTests(unittest.TestCase):
         screen = self.shown[-1]
         self.assertIn(t(T.free_link_off, "en"), screen.text)
         self.assertNotIn("t.me", screen.text)
-        self.assertEqual([b.callback_data for row in screen.markup.keyboard for b in row], ["bb"])
+        self.assertEqual([b.callback_data for row in screen.markup.keyboard for b in row], ["fl:stats", "bb"])
+
+
+class StatsTests(unittest.TestCase):
+    def test_where_each_test_account_stands(self):
+        import datetime
+
+        from hiddifypanel.panel.commercial.telegrambot import accounts
+
+        now = datetime.datetime.now()
+        users = {
+            "a": SimpleNamespace(uuid="a", deleted=False, start_date=datetime.date.today(), current_usage=5, last_online=now, st=accounts.Status.active),  # using, online
+            "b": SimpleNamespace(uuid="b", deleted=False, start_date=datetime.date.today(), current_usage=5, last_online=now - datetime.timedelta(days=1), st=accounts.Status.active),  # using
+            "c": SimpleNamespace(uuid="c", deleted=False, start_date=None, current_usage=0, last_online=datetime.datetime.min, st=accounts.Status.active),  # never connected
+            "d": SimpleNamespace(uuid="d", deleted=False, start_date=datetime.date.today(), current_usage=9, last_online=now, st=accounts.Status.expired),  # ended
+        }
+        convs = [SimpleNamespace(user_uuid=k) for k in ("a", "b", "c", "d", "gone")]  # "gone": the account was deleted
+        conv_model = mock.MagicMock(**{"query.filter.return_value.all.return_value": convs})
+        conv_model.free_grants.__gt__.return_value = True
+        user_model = mock.MagicMock(**{"query.filter.return_value.all.return_value": list(users.values())})
+        with mock.patch.object(free, "Conversation", conv_model), mock.patch.object(free, "User", user_model), mock.patch.object(accounts, "status", lambda u: u.st):
+            n = free.stats_of(SimpleNamespace(id=1))
+        self.assertEqual(n, {"received": 5, "using": 2, "online": 1, "waiting": 1, "ended": 2})
 
 
 if __name__ == "__main__":

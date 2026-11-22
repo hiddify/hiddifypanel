@@ -360,10 +360,55 @@ def link_of(admin: AdminUser) -> str | None:
     return f"https://t.me/{bot.username}?start={free_test.start_payload(admin)}" if bot.username else None
 
 
+def stats_of(admin: AdminUser) -> dict[str, int]:
+    """The people this admin's free test went to, by where their test account stands now."""
+    from . import accounts
+
+    convs = Conversation.query.filter(Conversation.admin_id == admin.id, Conversation.free_grants > 0).all()
+    uuids = [c.user_uuid for c in convs if c.user_uuid]
+    users = {u.uuid: u for u in User.query.filter(User.uuid.in_(uuids)).all()} if uuids else {}
+    out = {"received": len(convs), "using": 0, "online": 0, "waiting": 0, "ended": 0}
+    for conv in convs:
+        user = users.get(conv.user_uuid or "")
+        if user is None or getattr(user, "deleted", False) or accounts.status(user) is not accounts.Status.active:
+            out["ended"] += 1  # time or data used up, turned off, or deleted
+        elif user.start_date is None and not (user.current_usage or 0):
+            out["waiting"] += 1  # never connected yet
+        else:
+            out["using"] += 1
+            out["online"] += accounts.is_online(user)
+    return out
+
+
+def stats_screen(ctx: Ctx) -> Screen:
+    assert ctx.admin
+    n = stats_of(ctx.admin)
+    lines = [
+        f"📊 <b>{ctx.tr(T.free_stats_title)}</b>",
+        RULE,
+        f"🎁 {ctx.tr(T.free_stats_received)}: <b>{n['received']}</b>",
+        "<blockquote>"
+        + "\n".join(
+            [
+                f"🟢 {ctx.tr(T.free_stats_using)}: <b>{n['using']}</b>" + (f"  ·  ⚡️ {ctx.tr(T.free_stats_online)}: <b>{n['online']}</b>" if n["online"] else ""),
+                f"⏳ {ctx.tr(T.free_stats_waiting)}: <b>{n['waiting']}</b>",
+                f"⛔️ {ctx.tr(T.free_stats_ended)}: <b>{n['ended']}</b>",
+            ]
+        )
+        + "</blockquote>",
+        f"<i>{ctx.tr(T.free_stats_hint)}</i>",
+    ]
+    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.free_link, "stats"), btn(ctx.tr(T.back), Cb.back)]))
+
+
 @route(Cb.free_link, admin=True)
-def show_link(ctx: Ctx, _args: list[str]) -> None:
+def show_link(ctx: Ctx, args: list[str]) -> None:
+    """fl → the free test and its invite link · fl:stats → who got it and where they stand."""
     admin = ctx.admin
     assert admin
+    if args[:1] == ["stats"]:
+        ctx.toast()
+        return ctx.show(stats_screen(ctx))
     package = free_test.package_of(admin)
     on = package.enabled
     state = f"🟢 {ctx.tr(T.on)}" if on else f"⚪️ {ctx.tr(T.off)}"
@@ -384,6 +429,7 @@ def show_link(ctx: Ctx, _args: list[str]) -> None:
     waiting = free_test.counts(admin)["pending"]
     if waiting:
         lines += ["", f"📨 {ctx.tr(T.free_link_waiting, n=waiting)}"]
+    rows.append([btn(ctx.tr(T.free_stats), Cb.free_link, "stats")])
     rows.append([btn(ctx.tr(T.back), Cb.back)])
     ctx.show(Screen("\n".join(lines), keyboard(*rows)))
     ctx.toast()

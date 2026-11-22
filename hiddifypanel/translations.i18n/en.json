@@ -5252,7 +5252,15 @@
     "free_link_invite_hint": "Send it to anyone: they open it, see this package and ask for it in the bot. Tap the link to copy it.",
     "free_copy": "📋 Copy Link",
     "free_share": "📤 Share Link",
-    "free_share_text": "🎁 A free test: open this link and ask for it in the bot."
+    "free_share_text": "🎁 A free test: open this link and ask for it in the bot.",
+    "free_stats": "📊 Stats",
+    "free_stats_title": "Free Test Stats",
+    "free_stats_received": "Got a free test",
+    "free_stats_using": "Using it",
+    "free_stats_online": "online now",
+    "free_stats_waiting": "Not connected yet",
+    "free_stats_ended": "Ended",
+    "free_stats_hint": "Ended: their days or data ran out, or the account was turned off or deleted."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

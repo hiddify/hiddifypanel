@@ -217,6 +217,15 @@ class T(StrEnum):
     free_copy = "free_copy"
     free_share = "free_share"
     free_share_text = "free_share_text"
+    # free test stats
+    free_stats = "free_stats"
+    free_stats_title = "free_stats_title"
+    free_stats_received = "free_stats_received"
+    free_stats_using = "free_stats_using"
+    free_stats_online = "free_stats_online"
+    free_stats_waiting = "free_stats_waiting"
+    free_stats_ended = "free_stats_ended"
+    free_stats_hint = "free_stats_hint"
     # Advanced: nodes, domains, morning report
     nd_title = "nd_title"
     nd_this = "nd_this"
