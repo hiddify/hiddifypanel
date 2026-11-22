@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram onu yalnız @BotFather vasitəsilə əlavə etməyə icazə verir:\n1. @BotFather-i açın və /mybots göndərin\n2. {bot} seçin → Bot Settings → Configure Mini App → Enable Mini App\n   (yeni BotFather tətbiqi: Mini Apps → Main App → Enable)\n3. Ona bu linki göndərin:",
     "oa_copy": "📋 Linki kopyala",
     "oa_check": "🔄 Yenidən yoxla",
-    "oa_still_missing": "Hələ qurulmayıb: @BotFather-dən sonra Telegram bir dəqiqə çəkə bilər."
+    "oa_still_missing": "Hələ qurulmayıb: @BotFather-dən sonra Telegram bir dəqiqə çəkə bilər.",
+    "bk_menu_hint": "İndi ehtiyat nüsxə alın və ya serverdə saxlanılanlara baxın.",
+    "bk_now": "💾 İndi ehtiyat nüsxə",
+    "bk_history": "🗂 Ehtiyat nüsxə tarixçəsi",
+    "bk_history_title": "Ehtiyat nüsxə tarixçəsi",
+    "bk_history_count": "Serverdə {n} ehtiyat nüsxə saxlanılır, ən yenisi birincidir (hamısını görmək üçün ⌄ toxunun):",
+    "bk_history_none": "Serverdə hələ ehtiyat nüsxə yoxdur."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

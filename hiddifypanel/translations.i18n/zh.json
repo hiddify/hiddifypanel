@@ -3575,7 +3575,13 @@
     "oa_steps": "Telegram 只允许通过 @BotFather 添加：\n1. 打开 @BotFather 并发送 /mybots\n2. 选择 {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (新版 BotFather 应用: Mini Apps → Main App → Enable)\n3. 把这个链接发给它：",
     "oa_copy": "📋 复制链接",
     "oa_check": "🔄 重新检查",
-    "oa_still_missing": "尚未设置：@BotFather 操作后 Telegram 可能需要一分钟。"
+    "oa_still_missing": "尚未设置：@BotFather 操作后 Telegram 可能需要一分钟。",
+    "bk_menu_hint": "立即备份，或查看服务器上保留的备份。",
+    "bk_now": "💾 立即备份",
+    "bk_history": "🗂 备份历史",
+    "bk_history_title": "备份历史",
+    "bk_history_count": "服务器上保留了 {n} 个备份，最新的在前（点按 ⌄ 查看全部）：",
+    "bk_history_none": "服务器上暂无备份。"
   },
   "cdn": "🔀 CDN（Cloudflare 代理，...）",
   "cf-delete": {

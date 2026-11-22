@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram solo permite añadirlo mediante @BotFather:\n1. Abre @BotFather y envía /mybots\n2. Elige {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (nueva app de BotFather: Mini Apps → Main App → Enable)\n3. Envíale este enlace:",
     "oa_copy": "📋 Copiar el enlace",
     "oa_check": "🔄 Comprobar de nuevo",
-    "oa_still_missing": "Aún no configurado: Telegram puede tardar un minuto tras @BotFather."
+    "oa_still_missing": "Aún no configurado: Telegram puede tardar un minuto tras @BotFather.",
+    "bk_menu_hint": "Haz una copia de seguridad ahora o consulta las guardadas en el servidor.",
+    "bk_now": "💾 Copia de seguridad ahora",
+    "bk_history": "🗂 Historial de copias",
+    "bk_history_title": "Historial de copias de seguridad",
+    "bk_history_count": "{n} copias guardadas en el servidor, las más recientes primero (toca ⌄ para ver todas):",
+    "bk_history_none": "Aún no hay copias de seguridad en el servidor."
   },
   "cdn": "🔀 CDN (proxy de Cloudflare, ...)",
   "cf-delete": {

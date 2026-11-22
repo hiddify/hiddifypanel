@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram इसे सिर्फ़ @BotFather से जोड़ने देता है:\n1. @BotFather खोलें और /mybots भेजें\n2. {bot} चुनें → Bot Settings → Configure Mini App → Enable Mini App\n   (नया BotFather ऐप: Mini Apps → Main App → Enable)\n3. उसे यह लिंक भेजें:",
     "oa_copy": "📋 लिंक कॉपी करें",
     "oa_check": "🔄 फिर से जाँचें",
-    "oa_still_missing": "अभी सेट नहीं है: @BotFather के बाद Telegram को एक मिनट लग सकता है।"
+    "oa_still_missing": "अभी सेट नहीं है: @BotFather के बाद Telegram को एक मिनट लग सकता है।",
+    "bk_menu_hint": "अभी बैकअप लें, या सर्वर पर रखे बैकअप देखें।",
+    "bk_now": "💾 अभी बैकअप लें",
+    "bk_history": "🗂 बैकअप इतिहास",
+    "bk_history_title": "बैकअप इतिहास",
+    "bk_history_count": "सर्वर पर {n} बैकअप रखे हैं, सबसे नए पहले (सभी देखने के लिए ⌄ दबाएँ):",
+    "bk_history_none": "सर्वर पर अभी कोई बैकअप नहीं है।"
   },
   "cdn": "🔀 CDN (Cloudflare प्रॉक्सी, ...)",
   "cf-delete": {

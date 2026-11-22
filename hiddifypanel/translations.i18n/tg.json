@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram иҷозат медиҳад онро танҳо тавассути @BotFather илова кунед:\n1. @BotFather-ро кушоед ва /mybots фиристед\n2. {bot}-ро интихоб кунед → Bot Settings → Configure Mini App → Enable Mini App\n   (барномаи нави BotFather: Mini Apps → Main App → Enable)\n3. Ин пайвандро ба он фиристед:",
     "oa_copy": "📋 Нусхабардории пайванд",
     "oa_check": "🔄 Бори дигар санҷидан",
-    "oa_still_missing": "Ҳанӯз танзим нашудааст: баъди @BotFather Telegram метавонад як дақиқа гирад."
+    "oa_still_missing": "Ҳанӯз танзим нашудааст: баъди @BotFather Telegram метавонад як дақиқа гирад.",
+    "bk_menu_hint": "Ҳозир нусхаи эҳтиётӣ гиред ё нусхаҳои дар сервер нигоҳдоштаро бинед.",
+    "bk_now": "💾 Ҳозир нусхаи эҳтиётӣ",
+    "bk_history": "🗂 Таърихи нусхаҳои эҳтиётӣ",
+    "bk_history_title": "Таърихи нусхаҳои эҳтиётӣ",
+    "bk_history_count": "Дар сервер {n} нусхаи эҳтиётӣ нигоҳ дошта мешавад, аввал навҳо (барои дидани ҳама ⌄ -ро пахш кунед):",
+    "bk_history_none": "Дар сервер ҳанӯз нусхаи эҳтиётӣ нест."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

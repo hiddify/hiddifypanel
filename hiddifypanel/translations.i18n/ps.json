@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram یوازې د @BotFather له لارې د اضافه کولو اجازه ورکوي:\n1. @BotFather خلاص کړئ او /mybots ولېږئ\n2. {bot} وټاکئ → Bot Settings → Configure Mini App → Enable Mini App\n   (د BotFather نوې اپ: Mini Apps → Main App → Enable)\n3. دا لینک ورته ولېږئ:",
     "oa_copy": "📋 لینک کاپي کړئ",
     "oa_check": "🔄 بیا وګورئ",
-    "oa_still_missing": "لا تنظیم شوې نه ده: د @BotFather وروسته Telegram ته ښايي یوه دقیقه ولګي."
+    "oa_still_missing": "لا تنظیم شوې نه ده: د @BotFather وروسته Telegram ته ښايي یوه دقیقه ولګي.",
+    "bk_menu_hint": "همدا اوس بیک اپ واخلئ، یا هغه وګورئ چې په سرور کې ساتل شوي.",
+    "bk_now": "💾 همدا اوس بیک اپ",
+    "bk_history": "🗂 د بیک اپ تاریخچه",
+    "bk_history_title": "د بیک اپ تاریخچه",
+    "bk_history_count": "په سرور کې {n} بیک اپونه ساتل شوي، نوي لومړی (د ټولو لیدو لپاره ⌄ ټک کړئ):",
+    "bk_history_none": "په سرور کې تر اوسه بیک اپ نشته."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

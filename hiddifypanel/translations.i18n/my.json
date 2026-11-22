@@ -3568,7 +3568,13 @@
     "oa_steps": "Telegram က @BotFather မှသာ ထည့်ခွင့်ပြုသည်-\n1. @BotFather ကိုဖွင့်ပြီး /mybots ပို့ပါ\n2. {bot} ကို ရွေးပါ → Bot Settings → Configure Mini App → Enable Mini App\n   (BotFather အက်ပ်အသစ်: Mini Apps → Main App → Enable)\n3. ဤလင့်ခ်ကို ပို့ပါ-",
     "oa_copy": "📋 လင့်ခ်ကူးရန်",
     "oa_check": "🔄 ထပ်စစ်ရန်",
-    "oa_still_missing": "မသတ်မှတ်ရသေးပါ- @BotFather ပြီးနောက် Telegram တွင် တစ်မိနစ်ခန့် ကြာနိုင်သည်။"
+    "oa_still_missing": "မသတ်မှတ်ရသေးပါ- @BotFather ပြီးနောက် Telegram တွင် တစ်မိနစ်ခန့် ကြာနိုင်သည်။",
+    "bk_menu_hint": "ယခုပင် ဘက်ကပ်လုပ်ပါ၊ သို့မဟုတ် ဆာဗာတွင်သိမ်းထားသည့် ဘက်ကပ်များကို ကြည့်ပါ။",
+    "bk_now": "💾 ယခု ဘက်ကပ်လုပ်ရန်",
+    "bk_history": "🗂 ဘက်ကပ် မှတ်တမ်း",
+    "bk_history_title": "ဘက်ကပ် မှတ်တမ်း",
+    "bk_history_count": "ဆာဗာတွင် ဘက်ကပ် {n} ခု သိမ်းထားသည်၊ အသစ်ဆုံးအရင် (အားလုံးကြည့်ရန် ⌄ ကိုနှိပ်ပါ)။",
+    "bk_history_none": "ဆာဗာတွင် ဘက်ကပ် မရှိသေးပါ။"
   },
   "cdn": "🔀 CDN (Cloudflare ပရောက်စီ, ...)",
   "cf-delete": {

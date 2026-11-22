@@ -4801,7 +4801,13 @@
     "oa_steps": "ቴሌግራም የሚፈቅደው በ @BotFather ብቻ ነው፦\n1. @BotFather ን ክፈቱና /mybots ላኩ\n2. {bot} ን ምረጡ → Bot Settings → Configure Mini App → Enable Mini App\n   (አዲሱ BotFather መተግበሪያ: Mini Apps → Main App → Enable)\n3. ይህን ሊንክ ላኩለት፦",
     "oa_copy": "📋 ሊንኩን ቅዳ",
     "oa_check": "🔄 እንደገና አረጋግጥ",
-    "oa_still_missing": "ገና አልተዘጋጀም፦ ከ @BotFather በኋላ ቴሌግራም አንድ ደቂቃ ሊወስድ ይችላል።"
+    "oa_still_missing": "ገና አልተዘጋጀም፦ ከ @BotFather በኋላ ቴሌግራም አንድ ደቂቃ ሊወስድ ይችላል።",
+    "bk_menu_hint": "አሁን ምትኬ ይውሰዱ ወይም በአገልጋዩ ላይ የተቀመጡትን ይመልከቱ።",
+    "bk_now": "💾 አሁን ምትኬ ውሰድ",
+    "bk_history": "🗂 የምትኬ ታሪክ",
+    "bk_history_title": "የምትኬ ታሪክ",
+    "bk_history_count": "በአገልጋዩ ላይ {n} ምትኬዎች ተቀምጠዋል፣ አዲሱ መጀመሪያ (ሁሉንም ለማየት ⌄ ን ይንኩ)፦",
+    "bk_history_none": "በአገልጋዩ ላይ እስካሁን ምትኬ የለም።"
   },
   "cdn": "🔀 CDN (Cloudflare ፕሮክሲ፣ ...)",
   "cf-delete": {

@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram дозволяє додати її лише через @BotFather:\n1. Відкрийте @BotFather і надішліть /mybots\n2. Виберіть {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (новий застосунок BotFather: Mini Apps → Main App → Enable)\n3. Надішліть йому це посилання:",
     "oa_copy": "📋 Копіювати посилання",
     "oa_check": "🔄 Перевірити знову",
-    "oa_still_missing": "Ще не налаштовано: після @BotFather Telegram може оновитися за хвилину."
+    "oa_still_missing": "Ще не налаштовано: після @BotFather Telegram може оновитися за хвилину.",
+    "bk_menu_hint": "Створіть резервну копію зараз або перегляньте ті, що зберігаються на сервері.",
+    "bk_now": "💾 Резервна копія зараз",
+    "bk_history": "🗂 Історія резервних копій",
+    "bk_history_title": "Історія резервних копій",
+    "bk_history_count": "Резервних копій на сервері: {n}, спочатку нові (натисніть ⌄, щоб побачити всі):",
+    "bk_history_none": "На сервері ще немає резервних копій."
   },
   "cdn": "🔀 CDN (проксі Cloudflare, ...)",
   "cf-delete": {

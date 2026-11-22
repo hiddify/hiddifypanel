@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram-ը թույլ է տալիս ավելացնել այն միայն @BotFather-ով՝\n1. Բացեք @BotFather-ը և ուղարկեք /mybots\n2. Ընտրեք {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (BotFather-ի նոր հավելված: Mini Apps → Main App → Enable)\n3. Ուղարկեք նրան այս հղումը՝",
     "oa_copy": "📋 Պատճենել հղումը",
     "oa_check": "🔄 Նորից ստուգել",
-    "oa_still_missing": "Դեռ կարգավորված չէ․ @BotFather-ից հետո Telegram-ին կարող է մեկ րոպե պահանջվել։"
+    "oa_still_missing": "Դեռ կարգավորված չէ․ @BotFather-ից հետո Telegram-ին կարող է մեկ րոպե պահանջվել։",
+    "bk_menu_hint": "Կատարեք պահուստավորում հիմա կամ դիտեք սերվերում պահվածները։",
+    "bk_now": "💾 Պահուստավորել հիմա",
+    "bk_history": "🗂 Պահուստների պատմություն",
+    "bk_history_title": "Պահուստների պատմություն",
+    "bk_history_count": "Սերվերում պահվում է {n} պահուստ, նորերը՝ առաջինը (բոլորը տեսնելու համար սեղմեք ⌄)՝",
+    "bk_history_none": "Սերվերում դեռ պահուստներ չկան։"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

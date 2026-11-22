@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram uni faqat @BotFather orqali qo‘shishga ruxsat beradi:\n1. @BotFather’ni oching va /mybots yuboring\n2. {bot} ni tanlang → Bot Settings → Configure Mini App → Enable Mini App\n   (yangi BotFather ilovasi: Mini Apps → Main App → Enable)\n3. Unga shu havolani yuboring:",
     "oa_copy": "📋 Havolani nusxalash",
     "oa_check": "🔄 Qayta tekshirish",
-    "oa_still_missing": "Hali sozlanmagan: @BotFather’dan keyin Telegram bir daqiqa olishi mumkin."
+    "oa_still_missing": "Hali sozlanmagan: @BotFather’dan keyin Telegram bir daqiqa olishi mumkin.",
+    "bk_menu_hint": "Hozir zaxira nusxa oling yoki serverda saqlanganlarini ko'ring.",
+    "bk_now": "💾 Hozir zaxiralash",
+    "bk_history": "🗂 Zaxira tarixi",
+    "bk_history_title": "Zaxira tarixi",
+    "bk_history_count": "Serverda {n} ta zaxira nusxa saqlanmoqda, eng yangisi birinchi (hammasini ko'rish uchun ⌄ ni bosing):",
+    "bk_history_none": "Serverda hali zaxira nusxa yo'q."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

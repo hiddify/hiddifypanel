@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram аны @BotFather аркылуу гана кошууга уруксат берет:\n1. @BotFather'ди ачып, /mybots жөнөтүңүз\n2. {bot} тандаңыз → Bot Settings → Configure Mini App → Enable Mini App\n   (BotFather'дин жаңы колдонмосу: Mini Apps → Main App → Enable)\n3. Ага бул шилтемени жөнөтүңүз:",
     "oa_copy": "📋 Шилтемени көчүрүү",
     "oa_check": "🔄 Кайра текшерүү",
-    "oa_still_missing": "Али жөндөлө элек: @BotFather'ден кийин Telegram'га бир мүнөт кетиши мүмкүн."
+    "oa_still_missing": "Али жөндөлө элек: @BotFather'ден кийин Telegram'га бир мүнөт кетиши мүмкүн.",
+    "bk_menu_hint": "Азыр камдык көчүрмө жасаңыз же серверде сакталгандарды караңыз.",
+    "bk_now": "💾 Азыр камдык көчүрмө",
+    "bk_history": "🗂 Камдык көчүрмөлөр тарыхы",
+    "bk_history_title": "Камдык көчүрмөлөр тарыхы",
+    "bk_history_count": "Серверде {n} камдык көчүрмө сакталган, жаңылары биринчи (баарын көрүү үчүн ⌄ басыңыз):",
+    "bk_history_none": "Серверде азырынча камдык көчүрмө жок."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4801,7 +4801,13 @@
     "oa_steps": "يسمح تيليجرام بإضافته عبر @BotFather فقط:\n1. افتح @BotFather وأرسل /mybots\n2. اختر {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (تطبيق BotFather الجديد: Mini Apps → Main App → Enable)\n3. أرسل له هذا الرابط:",
     "oa_copy": "📋 نسخ الرابط",
     "oa_check": "🔄 تحقق مرة أخرى",
-    "oa_still_missing": "لم يُعدّ بعد: قد يستغرق تيليجرام دقيقة بعد @BotFather."
+    "oa_still_missing": "لم يُعدّ بعد: قد يستغرق تيليجرام دقيقة بعد @BotFather.",
+    "bk_menu_hint": "أنشئ نسخة احتياطية الآن، أو اطّلع على النسخ المحفوظة على الخادم.",
+    "bk_now": "💾 نسخ احتياطي الآن",
+    "bk_history": "🗂 سجل النسخ الاحتياطية",
+    "bk_history_title": "سجل النسخ الاحتياطية",
+    "bk_history_count": "{n} نسخة احتياطية محفوظة على الخادم، الأحدث أولاً (اضغط ⌄ لعرض الكل):",
+    "bk_history_none": "لا توجد نسخ احتياطية على الخادم بعد."
   },
   "cdn": "🔀 CDN (وكيل Cloudflare، ...)",
   "cf-delete": {

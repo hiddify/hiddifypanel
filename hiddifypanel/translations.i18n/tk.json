@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram ony diňe @BotFather arkaly goşmaga rugsat berýär:\n1. @BotFather-i açyň we /mybots iberiň\n2. {bot} saýlaň → Bot Settings → Configure Mini App → Enable Mini App\n   (täze BotFather programmasy: Mini Apps → Main App → Enable)\n3. Oňa şu linki iberiň:",
     "oa_copy": "📋 Linki göçür",
     "oa_check": "🔄 Ýene barla",
-    "oa_still_missing": "Entek sazlanmady: @BotFather-den soň Telegram bir minut alyp biler."
+    "oa_still_missing": "Entek sazlanmady: @BotFather-den soň Telegram bir minut alyp biler.",
+    "bk_menu_hint": "Häzir ätiýaçlyk nusga alyň ýa-da serwerde saklananlara serediň.",
+    "bk_now": "💾 Häzir ätiýaçlyk nusga",
+    "bk_history": "🗂 Ätiýaçlyk nusga taryhy",
+    "bk_history_title": "Ätiýaçlyk nusga taryhy",
+    "bk_history_count": "Serwerde {n} ätiýaçlyk nusga saklanýar, iň täzesi ilki (hemmesini görmek üçin ⌄ basyň):",
+    "bk_history_none": "Serwerde heniz ätiýaçlyk nusga ýok."
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

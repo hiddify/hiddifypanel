@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram laat dit alleen toe via @BotFather:\n1. Open @BotFather en stuur /mybots\n2. Kies {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (nieuwe BotFather-app: Mini Apps → Main App → Enable)\n3. Stuur het deze link:",
     "oa_copy": "📋 Link kopiëren",
     "oa_check": "🔄 Opnieuw controleren",
-    "oa_still_missing": "Nog niet ingesteld: Telegram kan na @BotFather een minuut nodig hebben."
+    "oa_still_missing": "Nog niet ingesteld: Telegram kan na @BotFather een minuut nodig hebben.",
+    "bk_menu_hint": "Maak nu een back-up of bekijk de back-ups op de server.",
+    "bk_now": "💾 Nu back-up maken",
+    "bk_history": "🗂 Back-upgeschiedenis",
+    "bk_history_title": "Back-upgeschiedenis",
+    "bk_history_count": "{n} back-ups op de server, nieuwste eerst (tik op ⌄ om alles te zien):",
+    "bk_history_none": "Nog geen back-ups op de server."
   },
   "cdn": "🔀 CDN (Cloudflare-proxy, ...)",
   "cf-delete": {

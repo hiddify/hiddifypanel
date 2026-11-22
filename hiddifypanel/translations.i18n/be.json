@@ -4801,7 +4801,13 @@
     "oa_steps": "Telegram дазваляе дадаць яе толькі праз @BotFather:\n1. Адкрыйце @BotFather і адпраўце /mybots\n2. Абярыце {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (новая праграма BotFather: Mini Apps → Main App → Enable)\n3. Адпраўце яму гэтую спасылку:",
     "oa_copy": "📋 Скапіраваць спасылку",
     "oa_check": "🔄 Праверыць яшчэ раз",
-    "oa_still_missing": "Яшчэ не наладжана: пасля @BotFather Telegram можа патрабаваць хвіліну."
+    "oa_still_missing": "Яшчэ не наладжана: пасля @BotFather Telegram можа патрабаваць хвіліну.",
+    "bk_menu_hint": "Стварыце рэзервовую копію зараз або паглядзіце тыя, што захоўваюцца на серверы.",
+    "bk_now": "💾 Рэзервная копія зараз",
+    "bk_history": "🗂 Гісторыя рэзервовых копій",
+    "bk_history_title": "Гісторыя рэзервовых копій",
+    "bk_history_count": "Рэзервовых копій на серверы: {n}, спачатку новыя (націсніце ⌄, каб убачыць усе):",
+    "bk_history_none": "На серверы пакуль няма рэзервовых копій."
   },
   "cdn": "🔀 CDN (проксі Cloudflare, ...)",
   "cf-delete": {
