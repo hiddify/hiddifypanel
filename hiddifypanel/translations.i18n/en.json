@@ -5220,7 +5220,13 @@
     "oa_steps": "Telegram lets only @BotFather add it:\n1. Open @BotFather and send /mybots\n2. Choose {bot} → Bot Settings → Configure Mini App → Enable Mini App\n   (new BotFather app: Mini Apps → Main App → Enable)\n3. Send it this link:",
     "oa_copy": "📋 Copy the link",
     "oa_check": "🔄 Check again",
-    "oa_still_missing": "Not set yet: Telegram can take a minute after @BotFather."
+    "oa_still_missing": "Not set yet: Telegram can take a minute after @BotFather.",
+    "bk_menu_hint": "Take a backup now, or see the ones kept on the server.",
+    "bk_now": "💾 Backup Now",
+    "bk_history": "🗂 Backup History",
+    "bk_history_title": "Backup History",
+    "bk_history_count": "{n} backups kept on the server, newest first (tap ⌄ to see all):",
+    "bk_history_none": "No backups on the server yet."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

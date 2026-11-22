@@ -16,7 +16,7 @@ from hiddifypanel.models import AdminMode, AdminUser, User
 from . import accounts, bot
 from .accounts import Filter, Sort
 from .texts import T
-from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, with_retry
+from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, tg_time, with_retry
 from .user import account_card, links_screen, share_screen
 
 PAGE_SIZE = 8
@@ -580,15 +580,61 @@ def on_text(ctx: Ctx, text: str) -> None:
 # --------------------------------------------------------------------------- backup
 
 
+#: The newest backups listed (a message holds about 4000 characters)
+MAX_BACKUPS_LISTED = 40
+
+
+def backup_menu(ctx: Ctx) -> Screen:
+    return Screen(
+        f"💾 <b>{ctx.tr(T.bk_title)}</b>\n{RULE}\n{ctx.tr(T.bk_menu_hint)}",
+        keyboard([btn(ctx.tr(T.bk_now), Cb.backup, "now", style=Style.success)], [btn(ctx.tr(T.bk_history), Cb.backup, "hist")], [btn(ctx.tr(T.back), Cb.back)]),
+    )
+
+
+def backup_history(ctx: Ctx) -> Screen:
+    """The backups kept on the server, newest first, in a box that opens: closed, it shows the newest one only (each
+    backup takes two lines and a blank one, the lines a closed box shows)."""
+    from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import list_files
+
+    from . import backup_msg
+
+    files = list_files()
+    lines = [f"🗂 <b>{ctx.tr(T.bk_history_title)}</b>", RULE]
+    if not files:
+        lines.append(ctx.tr(T.bk_history_none))
+    else:
+        lines.append(ctx.tr(T.bk_history_count, n=len(files)))
+        entries = []
+        for i, f in enumerate(files[:MAX_BACKUPS_LISTED]):
+            when = backup_msg.when_of(f["name"])
+            mark = "🆕" if i == 0 else "💾"
+            name = backup_msg.file_name(when).removesuffix(".json")
+            day = tg_time(when.date(), "D", f"{when:%Y-%m-%d}")
+            hour = tg_time(when, "t", f"{when:%H:%M}")
+            entries.append(f"{mark} <b>{h(name)}</b>\n📅 {day} · 🕒 {hour} · 📦 {backup_msg._kb(int(f['size']))}")
+        more = len(files) - MAX_BACKUPS_LISTED
+        body = "\n\n".join(entries) + (f"\n\n… +{more}" if more > 0 else "")
+        lines.append(f"<blockquote expandable>{body}</blockquote>")
+    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.bk_now), Cb.backup, "now", style=Style.success)], [btn(ctx.tr(T.back), Cb.back)]))
+
+
 @route(Cb.backup, admin=True)
-def send_backup(ctx: Ctx, _args: list[str]) -> None:
+def send_backup(ctx: Ctx, args: list[str]) -> None:
+    """bk → Backup Now / Backup History · bk:now → a backup now · bk:hist → the backups kept."""
     admin = ctx.admin
     assert admin
     if admin.mode != AdminMode.super_admin:
         return ctx.toast(ctx.tr(T.not_allowed), alert=True)
+    step = args[0] if args else ""
+    if step == "hist":
+        ctx.toast()
+        return ctx.show(backup_history(ctx))
+    if step != "now":
+        ctx.toast()
+        return ctx.show(backup_menu(ctx))
     from .miniapp import needs_unlock
 
-    if needs_unlock(ctx, "backup", Cb.backup.value):
+    if needs_unlock(ctx, "backup", f"{Cb.backup.value}:now"):
         return
     ctx.toast(ctx.tr(T.backup_working))
     try:

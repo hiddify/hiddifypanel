@@ -182,6 +182,13 @@ class T(StrEnum):
     oa_copy = "oa_copy"
     oa_check = "oa_check"
     oa_still_missing = "oa_still_missing"
+    # backup menu and history
+    bk_menu_hint = "bk_menu_hint"
+    bk_now = "bk_now"
+    bk_history = "bk_history"
+    bk_history_title = "bk_history_title"
+    bk_history_count = "bk_history_count"
+    bk_history_none = "bk_history_none"
     # Advanced: nodes, domains, morning report
     nd_title = "nd_title"
     nd_this = "nd_this"

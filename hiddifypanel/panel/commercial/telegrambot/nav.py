@@ -31,6 +31,8 @@ def is_admin_screen(kind: Cb, args: list[str]) -> bool:
         return bool(args) and args[-1:] != ["r"]  # a period's chart; another period in place is not a step
     if kind is Cb.broadcast:
         return args[:1] not in (["go"], ["x"])  # sending or dropping the message is not a step
+    if kind is Cb.backup:
+        return args[:1] != ["now"]  # the menu and the history are steps; taking a backup is not
     return kind in ADMIN_SCREENS
 
 
