@@ -67,6 +67,17 @@ class PathTests(Base):
         self.assertFalse(nav.is_screen(Cb.chart, ["r"]))  # refreshing the chart too
         self.assertFalse(nav.is_screen(Cb.pref, ["alerts", "0"]))
 
+    def test_doing_something_is_not_an_admin_step(self):
+        self.assertTrue(nav.is_admin_screen(Cb.bulk, ["a", "days", "30"]))  # the confirm screen
+        self.assertFalse(nav.is_admin_screen(Cb.bulk, ["a", "days", "30", "1"]))  # doing it: Back is not its confirm
+        self.assertTrue(nav.is_admin_screen(Cb.admin_card, ["9"]))
+        self.assertFalse(nav.is_admin_screen(Cb.admin_card, ["9", "users", "50"]))
+        self.assertTrue(nav.is_admin_screen(Cb.apply, []))
+        self.assertFalse(nav.is_admin_screen(Cb.apply, ["go"]))
+        self.assertFalse(nav.is_admin_screen(Cb.cfgtest, ["go"]))
+        self.assertTrue(nav.is_admin_screen(Cb.lock, []))
+        self.assertFalse(nav.is_admin_screen(Cb.lock, ["del", "1"]))
+
     def test_back_shows_the_screen_before(self):
         c = self.person(message_id=9)
         nav.reset(c, Cb.settings)

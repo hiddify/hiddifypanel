@@ -55,11 +55,9 @@ def _remember(ctx: Ctx, f: Filter, action: str, value: int, users: list[User]) -
 
 def _confirmed(ctx: Ctx, f: Filter, action: str, value: int) -> list[User] | None:
     """The users the confirm screen showed (still the admin's), when it was for this very action; read once."""
-    from hiddifypanel.cache import redis_client
+    from .ui import redis_take
 
-    key = _ids_key(ctx)
-    raw = redis_client.get(key)
-    redis_client.delete(key)
+    raw = redis_take(_ids_key(ctx))  # once, even for two presses at the same moment
     try:
         saved = json.loads(raw) if raw else {}
     except ValueError:
@@ -142,15 +140,12 @@ def confirm_screen(ctx: Ctx, f: Filter, action: str, value: int) -> Screen:
     return Screen("\n".join(x for x in lines if x), keyboard([go, btn(ctx.tr(T.cancel), Cb.bulk, f.value)]))
 
 
-def _within_active_limit(admin, users: list[User], *, only_off: bool) -> tuple[list[User], int]:
-    """``users`` cut to the admin's room for active users: the active ones always, the inactive ones while they fit.
-    ``only_off``: only the switched-off ones are wanted (turning on)."""
-    inactive = [u for u in users if not u.enable] if only_off else [u for u in users if not u.is_active]
-    room = admin.room_to_activate(len(inactive))
-    allowed = {u.id for u in inactive[:room]}
-    if only_off:
-        return [u for u in inactive if u.id in allowed], len(inactive) - len(allowed)
-    return [u for u in users if u.is_active or u.id in allowed], len(inactive) - len(allowed)
+def _within_active_limit(admin, users: list[User], waking: list[User]) -> tuple[list[User], int]:
+    """``users`` cut to the admin's room for active users: ``waking`` (the ones the action may turn on) while they fit,
+    the others always."""
+    room = admin.room_to_activate(len(waking)) if waking else 0
+    left_out = {u.id for u in waking[room:]}
+    return [u for u in users if u.id not in left_out], len(left_out)
 
 
 def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
@@ -174,10 +169,16 @@ def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
         hutils.apply_users.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return len(users), skipped
-    # Any user not active now that this can turn on (on, renew, more days or data for an ended package) counts
-    # against the admin's active-user limit: the first ones that fit are changed, the others are left as they are.
-    if action in ("on", "renew", "days", "gb"):
-        users, skipped = _within_active_limit(admin, users, only_off=action == "on")
+    # Any user not active now that this can turn on (on, renew, more days or data for an ended package, a usage
+    # reset for one out of data) counts against the admin's active-user limit: the first ones that fit are changed,
+    # the others are left as they are.
+    if action == "on":
+        users = [u for u in users if not u.enable]
+        users, skipped = _within_active_limit(admin, users, users)
+    elif action in ("renew", "days", "gb"):
+        users, skipped = _within_active_limit(admin, users, [u for u in users if not u.is_active])
+    elif action == "reset":
+        users, skipped = _within_active_limit(admin, users, [u for u in users if accounts.status(u) is accounts.Status.no_data])
     changed = []
     for u in users:
         match action:

@@ -49,6 +49,15 @@ def visible(ctx: Ctx, admin_id: int) -> AdminUser | None:
     return next((a for a in under(ctx) if a.id == admin_id), None)
 
 
+def own_limit(ctx: Ctx, key: str) -> int | None:
+    """The admin's own ``key`` limit, which nobody under them may pass (as the panel's Admins page); None: no limit
+    (the owner and super admins, or 0 = unlimited)."""
+    admin = ctx.admin
+    if admin is None or admin.mode == AdminMode.super_admin:
+        return None
+    return getattr(admin, key, None) or None
+
+
 def _users(a: AdminUser, *, active: bool = True) -> tuple[int, int]:
     """(all, active) users of ``a``; the list asks only the count (the database), the card the active ones too."""
     query = a.recursive_users_query()
@@ -128,8 +137,8 @@ def create_agent(ctx: Ctx, name: str) -> AdminUser:
         parent_admin_id=admin.id,
         can_add_admin=False,
         capabilities=caps.merge_for_actor(admin, {}, existing=None, creating=True),
-        max_users=100,
-        max_active_users=100,
+        max_users=min(100, own_limit(ctx, "max_users") or 100),
+        max_active_users=min(100, own_limit(ctx, "max_active_users") or 100),
     )
     db.session.add(agent)
     db.session.commit()
@@ -173,12 +182,15 @@ def show_admin_card(ctx: Ctx, args: list[str]) -> None:
         case "off":
             a.enable = False
             note = ctx.tr(T.disabled)
-        case "users" if value in LIMIT_STEPS:
-            a.max_users = min((a.max_users or 0) + value, MAX_LIMIT)
-            note = ctx.tr(T.am_limit_up, n=value)
-        case "active" if value in LIMIT_STEPS:
-            a.max_active_users = min((a.max_active_users or 0) + value, MAX_LIMIT)
-            note = ctx.tr(T.am_limit_up, n=value)
+        case "users" | "active" if value in LIMIT_STEPS:
+            key = "max_users" if action == "users" else "max_active_users"
+            now = getattr(a, key) or 0
+            cap = own_limit(ctx, key)
+            new = min(now + value, cap or MAX_LIMIT)
+            if new <= now:  # already at the admin's own limit: theirs is the most they can give
+                return ctx.toast(ctx.tr(T.am_at_your_limit, n=cap or MAX_LIMIT), alert=True)
+            setattr(a, key, new)
+            note = ctx.tr(T.am_limit_up, n=new - now)
         case _:
             return ctx.toast(ctx.tr(T.unknown))
     db.session.commit()

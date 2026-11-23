@@ -71,6 +71,11 @@ class OneAdminTests(Base):
         broadcast._find_admin(self.ctx, "@reseller")
         self.assertEqual(self.state.get("bc_admin"), 4)
 
+    def test_a_name_of_digits_is_found_by_its_name(self):
+        self.people.append(SimpleNamespace(id=6, name="1001", telegram_id=706))
+        broadcast._find_admin(self.ctx, "1001")  # not a Telegram ID of theirs: the name
+        self.assertEqual(self.state.get("bc_admin"), 6)
+
     def test_several_are_offered(self):
         broadcast._find_admin(self.ctx, "shop")
         self.assertEqual(self.data(self.shown[-1])[:2], ["bc:ato:2", "bc:ato:3"])

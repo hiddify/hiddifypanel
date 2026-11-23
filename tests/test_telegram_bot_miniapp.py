@@ -136,11 +136,11 @@ class LockTests(Base):
         miniapp.show_lock(self.ctx, ["root", "1"])
         self.assertEqual(miniapp.locked(5), set())
 
-    def test_the_panel_link_again_starts_the_locks_over(self):
+    def test_the_panel_link_again_forgets_only_the_phone_key(self):
         miniapp.set_locked(5, {"del"})
         self.prefs[(5, miniapp.LOCK_KEY_PREF)] = "x"
-        miniapp.reset_locks(5)
-        self.assertEqual(miniapp.locked(5), set())
+        miniapp.reset_lock_key(5)
+        self.assertEqual(miniapp.locked(5), {"del"})  # still locked: a new key needs the biometrics again
         self.assertEqual(miniapp._lock_key(5), "")
 
 

@@ -550,3 +550,16 @@ def duration(seconds: int, lang: str) -> str:
 
 
 RULE = "┄┄┄┄┄┄┄┄┄┄┄┄┄┄"
+
+
+def redis_take(key: str, client=None):
+    """The value at ``key``, read and deleted in one step (a MULTI/EXEC: two presses at once cannot both get it;
+    GETDEL needs Redis 6.2, Ubuntu 22.04 has 6.0)."""
+    if client is None:
+        from hiddifypanel.cache import redis_client as client
+
+    pipe = client.pipeline()
+    pipe.get(key)
+    pipe.delete(key)
+    raw, _ = pipe.execute()
+    return raw

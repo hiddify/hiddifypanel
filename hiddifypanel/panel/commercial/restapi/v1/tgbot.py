@@ -130,12 +130,16 @@ def panel_domain_name() -> str | None:
     return next((n for n in names if is_name(n)), names[0] if names else None)
 
 
+#: The panel address the agents' bots were last pointed at
+_AGENTS_HOOK = "tgbot:agents:hook"
+
+
 @cache.cache(1000)
 def register_bot_cached(set_hook=False, remove_hook=False):
     return register_bot(set_hook, remove_hook)
 
 
-def register_bot(set_hook=False, remove_hook=False) -> dict:
+def register_bot(set_hook=False, remove_hook=False, agents: bool = False) -> dict:
     """Points the bot at this panel. Returns ``{"ok", "username", "error"}`` so callers can report it."""
     try:
         token = hconfig(ConfigEnum.telegram_bot_token)
@@ -157,21 +161,29 @@ def register_bot(set_hook=False, remove_hook=False) -> dict:
 
         if set_hook:
             # No admin uuid in the URL: uuid-path auth rejects admins with a password.
-            bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/api/v1/tgbot/", secret_token=webhook_secret())
+            hook = f"https://{domain}/{admin_proxy_path}/api/v1/tgbot/"
+            bot.set_webhook(url=hook, secret_token=webhook_secret())
             # The "/" menu (menu, language) in every language the bot speaks
             from hiddifypanel.panel.commercial.telegrambot.settings import set_commands
 
             set_commands()
-            # The agents' own bots point here too: a new domain or admin path must reach them
+            # The agents' own bots point here too: a new domain or admin path must reach them. Only then (or when
+            # asked, from the panel's Telegram Bot page): this runs every few minutes, one Telegram call per bot.
             try:
                 from hiddifypanel.panel.commercial.telegrambot import resellers
 
-                if resellers.allowed():
+                last = redis_client.get(_AGENTS_HOOK)
+                last = last.decode() if isinstance(last, bytes) else str(last or "")
+                if resellers.allowed() and (agents or last != hook):
+                    failed = 0
                     for managed in resellers.all_bots():
                         try:
                             resellers.connect(managed)
                         except Exception as e:
+                            failed += 1
                             logger.warning(f"tgbot: agent bot {managed.bot_id} not reconnected: {e}")
+                    if not failed:
+                        redis_client.set(_AGENTS_HOOK, hook)
             except Exception as e:
                 logger.debug(f"tgbot: agent bots not reconnected: {e}")
         return {"ok": True, "username": bot.username, "error": ""}
@@ -284,10 +296,9 @@ class TGBackupResource(Resource):
         if not hconfig(ConfigEnum.telegram_bot_token) or not key or len(key) > 64:
             return {"error": "not_found"}, 404
         # Used once: a link forwarded or seen later (a log, a screenshot) gives nothing
-        pipe = redis_client.pipeline()  # GETDEL needs Redis 6.2 (Ubuntu 22.04 has 6.0): get and delete at once
-        pipe.get(f"tgbot:bkdl:{key}")
-        pipe.delete(f"tgbot:bkdl:{key}")
-        name, _ = pipe.execute()
+        from hiddifypanel.panel.commercial.telegrambot.ui import redis_take
+
+        name = redis_take(f"tgbot:bkdl:{key}", redis_client)  # once
         name = name.decode() if isinstance(name, bytes) else name
         if not name:
             return {"error": "expired"}, 404

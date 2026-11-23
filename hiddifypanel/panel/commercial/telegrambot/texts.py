@@ -113,6 +113,7 @@ class T(StrEnum):
     am_has_telegram = "am_has_telegram"
     am_copy_link = "am_copy_link"
     am_limit_up = "am_limit_up"
+    am_at_your_limit = "am_at_your_limit"
     # Advanced: apply, config test, scanner
     op_apply_title = "op_apply_title"
     op_apply_hint = "op_apply_hint"

@@ -159,7 +159,11 @@ def show_reseller_bot(ctx: Ctx, _args: list[str]) -> None:
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     markup.add(key)
     try:
-        bot.send_message(ctx.chat_id, f"🤖 <b>{ctx.tr(T.rb_title)}</b>\n{RULE}\n{ctx.tr(T.rb_how)}", reply_markup=markup)
+        sent = bot.send_message(ctx.chat_id, f"🤖 <b>{ctx.tr(T.rb_title)}</b>\n{RULE}\n{ctx.tr(T.rb_how)}", reply_markup=markup)
+        # The key takes the menu keyboard's place: as a Cancel keyboard, any other button brings the menu back
+        from . import menukey
+
+        ctx.state.update(**{menukey.CANCEL_FLAG: 1, menukey.CANCEL_MSG: sent.message_id})
     except Exception as e:  # Bot Management Mode is off in BotFather: Telegram refuses the key
         logger.warning(f"tgbot: managed bot key refused: {e}")
         ctx.show(Screen(f"🤖 <b>{ctx.tr(T.rb_title)}</b>\n{RULE}\n⚠️ {ctx.tr(T.rb_not_enabled)}", keyboard([btn(ctx.tr(T.back), Cb.admin_settings)])))
@@ -212,7 +216,7 @@ def on_managed_bot(update: types.ManagedBotUpdated) -> None:
 
     agent = AdminUser.by_id(m.agent_id)
     lang = lang_of(agent, admin=True)
-    try:
-        bot.send_message(update.user.id, f"🤖 {t(T.rb_ready, lang, name='@' + m.username)}", reply_markup=types.ReplyKeyboardRemove())
-    except Exception as e:
-        logger.debug(f"tgbot: managed bot ready not told: {e}")
+    from . import menukey
+
+    # The menu keyboard comes back in place of the key that made the bot (say never raises)
+    menukey.say(update.user.id, lang, f"🤖 {t(T.rb_ready, lang, name='@' + m.username)}", admin_mode=menukey.admin_mode(agent))

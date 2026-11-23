@@ -386,6 +386,10 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             accounts.renew(user)
             note = ctx.tr(T.renewed)
         case "reset", _:
+            # A user out of data is turned on again by it: the same active-user limit as "on"
+            assert ctx.admin
+            if accounts.status(user) is accounts.Status.no_data and not ctx.admin.can_activate_more_users():
+                return ctx.toast(ctx.tr(T.limit_reached), alert=True)
             user.reset_usage()
             note = ctx.tr(T.usage_reset)
         case "on", _:

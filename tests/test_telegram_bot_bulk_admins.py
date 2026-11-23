@@ -44,6 +44,21 @@ class FakeRedis(dict):
         for k in keys:
             self.pop(k, None)
 
+    def pipeline(self):
+        store, calls = self, []
+
+        class Pipe:
+            def get(self, key):
+                calls.append(("get", key))
+
+            def delete(self, key):
+                calls.append(("delete", key))
+
+            def execute(self):
+                return [store.get(k) if op == "get" else store.delete(k) for op, k in calls]
+
+        return Pipe()
+
 
 class Base(unittest.TestCase):
     def setUp(self):
@@ -133,6 +148,15 @@ class BulkTests(Base):
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.enable for u in self.users], [True, True, False])
 
+    def test_a_usage_reset_keeps_the_active_limit(self):
+        for u in self.users:
+            u.enable, u.is_active, u.usage_limit, u.current_usage = True, False, 10, 20  # all out of data
+        with mock.patch.object(bulk.accounts, "status", lambda u: bulk.accounts.Status.no_data):
+            bulk.confirm_screen(self.ctx, Filter.all, "reset", 0)
+            done, skipped = bulk.run(self.ctx, Filter.all, "reset", 0)  # room for 1
+        self.assertEqual((done, skipped), (1, 2))
+        self.assertEqual([u.current_usage for u in self.users], [0, 20, 20])
+
     def test_the_confirmed_users_are_the_ones_changed(self):
         bulk.confirm_screen(self.ctx, Filter.all, "days", 30)
         self.assertEqual(json.loads(self.redis["tgbot:bulk:5"])["ids"], [1, 2, 3])
@@ -182,6 +206,30 @@ class AdminsTests(Base):
         agent = ui.Ctx(6, "en", admin=SimpleNamespace(id=2, name="Bo", mode="agent", telegram_id=6))
         self.assertFalse(admins.allowed(agent))
         self.assertTrue(admins.allowed(self.ctx))
+
+    def test_no_more_than_the_admins_own_limit(self):
+        a = SimpleNamespace(id=9, name="Shop", mode="agent", enable=True, max_users=100, max_active_users=100)
+        self.admin.max_users, self.admin.max_active_users = 120, 100
+        with mock.patch.object(admins, "visible", lambda ctx, i: a), mock.patch.object(admins.db, "session", mock.MagicMock()), mock.patch.object(admins, "card_screen", lambda ctx, a, note=None: note), mock.patch(
+            "hiddifypanel.hutils.node.parent.notify_childs_users_changed"
+        ), mock.patch.object(admins.accounts, "is_read_only", lambda: False):
+            admins.show_admin_card(self.ctx, ["9", "users", "50"])  # up to the admin's own 120
+            admins.show_admin_card(self.ctx, ["9", "users", "50"])
+            admins.show_admin_card(self.ctx, ["9", "active", "10"])
+        self.assertEqual((a.max_users, a.max_active_users), (120, 100))
+        self.assertEqual(self.toasts[-1], t(T.am_at_your_limit, "en", n=100))
+        self.admin.mode = "super_admin"  # the owner and super admins have no such limit
+        self.assertIsNone(admins.own_limit(self.ctx, "max_users"))
+
+    def test_a_new_agent_gets_no_more_than_its_creator(self):
+        made = {}
+        model = mock.MagicMock(side_effect=lambda **kw: made.update(kw) or SimpleNamespace(**kw))
+        self.admin.max_users, self.admin.max_active_users = 20, 0  # 0: no limit
+        with mock.patch.object(admins, "AdminUser", model), mock.patch.object(admins.db, "session", mock.MagicMock()), mock.patch(
+            "hiddifypanel.hutils.node.parent.notify_childs_users_changed"
+        ):
+            admins.create_agent(self.ctx, "Shop")
+        self.assertEqual((made["max_users"], made["max_active_users"]), (20, 100))
 
     def test_card_outside_the_tree_is_gone(self):
         with mock.patch.object(admins, "under", lambda ctx: []):

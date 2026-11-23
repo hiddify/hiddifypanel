@@ -103,11 +103,9 @@ def take_token(token: str) -> dict | None:
     """The token's data, once (it is deleted as it is read)."""
     if not token or len(token) > 64:
         return None
-    key = _PENDING_KEY.format(token)
-    pipe = redis_client.pipeline()
-    pipe.get(key)
-    pipe.delete(key)
-    raw, _ = pipe.execute()
+    from .ui import redis_take
+
+    raw = redis_take(_PENDING_KEY.format(token), redis_client)
     try:
         return json.loads(raw) if raw else None
     except ValueError:
@@ -140,9 +138,10 @@ def _sha(value: str) -> str:
     return hashlib.sha256(value.encode()).hexdigest()
 
 
-def reset_locks(chat_id: int) -> None:
-    """No lock and no phone key for this chat (the admin opened their panel link again: a new phone, a lost key)."""
-    BotPref.put(chat_id, LOCK_PREF, "")
+def reset_lock_key(chat_id: int) -> None:
+    """The phone key is forgotten (the admin opened their panel link again: a new phone, a lost key). The locks stay:
+    the next locked action asks the biometrics of the phone in hand and keeps a new key there, so someone holding the
+    admin's phone still cannot pass without the admin's finger or face."""
     BotPref.put(chat_id, LOCK_KEY_PREF, "")
 
 
@@ -156,9 +155,9 @@ def needs_unlock(ctx: Ctx, action: str, data: str, *, force: bool = False) -> bo
     (once). Without a key on the phone yet, the confirmation also puts one there."""
     if not advanced.is_on() or (not force and action not in locked(ctx.chat_id)):
         return False
-    key = _UNLOCKED.format(ctx.chat_id, _digest(data))
-    if redis_client.get(key):
-        redis_client.delete(key)
+    from .ui import redis_take
+
+    if redis_take(_UNLOCKED.format(ctx.chat_id, _digest(data)), redis_client):  # once: a second press asks again
         return False
     setting = not _lock_key(ctx.chat_id)
     token = new_token(ctx.chat_id, "lock", data=data, action=action, lang=ctx.lang, set=setting)

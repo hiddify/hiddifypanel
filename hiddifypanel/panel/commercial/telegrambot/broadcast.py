@@ -162,9 +162,8 @@ def _find_admin(ctx: Ctx, text: str) -> None:
         chats = usernames.chats_of(typed)
     elif typed.isdigit():
         chats = [int(typed)]
-    if chats:
-        found = [a for a in people if a.telegram_id and int(a.telegram_id) in chats]
-    else:
+    found = [a for a in people if a.telegram_id and int(a.telegram_id) in chats] if chats else []
+    if not found:  # not a Telegram ID or @username of theirs: a name (one may be all digits, "1001")
         q = typed.casefold()
         exact = [a for a in people if (a.name or "").strip().casefold() == q]
         found = exact or [a for a in people if q and q in (a.name or "").casefold()]

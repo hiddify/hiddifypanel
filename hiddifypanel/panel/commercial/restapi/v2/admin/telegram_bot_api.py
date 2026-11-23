@@ -172,7 +172,7 @@ class TelegramBotWebhookApi(MethodView):
             abort(400, "The Telegram bot is not set up")
         from hiddifypanel.panel.commercial.restapi.v1.tgbot import register_bot
 
-        result = register_bot(set_hook=True)
+        result = register_bot(set_hook=True, agents=True)
         if not result.get("ok"):
             logger.info(f"tgbot page: webhook not set: {result.get('error')}")
         return {"ok": bool(result.get("ok")), "state": _state(load_icons=False)}

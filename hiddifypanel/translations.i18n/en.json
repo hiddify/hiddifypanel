@@ -5156,6 +5156,7 @@
     "am_has_telegram": "Linked to Telegram",
     "am_copy_link": "📋 Panel Link",
     "am_limit_up": "Limit raised by {n}",
+    "am_at_your_limit": "Your own limit is {n}: an admin under you cannot get more.",
     "op_apply_title": "Apply",
     "op_apply_hint": "Applies the panel's settings to the server's services (the Apply page).",
     "op_running": "Running now: {what}",

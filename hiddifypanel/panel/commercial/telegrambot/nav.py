@@ -38,6 +38,15 @@ def is_admin_screen(kind: Cb, args: list[str]) -> bool:
         return args[:1] != ["now"]  # the menu and the history are steps; taking a backup is not
     if kind is Cb.update:
         return args[1:2] != ["go"]  # the servers and the question are steps; starting the update is not
+    # Doing something is never a step: Back after it shows the screen it was done from, never its confirm again
+    if kind is Cb.bulk:
+        return args[3:4] != ["1"]
+    if kind is Cb.admin_card:
+        return len(args) < 3  # the card, not a change on it
+    if kind in (Cb.apply, Cb.cfgtest):
+        return args[:1] != ["go"]
+    if kind is Cb.lock:
+        return len(args) < 2  # the locks, not turning one on or off
     return kind in ADMIN_SCREENS
 
 
