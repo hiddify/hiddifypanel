@@ -88,6 +88,10 @@ class _LazyBot:
             from hiddifypanel.panel.commercial.telegrambot import rich
 
             rich.install()
+            # Every emoji in a message animated, when the animated icons are on (telegrambot/icons.py); outermost
+            from hiddifypanel.panel.commercial.telegrambot.icons import install_text_icons
+
+            install_text_icons()
             object.__setattr__(self, "_real", real)
         return real
 

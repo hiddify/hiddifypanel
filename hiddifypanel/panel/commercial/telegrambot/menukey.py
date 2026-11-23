@@ -67,8 +67,19 @@ def _admin_rows(mode: str | None) -> list[list[tuple[T, Cb, tuple]]]:
 
 
 def _key(label: T, lang: str) -> types.KeyboardButton:
-    """A key by the message box; Menu is blue (white text: a keyboard here draws blue well)."""
-    return types.KeyboardButton(t(label, lang), style="primary" if label is T.menu_key else None)
+    """A key by the message box (its emoji animated when the icons are on); Menu is blue (white text: a keyboard
+    here draws blue well)."""
+    from .ui import Style, _decorated
+
+    return types.KeyboardButton(**_decorated(t(label, lang), Style.primary if label is T.menu_key else None))
+
+
+def _bare(text: str) -> str:
+    """A key's text without its leading emoji: what Telegram sends back for a key whose emoji is an animated icon."""
+    from .icons import _LEADING_EMOJI
+
+    m = _LEADING_EMOJI.match(text)
+    return m.group(2).strip() if m else text
 
 
 def keyboard_for(lang: str, person: bool = False, admin_mode: str | None = None) -> types.ReplyKeyboardMarkup:
@@ -101,6 +112,8 @@ def _actions(admin: bool) -> dict[str, tuple[Cb, tuple]]:
         for row in rows:
             for label, kind, args in row:
                 found.setdefault(t(label, code), (kind, args))  # the first key with a text keeps it
+    for text, value in list(found.items()):  # the same key with an animated icon: its text without the emoji
+        found.setdefault(_bare(text), value)
     return found
 
 
@@ -128,7 +141,10 @@ def ensure(chat_id: int, lang: str, person: bool = False, force: bool = False, a
     """The right keyboard is in this chat, in this language. ``force``: send it even if the chat had it (a cleared
     chat loses it with its message, and the bot cannot tell). Never raises."""
     try:
-        want = f"{VERSION}:{lang}:{'p' if person else 'a-' + admin_mode if admin_mode else 'm'}"
+        from .icons import enabled as icons_on
+
+        # The animated icons turned on or off (or off by themselves): the keyboard is sent again to match
+        want = f"{VERSION}:{lang}:{'p' if person else 'a-' + admin_mode if admin_mode else 'm'}{':i' if icons_on() else ''}"
         pref, hint = _prefs()
         if not force and BotPref.get(chat_id, pref) == want:
             return

@@ -36,6 +36,36 @@ class IconsTestCase(unittest.TestCase):
             self.addCleanup(p.stop)
 
 
+class TextIconTests(IconsTestCase):
+    def test_the_texts_emoji_are_animated_with_the_emoji_inside(self):
+        out = icons.animate_html("👥 <b>Users</b> 12\n♻️ Renew")
+        self.assertEqual(out, '<tg-emoji emoji-id="111">👥</tg-emoji> <b>Users</b> 12\n<tg-emoji emoji-id="444">♻️</tg-emoji> Renew')
+
+    def test_not_in_code_nor_twice_nor_an_unknown_one(self):
+        once = icons.animate_html("<code>👥</code> 📷 🔄")
+        self.assertEqual(once, '<code>👥</code> 📷 <tg-emoji emoji-id="222">🔄</tg-emoji>')
+        self.assertEqual(icons.animate_html(once), once)  # already animated: as it is
+
+    def test_at_most_the_limit_and_nothing_when_off(self):
+        self.assertEqual(icons.animate_html("👥 👥 👥", limit=2).count("<tg-emoji"), 2)
+        self.config["telegram_bot_animated_icons"] = False
+        self.assertEqual(icons.animate_html("👥 Users"), "👥 Users")
+
+    def test_a_rich_buttons_icon_is_inside_the_pill(self):
+        from hiddifypanel.panel.commercial.telegrambot import rich
+
+        html = rich.button_html({"text": "Users", "icon_custom_emoji_id": "111", "callback_data": "u"})
+        self.assertIn('<tg-emoji emoji-id="111">👥</tg-emoji> Users</tg-button>', html)
+
+    def test_a_menu_key_with_its_icon_is_known_by_its_bare_text(self):
+        from hiddifypanel.panel.commercial.telegrambot import menukey
+        from hiddifypanel.panel.commercial.telegrambot.texts import T, t
+
+        key = menukey._key(T.btn_users, "en").to_dict()
+        self.assertEqual((key.get("icon_custom_emoji_id"), key["text"]), ("111", menukey._bare(t(T.btn_users, "en"))))
+        self.assertEqual(menukey.action(key["text"], admin=True), menukey.action(t(T.btn_users, "en"), admin=True))
+
+
 class SplitTests(IconsTestCase):
     def test_a_known_leading_emoji_becomes_the_icon(self):
         self.assertEqual(icons.split("👥 Users"), ("111", "Users"))

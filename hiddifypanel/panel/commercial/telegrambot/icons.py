@@ -18,14 +18,45 @@ from hiddifypanel.models import ConfigEnum, hconfig
 
 #: Telegram's own animated versions of the standard emoji first (the same Apple-style faces and objects as the
 #: labels), then animated icon sets for what it lacks.
-DEFAULT_SETS = ("RestrictedEmoji", "PremiumIcons", "MajorEmojis", "emojipack_sm", "SparklesEmoji", "AnimatedIconsEmoji", "AdaptiveIcons", "AdaptiveLines")
+DEFAULT_SETS = (
+    "RestrictedEmoji",
+    "PremiumIcons",
+    "MajorEmojis",
+    "emojipack_sm",
+    "SparklesEmoji",
+    "AnimatedIconsEmoji",
+    "AdaptiveIcons",
+    "AdaptiveLines",
+    # What those lack: the coloured status dots, the clipboard, the calendar, the siren
+    "NameColor",
+    "FinanceAnimations",
+    "FinanceEmoji",
+    "EffectEmoji",
+    "NotoColorEmojis",
+)
 
 #: An emoji no set animates borrows the icon of a close one (first found wins); the label keeps its own emoji, so
-#: without icons nothing changes. An alias is never a label emoji itself (its icon would give the wrong one back).
+#: without icons nothing changes. An alias is never a label emoji itself (its icon would give the wrong one back),
+#: neither one of the texts' nor one a button is given in the code (🔄 🛠 🖥 🌐 🧰 🧪 🤖 👤 ⏳ 📊 ✅ …).
 ALIASES: dict[str, tuple[str, ...]] = {
+    "🔓": ("🔑", "🗝"),
+    "🛠": ("🔧", "🔩", "🪛", "⚒", "🔨"),
+    "🔧": ("🔩", "🪛", "🔨"),
+    "✉": ("📩", "📧", "💌", "📬", "📮"),
+    "🚪": ("🏡", "🚶"),
+    "🧑‍💼": ("👨‍💼", "👩‍💼", "💼"),
+    "🍏": ("🍎",),
+    "🆔": ("🪪",),
+    "🔁": ("🔃", "🔂"),
+    "ℹ": ("💡", "❕"),
+    "🙋": ("🙋‍♂", "🙋‍♀"),
+    "🛟": ("🆘",),
+    "⚪": ("🤍", "⬜", "◻"),
+    "🗓": ("📆",),
+    "📏": ("📐",),
     "🗑": ("❌", "🚫"),
     "⚠": ("❗", "‼", "🚨"),
-    "⚙": ("🛠", "🔧", "🔩", "🎛", "⚒", "🪛", "🧰", "🔨", "⛏", "📝", "🎚"),
+    "⚙": ("🛠", "🔧", "🔩", "🎛", "⚒", "🪛", "🔨", "⛏", "📝", "🎚"),
     "📅": ("📆", "🗓", "⏰"),
     "📦": ("💽", "📀", "🗃", "🗄", "📥", "💿", "🧳"),
     "🖥": ("⌨", "🖱", "🖲"),
@@ -57,7 +88,10 @@ def enabled() -> bool:
 
     if managed_bot.get() is not None:  # an agent's bot: the switch and the refusal mark are the panel bot's
         return False
-    return bool(hconfig(ConfigEnum.telegram_bot_animated_icons)) and not redis_client.get(_REFUSED_KEY)
+    try:
+        return bool(hconfig(ConfigEnum.telegram_bot_animated_icons)) and not redis_client.get(_REFUSED_KEY)
+    except Exception:  # no panel settings to read here (outside the app): plain emoji
+        return False
 
 
 def _load_map(names: tuple[str, ...]) -> dict[str, str]:
@@ -100,6 +134,76 @@ def icon_for(emoji: str) -> str | None:
         if custom_id := found.get(_norm(candidate)):
             return custom_id
     return None
+
+
+#: Any emoji in a message's text (a flag's letters are left alone: they come in pairs)
+_EMOJI = re.compile(r"[\U0001F000-\U0001FAFF\u2190-\u21FF\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF](?:[\uFE0F\u20E3\U0001F3FB-\U0001F3FF]|\u200D[\U0001F000-\U0001FAFF\u2600-\u27BF]\uFE0F?)*")
+_TAG = re.compile(r"(<[^>]*>)")
+#: No custom emoji inside these (code shows text as it is; a custom emoji or a link's address stays as it is)
+_KEEP_TAGS = ("code", "pre", "tg-emoji")
+#: Custom emoji per message at most (Telegram counts each as an entity of the message, 100 at most with the rest)
+MAX_TEXT_ICONS = 50
+
+
+def animate_html(text: str, limit: int = MAX_TEXT_ICONS) -> str:
+    """``text`` (Telegram HTML) with its emoji as animated custom emoji (``<tg-emoji>``), when icons are on: the
+    emoji itself stays inside, so a chat Telegram shows them plain in (the owner has no Premium) loses nothing."""
+    if not text or not enabled():
+        return text
+    found = icon_map()
+    if not found:
+        return text
+    done = 0
+    inside: list[str] = []
+    out: list[str] = []
+
+    def swap(m: re.Match) -> str:
+        nonlocal done
+        emoji = m.group(0)
+        if done >= limit or "\U0001F1E6" <= emoji[0] <= "\U0001F1FF":
+            return emoji
+        custom_id = icon_for(emoji)
+        if not custom_id:
+            return emoji
+        done += 1
+        return f'<tg-emoji emoji-id="{custom_id}">{emoji}</tg-emoji>'
+
+    for part in _TAG.split(text):
+        if part.startswith("<") and part.endswith(">"):
+            name = part.strip("</>").split()[0].lower() if part.strip("</>") else ""
+            if name in _KEEP_TAGS:
+                if part.startswith("</"):
+                    if name in inside:
+                        inside.remove(name)
+                elif not part.endswith("/>"):
+                    inside.append(name)
+            out.append(part)
+        else:
+            out.append(part if inside else _EMOJI.sub(swap, part))
+    return "".join(out)
+
+
+def install_text_icons() -> None:
+    """Every message the bot sends (its text or caption, in HTML) gets its emoji animated: installed outermost, so a
+    rich message is made from the text already animated."""
+    from telebot import apihelper
+
+    original = apihelper._make_request
+    if getattr(original, "_hiddify_text_icons", False):
+        return
+
+    def animated(token, method_name, method="get", params=None, files=None):
+        if params and str(params.get("parse_mode") or "").upper() == "HTML" and method_name.startswith(("send", "edit")):
+            try:
+                for field in ("text", "caption"):
+                    if isinstance(params.get(field), str):
+                        params = {**params, field: animate_html(params[field])}
+            except Exception as e:  # never in the way of the message itself
+                logger.debug(f"tgbot: emoji not animated: {e}")
+        return original(token, method_name, method, params, files)
+
+    animated._hiddify_text_icons = True  # type: ignore[attr-defined]
+    apihelper._make_request = animated
 
 
 def split(label: str) -> tuple[str | None, str]:
