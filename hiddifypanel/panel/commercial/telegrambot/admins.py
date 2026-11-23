@@ -49,8 +49,12 @@ def visible(ctx: Ctx, admin_id: int) -> AdminUser | None:
     return next((a for a in under(ctx) if a.id == admin_id), None)
 
 
-def _users(a: AdminUser) -> tuple[int, int]:
-    users = a.recursive_users_query().all()
+def _users(a: AdminUser, *, active: bool = True) -> tuple[int, int]:
+    """(all, active) users of ``a``; the list asks only the count (the database), the card the active ones too."""
+    query = a.recursive_users_query()
+    if not active:
+        return query.order_by(None).count(), -1
+    users = query.all()
     return len(users), sum(1 for u in users if u.is_active)
 
 
@@ -62,9 +66,9 @@ def list_screen(ctx: Ctx, page: int = 0) -> Screen:
     lines = [f"🧑‍💼 <b>{ctx.tr(T.am_title)}</b>", RULE, ctx.tr(T.am_count, n=len(people))]
     rows = []
     for a in shown:
-        total, active = _users(a)
+        total, _ = _users(a, active=False)
         mark = "" if a.enable else "⛔️ "
-        rows.append([btn(f"{mark}{_MODE_ICON.get(a.mode, '🧑‍💼')} {a.name[:28]} · 👥 {active}/{total}", Cb.admin_card, a.id)])
+        rows.append([btn(f"{mark}{_MODE_ICON.get(a.mode, '🧑‍💼')} {a.name[:28]} · 👥 {total}", Cb.admin_card, a.id)])
     if not people:
         lines += ["", ctx.tr(T.am_none)]
     if pages > 1:

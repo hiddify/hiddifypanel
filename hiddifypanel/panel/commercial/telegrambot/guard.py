@@ -12,6 +12,7 @@ channel cannot be one: its posts do not say who sent them, so the owner cannot b
 from __future__ import annotations
 
 import datetime
+import time
 
 from loguru import logger
 from telebot import types
@@ -134,12 +135,14 @@ def sweep() -> None:
         if AdminUser.query.filter(AdminUser.telegram_id == user.telegram_id, AdminUser.deleted.is_(False)).first():
             continue  # an admin who is also a user stays
         try:
+            time.sleep(0.05)
             member = bot.get_chat_member(gid, user.telegram_id)
             if member.status not in ("member", "restricted"):
                 continue
             bot.ban_chat_member(gid, user.telegram_id)
             bot.unban_chat_member(gid, user.telegram_id, only_if_banned=True)  # out, but free to ask again after renewing
             removed += 1
+            time.sleep(0.1)  # Telegram takes about 30 calls a second from a bot
             lang = lang_of(user, admin=False)
             with_retry(lambda: bot.send_message(user.telegram_id, f"🔒 {t(T.gd_removed, lang)}"), attempts=2)
         except Exception as e:

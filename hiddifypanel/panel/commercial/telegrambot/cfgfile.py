@@ -24,7 +24,13 @@ MAX_BYTES = 8 * 1024 * 1024
 
 
 def _is_ip(host: str) -> bool:
-    return bool(re.fullmatch(r"[\d.]+|\[?[0-9a-fA-F:]+\]?", host or ""))
+    import ipaddress
+
+    try:
+        ipaddress.ip_address((host or "").split(":")[0] if host.count(":") == 1 else (host or "").strip("[]"))
+        return True
+    except ValueError:
+        return False
 
 
 def fetch(home: str, path: str, agent: str) -> bytes:

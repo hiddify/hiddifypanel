@@ -162,6 +162,18 @@ def register_bot(set_hook=False, remove_hook=False) -> dict:
             from hiddifypanel.panel.commercial.telegrambot.settings import set_commands
 
             set_commands()
+            # The agents' own bots point here too: a new domain or admin path must reach them
+            try:
+                from hiddifypanel.panel.commercial.telegrambot import resellers
+
+                if resellers.allowed():
+                    for managed in resellers.all_bots():
+                        try:
+                            resellers.connect(managed)
+                        except Exception as e:
+                            logger.warning(f"tgbot: agent bot {managed.bot_id} not reconnected: {e}")
+            except Exception as e:
+                logger.debug(f"tgbot: agent bots not reconnected: {e}")
         return {"ok": True, "username": bot.username, "error": ""}
     except Exception as e:
         logger.error(e)
@@ -272,7 +284,10 @@ class TGBackupResource(Resource):
         if not hconfig(ConfigEnum.telegram_bot_token) or not key or len(key) > 64:
             return {"error": "not_found"}, 404
         # Used once: a link forwarded or seen later (a log, a screenshot) gives nothing
-        name = redis_client.getdel(f"tgbot:bkdl:{key}")
+        pipe = redis_client.pipeline()  # GETDEL needs Redis 6.2 (Ubuntu 22.04 has 6.0): get and delete at once
+        pipe.get(f"tgbot:bkdl:{key}")
+        pipe.delete(f"tgbot:bkdl:{key}")
+        name, _ = pipe.execute()
         name = name.decode() if isinstance(name, bytes) else name
         if not name:
             return {"error": "expired"}, 404

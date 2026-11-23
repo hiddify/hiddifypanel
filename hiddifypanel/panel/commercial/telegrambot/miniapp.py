@@ -34,6 +34,8 @@ from .ui import RULE, Cb, Ctx, Screen, Style, app_btn, btn, can_open_as_app, key
 LOCKABLE = ("del", "bulk", "apply", "backup", "admin")
 _LOCK_TEXT = {"del": T.bl_del, "bulk": T.bl_bulk, "apply": T.bl_apply, "backup": T.bl_backup, "admin": T.bl_admin}
 LOCK_PREF = "adv_lock"
+#: sha256 of the key kept in the phone's biometric storage (Telegram gives it back only after the fingerprint/face)
+LOCK_KEY_PREF = "adv_lock_key"
 TOKEN_TTL = 10 * 60
 UNLOCK_TTL = 120
 _PENDING_KEY = "tgbot:act:{}"
@@ -127,21 +129,40 @@ def set_locked(chat_id: int, actions: set[str]) -> None:
     BotPref.put(chat_id, LOCK_PREF, ",".join(a for a in LOCKABLE if a in actions))
 
 
+def _lock_key(chat_id: int) -> str:
+    try:
+        return BotPref.get(chat_id, LOCK_KEY_PREF) or ""
+    except Exception:
+        return ""
+
+
+def _sha(value: str) -> str:
+    return hashlib.sha256(value.encode()).hexdigest()
+
+
+def reset_locks(chat_id: int) -> None:
+    """No lock and no phone key for this chat (the admin opened their panel link again: a new phone, a lost key)."""
+    BotPref.put(chat_id, LOCK_PREF, "")
+    BotPref.put(chat_id, LOCK_KEY_PREF, "")
+
+
 def _digest(data: str) -> str:
     return hashlib.sha256(data.encode()).hexdigest()[:24]
 
 
-def needs_unlock(ctx: Ctx, action: str, data: str) -> bool:
-    """True when ``action`` is locked for this admin and not unlocked yet: the lock screen is shown instead. A press
-    unlocked by the biometrics a moment ago goes through (once)."""
-    if not advanced.is_on() or action not in locked(ctx.chat_id):
+def needs_unlock(ctx: Ctx, action: str, data: str, *, force: bool = False) -> bool:
+    """True when ``action`` is locked for this admin (``force``: asked anyway, as for changing the locks) and not
+    unlocked yet: the lock screen is shown instead. A press unlocked by the biometrics a moment ago goes through
+    (once). Without a key on the phone yet, the confirmation also puts one there."""
+    if not advanced.is_on() or (not force and action not in locked(ctx.chat_id)):
         return False
     key = _UNLOCKED.format(ctx.chat_id, _digest(data))
     if redis_client.get(key):
         redis_client.delete(key)
         return False
-    token = new_token(ctx.chat_id, "lock", data=data, action=action, lang=ctx.lang)
-    url = page_url("lock", token)
+    setting = not _lock_key(ctx.chat_id)
+    token = new_token(ctx.chat_id, "lock", data=data, action=action, lang=ctx.lang, set=setting)
+    url = page_url("lock", token, m="set" if setting else "use")
     if url is None:  # no address a Mini App can open: the lock cannot be asked, the admin is not stuck
         logger.warning("tgbot: biometric lock skipped: the panel has no domain a Mini App can open")
         return False
@@ -183,10 +204,14 @@ def show_lock(ctx: Ctx, args: list[str]) -> None:
     if len(args) >= 2 and args[0] in LOCKABLE and args[1] in ("0", "1"):
         from hiddifypanel.database import db
 
+        # Changing a lock asks the biometrics too (else whoever holds the phone could just take it off), and the
+        # first one puts the key in the phone (so a phone without biometrics never gets locked out)
+        if needs_unlock(ctx, args[0], ":".join([Cb.lock.value, *args]), force=True):
+            return
         on = locked(ctx.chat_id)
         if args[1] == "1":
             on.add(args[0])
-        else:  # not behind the lock itself: a phone without biometrics would keep the action locked for good
+        else:
             on.discard(args[0])
         set_locked(ctx.chat_id, on)
         db.session.commit()
@@ -271,6 +296,20 @@ def answer(init_data: str, body: dict, bot_token: str) -> tuple[dict, int]:
     mark = managed_bot.set(managed)  # the answer comes from that same bot
     try:
         if kind == "lock" and body.get("ok") is True:
+            if pending.get("set"):  # the first confirmation: the key now kept in the phone's biometric storage
+                secret = str(body.get("secret") or "")
+                if len(secret) < 32:
+                    return {"error": "refused"}, 400
+                from hiddifypanel.database import db
+
+                BotPref.put(int(pending["chat"]), LOCK_KEY_PREF, _sha(secret))
+                db.session.commit()
+            else:  # Telegram gives the key back only after the fingerprint/face: a page that only says "ok" is not enough
+                import hmac
+
+                stored = _lock_key(int(pending["chat"]))
+                if not stored or not hmac.compare_digest(stored, _sha(str(body.get("token") or ""))):
+                    return {"error": "refused"}, 403
             _unlocked(pending)
         elif kind == "scan":
             _scanned(pending, str(body.get("text") or "")[:500])
@@ -331,7 +370,18 @@ const TEXTS = __TEXTS__, RTL = ['fa', 'ar', 'ur', 'ps'];
       tap('medium');
       if (!bm || !bm.isInited) return fail(L.no_bio);
       if (!bm.isBiometricAvailable) return fail(L.no_bio);
-      const auth = () => bm.authenticate({reason: L.lock}, (ok) => ok ? send({ok: true}) : fail(L.denied));
+      const setting = q.get('m') === 'set';
+      // The first time a random key goes into the phone's biometric storage; later Telegram gives it back only
+      // after the fingerprint/face, and the server checks it
+      const auth = () => bm.authenticate({reason: L.lock}, (ok, key) => {
+        if (!ok) return fail(L.denied);
+        if (setting) {
+          const raw = new Uint8Array(32); crypto.getRandomValues(raw);
+          const secret = Array.from(raw, (x) => x.toString(16).padStart(2, '0')).join('');
+          return bm.updateBiometricToken(secret, (saved) => saved ? send({ok: true, secret: secret}) : fail(L.no_bio));
+        }
+        return key ? send({ok: true, token: key}) : fail(L.no_key);
+      });
       if (bm.isAccessGranted) return auth();
       bm.requestAccess({reason: L.lock}, (granted) => granted ? auth() : fail(L.denied));
     };
@@ -363,6 +413,7 @@ def page() -> str:
         "lock": T.bl_page,
         "confirm": T.bl_confirm,
         "no_bio": T.bl_no_bio,
+        "no_key": T.bl_no_key,
         "denied": T.bl_denied,
         "scan": T.qs_page,
         "scan_again": T.qs_again,

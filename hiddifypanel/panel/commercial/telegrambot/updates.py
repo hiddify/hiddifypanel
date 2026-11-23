@@ -46,6 +46,10 @@ def allowed(ctx: Ctx) -> bool:
     """The panel's owner only (not the other super admins)."""
     if not advanced.is_on() or ctx.admin is None or ctx.admin.mode != AdminMode.super_admin:
         return False
+    from hiddifypanel.panel.commercial.restapi.v1.tgbot import managed_bot
+
+    if managed_bot.get() is not None:  # the watcher answers from the panel's bot: not from an agent's
+        return False
     owner = AdminUser.get_super_admin()
     return owner is not None and owner.id == ctx.admin.id
 

@@ -5279,7 +5279,9 @@
     "up_done": "{name} was updated successfully.",
     "up_failed": "The update of {name} stopped without finishing: open its log on the Apply page.",
     "up_unknown": "The update of {name} is taking too long: look at its log on the Apply page.",
-    "up_starting": "Starting the update…"
+    "up_starting": "Starting the update…",
+    "bl_no_key": "This phone does not hold your lock key. Open your admin link from the panel again to set the locks anew.",
+    "bu_expired": "That confirm is gone (it was pressed already, or it is old). Pick the action again."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -19,6 +19,14 @@ from .ui import Cb
 
 PREF = "menu_key"
 HINT_PREF = "menu_key_msg"
+
+
+def _prefs() -> tuple[str, str]:
+    """This bot's keys (an agent's own bot keeps its keyboard apart from the panel's bot in the same chat)."""
+    from .resellers import state_prefix
+
+    prefix = state_prefix()
+    return prefix + PREF, prefix + HINT_PREF
 #: Raise it to send the keyboard again to every chat (a new look).
 VERSION = "13"  # 13: Server Status is now Action & Status
 #: The line that carries the keyboard (the same in every language: Hiddify's tagline)
@@ -121,19 +129,20 @@ def ensure(chat_id: int, lang: str, person: bool = False, force: bool = False, a
     chat loses it with its message, and the bot cannot tell). Never raises."""
     try:
         want = f"{VERSION}:{lang}:{'p' if person else 'a-' + admin_mode if admin_mode else 'm'}"
-        if not force and BotPref.get(chat_id, PREF) == want:
+        pref, hint = _prefs()
+        if not force and BotPref.get(chat_id, pref) == want:
             return
         sent = bot.send_message(chat_id, TAGLINE, reply_markup=keyboard_for(lang, person, admin_mode))
         # One such line in the chat: the one before goes (the keyboard stays with the new one)
-        old = BotPref.get(chat_id, HINT_PREF)
+        old = BotPref.get(chat_id, hint)
         if old.isdigit() and int(old) != sent.message_id:
             try:
                 bot.delete_message(chat_id, int(old))
             except Exception:
                 pass
         _forget_cancel(chat_id)
-        BotPref.put(chat_id, PREF, want)
-        BotPref.put(chat_id, HINT_PREF, str(sent.message_id))
+        BotPref.put(chat_id, pref, want)
+        BotPref.put(chat_id, hint, str(sent.message_id))
         db.session.commit()
     except Exception as e:
         # No rollback: it would undo the caller's own changes in this session too

@@ -158,8 +158,8 @@ def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
     admin = ctx.admin
     assert admin
     users = _confirmed(ctx, f, action, value)
-    if users is None:
-        users = targets(ctx, f)
+    if users is None:  # no confirm screen behind this press (pressed twice, or an old one): nothing is done
+        return 0, -1
     skipped = 0
     if action == "del":
         left = User.query.filter(User.deleted.is_(False)).count()
@@ -237,6 +237,9 @@ def show_bulk(ctx: Ctx, args: list[str]) -> None:
         db.session.rollback()
         logger.exception(f"tgbot: bulk {action} failed: {e}")
         return ctx.toast(ctx.tr(T.error_generic), alert=True)
+    if skipped < 0:
+        ctx.toast(ctx.tr(T.bu_expired), alert=True)
+        return ctx.show(actions_screen(ctx, f))
     note = ctx.tr(T.bu_done, what=_what(ctx, action, value), n=done)
     if skipped:
         note += "\n" + ctx.tr(T.bu_skipped, n=skipped)

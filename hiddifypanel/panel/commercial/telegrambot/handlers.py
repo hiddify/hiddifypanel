@@ -51,6 +51,9 @@ def _link_admin(chat_id: int, uuid: str) -> AdminUser | None:
     if found and not admin_in_scope(found):
         return None
     if found:
+        from .miniapp import reset_locks
+
+        reset_locks(chat_id)  # the panel link opened again (a new phone): the biometric locks start over
         AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.id != found.id).update({AdminUser.telegram_id: None})
         found.telegram_id = chat_id
         db.session.commit()

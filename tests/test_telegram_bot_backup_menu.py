@@ -114,7 +114,20 @@ class DownloadKeyTests(unittest.TestCase):
             name = "2026_11_22__22_41_10.json"
             (Path(d) / name).write_text("{}", encoding="utf-8")
             store = {"tgbot:bkdl:k1": name}
-            redis = SimpleNamespace(getdel=lambda k: store.pop(k, None))
+            class Pipe:
+                def __init__(self):
+                    self.ops = []
+
+                def get(self, k):
+                    self.ops.append(("get", k))
+
+                def delete(self, k):
+                    self.ops.append(("del", k))
+
+                def execute(self):
+                    return [store.get(k) if op == "get" else store.pop(k, None) for op, k in self.ops]
+
+            redis = SimpleNamespace(pipeline=Pipe)
             with mock.patch.object(tgbot, "redis_client", redis), mock.patch.object(tgbot, "hconfig", lambda key: "token"), mock.patch(
                 "hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.backup_dir", lambda: Path(d)
             ), mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api._json_attachment", lambda text, filename: ("file", filename)):

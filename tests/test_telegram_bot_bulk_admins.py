@@ -103,6 +103,7 @@ class BulkTests(Base):
         self.assertEqual(self.users[0].package_days, 30)
 
     def test_turning_on_stops_at_the_limit(self):
+        bulk.confirm_screen(self.ctx, Filter.all, "on", 0)
         done, skipped = bulk.run(self.ctx, Filter.all, "on", 0)
         self.assertEqual((done, skipped), (1, 1))
         self.assertEqual([u.enable for u in self.users], [True, True, False])
@@ -111,6 +112,7 @@ class BulkTests(Base):
         with mock.patch.object(bulk.User, "query", mock.MagicMock(**{"filter.return_value.count.return_value": 3})), mock.patch("hiddifypanel.hutils.apply_users.quick_apply_users"), mock.patch(
             "hiddifypanel.hutils.node.parent.notify_childs_users_changed"
         ):
+            bulk.confirm_screen(self.ctx, Filter.all, "del", 0)
             done, skipped = bulk.run(self.ctx, Filter.all, "del", 0)
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.deleted for u in self.users], [True, True, False])
@@ -118,6 +120,7 @@ class BulkTests(Base):
     def test_more_days_for_ended_packages_keep_the_active_limit(self):
         for u in self.users:
             u.is_active = u.enable  # the switched-off ones are the inactive ones here
+        bulk.confirm_screen(self.ctx, Filter.all, "days", 30)
         done, skipped = bulk.run(self.ctx, Filter.all, "days", 30)  # room for 1 of the 2 inactive
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.package_days for u in self.users], [60, 60, 30])
@@ -125,6 +128,7 @@ class BulkTests(Base):
     def test_renew_keeps_the_active_limit(self):
         for u in self.users:
             u.is_active = u.enable
+        bulk.confirm_screen(self.ctx, Filter.all, "renew", 0)
         done, skipped = bulk.run(self.ctx, Filter.all, "renew", 0)  # room for 1 of the 2 disabled
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.enable for u in self.users], [True, True, False])
@@ -138,6 +142,10 @@ class BulkTests(Base):
         done, _ = bulk.run(self.ctx, Filter.all, "days", 30)
         self.assertEqual(done, 1)
         self.assertNotIn("tgbot:bulk:5", self.redis)  # read once
+
+    def test_nothing_without_its_confirm_screen(self):
+        self.assertEqual(bulk.run(self.ctx, Filter.all, "del", 0), (0, -1))  # pressed twice, or an old confirm
+        self.assertEqual([u.deleted for u in self.users], [False, False, False])
 
     def test_off_while_advanced_is_off(self):
         with mock.patch(ADV, lambda: False):
