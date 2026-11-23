@@ -4862,7 +4862,8 @@
     "bk_file_hint": "Hier herunterladen (der Link funktioniert einmal, 15 Minuten lang):",
     "up_starting": "Update wird gestartet…",
     "bl_no_key": "Dieses Telefon hat Ihren Sperrschlüssel nicht. Öffnen Sie Ihren Admin-Link erneut im Panel, um die Sperren neu einzurichten.",
-    "bu_expired": "Diese Bestätigung ist nicht mehr gültig (bereits gedrückt oder veraltet). Wählen Sie die Aktion erneut."
+    "bu_expired": "Diese Bestätigung ist nicht mehr gültig (bereits gedrückt oder veraltet). Wählen Sie die Aktion erneut.",
+    "am_at_your_limit": "Ihr eigenes Limit beträgt {n}: Ein Admin unter Ihnen kann nicht mehr erhalten."
   },
   "cdn": "🔀 CDN (Cloudflare-Proxy, ...)",
   "cf-delete": {

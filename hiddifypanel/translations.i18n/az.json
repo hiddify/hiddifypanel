@@ -4862,7 +4862,8 @@
     "bk_file_hint": "Haradan yükləmək olar (keçid bir dəfə və 15 dəqiqə işləyir):",
     "up_starting": "Yeniləmə başlayır…",
     "bl_no_key": "Bu telefonda kilid açarınız yoxdur. Kilidləri yenidən qurmaq üçün admin linkinizi paneldən yenidən açın.",
-    "bu_expired": "Bu təsdiq artıq etibarsızdır (əvvəl basılıb və ya köhnədir). Əməliyyatı yenidən seçin."
+    "bu_expired": "Bu təsdiq artıq etibarsızdır (əvvəl basılıb və ya köhnədir). Əməliyyatı yenidən seçin.",
+    "am_at_your_limit": "Sizin limitiniz {n}-dir: sizin tabeliyinizdə olan admin bundan çoxunu ala bilməz."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4862,7 +4862,8 @@
     "bk_file_hint": "Nereden indirilir (bağlantı bir kez, 15 dakika boyunca çalışır):",
     "up_starting": "Güncelleme başlatılıyor…",
     "bl_no_key": "Bu telefonda kilit anahtarınız yok. Kilitleri yeniden ayarlamak için yönetici bağlantınızı panelden tekrar açın.",
-    "bu_expired": "Bu onay artık geçerli değil (zaten basıldı veya eski). İşlemi yeniden seçin."
+    "bu_expired": "Bu onay artık geçerli değil (zaten basıldı veya eski). İşlemi yeniden seçin.",
+    "am_at_your_limit": "Kendi limitiniz {n}: size bağlı bir yönetici bundan fazlasını alamaz."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

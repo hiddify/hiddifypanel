@@ -4862,7 +4862,8 @@
     "bk_file_hint": "Desde dónde descargarlo (el enlace funciona una vez, durante 15 minutos):",
     "up_starting": "Iniciando la actualización…",
     "bl_no_key": "Este teléfono no tiene tu clave de bloqueo. Abre de nuevo tu enlace de administrador desde el panel para configurar los bloqueos otra vez.",
-    "bu_expired": "Esa confirmación ya no es válida (ya se pulsó o es antigua). Elige la acción de nuevo."
+    "bu_expired": "Esa confirmación ya no es válida (ya se pulsó o es antigua). Elige la acción de nuevo.",
+    "am_at_your_limit": "Tu propio límite es {n}: un administrador a tu cargo no puede recibir más."
   },
   "cdn": "🔀 CDN (proxy de Cloudflare, ...)",
   "cf-delete": {

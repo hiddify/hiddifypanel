@@ -4862,7 +4862,8 @@
     "bk_file_hint": "Nireden ýükläp bolýar (baglanyşyk bir gezek, 15 minut işleýär):",
     "up_starting": "Täzelenme başlanýar…",
     "bl_no_key": "Bu telefonda gulp açaryňyz ýok. Gulplary täzeden sazlamak üçin admin salgyňyzy panelden ýene açyň.",
-    "bu_expired": "Bu tassyklama indi güýçde däl (öň basylypdyr ýa-da könelipdir). Hereketi ýene saýlaň."
+    "bu_expired": "Bu tassyklama indi güýçde däl (öň basylypdyr ýa-da könelipdir). Hereketi ýene saýlaň.",
+    "am_at_your_limit": "Siziň öz limitiňiz {n}: size degişli admin bundan köp alyp bilmez."
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

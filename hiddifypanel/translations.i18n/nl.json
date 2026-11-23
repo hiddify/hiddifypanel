@@ -4862,7 +4862,8 @@
     "bk_file_hint": "Waar te downloaden (de link werkt één keer, 15 minuten lang):",
     "up_starting": "Update wordt gestart…",
     "bl_no_key": "Deze telefoon heeft je vergrendelingssleutel niet. Open je beheerderslink opnieuw vanuit het paneel om de vergrendelingen opnieuw in te stellen.",
-    "bu_expired": "Die bevestiging is niet meer geldig (al ingedrukt of verouderd). Kies de actie opnieuw."
+    "bu_expired": "Die bevestiging is niet meer geldig (al ingedrukt of verouderd). Kies de actie opnieuw.",
+    "am_at_your_limit": "Uw eigen limiet is {n}: een beheerder onder u kan niet meer krijgen."
   },
   "cdn": "🔀 CDN (Cloudflare-proxy, ...)",
   "cf-delete": {
