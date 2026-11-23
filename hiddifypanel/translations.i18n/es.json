@@ -4376,7 +4376,7 @@
     "renewed": "Paquete renovado",
     "reply": "↩️ Responder",
     "reply_failed": "Su respuesta a <b>{name}</b> no fue entregada.",
-    "reply_prompt": "Escriba su respuesta para {name} y envíela.",
+    "reply_prompt": "Escribe tu respuesta para <b>{name}</b> (texto, una foto o un archivo).",
     "reply_sent": "Su respuesta fue enviada a <b>{name}</b>.",
     "req_approve": "✅ Aprobar",
     "req_approved": "Aprobado: {name} recibió la prueba gratuita.",

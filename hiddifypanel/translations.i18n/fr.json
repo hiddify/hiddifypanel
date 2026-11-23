@@ -4376,7 +4376,7 @@
     "renewed": "Forfait renouvelé",
     "reply": "↩️ Répondre",
     "reply_failed": "Votre réponse à <b>{name}</b> n'a pas été remise.",
-    "reply_prompt": "Saisissez votre réponse à {name} et envoyez-la.",
+    "reply_prompt": "Écrivez votre réponse à <b>{name}</b> (texte, photo ou fichier).",
     "reply_sent": "Votre réponse a été envoyée à <b>{name}</b>.",
     "req_approve": "✅ Approuver",
     "req_approved": "Approuvé : {name} a reçu l'essai gratuit.",

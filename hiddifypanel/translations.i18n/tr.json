@@ -4376,7 +4376,7 @@
     "renewed": "Paket yenilendi",
     "reply": "↩️ Yanıtla",
     "reply_failed": "<b>{name}</b> kişisine yanıtınız iletilemedi.",
-    "reply_prompt": "{name} kişisine yanıtınızı yazıp gönderin.",
+    "reply_prompt": "<b>{name}</b> için yanıtınızı yazın (metin, fotoğraf veya dosya).",
     "reply_sent": "Yanıtınız <b>{name}</b> kişisine gönderildi.",
     "req_approve": "✅ Onayla",
     "req_approved": "Onaylandı: {name} ücretsiz denemeyi aldı.",

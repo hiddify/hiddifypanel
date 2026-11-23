@@ -4376,7 +4376,7 @@
     "renewed": "Paket verlängert",
     "reply": "↩️ Antworten",
     "reply_failed": "Ihre Antwort an <b>{name}</b> wurde nicht zugestellt.",
-    "reply_prompt": "Schreiben Sie Ihre Antwort an {name} und senden Sie sie ab.",
+    "reply_prompt": "Schreiben Sie Ihre Antwort an <b>{name}</b> (Text, Foto oder Datei).",
     "reply_sent": "Ihre Antwort wurde an <b>{name}</b> gesendet.",
     "req_approve": "✅ Genehmigen",
     "req_approved": "Genehmigt: {name} hat den Gratis-Test erhalten.",

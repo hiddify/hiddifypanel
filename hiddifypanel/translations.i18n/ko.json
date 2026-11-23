@@ -4376,7 +4376,7 @@
     "renewed": "패키지를 갱신했습니다",
     "reply": "↩️ 답장",
     "reply_failed": "<b>{name}</b>님에게 보낸 답장이 전달되지 않았습니다.",
-    "reply_prompt": "{name}님에게 보낼 답장을 입력해서 보내세요.",
+    "reply_prompt": "<b>{name}</b>님에게 보낼 답장을 작성하세요 (텍스트, 사진 또는 파일).",
     "reply_sent": "<b>{name}</b>님에게 답장을 보냈습니다.",
     "req_approve": "✅ 승인",
     "req_approved": "승인됨: {name}님이 무료 체험을 받았습니다.",

@@ -3031,7 +3031,7 @@
   "auto_cdn_ip": "☑️ 自动 CDN IP 选择器",
   "bot": {
     "admin_welcome": "欢迎使用管理机器人。选择你的行动",
-    "welcome": "万岁🎉🎉🎉\n欢迎使用 Hiddify 机器人\n首先单击面板上的链接或输入您的 UUID。",
+    "welcome": "👋 <b>欢迎使用 Hiddify！</b>\n\n请在面板中打开您的账户页面并点击 Telegram 按钮，或者直接把您的订阅链接或 UUID 发给我。",
     "language": "🌐 语言",
     "language_title": "语言",
     "language_set": "语言已更改",
@@ -3157,7 +3157,7 @@
     "renewed": "套餐已续期",
     "reply": "↩️ 回复",
     "reply_failed": "你给 <b>{name}</b> 的回复未能送达。",
-    "reply_prompt": "请输入给 {name} 的回复并发送。",
+    "reply_prompt": "请写下您给 <b>{name}</b> 的回复（文字、图片或文件）。",
     "reply_sent": "你的回复已发送给 <b>{name}</b>。",
     "req_approve": "✅ 通过",
     "req_approved": "已通过：{name} 已获得免费试用。",

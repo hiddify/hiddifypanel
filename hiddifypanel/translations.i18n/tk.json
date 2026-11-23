@@ -4376,7 +4376,7 @@
     "renewed": "Paket täzelendi",
     "reply": "↩️ Jogap ber",
     "reply_failed": "<b>{name}</b> adama jogabyňyz ýetirilmedi.",
-    "reply_prompt": "{name} adama jogabyňyzy ýazyp iberiň.",
+    "reply_prompt": "<b>{name}</b> üçin jogabyňyzy ýazyň (tekst, surat ýa-da faýl).",
     "reply_sent": "Jogabyňyz <b>{name}</b> adama iberildi.",
     "req_approve": "✅ Tassykla",
     "req_approved": "Tassyklandy: {name} mugt synagy aldy.",

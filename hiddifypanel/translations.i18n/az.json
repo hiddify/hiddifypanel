@@ -4376,7 +4376,7 @@
     "renewed": "Paket yeniləndi",
     "reply": "↩️ Cavab ver",
     "reply_failed": "<b>{name}</b> üçün cavabınız çatdırılmadı.",
-    "reply_prompt": "{name} üçün cavabınızı yazıb göndərin.",
+    "reply_prompt": "<b>{name}</b> üçün cavabınızı yazın (mətn, foto və ya fayl).",
     "reply_sent": "Cavabınız <b>{name}</b> üçün göndərildi.",
     "req_approve": "✅ Təsdiq et",
     "req_approved": "Təsdiqləndi: {name} pulsuz sınaq aldı.",

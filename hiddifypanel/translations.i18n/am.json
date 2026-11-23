@@ -4376,7 +4376,7 @@
     "renewed": "ጥቅሉ ታድሷል",
     "reply": "↩️ መልስ",
     "reply_failed": "ለ<b>{name}</b> የላኩት መልስ አልደረሰም።",
-    "reply_prompt": "ለ{name} የሚሰጡትን መልስ ጽፈው ይላኩ።",
+    "reply_prompt": "ለ<b>{name}</b> መልስዎን ይጻፉ (ጽሑፍ፣ ፎቶ ወይም ፋይል)።",
     "reply_sent": "መልስዎ ለ<b>{name}</b> ተልኳል።",
     "req_approve": "✅ አጽድቅ",
     "req_approved": "ጸድቋል፦ {name} ነጻ ሙከራ አግኝቷል።",

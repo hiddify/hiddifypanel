@@ -3022,7 +3022,7 @@
   "auto_cdn_ip": "Seletor automático de CDN IP",
   "bot": {
     "admin_welcome": "Bem-vindo ao bot administrativo. Escolha sua ação",
-    "welcome": "Viva 🎉 🎉 🎉\nBem-vindo ao bot Hiddify\nComece clicando no link no Painel ou inserindo seu UUID.",
+    "welcome": "👋 <b>Bem-vindo ao Hiddify!</b>\n\nAbra a página da sua conta no painel e toque no botão do Telegram, ou simplesmente envie-me o seu link de subscrição ou UUID.",
     "language": "🌐 Idioma",
     "language_title": "Idioma",
     "language_set": "Idioma alterado",
@@ -3148,7 +3148,7 @@
     "renewed": "Pacote renovado",
     "reply": "↩️ Responder",
     "reply_failed": "Sua resposta para <b>{name}</b> não foi entregue.",
-    "reply_prompt": "Digite sua resposta para {name} e envie.",
+    "reply_prompt": "Escreva a sua resposta para <b>{name}</b> (texto, uma foto ou um ficheiro).",
     "reply_sent": "Sua resposta foi enviada para <b>{name}</b>.",
     "req_approve": "✅ Aprovar",
     "req_approved": "Aprovado: {name} recebeu o teste grátis.",

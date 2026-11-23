@@ -4376,7 +4376,7 @@
     "renewed": "تم تجديد الباقة",
     "reply": "↩️ رد",
     "reply_failed": "لم يتم تسليم ردك على <b>{name}</b>.",
-    "reply_prompt": "اكتب ردك على {name} وأرسله.",
+    "reply_prompt": "اكتب ردك على <b>{name}</b> (نص أو صورة أو ملف).",
     "reply_sent": "تم إرسال ردك إلى <b>{name}</b>.",
     "req_approve": "✅ موافقة",
     "req_approved": "تمت الموافقة: حصل {name} على التجربة المجانية.",

@@ -4376,7 +4376,7 @@
     "renewed": "Pacchetto rinnovato",
     "reply": "↩️ Rispondi",
     "reply_failed": "La risposta a <b>{name}</b> non è stata recapitata.",
-    "reply_prompt": "Scrivi la risposta per {name} e inviala.",
+    "reply_prompt": "Scrivi la tua risposta a <b>{name}</b> (testo, foto o file).",
     "reply_sent": "La risposta è stata inviata a <b>{name}</b>.",
     "req_approve": "✅ Approva",
     "req_approved": "Approvata: {name} ha ottenuto la prova gratuita.",

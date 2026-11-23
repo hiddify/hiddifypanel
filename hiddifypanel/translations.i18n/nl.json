@@ -4376,7 +4376,7 @@
     "renewed": "Pakket verlengd",
     "reply": "↩️ Antwoorden",
     "reply_failed": "Uw antwoord aan <b>{name}</b> is niet afgeleverd.",
-    "reply_prompt": "Typ uw antwoord aan {name} en verstuur het.",
+    "reply_prompt": "Schrijf je antwoord aan <b>{name}</b> (tekst, een foto of een bestand).",
     "reply_sent": "Uw antwoord is verstuurd aan <b>{name}</b>.",
     "req_approve": "✅ Goedkeuren",
     "req_approved": "Goedgekeurd: {name} heeft de gratis proef gekregen.",

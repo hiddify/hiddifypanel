@@ -4376,7 +4376,7 @@
     "renewed": "Paket yangilandi",
     "reply": "↩️ Javob berish",
     "reply_failed": "<b>{name}</b> ga javobingiz yetkazilmadi.",
-    "reply_prompt": "{name} ga javobingizni yozib yuboring.",
+    "reply_prompt": "<b>{name}</b> uchun javobingizni yozing (matn, rasm yoki fayl).",
     "reply_sent": "Javobingiz <b>{name}</b> ga yuborildi.",
     "req_approve": "✅ Tasdiqlash",
     "req_approved": "Tasdiqlandi: {name} bepul sinov oldi.",
