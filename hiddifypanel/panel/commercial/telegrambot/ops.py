@@ -73,7 +73,7 @@ def apply_screen(ctx: Ctx, note: str | None = None) -> Screen:
     if not running:
         rows.append([btn(ctx.tr(T.op_apply_now), Cb.apply, "ask", style=Style.primary)])
     if url := app_url("apply"):
-        rows.append([app_btn(ctx.tr(T.op_open_page), url)])
+        rows.append([app_btn(f"🖥 {ctx.tr(T.op_open_page)}", url)])
     rows.append([btn(ctx.tr(T.refresh), Cb.apply), btn(ctx.tr(T.back), Cb.back)])
     return Screen("\n".join(lines), keyboard(*rows))
 
@@ -89,7 +89,7 @@ def _watch_apply(chat_id: int, lang: str, started: float) -> None:
         return
     finished = (api._last_runs().get("apply") or {}).get("finished")
     text = f"✅ {t(T.op_apply_done, lang)}" if finished else f"⚠️ {t(T.op_apply_unsure, lang)}"
-    rows = [[app_btn(t(T.op_open_page, lang), url)]] if (url := app_url("apply")) else []
+    rows = [[app_btn(f"🖥 {t(T.op_open_page, lang)}", url)]] if (url := app_url("apply")) else []
     try:
         with_retry(lambda: bot.send_message(chat_id, text, reply_markup=keyboard(*rows) if rows else None), attempts=3)
     except Exception as e:
@@ -167,7 +167,7 @@ def test_screen(ctx: Ctx, note: str | None = None) -> Screen:
     if not running:
         rows.append([btn(ctx.tr(T.op_test_now), Cb.cfgtest, "go", style=Style.primary)])
     if url := app_url("config-tester"):
-        rows.append([app_btn(ctx.tr(T.op_open_page), url)])
+        rows.append([app_btn(f"🖥 {ctx.tr(T.op_open_page)}", url)])
     rows.append([btn(ctx.tr(T.refresh), Cb.cfgtest), btn(ctx.tr(T.back), Cb.back)])
     return Screen("\n".join(lines), keyboard(*rows))
 
@@ -182,7 +182,7 @@ def _watch_test(chat_id: int, lang: str) -> None:
         return
     text = "\n".join([f"🧪 <b>{t(T.op_test_title, lang)}</b>", RULE, *result_lines(lang, health.last())])
     try:
-        with_retry(lambda: bot.send_message(chat_id, text, reply_markup=keyboard([btn(t(T.op_test_title, lang), Cb.cfgtest)])), attempts=3)
+        with_retry(lambda: bot.send_message(chat_id, text, reply_markup=keyboard([btn(f"🧪 {t(T.op_test_title, lang)}", Cb.cfgtest)])), attempts=3)
     except Exception as e:
         logger.debug(f"tgbot: config test result not told: {e}")
 
@@ -212,7 +212,7 @@ def status_rows(ctx: Ctx) -> list[list]:
     """The status screen's keys to these (Advanced, super admins)."""
     if not allowed(ctx):
         return []
-    row = [btn(ctx.tr(T.op_apply_title), Cb.apply), btn(ctx.tr(T.op_test_title), Cb.cfgtest)]
+    row = [btn(f"🛠 {ctx.tr(T.op_apply_title)}", Cb.apply), btn(f"🧪 {ctx.tr(T.op_test_title)}", Cb.cfgtest)]
     from .updates import allowed as may_update
 
     rows = [row, [btn(ctx.tr(T.up_key), Cb.update, style=Style.primary)]] if may_update(ctx) else [row]

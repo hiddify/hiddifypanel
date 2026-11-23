@@ -136,7 +136,7 @@ def settings_lines(ctx: Ctx) -> list[str]:
 def settings_rows(ctx: Ctx) -> list[list]:
     if not allowed() or ctx.admin is None or current.get() is not None:
         return []
-    return [[btn(ctx.tr(T.rb_title), Cb.reseller_bot)]]
+    return [[btn(f"🤖 {ctx.tr(T.rb_title)}", Cb.reseller_bot)]]
 
 
 @route(Cb.reseller_bot, admin=True)

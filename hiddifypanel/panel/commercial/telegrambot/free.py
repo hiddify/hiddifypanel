@@ -63,7 +63,7 @@ def offer_screen(conv: Conversation, lang: str) -> Screen:
     if not free_test.is_first_time(conv):
         rows = [[btn(t(T.free_again, lang), Cb.free_ask, conv.id, style=Style.primary)], [write]]
         if free_test.has_account(conv.telegram_id):
-            rows.insert(0, [btn(t(T.account_title, lang), Cb.me, style=Style.primary)])
+            rows.insert(0, [btn(f"👤 {t(T.account_title, lang)}", Cb.me, style=Style.primary)])
         return Screen("\n".join([*head, f"<i>{t(T.free_hint_used, lang)}</i>"]), keyboard(*rows))
     if package.approval == "auto":
         return Screen("\n".join([*head, f"<i>{t(T.free_hint_auto, lang)}</i>"]), keyboard([btn(t(T.free_get, lang), Cb.free_ask, conv.id, style=Style.success)], [write]))

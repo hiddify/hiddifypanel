@@ -43,7 +43,7 @@ def settings_screen(ctx: Ctx) -> Screen:
 
         if more := settings_line(ctx):  # the bot's "Open" button (BotFather only: Telegram has no API for it)
             lines += more
-            rows.append([btn(ctx.tr(T.as_main_app), Cb.open_help)])
+            rows.append([btn(f"🚀 {ctx.tr(T.as_main_app)}", Cb.open_help)])
     rows.append([btn(ctx.tr(T.back), Cb.back)])
     return Screen("\n".join(lines), keyboard(*rows))
 

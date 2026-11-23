@@ -196,7 +196,7 @@ def _advanced_row(ctx: Ctx) -> list:
 
     row = bulk.list_row(ctx)
     if admins.allowed(ctx):
-        row.append(btn(ctx.tr(T.am_title), Cb.admins))
+        row.append(btn(f"🧑‍💼 {ctx.tr(T.am_title)}", Cb.admins))
     if scan := scan_button(ctx):
         row.append(scan)
     return row
@@ -458,7 +458,7 @@ def new_screen(ctx: Ctx, gb: int, days: int, count: int) -> Screen:
         # Many users: their name comes first (typed), each gets its number after it
         ctx.state.update(awaiting="new_name", new_args=[gb, days, count])
         text += f"✏️ {ctx.tr(T.new_many_name, example=h(names_preview('Hiddify', count)))}"
-        rows += [[btn(ctx.tr(T.new_use_name, name=name[:30]), Cb.new_name, gb, days, count, "d")], [btn(ctx.tr(T.back), Cb.new, gb, 0, count)]]
+        rows += [[btn("✅ " + ctx.tr(T.new_use_name, name=name[:30]), Cb.new_name, gb, days, count, "d")], [btn(ctx.tr(T.back), Cb.new, gb, 0, count)]]
     else:
         rows += [
             [btn(ctx.tr(T.new_create_n, n=count) if count > 1 else ctx.tr(T.new_create), Cb.new_go, gb, days, count, style=Style.success)],

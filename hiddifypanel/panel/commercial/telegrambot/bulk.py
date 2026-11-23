@@ -251,4 +251,4 @@ def list_row(ctx: Ctx) -> list:
     """The users list's key to it (Advanced, a panel that can change users)."""
     if not advanced.is_on() or accounts.is_read_only():
         return []
-    return [btn(ctx.tr(T.bu_title), Cb.bulk)]
+    return [btn(f"🧰 {ctx.tr(T.bu_title)}", Cb.bulk)]

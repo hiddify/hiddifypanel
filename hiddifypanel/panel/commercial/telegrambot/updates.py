@@ -204,7 +204,7 @@ def show_update(ctx: Ctx, args: list[str]) -> None:
         logger.info(f"tgbot: update of {n.id} not started: {getattr(e, 'description', e)}")
         started, server_started = False, 0.0
     if not started:
-        return ctx.show(Screen(f"⚠️ {ctx.tr(T.up_not_started)}", keyboard([btn(ctx.tr(T.up_title), Cb.update)])))
+        return ctx.show(Screen(f"⚠️ {ctx.tr(T.up_not_started)}", keyboard([btn(f"🔄 {ctx.tr(T.up_title)}", Cb.update)])))
     name = _name(ctx, n)
     ctx.show(list_screen(ctx))  # the bot's screen goes on; the waiting is a message of its own
     sent = bot.send_message(ctx.chat_id, waiting_text(ctx.lang, name, time.time()))
@@ -275,7 +275,7 @@ def watch_updates() -> None:
             text = f"{mark} <b>{t(key_text, lang, name=h(name))}</b>"
             redis_client.hdel(_WATCH, key)
         try:
-            bot.edit_message_text(text, int(entry["chat"]), int(entry["msg"]), reply_markup=keyboard([btn(t(T.up_title, lang), Cb.update)]) if result else None)
+            bot.edit_message_text(text, int(entry["chat"]), int(entry["msg"]), reply_markup=keyboard([btn(f"🔄 {t(T.up_title, lang)}", Cb.update)]) if result else None)
         except Exception as e:
             if "not modified" not in str(e) and result:
                 try:  # the message is gone or too old to edit: a new one

@@ -19,6 +19,7 @@ from .ui import RULE, Cb, Ctx, Screen, btn, h, keyboard, route
 FORMATS = {"singbox": ("singbox/", "json"), "clash": ("clash/", "yaml"), "links": ("sub/", "txt")}
 #: The panel answers known apps only, each in its own form: the file is fetched as that app
 _AGENT = {"singbox": "SFA/1.11.0 (Android)", "clash": "ClashMeta/1.18", "links": "v2rayNG/1.9"}
+_ICON = {"singbox": "🧩", "clash": "🐱", "links": "🔗"}
 _LABEL = {"singbox": "sing-box (JSON)", "clash": "Clash (YAML)", "links": "V2Ray / Xray (TXT)"}
 MAX_BYTES = 8 * 1024 * 1024
 
@@ -43,7 +44,7 @@ def fetch(home: str, path: str, agent: str) -> bytes:
 
 
 def choose_screen(ctx: Ctx) -> Screen:
-    rows = [[btn(_LABEL[f], Cb.cfgfile, f)] for f in FORMATS]
+    rows = [[btn(f"{_ICON[f]} {_LABEL[f]}", Cb.cfgfile, f)] for f in FORMATS]
     rows.append([btn(ctx.tr(T.back), Cb.me)])
     return Screen(f"📄 <b>{ctx.tr(T.cf_title)}</b>\n{RULE}\n{ctx.tr(T.cf_pick)}", keyboard(*rows))
 
