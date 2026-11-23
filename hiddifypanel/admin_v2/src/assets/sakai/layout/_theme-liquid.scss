@@ -300,6 +300,15 @@ html.theme-liquid.app-dark {
     --lg-wave-3: color-mix(in srgb, var(--p-primary-800) 75%, #581c87 25%);
 }
 
+/* Phones: a blur costs with its radius, and a phone's page holds a long column of cards; a smaller radius looks the
+   same on a small screen */
+@media (max-width: 720px) {
+    html.theme-liquid {
+        --lg-blur: calc(6px + 20px * var(--lg-ease));
+        --lg-blur-float: calc(16px + 18px * var(--lg-ease));
+    }
+}
+
 /* No backdrop blur in this browser: the glass would only be see-through, so every surface is nearly solid instead */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     html.theme-liquid {
