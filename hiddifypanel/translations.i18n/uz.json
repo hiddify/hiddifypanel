@@ -4863,7 +4863,8 @@
     "up_starting": "Yangilanish boshlanmoqda…",
     "bl_no_key": "Bu telefonda qulf kalitingiz yo‘q. Qulflarni qayta sozlash uchun admin havolangizni paneldan yana oching.",
     "bu_expired": "Bu tasdiq endi amal qilmaydi (avval bosilgan yoki eskirgan). Amalni qaytadan tanlang.",
-    "am_at_your_limit": "Sizning limitingiz {n}: sizga qarashli admin bundan ko‘p ola olmaydi."
+    "am_at_your_limit": "Sizning limitingiz {n}: sizga qarashli admin bundan ko‘p ola olmaydi.",
+    "bl_no_page": "Bu amal qulflangan va barmoq izi sahifasini ochib bo‘lmaydi: panelga yaroqli sertifikatli domen kerak."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

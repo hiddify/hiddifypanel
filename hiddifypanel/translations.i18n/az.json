@@ -4863,7 +4863,8 @@
     "up_starting": "Yeniləmə başlayır…",
     "bl_no_key": "Bu telefonda kilid açarınız yoxdur. Kilidləri yenidən qurmaq üçün admin linkinizi paneldən yenidən açın.",
     "bu_expired": "Bu təsdiq artıq etibarsızdır (əvvəl basılıb və ya köhnədir). Əməliyyatı yenidən seçin.",
-    "am_at_your_limit": "Sizin limitiniz {n}-dir: sizin tabeliyinizdə olan admin bundan çoxunu ala bilməz."
+    "am_at_your_limit": "Sizin limitiniz {n}-dir: sizin tabeliyinizdə olan admin bundan çoxunu ala bilməz.",
+    "bl_no_page": "Bu əməliyyat kilidlidir və barmaq izi səhifəsi açıla bilmir: panel etibarlı sertifikatı olan domen tələb edir."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4863,7 +4863,8 @@
     "up_starting": "Démarrage de la mise à jour…",
     "bl_no_key": "Ce téléphone ne contient pas votre clé de verrouillage. Rouvrez votre lien d'administrateur depuis le panneau pour reconfigurer les verrous.",
     "bu_expired": "Cette confirmation n'est plus valide (déjà utilisée ou trop ancienne). Choisissez à nouveau l'action.",
-    "am_at_your_limit": "Votre propre limite est de {n} : un admin sous votre responsabilité ne peut pas en recevoir plus."
+    "am_at_your_limit": "Votre propre limite est de {n} : un admin sous votre responsabilité ne peut pas en recevoir plus.",
+    "bl_no_page": "Cette action est verrouillée et la page d'empreinte digitale ne peut pas s'ouvrir : le panneau a besoin d'un domaine avec un certificat valide."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

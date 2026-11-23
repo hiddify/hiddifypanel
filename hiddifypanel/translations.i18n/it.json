@@ -4863,7 +4863,8 @@
     "up_starting": "Avvio dell'aggiornamento…",
     "bl_no_key": "Questo telefono non ha la tua chiave di blocco. Riapri il link da amministratore dal pannello per impostare di nuovo i blocchi.",
     "bu_expired": "Questa conferma non è più valida (già premuta o scaduta). Scegli di nuovo l'azione.",
-    "am_at_your_limit": "Il tuo limite è {n}: un admin sotto di te non può averne di più."
+    "am_at_your_limit": "Il tuo limite è {n}: un admin sotto di te non può averne di più.",
+    "bl_no_page": "Questa azione è bloccata e la pagina dell'impronta digitale non può aprirsi: il pannello richiede un dominio con un certificato valido."
   },
   "cdn": "🔀 CDN (proxy Cloudflare, ...)",
   "cf-delete": {

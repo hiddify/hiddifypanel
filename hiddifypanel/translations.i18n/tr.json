@@ -4863,7 +4863,8 @@
     "up_starting": "Güncelleme başlatılıyor…",
     "bl_no_key": "Bu telefonda kilit anahtarınız yok. Kilitleri yeniden ayarlamak için yönetici bağlantınızı panelden tekrar açın.",
     "bu_expired": "Bu onay artık geçerli değil (zaten basıldı veya eski). İşlemi yeniden seçin.",
-    "am_at_your_limit": "Kendi limitiniz {n}: size bağlı bir yönetici bundan fazlasını alamaz."
+    "am_at_your_limit": "Kendi limitiniz {n}: size bağlı bir yönetici bundan fazlasını alamaz.",
+    "bl_no_page": "Bu işlem kilitli ve parmak izi sayfası açılamıyor: panelin geçerli sertifikaya sahip bir alan adına ihtiyacı var."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

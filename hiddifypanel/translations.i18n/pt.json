@@ -3628,7 +3628,8 @@
     "up_starting": "Iniciando a atualização…",
     "bl_no_key": "Este telefone não tem a sua chave de bloqueio. Abra novamente o seu link de administrador no painel para configurar os bloqueios de novo.",
     "bu_expired": "Essa confirmação não é mais válida (já foi usada ou está antiga). Escolha a ação novamente.",
-    "am_at_your_limit": "O seu próprio limite é {n}: um administrador abaixo de você não pode receber mais."
+    "am_at_your_limit": "O seu próprio limite é {n}: um administrador abaixo de você não pode receber mais.",
+    "bl_no_page": "Esta ação está bloqueada e a página da impressão digital não pode ser aberta: o painel precisa de um domínio com certificado válido."
   },
   "cdn": "CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

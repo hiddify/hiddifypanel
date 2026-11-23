@@ -4863,7 +4863,8 @@
     "up_starting": "Update wordt gestart…",
     "bl_no_key": "Deze telefoon heeft je vergrendelingssleutel niet. Open je beheerderslink opnieuw vanuit het paneel om de vergrendelingen opnieuw in te stellen.",
     "bu_expired": "Die bevestiging is niet meer geldig (al ingedrukt of verouderd). Kies de actie opnieuw.",
-    "am_at_your_limit": "Uw eigen limiet is {n}: een beheerder onder u kan niet meer krijgen."
+    "am_at_your_limit": "Uw eigen limiet is {n}: een beheerder onder u kan niet meer krijgen.",
+    "bl_no_page": "Deze actie is vergrendeld en de vingerafdrukpagina kan niet worden geopend: het paneel heeft een domein met een geldig certificaat nodig."
   },
   "cdn": "🔀 CDN (Cloudflare-proxy, ...)",
   "cf-delete": {

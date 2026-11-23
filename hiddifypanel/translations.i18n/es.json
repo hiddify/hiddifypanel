@@ -4863,7 +4863,8 @@
     "up_starting": "Iniciando la actualización…",
     "bl_no_key": "Este teléfono no tiene tu clave de bloqueo. Abre de nuevo tu enlace de administrador desde el panel para configurar los bloqueos otra vez.",
     "bu_expired": "Esa confirmación ya no es válida (ya se pulsó o es antigua). Elige la acción de nuevo.",
-    "am_at_your_limit": "Tu propio límite es {n}: un administrador a tu cargo no puede recibir más."
+    "am_at_your_limit": "Tu propio límite es {n}: un administrador a tu cargo no puede recibir más.",
+    "bl_no_page": "Esta acción está bloqueada y no se puede abrir la página de la huella digital: el panel necesita un dominio con un certificado válido."
   },
   "cdn": "🔀 CDN (proxy de Cloudflare, ...)",
   "cf-delete": {
