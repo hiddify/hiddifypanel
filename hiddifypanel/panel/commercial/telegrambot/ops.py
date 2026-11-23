@@ -213,7 +213,9 @@ def status_rows(ctx: Ctx) -> list[list]:
     if not allowed(ctx):
         return []
     row = [btn(ctx.tr(T.op_apply_title), Cb.apply), btn(ctx.tr(T.op_test_title), Cb.cfgtest)]
-    rows = [row, [btn(ctx.tr(T.up_key), Cb.update, style=Style.primary)]]
+    from .updates import allowed as may_update
+
+    rows = [row, [btn(ctx.tr(T.up_key), Cb.update, style=Style.primary)]] if may_update(ctx) else [row]
     if url := app_url("scanner"):
         rows.append([app_btn(ctx.tr(T.op_scanner), url, style=Style.primary)])
     return rows

@@ -48,6 +48,7 @@ class Base(unittest.TestCase):
             mock.patch.object(ui.Ctx, "show", lambda s, screen: self.shown.append(screen)),
             mock.patch.object(updates, "_servers", lambda: list(self.servers)),
             mock.patch.object(updates, "redis_client", self.redis),
+            mock.patch.object(updates.AdminUser, "get_super_admin", lambda: SimpleNamespace(id=1)),
         ):
             p.start()
             self.addCleanup(p.stop)
@@ -70,10 +71,25 @@ class ScreenTests(Base):
         self.assertIn(t(T.up_confirm, "en"), self.shown[-1].text)
         self.assertIn("up:2:go", [b.callback_data for row in self.shown[-1].markup.keyboard for b in row])
 
-    def test_super_admins_only(self):
-        agent = ui.Ctx(6, "en", admin=SimpleNamespace(id=2, name="Bo", mode="admin"))
-        updates.show_update(agent, [])
+    def test_the_owner_only(self):
+        other_super = ui.Ctx(6, "en", admin=SimpleNamespace(id=2, name="Bo", mode="super_admin"))
+        updates.show_update(other_super, [])
+        self.assertEqual(self.shown, [])  # another super admin: no access
+        admin = ui.Ctx(7, "en", admin=SimpleNamespace(id=3, name="Cy", mode="admin"))
+        updates.show_update(admin, [])
         self.assertEqual(self.shown, [])
+        self.assertTrue(updates.allowed(self.ctx))  # the owner (id 1)
+
+    def test_the_key_on_the_status_screen_for_the_owner_only(self):
+        from hiddifypanel.panel.commercial.telegrambot import ops
+
+        with mock.patch.object(ops, "app_url", lambda page: None):
+            owner_keys = [b.callback_data for row in ops.status_rows(self.ctx) for b in row]
+            other = ui.Ctx(6, "en", admin=SimpleNamespace(id=2, name="Bo", mode="super_admin"))
+            other_keys = [b.callback_data for row in ops.status_rows(other) for b in row]
+        self.assertIn("up", owner_keys)
+        self.assertNotIn("up", other_keys)
+        self.assertIn("ap", other_keys)  # the other operations stay for super admins
 
 
 class StartTests(Base):

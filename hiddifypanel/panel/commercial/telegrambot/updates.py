@@ -1,4 +1,4 @@
-"""Advanced mode, super admins: update the panel of this server or of a node, from the bot (the status screen's
+"""Advanced mode, the panel's owner only: update the panel of this server or of a node, from the bot (the status screen's
 "Update Panel" key).
 
 The servers are listed as keys: green the ones answering, red the others. A green one asks first (an update takes
@@ -43,7 +43,11 @@ class _ApplyState(BaseModel):
 
 
 def allowed(ctx: Ctx) -> bool:
-    return advanced.is_on() and ctx.admin is not None and ctx.admin.mode == AdminMode.super_admin
+    """The panel's owner only (not the other super admins)."""
+    if not advanced.is_on() or ctx.admin is None or ctx.admin.mode != AdminMode.super_admin:
+        return False
+    owner = AdminUser.get_super_admin()
+    return owner is not None and owner.id == ctx.admin.id
 
 
 def _servers() -> list:
