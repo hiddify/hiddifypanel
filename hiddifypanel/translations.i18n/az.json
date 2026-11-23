@@ -4810,7 +4810,6 @@
     "bk_history_none": "Serverdə hələ ehtiyat nüsxə yoxdur.",
     "bk_history_month": "Son 30 gündən {n} ehtiyat nüsxə, əvvəlcə ən yenisi (hamısını görmək üçün ⌄ toxunun, yükləmək üçün adına toxunun):",
     "bk_history_none_month": "Son 30 gündə ehtiyat nüsxə yoxdur.",
-    "bk_file_hint": "Haradan yüklənsin (keçidlər bir saat işləyir):",
     "bc_to_users": "👥 İstifadəçilərə",
     "bc_to_admins": "🧑‍💼 Adminlərə",
     "bc_admins_menu": "Adminlərə Mesaj",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "İndiyədək {n} dəq",
     "up_done": "{name} uğurla yeniləndi.",
     "up_failed": "{name} yeniləməsi başa çatmadan dayandı: jurnalını Apply səhifəsində açın.",
-    "up_unknown": "{name} yeniləməsi çox uzun çəkir: jurnalına Apply səhifəsində baxın."
+    "up_unknown": "{name} yeniləməsi çox uzun çəkir: jurnalına Apply səhifəsində baxın.",
+    "bk_file_hint": "Haradan yükləmək olar (keçid bir dəfə və 15 dəqiqə işləyir):",
+    "up_starting": "Yeniləmə başlayır…"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

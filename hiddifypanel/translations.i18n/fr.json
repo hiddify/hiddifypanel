@@ -4810,7 +4810,6 @@
     "bk_history_none": "Aucune sauvegarde sur le serveur pour le moment.",
     "bk_history_month": "{n} sauvegardes des 30 derniers jours, les plus récentes d'abord (touchez ⌄ pour tout voir, touchez un nom pour la télécharger) :",
     "bk_history_none_month": "Aucune sauvegarde ces 30 derniers jours.",
-    "bk_file_hint": "D'où la télécharger (les liens fonctionnent pendant une heure) :",
     "bc_to_users": "👥 Aux utilisateurs",
     "bc_to_admins": "🧑‍💼 Aux administrateurs",
     "bc_admins_menu": "Message aux administrateurs",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "{n} min écoulées",
     "up_done": "{name} a été mis à jour avec succès.",
     "up_failed": "La mise à jour de {name} s'est arrêtée sans aboutir : ouvrez son journal sur la page Apply.",
-    "up_unknown": "La mise à jour de {name} prend trop de temps : consultez son journal sur la page Apply."
+    "up_unknown": "La mise à jour de {name} prend trop de temps : consultez son journal sur la page Apply.",
+    "bk_file_hint": "Où le télécharger (le lien ne fonctionne qu'une fois, pendant 15 minutes) :",
+    "up_starting": "Démarrage de la mise à jour…"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

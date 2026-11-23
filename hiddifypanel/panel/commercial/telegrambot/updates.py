@@ -52,6 +52,32 @@ def _servers() -> list:
     return _nodes()
 
 
+_SERVERS = "tgbot:upd:servers"
+_SERVERS_TTL = 120
+
+
+def _remember(servers: list) -> None:
+    """The list as the admin saw it: the question and the start use it (asking every node again takes seconds)."""
+    rows = [{"id": n.id, "name": n.name, "ok": bool(n.ok), "version": getattr(n.host, "panel_version", "") if n.ok and n.host else ""} for n in servers]
+    redis_client.set(_SERVERS, json.dumps(rows), ex=_SERVERS_TTL)
+
+
+def _known(server_id: int):
+    from types import SimpleNamespace
+
+    raw = redis_client.get(_SERVERS)
+    try:
+        rows = json.loads(raw) if raw else None
+    except ValueError:
+        rows = None
+    if rows is None:
+        servers = _servers()
+        _remember(servers)
+        return next((n for n in servers if n.id == server_id), None)
+    row = next((r for r in rows if r["id"] == server_id), None)
+    return SimpleNamespace(id=row["id"], name=row["name"], ok=row["ok"], host=SimpleNamespace(panel_version=row["version"])) if row else None
+
+
 def _child(node_id: int):
     from hiddifypanel.models import Child, ChildMode
 
@@ -74,6 +100,7 @@ def _name(ctx: Ctx, n) -> str:
 def list_screen(ctx: Ctx) -> Screen:
     try:
         servers = _servers()
+        _remember(servers)
     except Exception as e:
         logger.warning(f"tgbot: servers not read for an update: {e}")
         servers = []
@@ -88,7 +115,7 @@ def list_screen(ctx: Ctx) -> Screen:
 
 
 def _server(ctx: Ctx, server_id: int):
-    return next((n for n in _servers() if n.id == server_id), None)
+    return _known(server_id)
 
 
 def confirm_screen(ctx: Ctx, n) -> Screen:
@@ -129,16 +156,16 @@ def start(ctx: Ctx, n) -> tuple[bool, float]:
     assert ctx.admin
     if child is None or not child.node_base_url:
         return False, 0.0
-    owner = AdminUser.get_super_admin()
-    res = _client(child, owner).post(_APPLY_PATH + "update/", None, _ApplyState)
+    # As the admin who pressed it (the admins are the same on the parent and its nodes)
+    res = _client(child, ctx.admin).post(_APPLY_PATH + "update/", None, _ApplyState)
     if not isinstance(res, _ApplyState):
         logger.info(f"tgbot: node {n.id} update not started: {getattr(res, 'msg', res)}")
         return False, 0.0
     return True, float(res.now or time.time())
 
 
-def _watch(chat_id: int, message_id: int, server_id: int, name: str, lang: str, server_started: float) -> None:
-    entry = {"chat": chat_id, "msg": message_id, "server": server_id, "name": name, "lang": lang, "started": time.time(), "server_started": server_started}
+def _watch(chat_id: int, message_id: int, server_id: int, name: str, lang: str, server_started: float, admin_id: int) -> None:
+    entry = {"chat": chat_id, "msg": message_id, "server": server_id, "name": name, "lang": lang, "started": time.time(), "server_started": server_started, "admin": admin_id}
     redis_client.hset(_WATCH, f"{chat_id}:{message_id}", json.dumps(entry))
 
 
@@ -162,24 +189,24 @@ def show_update(ctx: Ctx, args: list[str]) -> None:
 
     if needs_unlock(ctx, "apply", f"{Cb.update.value}:{n.id}:go"):
         return
+    ctx.toast(ctx.tr(T.up_starting))  # the node may take seconds to answer: Telegram hears back at once
     try:
         started, server_started = start(ctx, n)
     except Exception as e:  # another action running there, or the panel too old
         logger.info(f"tgbot: update of {n.id} not started: {getattr(e, 'description', e)}")
         started, server_started = False, 0.0
     if not started:
-        return ctx.toast(ctx.tr(T.up_not_started), alert=True)
+        return ctx.show(Screen(f"⚠️ {ctx.tr(T.up_not_started)}", keyboard([btn(ctx.tr(T.up_title), Cb.update)])))
     name = _name(ctx, n)
-    ctx.toast(ctx.tr(T.up_started))
-    ctx.show(Screen(waiting_text(ctx.lang, name, time.time())))
-    if ctx.message_id:
-        _watch(ctx.chat_id, ctx.message_id, n.id, name, ctx.lang, server_started)
+    ctx.show(list_screen(ctx))  # the bot's screen goes on; the waiting is a message of its own
+    sent = bot.send_message(ctx.chat_id, waiting_text(ctx.lang, name, time.time()))
+    _watch(ctx.chat_id, sent.message_id, n.id, name, ctx.lang, server_started, ctx.admin.id)
 
 
 # --------------------------------------------------------------------------- watching it (scheduled)
 
 
-def _state_of(server_id: int) -> dict | None:
+def _state_of(server_id: int, admin_id: int | None = None) -> dict | None:
     """The server's Apply state now; None when it cannot be asked (a panel restarting during its update)."""
     if server_id == 0:
         from hiddifypanel.panel.commercial.restapi.v2.admin import apply_api
@@ -188,7 +215,8 @@ def _state_of(server_id: int) -> dict | None:
     child = _child(server_id)
     if child is None:
         return None
-    res = _client(child, AdminUser.get_super_admin(), timeout=15).get(_APPLY_PATH, _ApplyState)
+    admin = AdminUser.by_id(admin_id) if admin_id else None
+    res = _client(child, admin or AdminUser.get_super_admin(), timeout=15).get(_APPLY_PATH, _ApplyState)
     return res.model_dump() if isinstance(res, _ApplyState) else None
 
 
@@ -227,7 +255,7 @@ def watch_updates() -> None:
             redis_client.hdel(_WATCH, key)
             continue
         try:
-            result = outcome(entry, _state_of(int(entry["server"])), now)
+            result = outcome(entry, _state_of(int(entry["server"]), entry.get("admin")), now)
         except Exception as e:
             logger.debug(f"tgbot: update of {entry.get('server')} not checked: {e}")
             result = None

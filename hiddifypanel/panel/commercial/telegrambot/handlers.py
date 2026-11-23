@@ -159,6 +159,8 @@ def on_start(message: types.Message) -> None:
         ctx = context(chat_id, telegram_lang=_tg_lang(message.from_user))
         if ctx.admin and ctx.admin.mode == AdminMode.super_admin:
             return admin.show_backup_file(ctx, payload.removeprefix("bk_"))
+        bot.send_message(chat_id, f"⛔️ {ctx.tr(T.not_allowed)}")
+        return open_home(ctx, keys=True)
     if payload.startswith("admin_") and (match := _UUID.search(payload)):
         _link_admin(chat_id, match.group(0).lower())
     elif match := _UUID.search(payload):
@@ -238,7 +240,7 @@ def on_button(call: types.CallbackQuery) -> None:
         ctx.on_photo = message.content_type == "photo"
     # A button while writing (a message, a name): the writing stops and the menu keyboard comes back, unless the
     # button is the next step of that same writing (picking the user to write to)
-    if not (kind is Cb.broadcast and args[:1] in (["to"], ["one"], ["all"])) and menukey.restore(ctx):
+    if not (kind is Cb.broadcast and args[:1] in (["to"], ["one"], ["all"], ["ato"], ["aone"], ["aall"])) and menukey.restore(ctx):
         # The menu came back with a line under the screen: the screen comes again under it (the old one goes)
         ctx.message_id, ctx.on_photo = None, False
     if ctx.person:  # a person's path, for Back

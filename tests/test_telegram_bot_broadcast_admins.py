@@ -84,6 +84,15 @@ class OneAdminTests(Base):
         self.assertIsNone(self.state.get("bc_admin"))
 
 
+class LeftoverTests(Base):
+    def test_a_user_picked_after_the_admins_flow_gets_it_alone(self):
+        broadcast.show_broadcast(self.ctx, ["aall"])  # all admins, then the admin goes back and picks one user
+        user = SimpleNamespace(id=9, name="Sara", telegram_id=909)
+        with mock.patch.object(broadcast, "_visible", lambda ctx, i: user if i == 9 else None):
+            broadcast._pick_user(self.ctx, 9)
+            self.assertEqual(broadcast._chats(self.ctx), [909])  # not every admin
+
+
 class NavTests(unittest.TestCase):
     def test_each_choice_is_a_back_step(self):
         from hiddifypanel.panel.commercial.telegrambot import nav

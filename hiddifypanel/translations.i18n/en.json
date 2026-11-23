@@ -5229,7 +5229,7 @@
     "bk_history_none": "No backups on the server yet.",
     "bk_history_month": "{n} backups from the last 30 days, newest first (tap ⌄ to see all, tap a name to download it):",
     "bk_history_none_month": "No backups in the last 30 days.",
-    "bk_file_hint": "Where to download it from (the links work for an hour):",
+    "bk_file_hint": "Where to download it from (the link works once, for 15 minutes):",
     "bc_to_users": "👥 To Users",
     "bc_to_admins": "🧑‍💼 To Admins",
     "bc_admins_menu": "Message to Admins",
@@ -5278,7 +5278,8 @@
     "up_elapsed": "{n} min so far",
     "up_done": "{name} was updated successfully.",
     "up_failed": "The update of {name} stopped without finishing: open its log on the Apply page.",
-    "up_unknown": "The update of {name} is taking too long: look at its log on the Apply page."
+    "up_unknown": "The update of {name} is taking too long: look at its log on the Apply page.",
+    "up_starting": "Starting the update…"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

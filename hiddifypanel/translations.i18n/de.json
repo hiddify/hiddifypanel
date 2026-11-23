@@ -4810,7 +4810,6 @@
     "bk_history_none": "Noch keine Backups auf dem Server.",
     "bk_history_month": "{n} Backups der letzten 30 Tage, neueste zuerst (⌄ antippen für alle, Namen antippen zum Herunterladen):",
     "bk_history_none_month": "Keine Backups in den letzten 30 Tagen.",
-    "bk_file_hint": "Von wo herunterladen (die Links funktionieren eine Stunde):",
     "bc_to_users": "👥 An Benutzer",
     "bc_to_admins": "🧑‍💼 An Admins",
     "bc_admins_menu": "Nachricht an Admins",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "{n} Min. bisher",
     "up_done": "{name} wurde erfolgreich aktualisiert.",
     "up_failed": "Das Update von {name} wurde abgebrochen, ohne fertig zu werden: Öffnen Sie das Protokoll auf der Seite Apply.",
-    "up_unknown": "Das Update von {name} dauert zu lange: Sehen Sie sich das Protokoll auf der Seite Apply an."
+    "up_unknown": "Das Update von {name} dauert zu lange: Sehen Sie sich das Protokoll auf der Seite Apply an.",
+    "bk_file_hint": "Hier herunterladen (der Link funktioniert einmal, 15 Minuten lang):",
+    "up_starting": "Update wird gestartet…"
   },
   "cdn": "🔀 CDN (Cloudflare-Proxy, ...)",
   "cf-delete": {

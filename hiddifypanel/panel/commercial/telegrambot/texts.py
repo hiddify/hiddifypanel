@@ -239,6 +239,7 @@ class T(StrEnum):
     up_yes = "up_yes"
     up_not_started = "up_not_started"
     up_started = "up_started"
+    up_starting = "up_starting"
     up_running = "up_running"
     up_wait = "up_wait"
     up_elapsed = "up_elapsed"

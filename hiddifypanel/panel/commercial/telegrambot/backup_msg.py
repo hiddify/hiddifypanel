@@ -64,6 +64,13 @@ def links(owner) -> list[tuple[str, str, str]]:
             secure.append(("secure", address, hiddify.get_account_panel_link(owner, address)))
         else:  # no certificate a browser trusts: still https (the browser warns); the panel is never offered over http
             insecure.append(("insecure", address, hiddify.get_account_panel_link(owner, address)))
+    # The server's IPv4 too when no domain is it (a way in when the names are blocked), over https: no certificate
+    # names a bare IP, so it is a red one
+    from hiddifypanel import hutils
+
+    ip = hutils.network.get_ip_str(4)
+    if ip and ip not in {a for _k, a, _u in secure + insecure}:
+        insecure.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip)))
     return secure + cdn + insecure
 
 
@@ -114,7 +121,7 @@ def button_label(kind: str, address: str) -> str:
 def markup(lang: str, owner, *, plain_http: bool = True, tail: list | None = None) -> types.InlineKeyboardMarkup:
     rows = []
     for kind, address, url in links(owner)[:20]:
-        if kind == "insecure" and not plain_http:
+        if not plain_http and url.startswith("http://"):  # the retry without plain-http links (Telegram may refuse them)
             continue
         rows.append([url_btn(button_label(kind, address), url, style=Style.danger if kind == "insecure" else Style.success)])
     if tail:

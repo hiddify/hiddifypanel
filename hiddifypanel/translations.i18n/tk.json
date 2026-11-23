@@ -4810,7 +4810,6 @@
     "bk_history_none": "Serwerde heniz ätiýaçlyk nusga ýok.",
     "bk_history_month": "Soňky 30 günden {n} ätiýaçlyk nusga, ilki iň täzeleri (hemmesini görmek üçin ⌄ basyň, ýüklemek üçin adyna basyň):",
     "bk_history_none_month": "Soňky 30 günde ätiýaçlyk nusga ýok.",
-    "bk_file_hint": "Nireden ýüklemeli (baglanyşyklar bir sagat işleýär):",
     "bc_to_users": "👥 Ulanyjylara",
     "bc_to_admins": "🧑‍💼 Administratorlara",
     "bc_admins_menu": "Administratorlara Habar",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "Häzirki wagta çenli {n} min",
     "up_done": "{name} üstünlikli täzelendi.",
     "up_failed": "{name} täzelenişi gutarman duruldy: onuň žurnalyny Apply sahypasynda açyň.",
-    "up_unknown": "{name} täzelenişi gaty uzak dowam edýär: onuň žurnalyna Apply sahypasynda serediň."
+    "up_unknown": "{name} täzelenişi gaty uzak dowam edýär: onuň žurnalyna Apply sahypasynda serediň.",
+    "bk_file_hint": "Nireden ýükläp bolýar (baglanyşyk bir gezek, 15 minut işleýär):",
+    "up_starting": "Täzelenme başlanýar…"
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

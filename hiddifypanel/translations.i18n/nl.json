@@ -4810,7 +4810,6 @@
     "bk_history_none": "Nog geen back-ups op de server.",
     "bk_history_month": "{n} back-ups van de afgelopen 30 dagen, nieuwste eerst (tik op ⌄ voor alle, tik op een naam om te downloaden):",
     "bk_history_none_month": "Geen back-ups in de afgelopen 30 dagen.",
-    "bk_file_hint": "Waarvandaan downloaden (de links werken een uur):",
     "bc_to_users": "👥 Naar gebruikers",
     "bc_to_admins": "🧑‍💼 Naar beheerders",
     "bc_admins_menu": "Bericht aan beheerders",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "{n} min tot nu toe",
     "up_done": "{name} is succesvol bijgewerkt.",
     "up_failed": "De update van {name} is gestopt zonder af te ronden: open het logboek op de pagina Apply.",
-    "up_unknown": "De update van {name} duurt te lang: bekijk het logboek op de pagina Apply."
+    "up_unknown": "De update van {name} duurt te lang: bekijk het logboek op de pagina Apply.",
+    "bk_file_hint": "Waar te downloaden (de link werkt één keer, 15 minuten lang):",
+    "up_starting": "Update wordt gestart…"
   },
   "cdn": "🔀 CDN (Cloudflare-proxy, ...)",
   "cf-delete": {

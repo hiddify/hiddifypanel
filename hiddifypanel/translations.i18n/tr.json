@@ -4810,7 +4810,6 @@
     "bk_history_none": "Sunucuda henüz yedek yok.",
     "bk_history_month": "Son 30 günden {n} yedek, en yeniler önce (tümünü görmek için ⌄ simgesine, indirmek için ada dokunun):",
     "bk_history_none_month": "Son 30 günde yedek yok.",
-    "bk_file_hint": "Nereden indirilsin (bağlantılar bir saat çalışır):",
     "bc_to_users": "👥 Kullanıcılara",
     "bc_to_admins": "🧑‍💼 Yöneticilere",
     "bc_admins_menu": "Yöneticilere Mesaj",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "Şimdiye kadar {n} dk",
     "up_done": "{name} başarıyla güncellendi.",
     "up_failed": "{name} güncellemesi tamamlanmadan durdu: günlüğünü Apply sayfasında açın.",
-    "up_unknown": "{name} güncellemesi çok uzun sürüyor: günlüğüne Apply sayfasında bakın."
+    "up_unknown": "{name} güncellemesi çok uzun sürüyor: günlüğüne Apply sayfasında bakın.",
+    "bk_file_hint": "Nereden indirilir (bağlantı bir kez, 15 dakika boyunca çalışır):",
+    "up_starting": "Güncelleme başlatılıyor…"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

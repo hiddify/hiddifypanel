@@ -582,10 +582,10 @@ def on_text(ctx: Ctx, text: str) -> None:
 
 
 #: The newest backups listed (a message holds about 4000 characters), from this many days back
-MAX_BACKUPS_LISTED = 40
+MAX_BACKUPS_LISTED = 20  # each takes 3 of the 100 formatted parts a message may hold (a link, two dates)
 HISTORY_DAYS = 30
-#: A backup's download links work this long (a random key for that one file: api/v1/tgbot/backup/<key>/)
-DOWNLOAD_TTL = 3600
+#: A backup's download link: a random key for that one file (api/v1/tgbot/backup/<key>/), used once, this long
+DOWNLOAD_TTL = 15 * 60
 _DOWNLOAD_KEY = "tgbot:bkdl:{}"
 _STEM = re.compile(r"^\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}$")
 
@@ -675,7 +675,7 @@ def backup_history(ctx: Ctx, page: int = 0) -> Screen:
             stem = f["name"].removesuffix(".json")
             # A tap on the name opens that backup in the bot (a /start link: a quote's text cannot hold the bot's keys)
             title = f'<a href="https://t.me/{bot.username}?start=bk_{stem}">{h(name)}</a>' if bot.username and _STEM.match(stem) else h(name)
-            entries.append(f"{mark} <b>{title}</b>\n📅 {day} · 🕒 {hour} · 📦 {backup_msg._kb(int(f['size']))}")
+            entries.append(f"{mark} {title}\n📅 {day} · 🕒 {hour} · 📦 {backup_msg._kb(int(f['size']))}")
         body = "\n\n".join(entries)
         lines.append(f"<blockquote expandable>{body}</blockquote>")
     # Older backups of the month on further pages (a message holds about 40 of them)

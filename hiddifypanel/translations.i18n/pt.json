@@ -3575,7 +3575,6 @@
     "bk_history_none": "Ainda não há backups no servidor.",
     "bk_history_month": "{n} backups dos últimos 30 dias, os mais recentes primeiro (toque em ⌄ para ver todos, toque num nome para baixar):",
     "bk_history_none_month": "Nenhum backup nos últimos 30 dias.",
-    "bk_file_hint": "De onde baixar (os links funcionam por uma hora):",
     "bc_to_users": "👥 Para usuários",
     "bc_to_admins": "🧑‍💼 Para administradores",
     "bc_admins_menu": "Mensagem para administradores",
@@ -3624,7 +3623,9 @@
     "up_elapsed": "{n} min até agora",
     "up_done": "{name} foi atualizado com sucesso.",
     "up_failed": "A atualização de {name} parou sem terminar: abra o log na página Apply.",
-    "up_unknown": "A atualização de {name} está demorando demais: veja o log na página Apply."
+    "up_unknown": "A atualização de {name} está demorando demais: veja o log na página Apply.",
+    "bk_file_hint": "Onde baixar (o link funciona uma vez, por 15 minutos):",
+    "up_starting": "Iniciando a atualização…"
   },
   "cdn": "CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

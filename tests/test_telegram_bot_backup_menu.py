@@ -54,10 +54,11 @@ class BackupMenuTests(Base):
         with mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.list_files", lambda: files), mock.patch.object(admin, "bot", SimpleNamespace(username="b")):
             admin.send_backup(self.ctx, ["hist"])
             first = self.shown[-1]
-            admin.send_backup(self.ctx, ["hist", "2"])
+            pages = -(-89 // admin.MAX_BACKUPS_LISTED)
+            admin.send_backup(self.ctx, ["hist", str(pages - 1)])
             last = self.shown[-1]
         self.assertIn("bk:hist:1", self.data(first))
-        self.assertEqual(last.text.count("?start=bk_"), 89 - 2 * admin.MAX_BACKUPS_LISTED)
+        self.assertEqual(last.text.count("?start=bk_"), 89 - (pages - 1) * admin.MAX_BACKUPS_LISTED)
         self.assertIn(files[-1]["name"].removesuffix(".json"), last.text)
 
     def test_no_backups_in_the_last_month(self):
@@ -100,6 +101,27 @@ class BackupMenuTests(Base):
         self.assertTrue(nav.is_admin_screen(ui.Cb.backup, []))
         self.assertTrue(nav.is_admin_screen(ui.Cb.backup, ["hist"]))
         self.assertFalse(nav.is_admin_screen(ui.Cb.backup, ["now"]))
+
+
+class DownloadKeyTests(unittest.TestCase):
+    def test_a_key_gives_its_file_once(self):
+        import tempfile
+        from pathlib import Path
+
+        from hiddifypanel.panel.commercial.restapi.v1 import tgbot
+
+        with tempfile.TemporaryDirectory() as d:
+            name = "2026_11_22__22_41_10.json"
+            (Path(d) / name).write_text("{}", encoding="utf-8")
+            store = {"tgbot:bkdl:k1": name}
+            redis = SimpleNamespace(getdel=lambda k: store.pop(k, None))
+            with mock.patch.object(tgbot, "redis_client", redis), mock.patch.object(tgbot, "hconfig", lambda key: "token"), mock.patch(
+                "hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.backup_dir", lambda: Path(d)
+            ), mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api._json_attachment", lambda text, filename: ("file", filename)):
+                first = tgbot.TGBackupResource().get("k1")
+                again = tgbot.TGBackupResource().get("k1")
+        self.assertEqual(first, ("file", f"hiddify-{name}"))
+        self.assertEqual(again[1], 404)  # used: a forwarded link gives nothing
 
 
 if __name__ == "__main__":

@@ -271,7 +271,8 @@ class TGBackupResource(Resource):
     def get(self, key: str):
         if not hconfig(ConfigEnum.telegram_bot_token) or not key or len(key) > 64:
             return {"error": "not_found"}, 404
-        name = redis_client.get(f"tgbot:bkdl:{key}")
+        # Used once: a link forwarded or seen later (a log, a screenshot) gives nothing
+        name = redis_client.getdel(f"tgbot:bkdl:{key}")
         name = name.decode() if isinstance(name, bytes) else name
         if not name:
             return {"error": "expired"}, 404

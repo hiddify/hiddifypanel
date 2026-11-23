@@ -4810,7 +4810,6 @@
     "bk_history_none": "Serverda hali zaxira nusxa yo'q.",
     "bk_history_month": "Oxirgi 30 kundagi {n} ta zaxira nusxa, yangilari birinchi (hammasini ko‘rish uchun ⌄ ni bosing, yuklab olish uchun nomini bosing):",
     "bk_history_none_month": "Oxirgi 30 kunda zaxira nusxa yo‘q.",
-    "bk_file_hint": "Qayerdan yuklab olinsin (havolalar bir soat ishlaydi):",
     "bc_to_users": "👥 Foydalanuvchilarga",
     "bc_to_admins": "🧑‍💼 Adminlarga",
     "bc_admins_menu": "Adminlarga xabar",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "Hozircha {n} daq",
     "up_done": "{name} muvaffaqiyatli yangilandi.",
     "up_failed": "{name} yangilanishi tugamay to'xtadi: uning jurnalini Apply sahifasida oching.",
-    "up_unknown": "{name} yangilanishi juda uzoq cho'zildi: uning jurnalini Apply sahifasida ko'ring."
+    "up_unknown": "{name} yangilanishi juda uzoq cho'zildi: uning jurnalini Apply sahifasida ko'ring.",
+    "bk_file_hint": "Qayerdan yuklab olish (havola bir marta, 15 daqiqa ishlaydi):",
+    "up_starting": "Yangilanish boshlanmoqda…"
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

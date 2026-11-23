@@ -396,6 +396,18 @@ class BackupMessageTests(unittest.TestCase):
         self.assertEqual([backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔒 Secure IPv4", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure"])
         self.assertTrue(all(u.startswith("https://") for _k, _a, u in found))  # never over plain http
 
+    def test_the_ip_too_when_no_domain_is_it(self):
+        from hiddifypanel.models import DomainType
+        from hiddifypanel.panel.commercial.telegrambot import backup_msg
+
+        ip = ".".join(["198", "51", "100", "9"])
+        domains = [SimpleNamespace(domain="panel.example.com", mode=DomainType.direct, tls_status="valid")]
+        with mock.patch("hiddifypanel.models.Domain.get_domains", lambda: domains), mock.patch(
+            "hiddifypanel.panel.hiddify.get_account_panel_link", lambda owner, host, is_https=True: ("https" if is_https else "http") + f"://{host}/p/"
+        ), mock.patch("hiddifypanel.hutils.network.get_ip_str", lambda v: ip):
+            found = backup_msg.links(None)
+        self.assertEqual(found[-1], ("insecure", ip, f"https://{ip}/p/"))  # red, over https (no http link)
+
     def test_the_labels_by_kind(self):
         from hiddifypanel.panel.commercial.telegrambot import backup_msg
 

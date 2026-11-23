@@ -25,6 +25,12 @@ class FakeRedis:
     def hdel(self, name, key):
         self.h.pop(key, None)
 
+    def get(self, key):
+        return self.h.get("@" + key)
+
+    def set(self, key, value, ex=None):
+        self.h["@" + key] = value
+
 
 def node(id, name, ok=True, version="14.5.0"):
     return SimpleNamespace(id=id, name=name, ok=ok, host=SimpleNamespace(panel_version=version))
@@ -71,18 +77,23 @@ class ScreenTests(Base):
 
 
 class StartTests(Base):
-    def test_start_waits_and_is_watched(self):
-        with mock.patch.object(updates, "start", lambda ctx, n: (True, 1000.0)), mock.patch("hiddifypanel.panel.commercial.telegrambot.miniapp.needs_unlock", lambda *a: False):
+    def test_start_waits_in_a_message_of_its_own_and_is_watched(self):
+        sent = []
+        fake_bot = SimpleNamespace(send_message=lambda chat, text, **k: sent.append(text) or SimpleNamespace(message_id=88))
+        with mock.patch.object(updates, "start", lambda ctx, n: (True, 1000.0)), mock.patch.object(updates, "bot", fake_bot), mock.patch(
+            "hiddifypanel.panel.commercial.telegrambot.miniapp.needs_unlock", lambda *a: False
+        ):
             updates.show_update(self.ctx, ["2", "go"])
-        self.assertIn(t(T.up_running, "en", name="Berlin"), self.shown[-1].text)
-        entry = json.loads(self.redis.h["5:70"])
-        self.assertEqual((entry["server"], entry["server_started"]), (2, 1000.0))
+        self.assertIn(t(T.up_running, "en", name="Berlin"), sent[-1])  # not over the bot's screen
+        self.assertNotIn(t(T.up_running, "en", name="Berlin"), self.shown[-1].text)
+        entry = json.loads(self.redis.h["5:88"])
+        self.assertEqual((entry["server"], entry["server_started"], entry["admin"]), (2, 1000.0, 1))
 
     def test_not_started_says_so(self):
         with mock.patch.object(updates, "start", lambda ctx, n: (False, 0.0)), mock.patch("hiddifypanel.panel.commercial.telegrambot.miniapp.needs_unlock", lambda *a: False):
             updates.show_update(self.ctx, ["2", "go"])
-        self.assertEqual(self.toasts[-1], t(T.up_not_started, "en"))
-        self.assertEqual(self.redis.h, {})
+        self.assertIn(t(T.up_not_started, "en"), self.shown[-1].text)
+        self.assertFalse([k for k in self.redis.h if not k.startswith("@")])  # nothing watched
 
 
 class OutcomeTests(unittest.TestCase):
@@ -107,7 +118,7 @@ class OutcomeTests(unittest.TestCase):
         edited = []
         fake_bot = SimpleNamespace(username="b", edit_message_text=lambda text, chat, msg, reply_markup=None: edited.append(text))
         state = {"running": [], "last": {"update": {"mtime": time.time(), "finished": True}}}
-        with mock.patch.object(updates, "redis_client", redis), mock.patch.object(updates, "bot", fake_bot), mock.patch.object(updates, "_state_of", lambda i: state), mock.patch(
+        with mock.patch.object(updates, "redis_client", redis), mock.patch.object(updates, "bot", fake_bot), mock.patch.object(updates, "_state_of", lambda *a: state), mock.patch(
             "hiddifypanel.models.hconfig", lambda key: "x"
         ), mock.patch("hiddifypanel.panel.commercial.telegrambot.icons.enabled", lambda: False):
             updates.watch_updates()

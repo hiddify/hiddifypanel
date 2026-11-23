@@ -4810,7 +4810,6 @@
     "bk_history_none": "Aún no hay copias de seguridad en el servidor.",
     "bk_history_month": "{n} copias de seguridad de los últimos 30 días, las más recientes primero (toca ⌄ para ver todas, toca un nombre para descargarla):",
     "bk_history_none_month": "No hay copias de seguridad en los últimos 30 días.",
-    "bk_file_hint": "Desde dónde descargar (los enlaces funcionan durante una hora):",
     "bc_to_users": "👥 A usuarios",
     "bc_to_admins": "🧑‍💼 A administradores",
     "bc_admins_menu": "Mensaje a administradores",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "{n} min hasta ahora",
     "up_done": "{name} se actualizó correctamente.",
     "up_failed": "La actualización de {name} se detuvo sin terminar: abre su registro en la página Apply.",
-    "up_unknown": "La actualización de {name} tarda demasiado: revisa su registro en la página Apply."
+    "up_unknown": "La actualización de {name} tarda demasiado: revisa su registro en la página Apply.",
+    "bk_file_hint": "Desde dónde descargarlo (el enlace funciona una vez, durante 15 minutos):",
+    "up_starting": "Iniciando la actualización…"
   },
   "cdn": "🔀 CDN (proxy de Cloudflare, ...)",
   "cf-delete": {

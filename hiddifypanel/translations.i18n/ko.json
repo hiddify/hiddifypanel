@@ -4810,7 +4810,6 @@
     "bk_history_none": "서버에 아직 백업이 없습니다.",
     "bk_history_month": "최근 30일간 백업 {n}개, 최신순 (전체 보기는 ⌄ 탭, 다운로드는 이름 탭):",
     "bk_history_none_month": "최근 30일간 백업이 없습니다.",
-    "bk_file_hint": "어디서 다운로드할까요 (링크는 1시간 동안 유효):",
     "bc_to_users": "👥 사용자에게",
     "bc_to_admins": "🧑‍💼 관리자에게",
     "bc_admins_menu": "관리자에게 메시지",
@@ -4859,7 +4858,9 @@
     "up_elapsed": "지금까지 {n}분",
     "up_done": "{name} 업데이트가 완료되었습니다.",
     "up_failed": "{name} 업데이트가 끝나지 않고 중단되었습니다. Apply 페이지에서 로그를 확인하세요.",
-    "up_unknown": "{name} 업데이트가 너무 오래 걸립니다. Apply 페이지에서 로그를 확인하세요."
+    "up_unknown": "{name} 업데이트가 너무 오래 걸립니다. Apply 페이지에서 로그를 확인하세요.",
+    "bk_file_hint": "다운로드 위치 (링크는 한 번만, 15분간 작동합니다):",
+    "up_starting": "업데이트를 시작하는 중…"
   },
   "cdn": "🔀 CDN (Cloudflare 프록시 등)",
   "cf-delete": {

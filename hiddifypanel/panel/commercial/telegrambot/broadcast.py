@@ -181,7 +181,7 @@ def _find_admin(ctx: Ctx, text: str) -> None:
 
 def _ask_user(ctx: Ctx, note: str = "") -> None:
     """Which user: their name, typed (a part of it is enough)."""
-    ctx.state.update(awaiting=AWAITING_USER, bc_target=None, bc_chat=None, bc_message=None)
+    ctx.state.update(awaiting=AWAITING_USER, bc_target=None, bc_chat=None, bc_admin=None, bc_aud=None, bc_message=None)
     ctx.toast()
     text = f"👤 <b>{ctx.tr(T.bc_one_title)}</b>\n\n{ctx.tr(T.bc_one_ask)}"
     if note:
@@ -203,7 +203,7 @@ def _pick_user(ctx: Ctx, user_id: int) -> None:
     user = _visible(ctx, user_id)
     if user is None or not user.telegram_id:
         return _ask_user(ctx, ctx.tr(T.bc_one_no_bot, name=h(user.name)) if user is not None else ctx.tr(T.gone))
-    ctx.state.update(awaiting=AWAITING, bc_target=user.id, bc_chat=None, bc_message=None)
+    ctx.state.update(awaiting=AWAITING, bc_target=user.id, bc_chat=None, bc_admin=None, bc_aud=None, bc_message=None)
     ctx.toast()
     ctx.show(Screen(f"👤 <b>{h(user.name)}</b>\n\n✍️ {ctx.tr(T.bc_one_write, name=h(user.name))}", keyboard([btn(ctx.tr(T.back), Cb.broadcast, "one")])))
     menukey.prompt(ctx, f"👇 {ctx.tr(T.bc_write_hint)}", ctx.tr(T.bc_placeholder))
@@ -230,7 +230,7 @@ def _chat_target(ctx: Ctx, chats: list[int]) -> bool:
 
 def _pick_chat(ctx: Ctx, chat: int, label: str) -> None:
     """Someone without an account here who wrote to this admin: the message goes to their chat."""
-    ctx.state.update(awaiting=AWAITING, bc_target=None, bc_chat=[int(chat), label[:60]], bc_message=None)
+    ctx.state.update(awaiting=AWAITING, bc_target=None, bc_chat=[int(chat), label[:60]], bc_admin=None, bc_aud=None, bc_message=None)
     ctx.toast()
     ctx.show(Screen(f"👤 <b>{h(label)}</b>\n\n✍️ {ctx.tr(T.bc_one_write, name=h(label))}", keyboard([btn(ctx.tr(T.back), Cb.broadcast, "one")])))
     menukey.prompt(ctx, f"👇 {ctx.tr(T.bc_write_hint)}", ctx.tr(T.bc_placeholder))
