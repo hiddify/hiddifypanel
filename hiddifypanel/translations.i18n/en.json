@@ -4687,7 +4687,7 @@
     "added_days": "{n} days added",
     "added_gb": "{n} GB added",
     "admin_hello": "👋 Hi <b>{name}</b>",
-    "admin_summary": "👥 Users  <b>{total}</b>\n🟢 Active  <b>{active}</b>\n⚡️ Online  <b>{online}</b>\n⏳ Ending soon  <b>{expiring}</b>",
+    "admin_summary": "👥 Users  <b>{total}</b>\n🟢 Active  <b>{active}</b>\n⚡️ Online  <b>{online}</b>\n⏳ Ending Soon  <b>{expiring}</b>",
     "admin_welcome": "Hooray 🎉 🎉 🎉 Welcome to admin bot. Choose your action",
     "ago_days": "{n} days ago",
     "ago_hours": "{n} h ago",
