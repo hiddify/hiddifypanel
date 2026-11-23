@@ -390,7 +390,7 @@ const TEXTS = __TEXTS__, RTL = ['fa', 'ar', 'ur', 'ps'];
   } else if (kind === 'scan') {
     i.textContent = '📷'; m.textContent = L.scan;
     const open = () => { tap(); tg.showScanQrPopup({text: L.scan}, (text) => { send({text: text}); return true; }); };
-    b.hidden = false; b.textContent = L.scan_again; b.onclick = open;
+    b.hidden = false; b.textContent = '📷 ' + L.scan_again; b.onclick = open;
     open();
   } else if (kind === 'emoji') {
     i.textContent = '⭐️'; m.textContent = L.emoji;
