@@ -4860,7 +4860,9 @@
     "up_failed": "{name} güncellemesi tamamlanmadan durdu: günlüğünü Apply sayfasında açın.",
     "up_unknown": "{name} güncellemesi çok uzun sürüyor: günlüğüne Apply sayfasında bakın.",
     "bk_file_hint": "Nereden indirilir (bağlantı bir kez, 15 dakika boyunca çalışır):",
-    "up_starting": "Güncelleme başlatılıyor…"
+    "up_starting": "Güncelleme başlatılıyor…",
+    "bl_no_key": "Bu telefonda kilit anahtarınız yok. Kilitleri yeniden ayarlamak için yönetici bağlantınızı panelden tekrar açın.",
+    "bu_expired": "Bu onay artık geçerli değil (zaten basıldı veya eski). İşlemi yeniden seçin."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

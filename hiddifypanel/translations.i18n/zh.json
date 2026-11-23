@@ -3634,7 +3634,9 @@
     "up_failed": "{name} 的更新未完成就停止了:请在 Apply 页面查看其日志。",
     "up_unknown": "{name} 的更新耗时过长:请在 Apply 页面查看其日志。",
     "bk_file_hint": "下载位置（链接仅可使用一次，有效期 15 分钟）：",
-    "up_starting": "正在开始更新…"
+    "up_starting": "正在开始更新…",
+    "bl_no_key": "这部手机上没有你的锁密钥。请再次从面板打开你的管理员链接，重新设置锁。",
+    "bu_expired": "该确认已失效（已被点击或已过期）。请重新选择操作。"
   },
   "cdn": "🔀 CDN（Cloudflare 代理，...）",
   "cf-delete": {

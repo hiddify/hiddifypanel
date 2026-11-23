@@ -4860,7 +4860,9 @@
     "up_failed": "Das Update von {name} wurde abgebrochen, ohne fertig zu werden: Öffnen Sie das Protokoll auf der Seite Apply.",
     "up_unknown": "Das Update von {name} dauert zu lange: Sehen Sie sich das Protokoll auf der Seite Apply an.",
     "bk_file_hint": "Hier herunterladen (der Link funktioniert einmal, 15 Minuten lang):",
-    "up_starting": "Update wird gestartet…"
+    "up_starting": "Update wird gestartet…",
+    "bl_no_key": "Dieses Telefon hat Ihren Sperrschlüssel nicht. Öffnen Sie Ihren Admin-Link erneut im Panel, um die Sperren neu einzurichten.",
+    "bu_expired": "Diese Bestätigung ist nicht mehr gültig (bereits gedrückt oder veraltet). Wählen Sie die Aktion erneut."
   },
   "cdn": "🔀 CDN (Cloudflare-Proxy, ...)",
   "cf-delete": {

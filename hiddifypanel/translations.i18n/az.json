@@ -4860,7 +4860,9 @@
     "up_failed": "{name} yeniləməsi başa çatmadan dayandı: jurnalını Apply səhifəsində açın.",
     "up_unknown": "{name} yeniləməsi çox uzun çəkir: jurnalına Apply səhifəsində baxın.",
     "bk_file_hint": "Haradan yükləmək olar (keçid bir dəfə və 15 dəqiqə işləyir):",
-    "up_starting": "Yeniləmə başlayır…"
+    "up_starting": "Yeniləmə başlayır…",
+    "bl_no_key": "Bu telefonda kilid açarınız yoxdur. Kilidləri yenidən qurmaq üçün admin linkinizi paneldən yenidən açın.",
+    "bu_expired": "Bu təsdiq artıq etibarsızdır (əvvəl basılıb və ya köhnədir). Əməliyyatı yenidən seçin."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

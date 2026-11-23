@@ -4860,7 +4860,9 @@
     "up_failed": "{name} yangilanishi tugamay to'xtadi: uning jurnalini Apply sahifasida oching.",
     "up_unknown": "{name} yangilanishi juda uzoq cho'zildi: uning jurnalini Apply sahifasida ko'ring.",
     "bk_file_hint": "Qayerdan yuklab olish (havola bir marta, 15 daqiqa ishlaydi):",
-    "up_starting": "Yangilanish boshlanmoqda…"
+    "up_starting": "Yangilanish boshlanmoqda…",
+    "bl_no_key": "Bu telefonda qulf kalitingiz yo‘q. Qulflarni qayta sozlash uchun admin havolangizni paneldan yana oching.",
+    "bu_expired": "Bu tasdiq endi amal qilmaydi (avval bosilgan yoki eskirgan). Amalni qaytadan tanlang."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

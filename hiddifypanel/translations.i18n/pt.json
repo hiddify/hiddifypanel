@@ -3625,7 +3625,9 @@
     "up_failed": "A atualização de {name} parou sem terminar: abra o log na página Apply.",
     "up_unknown": "A atualização de {name} está demorando demais: veja o log na página Apply.",
     "bk_file_hint": "Onde baixar (o link funciona uma vez, por 15 minutos):",
-    "up_starting": "Iniciando a atualização…"
+    "up_starting": "Iniciando a atualização…",
+    "bl_no_key": "Este telefone não tem a sua chave de bloqueio. Abra novamente o seu link de administrador no painel para configurar os bloqueios de novo.",
+    "bu_expired": "Essa confirmação não é mais válida (já foi usada ou está antiga). Escolha a ação novamente."
   },
   "cdn": "CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

@@ -4860,7 +4860,9 @@
     "up_failed": "L'aggiornamento di {name} si è fermato senza completarsi: apri il suo log nella pagina Apply.",
     "up_unknown": "L'aggiornamento di {name} sta impiegando troppo: guarda il suo log nella pagina Apply.",
     "bk_file_hint": "Da dove scaricarlo (il link funziona una sola volta, per 15 minuti):",
-    "up_starting": "Avvio dell'aggiornamento…"
+    "up_starting": "Avvio dell'aggiornamento…",
+    "bl_no_key": "Questo telefono non ha la tua chiave di blocco. Riapri il link da amministratore dal pannello per impostare di nuovo i blocchi.",
+    "bu_expired": "Questa conferma non è più valida (già premuta o scaduta). Scegli di nuovo l'azione."
   },
   "cdn": "🔀 CDN (proxy Cloudflare, ...)",
   "cf-delete": {

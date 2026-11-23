@@ -4860,7 +4860,9 @@
     "up_failed": "{name} täzelenişi gutarman duruldy: onuň žurnalyny Apply sahypasynda açyň.",
     "up_unknown": "{name} täzelenişi gaty uzak dowam edýär: onuň žurnalyna Apply sahypasynda serediň.",
     "bk_file_hint": "Nireden ýükläp bolýar (baglanyşyk bir gezek, 15 minut işleýär):",
-    "up_starting": "Täzelenme başlanýar…"
+    "up_starting": "Täzelenme başlanýar…",
+    "bl_no_key": "Bu telefonda gulp açaryňyz ýok. Gulplary täzeden sazlamak üçin admin salgyňyzy panelden ýene açyň.",
+    "bu_expired": "Bu tassyklama indi güýçde däl (öň basylypdyr ýa-da könelipdir). Hereketi ýene saýlaň."
   },
   "cdn": "🔀 CDN (Cloudflare Proksi, ...)",
   "cf-delete": {

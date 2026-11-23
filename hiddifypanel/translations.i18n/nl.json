@@ -4860,7 +4860,9 @@
     "up_failed": "De update van {name} is gestopt zonder af te ronden: open het logboek op de pagina Apply.",
     "up_unknown": "De update van {name} duurt te lang: bekijk het logboek op de pagina Apply.",
     "bk_file_hint": "Waar te downloaden (de link werkt één keer, 15 minuten lang):",
-    "up_starting": "Update wordt gestart…"
+    "up_starting": "Update wordt gestart…",
+    "bl_no_key": "Deze telefoon heeft je vergrendelingssleutel niet. Open je beheerderslink opnieuw vanuit het paneel om de vergrendelingen opnieuw in te stellen.",
+    "bu_expired": "Die bevestiging is niet meer geldig (al ingedrukt of verouderd). Kies de actie opnieuw."
   },
   "cdn": "🔀 CDN (Cloudflare-proxy, ...)",
   "cf-delete": {
