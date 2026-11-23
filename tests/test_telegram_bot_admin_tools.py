@@ -366,12 +366,12 @@ class BackupMessageTests(unittest.TestCase):
         found = [("secure", "panel.example.com", "https://panel.example.com/p/"), ("cdn", "cdn.example.com", "https://cdn.example.com/p/"), ("insecure", "192.0.2.1", "http://192.0.2.1/p/")]
         with mock.patch.object(backup_msg, "links", lambda owner: found), mock.patch("hiddifypanel.panel.commercial.telegrambot.icons.enabled", lambda: False):
             rows = json.loads(backup_msg.markup("en", None).to_json())["inline_keyboard"]
-            plain = json.loads(backup_msg.markup("en", None, plain_http=False).to_json())["inline_keyboard"]
+            plain = json.loads(backup_msg.markup("en", None, no_ip=True).to_json())["inline_keyboard"]
         styles = [r[0].get("style") for r in rows]
         self.assertEqual(styles, ["success", "success", "danger"])  # secure and CDN green, not secure red
         self.assertEqual([r[0]["text"] for r in rows], ["🔒 Secure", "🔐 Secure", "⚠️ Not Secure IPv4"])
         self.assertFalse(any("example.com" in r[0]["text"] for r in rows))  # never the address itself
-        self.assertEqual(len(plain), 2)  # without the plain http one
+        self.assertEqual(len(plain), 2)  # without the IP one
 
     def test_secure_means_a_valid_certificate(self):
         from hiddifypanel.models import DomainType

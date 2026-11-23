@@ -88,6 +88,24 @@ def save(m: Managed) -> None:
     db.session.commit()
 
 
+def forget(m: Managed) -> None:
+    """An agent's bot that is gone (deleted in BotFather, its token revoked): out of the panel, so the agent can make
+    a new one and nobody keeps calling Telegram for it."""
+    from hiddifypanel.database import db
+
+    pref = _pref()
+    pref.put(_PANEL, _PREF.format(m.bot_id), "")
+    ids = [i for i in (pref.get(_PANEL, _INDEX) or "").split(",") if i.isdigit() and int(i) != m.bot_id]
+    pref.put(_PANEL, _INDEX, ",".join(ids))
+    db.session.commit()
+    logger.info(f"tgbot: agent {m.agent_id}'s bot {m.bot_id} is gone, forgotten")
+
+
+def is_gone(e: Exception) -> bool:
+    """Telegram says the bot's token is no longer valid (the bot deleted or its token revoked)."""
+    return getattr(e, "error_code", None) in (401, 404)
+
+
 def webhook_secret(token: str) -> str:
     return hmac.new(b"hiddify-managed-bot", token.encode(), hashlib.sha256).hexdigest()[:48]
 
@@ -148,6 +166,15 @@ def show_reseller_bot(ctx: Ctx, _args: list[str]) -> None:
         return ctx.toast(ctx.tr(T.not_allowed), alert=True)
     ctx.toast()
     m = of_agent(ctx.admin.id)
+    if m:
+        import telebot
+
+        try:
+            telebot.TeleBot(m.token, threaded=False).get_me()
+        except Exception as e:
+            if is_gone(e):  # deleted in BotFather: the key to make a new one, below
+                forget(m)
+                m = None
     if m:
         lines = [f"🤖 <b>{ctx.tr(T.rb_title)}</b>", RULE, ctx.tr(T.rb_ready, name=f"@{m.username}")]
         return ctx.show(Screen("\n".join(lines), keyboard([types.InlineKeyboardButton(f"@{m.username}", url=f"https://t.me/{m.username}")], [btn(ctx.tr(T.back), Cb.admin_settings)])))

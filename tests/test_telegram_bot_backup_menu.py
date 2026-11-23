@@ -104,7 +104,7 @@ class BackupMenuTests(Base):
 
 
 class DownloadKeyTests(unittest.TestCase):
-    def test_a_key_gives_its_file_once(self):
+    def test_a_key_works_a_minute_from_its_first_use(self):
         import tempfile
         from pathlib import Path
 
@@ -113,28 +113,20 @@ class DownloadKeyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             name = "2026_11_22__22_41_10.json"
             (Path(d) / name).write_text("{}", encoding="utf-8")
-            store = {"tgbot:bkdl:k1": name}
-            class Pipe:
-                def __init__(self):
-                    self.ops = []
-
-                def get(self, k):
-                    self.ops.append(("get", k))
-
-                def delete(self, k):
-                    self.ops.append(("del", k))
-
-                def execute(self):
-                    return [store.get(k) if op == "get" else store.pop(k, None) for op, k in self.ops]
-
-            redis = SimpleNamespace(pipeline=Pipe)
+            store, ttls = {"tgbot:bkdl:k1": name}, {"tgbot:bkdl:k1": 900}
+            redis = SimpleNamespace(get=store.get, ttl=lambda k: ttls.get(k, -2), expire=lambda k, s: ttls.__setitem__(k, s))
             with mock.patch.object(tgbot, "redis_client", redis), mock.patch.object(tgbot, "hconfig", lambda key: "token"), mock.patch(
                 "hiddifypanel.panel.commercial.restapi.v2.admin.backup_api.backup_dir", lambda: Path(d)
             ), mock.patch("hiddifypanel.panel.commercial.restapi.v2.admin.backup_api._json_attachment", lambda text, filename: ("file", filename)):
                 first = tgbot.TGBackupResource().get("k1")
-                again = tgbot.TGBackupResource().get("k1")
+                self.assertEqual(ttls["tgbot:bkdl:k1"], tgbot.BACKUP_KEY_GRACE)  # a minute left from now
+                again = tgbot.TGBackupResource().get("k1")  # a browser asking twice, another key on the screen
+                self.assertEqual(ttls["tgbot:bkdl:k1"], tgbot.BACKUP_KEY_GRACE)  # not one more minute
+                store.clear()  # the minute is over
+                late = tgbot.TGBackupResource().get("k1")
         self.assertEqual(first, ("file", f"hiddify-{name}"))
-        self.assertEqual(again[1], 404)  # used: a forwarded link gives nothing
+        self.assertEqual(again, first)
+        self.assertEqual(late[1], 404)  # a forwarded link gives nothing
 
 
 if __name__ == "__main__":

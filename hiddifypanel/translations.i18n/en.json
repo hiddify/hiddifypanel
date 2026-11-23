@@ -5282,6 +5282,7 @@
     "up_unknown": "The update of {name} is taking too long: look at its log on the Apply page.",
     "up_starting": "Starting the update…",
     "bl_no_key": "This phone does not hold your lock key. Open your admin link from the panel again to set the locks anew.",
+    "bl_no_page": "This action is locked, and the fingerprint page cannot open: the panel needs a domain with a valid certificate.",
     "bu_expired": "That confirm is gone (it was pressed already, or it is old). Pick the action again."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",

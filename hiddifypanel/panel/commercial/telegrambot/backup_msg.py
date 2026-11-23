@@ -118,10 +118,10 @@ def button_label(kind: str, address: str) -> str:
     return "🔒 Secure IPv4" if _is_ip(address) else "🔒 Secure"
 
 
-def markup(lang: str, owner, *, plain_http: bool = True, tail: list | None = None) -> types.InlineKeyboardMarkup:
+def markup(lang: str, owner, *, no_ip: bool = False, tail: list | None = None) -> types.InlineKeyboardMarkup:
     rows = []
     for kind, address, url in links(owner)[:20]:
-        if not plain_http and url.startswith("http://"):  # the retry without plain-http links (Telegram may refuse them)
+        if no_ip and _is_ip(address):  # the retry without the IP keys (Telegram may refuse a link to an address)
             continue
         rows.append([url_btn(button_label(kind, address), url, style=Style.danger if kind == "insecure" else Style.success)])
     if tail:
@@ -140,7 +140,7 @@ def send(chat_id: int, document: IO[bytes], disk_name: str, account, *, size: in
     owner = AdminUser.get_super_admin()
     when = when_of(disk_name)
     text = caption(lang, when, size)
-    tries = [lambda: markup(lang, owner, tail=tail), lambda: markup(lang, owner, plain_http=False, tail=tail), lambda: keyboard(tail) if tail else None]
+    tries = [lambda: markup(lang, owner, tail=tail), lambda: markup(lang, owner, no_ip=True, tail=tail), lambda: keyboard(tail) if tail else None]
     from . import rich
 
     error: Exception | None = None

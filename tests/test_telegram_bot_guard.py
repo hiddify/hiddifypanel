@@ -80,18 +80,19 @@ class ConnectTests(Base):
 
 class SweepTests(Base):
     def test_ended_users_leave(self):
-        ended = SimpleNamespace(id=1, telegram_id=11, lang=None)
-        active = SimpleNamespace(id=2, telegram_id=12, lang=None)
-        users = mock.MagicMock(**{"query.filter.return_value.order_by.return_value.yield_per.return_value": [active, ended]})
+        ended = SimpleNamespace(id=1, telegram_id=11, lang=None, deleted=False)
+        active = SimpleNamespace(id=2, telegram_id=12, lang=None, deleted=False)
+        deleted = SimpleNamespace(id=3, telegram_id=13, lang=None, deleted=True)  # a delete keeps the row: out too
+        users = mock.MagicMock(**{"query.filter.return_value.order_by.return_value.yield_per.return_value": [active, ended, deleted]})
         users.id.__gt__.return_value = True
         admins = mock.MagicMock(**{"query.filter.return_value.first.return_value": None})
-        status = {1: guard.accounts.Status.expired, 2: guard.accounts.Status.active}
+        status = {1: guard.accounts.Status.expired, 2: guard.accounts.Status.active, 3: guard.accounts.Status.active}
         with mock.patch.object(guard, "User", users), mock.patch.object(guard, "AdminUser", admins), mock.patch.object(guard.accounts, "status", lambda u: status[u.id]), mock.patch.object(
             guard, "redis_client", SimpleNamespace(set=lambda *a, **k: True, get=lambda k: None)
-        ), mock.patch.object(guard, "lang_of", lambda *a, **k: "en"):
+        ), mock.patch.object(guard, "lang_of", lambda *a, **k: "en"), mock.patch.object(guard, "_active_account", lambda tg: False), mock.patch.object(guard.time, "sleep", lambda s: None):
             guard.sweep()
-        self.assertEqual(self.names(), ["get_chat_member", "ban_chat_member", "unban_chat_member", "send_message"])
-        self.assertEqual(self.bot.calls[1][1], (-100, 11))
+        self.assertEqual(self.names(), ["get_chat_member", "ban_chat_member", "unban_chat_member", "send_message"] * 2)
+        self.assertEqual([c[1] for c in self.bot.calls if c[0] == "ban_chat_member"], [(-100, 11), (-100, 13)])
 
 
 if __name__ == "__main__":

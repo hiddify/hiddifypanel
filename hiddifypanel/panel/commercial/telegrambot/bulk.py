@@ -175,8 +175,11 @@ def run(ctx: Ctx, f: Filter, action: str, value: int) -> tuple[int, int]:
     if action == "on":
         users = [u for u in users if not u.enable]
         users, skipped = _within_active_limit(admin, users, users)
-    elif action in ("renew", "days", "gb"):
+    elif action == "renew":
         users, skipped = _within_active_limit(admin, users, [u for u in users if not u.is_active])
+    elif action in ("days", "gb"):  # more days wake an ended package, more data one out of data; not a switched-off user
+        wakes = accounts.Status.expired if action == "days" else accounts.Status.no_data
+        users, skipped = _within_active_limit(admin, users, [u for u in users if accounts.status(u) is wakes])
     elif action == "reset":
         users, skipped = _within_active_limit(admin, users, [u for u in users if accounts.status(u) is accounts.Status.no_data])
     changed = []

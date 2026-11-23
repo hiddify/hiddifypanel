@@ -206,9 +206,11 @@ def show_update(ctx: Ctx, args: list[str]) -> None:
     if not started:
         return ctx.show(Screen(f"⚠️ {ctx.tr(T.up_not_started)}", keyboard([btn(f"🔄 {ctx.tr(T.up_title)}", Cb.update)])))
     name = _name(ctx, n)
-    ctx.show(list_screen(ctx))  # the bot's screen goes on; the waiting is a message of its own
+    # The waiting message and its watch first (this panel may restart for its own update): then the screen, which
+    # asks every server (seconds), goes on in place above it
     sent = bot.send_message(ctx.chat_id, waiting_text(ctx.lang, name, time.time()))
     _watch(ctx.chat_id, sent.message_id, n.id, name, ctx.lang, server_started, ctx.admin.id)
+    ctx.show(list_screen(ctx))
 
 
 # --------------------------------------------------------------------------- watching it (scheduled)

@@ -136,6 +136,11 @@ class LockTests(Base):
         miniapp.show_lock(self.ctx, ["root", "1"])
         self.assertEqual(miniapp.locked(5), set())
 
+    def test_no_page_to_ask_on_means_the_locked_action_waits(self):
+        miniapp.set_locked(5, {"del"})
+        with mock.patch.object(miniapp, "page_url", lambda *a, **k: None):  # the panel has no domain for a Mini App
+            self.assertTrue(miniapp.needs_unlock(self.ctx, "del", "ua:3:del:1"))  # not done without the fingerprint
+
     def test_the_panel_link_again_forgets_only_the_phone_key(self):
         miniapp.set_locked(5, {"del"})
         self.prefs[(5, miniapp.LOCK_KEY_PREF)] = "x"
@@ -175,6 +180,13 @@ class ManagedBotTests(Base):
 
 
 class ScanTests(Base):
+    def test_the_scan_key_works_again_from_the_same_message(self):
+        token = miniapp.lasting_token(5, "scan", lang="en")
+        with mock.patch.object(miniapp, "_scanned", lambda pending, text: None):
+            for _ in range(2):  # the list's key is not redrawn after a scan: pressed again, it still works
+                with self.signed(5):
+                    self.assertEqual(miniapp.answer("data", {"t": token, "text": "x"}, "tok")[1], 200)
+
     def test_only_their_own_users(self):
         uid = "6f1c2b8e-1111-4a2b-9c3d-0123456789ab"
         admin = SimpleNamespace(id=1, mode="super_admin")
@@ -192,6 +204,7 @@ class ConfigFileTests(unittest.TestCase):
     def test_formats_and_ip_check(self):
         self.assertEqual(set(cfgfile.FORMATS), {"singbox", "clash", "links"})
         self.assertFalse(cfgfile._is_ip("panel.example.com"))
+        self.assertTrue(cfgfile._is_ip("::1"))
 
     def test_hidden_while_advanced_is_off(self):
         with mock.patch(ADV, lambda: False):

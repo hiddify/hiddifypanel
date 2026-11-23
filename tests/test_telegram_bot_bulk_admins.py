@@ -21,7 +21,7 @@ class FakeUser(SimpleNamespace):
 
 
 def user(i, enable=True):
-    return FakeUser(id=i, name=f"u{i}", enable=enable, is_active=enable, package_days=30, usage_limit_GB=10, current_usage=5, start_date=None, deleted=False)
+    return FakeUser(id=i, name=f"u{i}", enable=enable, is_active=enable, package_days=30, usage_limit_GB=10, usage_limit=10, current_usage=5, remaining_days=10, start_date=None, deleted=False)
 
 
 class FakeState(dict):
@@ -133,12 +133,17 @@ class BulkTests(Base):
         self.assertEqual([u.deleted for u in self.users], [True, True, False])
 
     def test_more_days_for_ended_packages_keep_the_active_limit(self):
-        for u in self.users:
-            u.is_active = u.enable  # the switched-off ones are the inactive ones here
+        for u in self.users[1:]:
+            u.enable, u.is_active, u.remaining_days = True, False, -1  # their package ended
         bulk.confirm_screen(self.ctx, Filter.all, "days", 30)
-        done, skipped = bulk.run(self.ctx, Filter.all, "days", 30)  # room for 1 of the 2 inactive
+        done, skipped = bulk.run(self.ctx, Filter.all, "days", 30)  # room for 1 of the 2 ended
         self.assertEqual((done, skipped), (2, 1))
         self.assertEqual([u.package_days for u in self.users], [60, 60, 30])
+
+    def test_more_days_do_not_wait_for_room_for_switched_off_users(self):
+        bulk.confirm_screen(self.ctx, Filter.all, "days", 30)  # u2, u3 off: more days do not turn them on
+        done, skipped = bulk.run(self.ctx, Filter.all, "days", 30)
+        self.assertEqual((done, skipped), (3, 0))
 
     def test_renew_keeps_the_active_limit(self):
         for u in self.users:

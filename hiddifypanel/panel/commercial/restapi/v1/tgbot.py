@@ -180,6 +180,9 @@ def register_bot(set_hook=False, remove_hook=False, agents: bool = False) -> dic
                         try:
                             resellers.connect(managed)
                         except Exception as e:
+                            if resellers.is_gone(e):  # the agent deleted it: forgotten, not tried again
+                                resellers.forget(managed)
+                                continue
                             failed += 1
                             logger.warning(f"tgbot: agent bot {managed.bot_id} not reconnected: {e}")
                     if not failed:
@@ -289,19 +292,26 @@ class TGManagedBotResource(Resource):
         return ""
 
 
+#: How long a backup download key still works after its first use
+BACKUP_KEY_GRACE = 60
+
+
 class TGBackupResource(Resource):
     """A backup from the bot's Backup History: a random key (an hour) for that one file, made for the owner's chat."""
 
     def get(self, key: str):
         if not hconfig(ConfigEnum.telegram_bot_token) or not key or len(key) > 64:
             return {"error": "not_found"}, 404
-        # Used once: a link forwarded or seen later (a log, a screenshot) gives nothing
-        from hiddifypanel.panel.commercial.telegrambot.ui import redis_take
-
-        name = redis_take(f"tgbot:bkdl:{key}", redis_client)  # once
+        # A minute from its first use (a browser may ask twice, the other keys on the screen share it), then nothing:
+        # a link forwarded or seen later (a log, a screenshot) gives nothing
+        rkey = f"tgbot:bkdl:{key}"
+        name = redis_client.get(rkey)
         name = name.decode() if isinstance(name, bytes) else name
         if not name:
             return {"error": "expired"}, 404
+        ttl = redis_client.ttl(rkey)
+        if ttl is None or ttl < 0 or ttl > BACKUP_KEY_GRACE:
+            redis_client.expire(rkey, BACKUP_KEY_GRACE)
         from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import FILE_RE, _json_attachment, backup_dir
 
         path = backup_dir() / name

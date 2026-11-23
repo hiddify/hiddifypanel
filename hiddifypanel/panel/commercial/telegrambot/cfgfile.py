@@ -28,14 +28,16 @@ def _is_ip(host: str) -> bool:
     import ipaddress
 
     try:
-        ipaddress.ip_address((host or "").split(":")[0] if host.count(":") == 1 else (host or "").strip("[]"))
+        ipaddress.ip_address(host or "")
         return True
     except ValueError:
         return False
 
 
 def fetch(home: str, path: str, agent: str) -> bytes:
-    host = home.split("/")[2] if home.count("/") >= 2 else ""
+    from urllib.parse import urlsplit
+
+    host = urlsplit(home).hostname or ""  # without the port and the brackets of an IPv6 address
     res = requests.get(home + path, timeout=20, verify=not _is_ip(host), headers={"User-Agent": agent})
     res.raise_for_status()
     if len(res.content) > MAX_BYTES:

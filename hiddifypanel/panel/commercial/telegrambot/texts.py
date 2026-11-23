@@ -149,6 +149,7 @@ class T(StrEnum):
     bl_page = "bl_page"
     bl_no_bio = "bl_no_bio"
     bl_no_key = "bl_no_key"
+    bl_no_page = "bl_no_page"
     bl_denied = "bl_denied"
     qs_button = "qs_button"
     qs_page = "qs_page"

@@ -162,9 +162,10 @@ def needs_unlock(ctx: Ctx, action: str, data: str, *, force: bool = False) -> bo
     setting = not _lock_key(ctx.chat_id)
     token = new_token(ctx.chat_id, "lock", data=data, action=action, lang=ctx.lang, set=setting)
     url = page_url("lock", token, m="set" if setting else "use")
-    if url is None:  # no address a Mini App can open: the lock cannot be asked, the admin is not stuck
-        logger.warning("tgbot: biometric lock skipped: the panel has no domain a Mini App can open")
-        return False
+    if url is None:  # no address a Mini App can open: the lock cannot be asked, so the locked action waits
+        logger.warning("tgbot: biometric lock not asked: the panel has no domain a Mini App can open")
+        ctx.toast(ctx.tr(T.bl_no_page), alert=True)
+        return True
     ctx.toast()
     ctx.show(
         Screen(
@@ -289,9 +290,11 @@ def answer(init_data: str, body: dict, bot_token: str) -> tuple[dict, int]:
     tg_id = telegram_user_id(init_data, managed.token if managed else bot_token)
     if tg_id is None or int(pending.get("chat") or 0) != tg_id:  # a forged or foreign answer leaves the token as it was
         return {"error": "invalid_sign_in"}, 403
-    if take_token(token) is None:  # used a moment ago by another answer
-        return {"error": "expired"}, 403
     kind = pending.get("kind")
+    # A lock is answered once; the scan and emoji keys stay in their message and are pressed again (each answer is
+    # still signed by Telegram for that very person)
+    if kind not in ("scan", "emoji") and take_token(token) is None:  # used a moment ago by another answer
+        return {"error": "expired"}, 403
     mark = managed_bot.set(managed)  # the answer comes from that same bot
     try:
         if kind == "lock" and body.get("ok") is True:

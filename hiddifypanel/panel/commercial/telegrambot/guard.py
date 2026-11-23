@@ -122,11 +122,12 @@ def sweep() -> None:
     # A few thousand checks a day at most, going round the users: each day starts where the last one stopped, so
     # every ended user is reached in turn (newly ended ones too); the users are read in batches, not all at once.
     start = int(redis_client.get(_CURSOR) or 0)
-    query = User.query.filter(User.deleted.is_(False), User.telegram_id.isnot(None), User.telegram_id != 0, User.id > start).order_by(User.id)
+    # Deleted users too (a delete keeps the row): they are not the panel's users any more
+    query = User.query.filter(User.telegram_id.isnot(None), User.telegram_id != 0, User.id > start).order_by(User.id)
     ended, last = [], 0
     for u in query.yield_per(500):
         last = u.id
-        if accounts.status(u) is not accounts.Status.active:
+        if u.deleted or accounts.status(u) is not accounts.Status.active:
             ended.append(u)
             if len(ended) >= MAX_CHECKS:
                 break
@@ -134,6 +135,8 @@ def sweep() -> None:
     for user in ended:
         if AdminUser.query.filter(AdminUser.telegram_id == user.telegram_id, AdminUser.deleted.is_(False)).first():
             continue  # an admin who is also a user stays
+        if _active_account(user.telegram_id):
+            continue  # the same person has another account that is active
         try:
             time.sleep(0.05)
             member = bot.get_chat_member(gid, user.telegram_id)

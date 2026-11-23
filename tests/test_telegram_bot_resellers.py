@@ -41,6 +41,17 @@ class TokenTests(unittest.TestCase):
             managed_bot.reset(mark)
 
 
+class GoneBotTests(unittest.TestCase):
+    def test_a_bot_the_agent_deleted_is_forgotten(self):
+        prefs = {(0, resellers._INDEX): "7,8", (0, resellers._PREF.format(7)): '{"token": "a", "agent": 1}', (0, resellers._PREF.format(8)): '{"token": "b", "agent": 2}'}
+        pref = SimpleNamespace(get=lambda c, k: prefs.get((c, k), ""), put=lambda c, k, v: prefs.__setitem__((c, k), v))
+        with mock.patch.object(resellers, "_pref", lambda: pref), mock.patch("hiddifypanel.database.db.session", mock.MagicMock()):
+            resellers.forget(resellers.find(7))
+            self.assertEqual([m.bot_id for m in resellers.all_bots()], [8])
+        self.assertTrue(resellers.is_gone(SimpleNamespace(error_code=401)))
+        self.assertFalse(resellers.is_gone(TimeoutError()))
+
+
 class ScopeTests(unittest.TestCase):
     def setUp(self):
         agent = SimpleNamespace(id=4, deleted=False, recursive_sub_admins_ids=lambda: [4, 9])
