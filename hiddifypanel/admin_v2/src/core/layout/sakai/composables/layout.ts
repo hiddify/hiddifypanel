@@ -61,8 +61,13 @@ function writeStorage(key: string, value: string) {
 }
 
 function applyGlass() {
-  // one variable for the whole theme: every Liquid Glass surface derives its look from it (_theme-liquid.scss)
-  document.documentElement.style.setProperty('--lg-strength', String(layoutConfig.glass / 100))
+  // one number for the whole theme: every Liquid Glass token derives from it (_theme-liquid.scss), with two curves of it
+  // CSS cannot compute: --lg-ease rises quickly at first (the blur), --lg-s2 slowly (the background's liveliness)
+  const s = layoutConfig.glass / 100
+  const style = document.documentElement.style
+  style.setProperty('--lg-strength', String(s))
+  style.setProperty('--lg-ease', Math.sqrt(s).toFixed(3))
+  style.setProperty('--lg-s2', (s * s).toFixed(3))
 }
 
 function applyTheme() {
