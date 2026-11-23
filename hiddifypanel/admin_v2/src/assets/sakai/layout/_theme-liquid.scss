@@ -249,6 +249,10 @@ html.theme-liquid {
     --p-skeleton-animation-background: rgb(var(--lg-light) / 0.4);
     --p-paginator-nav-button-border-radius: 999px;
 
+    /* secondary text as iOS's secondary label: a little darker as the glass grows clearer, so it keeps its contrast
+       over the brightest part of the page */
+    --p-text-muted-color: rgb(60 60 67 / calc(0.72 + 0.14 * var(--lg-strength)));
+
     /* Apple's system font where there is one; the panel's fonts elsewhere and for Persian */
     font-synthesis: none;
 }
@@ -281,6 +285,7 @@ html.theme-liquid.app-dark {
     --lg-fill-control: rgb(255 255 255 / 0.08);
 
     --p-content-hover-background: rgb(255 255 255 / 0.06);
+    --p-text-muted-color: rgb(235 235 245 / calc(0.6 + 0.14 * var(--lg-strength)));
     --p-form-field-border-color: rgb(255 255 255 / 0.1);
     --p-form-field-hover-border-color: rgb(255 255 255 / 0.2);
     --p-form-field-disabled-background: rgb(255 255 255 / 0.04);
