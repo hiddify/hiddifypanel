@@ -34,6 +34,9 @@ const routes = [
         path: 'node',
         name: 'node-home',
         component: () => import('@/features/node-home/views/NodeHomeView.vue'),
+        // A node's home; on a parent panel only super admins (its sync status). Never back to the dashboard on a
+        // node: the dashboard sends there.
+        beforeEnter: () => (isChildPanel.value || isSuperAdmin.value ? true : { name: 'dashboard' }),
       },
       {
         // Classic admin pages the new UI has not replaced yet, framed inside the new shell.
