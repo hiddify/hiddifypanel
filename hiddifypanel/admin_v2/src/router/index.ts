@@ -1,11 +1,15 @@
 import { createRouter, createWebHistory, type RouteLocation, type Router } from 'vue-router'
 import AppLayout from '@/core/layout/sakai/AppLayout.vue'
-import { isAgent, isChildPanel, isSuperAdmin, needsQuickSetup } from '@/core/panelShell'
+import { hasCapability, isChildPanel, isSuperAdmin, needsQuickSetup, type AdminCapabilities } from '@/core/panelShell'
 
 export const QUICK_SETUP_SKIPPED_KEY = 'hiddify.quickSetup.skipped'
 
 /** Proxy editor pages: not for agents. */
-const notForAgents = () => (isAgent.value ? { name: 'dashboard' } : true)
+// The same rules as the panel's API: what the server would refuse goes back to the dashboard.
+// Server-wide settings (protocols, the proxy editor, settings): super admins only.
+const superAdminOnly = () => (isSuperAdmin.value ? true : { name: 'dashboard' })
+// Pages of a capability granted on the Admins page (super admins have them all).
+const needs = (capability: keyof AdminCapabilities) => () => (hasCapability(capability) ? true : { name: 'dashboard' })
 
 const routes = [
   {
@@ -81,19 +85,20 @@ const routes = [
         path: 'settings',
         name: 'settings',
         component: () => import('@/features/settings/views/SettingsView.vue'),
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'protocols',
         name: 'protocols',
         component: () => import('@/features/protocols/views/ProtocolsView.vue'),
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'domains',
         name: 'domains',
         component: () => import('@/features/domains/views/DomainsView.vue'),
-        // Super admins and admins (like the classic Domains page); agents do not manage domains.
-        beforeEnter: notForAgents,
+        // Whoever may change domains (the "Modify domains" capability), agents too.
+        beforeEnter: needs('modify_domains'),
       },
       {
         // The panel's Telegram bot: its health, a test message, the webhook and the animated icons (owner only).
@@ -113,53 +118,53 @@ const routes = [
         path: 'outbounds',
         name: 'outbounds',
         component: () => import('@/features/outbounds/views/OutboundsView.vue'),
-        // Server routing: super admins only.
-        beforeEnter: () => (isSuperAdmin.value ? true : { name: 'dashboard' }),
+        // Server routing: whoever has the "Modify outbounds" capability.
+        beforeEnter: needs('modify_outbounds'),
       },
       {
         path: 'custom-proxies',
         name: 'custom-proxy-list',
         component: () => import('@/features/custom-proxy/views/CustomProxyListView.vue'),
         meta: { keepAlive: true },
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'custom-proxies/new',
         name: 'custom-proxy-new',
         component: () => import('@/features/custom-proxy/views/CustomProxyEditorView.vue'),
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'custom-proxies/:id',
         name: 'custom-proxy-edit',
         component: () => import('@/features/custom-proxy/views/CustomProxyEditorView.vue'),
         props: true,
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'templates',
         name: 'template-list',
         component: () => import('@/features/templates/views/TemplateListView.vue'),
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'templates/new',
         name: 'template-new',
         component: () => import('@/features/templates/views/TemplateEditorView.vue'),
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'templates/:id',
         name: 'template-edit',
         component: () => import('@/features/templates/views/TemplateEditorView.vue'),
         props: true,
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'template-variables',
         name: 'template-variables',
         component: () => import('@/features/template-variables/views/TemplateVariablesView.vue'),
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'utils',
@@ -175,6 +180,8 @@ const routes = [
         path: 'scanner',
         name: 'scanner',
         component: () => import('@/features/clean-ip/views/ScannerView.vue'),
+        // It saves the clean IPs it finds on the CDN domains.
+        beforeEnter: needs('modify_domains'),
       },
       { path: 'clean-ip', redirect: (to: RouteLocation) => ({ name: 'scanner', query: to.query }) },
       {
@@ -204,20 +211,20 @@ const routes = [
         path: 'base-configs',
         name: 'base-config-list',
         component: () => import('@/features/base-config/views/BaseConfigListView.vue'),
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'base-configs/new',
         name: 'base-config-new',
         component: () => import('@/features/base-config/views/BaseConfigEditorView.vue'),
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
       {
         path: 'base-configs/:id',
         name: 'base-config-edit',
         component: () => import('@/features/base-config/views/BaseConfigEditorView.vue'),
         props: true,
-        beforeEnter: notForAgents,
+        beforeEnter: superAdminOnly,
       },
     ],
   },

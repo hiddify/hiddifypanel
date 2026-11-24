@@ -22,6 +22,7 @@ from loguru import logger
 from flask import Response, request
 from flask.views import MethodView
 
+from hiddifypanel import admin_capabilities as caps
 from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache, redis_client
@@ -33,7 +34,8 @@ from hiddifypanel.models.proxy_base_config import BaseConfigSide, ProxyBaseConfi
 from hiddifypanel.panel import reality_watch
 
 
-ROLES = {Role.super_admin, Role.admin}
+# The Scanner saves clean IPs on the CDN domains: whoever may change domains (agents too), see caps.MODIFY_DOMAINS
+ROLES = {Role.super_admin, Role.admin, Role.agent}
 TOKEN_TTL = 24 * 3600
 _KEY = "hiddify:clean-ip:{}"
 # https://www.cloudflare.com/ips-v4/
@@ -172,6 +174,7 @@ class CleanIpTokenApi(MethodView):
             candidates = [n for n in _snis(body.get("snis")) if n not in watched]
             data = {"kind": "sni", "snis": watched + candidates, "watched": watched, "server_ip": _server_ipv4(), "control": request.host.split(":")[0]}
         else:
+            caps.require(caps.MODIFY_DOMAINS)  # the script saves its IPs on this domain
             domain = _cdn_domain(body.get("domain_id"))
             data = {
                 "kind": "ip",
