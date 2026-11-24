@@ -665,7 +665,7 @@
       "noMatch": "No admin matches these filters",
       "role": {
         "hint": {
-          "admin": "Also opens the panel's protocols and proxy editor; what else they may change is set by the permissions.",
+          "admin": "Can have their own sub-admins; what else they may do is set by the permissions.",
           "agent": "Manages their own users within the limits you set; can't add sub-admins.",
           "super_admin": "The whole panel, with no limits."
         },

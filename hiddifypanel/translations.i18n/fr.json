@@ -608,7 +608,7 @@
       "noMatch": "Aucun administrateur ne correspond à ces filtres",
       "role": {
         "hint": {
-          "admin": "Voit aussi les protocoles et l'éditeur de proxy du panneau ; le reste dépend des autorisations.",
+          "admin": "Peut avoir ses propres sous-admins ; le reste dépend des autorisations.",
           "agent": "Gère ses propres utilisateurs dans les limites que vous fixez ; ne peut pas ajouter de sous-admins.",
           "super_admin": "Tout le panneau, sans aucune limite."
         },

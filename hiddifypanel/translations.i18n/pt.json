@@ -561,7 +561,7 @@
       "noMatch": "Nenhum administrador corresponde a estes filtros",
       "role": {
         "hint": {
-          "admin": "Também acessa os protocolos e o editor de proxy do painel; o resto depende das permissões.",
+          "admin": "Pode ter seus próprios sub-admins; o resto depende das permissões.",
           "agent": "Gerencia os próprios usuários dentro dos limites que você define; não pode adicionar subadministradores.",
           "super_admin": "Todo o painel, sem limites."
         },
