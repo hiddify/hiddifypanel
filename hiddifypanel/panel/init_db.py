@@ -26,6 +26,17 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 212
 
 
+def _v213(child_id):
+    """Admins' traffic limit (max_total_usage_GB) is the traffic they give out: their users' limits, plus what users used
+    before an admin reset, renewed or deleted them (AdminUser.spent_traffic, from 0 here)."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.admin import AdminUser
+
+    add_column(AdminUser.spent_traffic)
+    db.session.query(AdminUser).update({AdminUser.spent_traffic: 0})
+
+
 def _v212(child_id):
     """Settings people make in the Telegram bot (bot_pref): usage alerts on or off."""
     if child_id != 0:

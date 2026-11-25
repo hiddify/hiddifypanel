@@ -353,6 +353,8 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             accounts.add_days(user, days)
             note = ctx.tr(T.added_days, n=days)
         case "gb", gb:
+            if not accounts.traffic_fits(user, gb):
+                return ctx.toast(ctx.tr(T.limit_reached), alert=True)
             accounts.add_gb(user, gb)
             note = ctx.tr(T.added_gb, n=gb)
         case "renew", _:
@@ -360,10 +362,15 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             assert ctx.admin
             if not user.enable and not ctx.admin.can_activate_more_users():
                 return ctx.toast(ctx.tr(T.limit_reached), alert=True)
+            if not accounts.traffic_fits(user, (user.current_usage or 0) / 1024**3):
+                return ctx.toast(ctx.tr(T.limit_reached), alert=True)
             accounts.renew(user)
             note = ctx.tr(T.renewed)
         case "reset", _:
-            user.reset_usage()
+            # What it used stays given out by its admin: the reset gives that much again
+            if not accounts.traffic_fits(user, (user.current_usage or 0) / 1024**3):
+                return ctx.toast(ctx.tr(T.limit_reached), alert=True)
+            user.reset_usage_by_admin()
             note = ctx.tr(T.usage_reset)
         case "on", _:
             assert ctx.admin
@@ -492,7 +499,7 @@ def create_users(ctx: Ctx, args: list[str]) -> None:
     count = min(max(_int(args, 2), 1), MAX_BATCH)
     if accounts.is_read_only():
         return ctx.toast(ctx.tr(T.read_only_node), alert=True)
-    if not admin.can_have_more_users():
+    if admin.room_for_users(count, gb) < count:
         return ctx.toast(ctx.tr(T.limit_reached), alert=True)
     ctx.toast(ctx.tr(T.new_working))
     ctx.show(Screen(f"⏳ {ctx.tr(T.new_working)}"))

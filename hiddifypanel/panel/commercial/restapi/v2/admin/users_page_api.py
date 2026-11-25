@@ -153,7 +153,33 @@ def _number(body: dict, key: str, *, low: float, high: float, integer: bool) -> 
     return value
 
 
+TRAFFIC_LIMIT_MESSAGE = "Traffic limit reached: you (or an admin above you) gave out all the traffic you may give"
+
+
+def _require_traffic(need: dict[int, float], *, skip_ids: set[int] | frozenset[int] = frozenset()) -> None:
+    """Abort unless the traffic about to be given out (GB per owning admin id) fits every limit it counts for."""
+    need = {owner: gb for owner, gb in need.items() if gb > 1e-9}
+    if need and not AdminUser.traffic_fits(need, skip_ids=skip_ids):
+        abort(400, TRAFFIC_LIMIT_MESSAGE)
+
+
+def require_given_traffic(old_owner_id: int | None, new_owner_id: int | None, old_limit: int, new_limit: int, wiped: int) -> None:
+    """An edit gives out more traffic when it raises a user's limit (bytes), wipes some of its usage (a reset, ``wiped``
+    bytes), or moves it to a sub-admin whose limits did not count it yet (max_total_usage_GB: traffic given out)."""
+    if new_owner_id == old_owner_id or old_owner_id is None:
+        _require_traffic({new_owner_id: (new_limit - old_limit + wiped) / ONE_GIG})
+        return
+    old_owner = db.session.get(AdminUser, old_owner_id)
+    new_owner = db.session.get(AdminUser, new_owner_id) if new_owner_id else None
+    counted = {a.id for a in old_owner.limited_ancestors()} if old_owner else set()
+    new_chain = {a.id for a in new_owner.limited_ancestors()} if new_owner else set()
+    # The new branch counts all of it; the admins that counted it before count only what changes
+    _require_traffic({new_owner_id: (new_limit + wiped) / ONE_GIG}, skip_ids=counted)
+    _require_traffic({new_owner_id: (new_limit - old_limit + wiped) / ONE_GIG}, skip_ids=new_chain - counted)
+
+
 def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
+    old_limit, old_owner_id = (user.usage_limit or 0), user.added_by
     if creating or "name" in body:
         name = str(body.get("name") or "").strip()[:512]
         if not name:
@@ -191,11 +217,15 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
             abort(403, "The owner must be you or one of your sub-admins")
         user.added_by = owner.id
 
+    if not creating:
+        wiped = (user.current_usage or 0) if body.get("reset_usage") else 0
+        require_given_traffic(old_owner_id, user.added_by, old_limit, user.usage_limit or 0, wiped)
+
     # Quick actions (classic "reset package days" / "reset usage" switches).
     if body.get("reset_days"):
         user.start_date = None
     if body.get("reset_usage"):
-        user.reset_usage()
+        user.reset_usage_by_admin()
 
     # Extra params: the JSON editor's keys plus the ones the form manages.
     extra = user.extra_params_json()
@@ -276,6 +306,7 @@ class UsersPageApi(MethodView):
         actor: AdminUser = g.account
         if not actor.can_have_more_users():
             abort(400, "User limit reached: you (or an admin above you) reached the max users, active users or total traffic")
+        body.setdefault("usage_limit_GB", 100)
         new_uuid = str(body.get("uuid") or uuid_lib.uuid4()).strip().lower()
         if not _UUID_RE.match(new_uuid):
             abort(400, "UUID is not valid")
@@ -285,9 +316,10 @@ class UsersPageApi(MethodView):
         if existing:
             existing.purge(commit=False)  # a deleted user still held the UUID
         user = User(uuid=new_uuid, added_by=actor.id, enable=True, mode=UserMode.no_reset, current_usage=0)
-        body.setdefault("usage_limit_GB", 100)
         body.setdefault("package_days", 30)
         _apply_fields(user, body, creating=True)
+        # Its data is given out by its owner (an owner picked in the form may be a sub-admin)
+        _require_traffic({user.added_by: (user.usage_limit or 0) / ONE_GIG})
         db.session.add(user)
         db.session.commit()
         if hconfig(ConfigEnum.first_setup):
@@ -406,6 +438,19 @@ class UsersBulkApi(MethodView):
             if not add_gb and not days:
                 abort(400, "Give some data (GB) or days to add")
         actor = g.account
+        # More data given out: the added GB, or what a usage reset wipes (it stays given out)
+        if action == "add_limits" and add_gb:
+            need: dict[int, float] = {}
+            for user in users:
+                need[user.added_by] = need.get(user.added_by, 0.0) + add_gb
+            _require_traffic(need)
+        if action == "reset_usage":
+            need = {}
+            for user in users:
+                need[user.added_by] = need.get(user.added_by, 0.0) + (user.current_usage or 0) / ONE_GIG
+            _require_traffic(need)
+            for user in users:
+                AdminUser.spend_traffic(user.added_by, user.current_usage or 0)
         if action == "enable":
             # The active ceiling once for all of them (per user it counted every user again: minutes for thousands)
             turning_on = sum(1 for user in users if not user.enable)
@@ -482,7 +527,11 @@ class UsersBulkCreateApi(MethodView):
                 abort(403, "The owner must be you or one of your sub-admins")
         # The limits once for the whole batch (per user it was a count query each time: slow for thousands).
         # The owner's chain: its own limits and those of the admins above it, the signed-in one among them.
-        room = owner.room_for_users(count)
+        try:
+            gb_each = max(0.0, float(template.get("usage_limit_GB") or 0))
+        except (TypeError, ValueError):
+            abort(400, "usage_limit_GB must be a number")
+        room = owner.room_for_users(count, gb_each)
         if room < count:
             abort(
                 400,
