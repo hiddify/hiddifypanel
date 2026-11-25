@@ -21,8 +21,8 @@
           </header>
 
           <div class="bk-counts">
-            <div v-for="c in counts" :key="c.key" class="bk-count">
-              <i :class="c.icon" />
+            <div v-for="c in counts" :key="c.key" class="bk-count" :style="{ '--c': c.color, '--ct': c.text }">
+              <span class="bk-count__icon"><i :class="c.icon" /></span>
               <b>{{ c.n.toLocaleString() }}</b>
               <span>{{ t(`backup.count.${c.key}`) }}</span>
             </div>
@@ -132,11 +132,12 @@ const counts = computed(() => {
   const c = state.value?.current
   if (!c) return []
   return [
-    { key: 'users', icon: 'pi pi-users', n: c.users },
-    { key: 'admins', icon: 'pi pi-user-edit', n: c.admins },
-    { key: 'domains', icon: 'pi pi-globe', n: c.domains },
-    { key: 'custom_proxies', icon: 'pi pi-sitemap', n: c.custom_proxies },
-    { key: 'nodes', icon: 'pi pi-server', n: c.nodes },
+    // Each part in its own colour (the icon and its badge), its label in a darker shade of it (readable on a light page)
+    { key: 'users', icon: 'pi pi-users', n: c.users, color: '#3b82f6', text: '#1d4ed8' },
+    { key: 'admins', icon: 'pi pi-user-edit', n: c.admins, color: '#8b5cf6', text: '#6d28d9' },
+    { key: 'domains', icon: 'pi pi-globe', n: c.domains, color: '#10b981', text: '#047857' },
+    { key: 'custom_proxies', icon: 'pi pi-sitemap', n: c.custom_proxies, color: '#f59e0b', text: '#92400e' },
+    { key: 'nodes', icon: 'pi pi-server', n: c.nodes, color: '#ec4899', text: '#be185d' },
   ].filter((x) => x.n > 0 || x.key === 'users')
 })
 const shownFiles = computed(() => (showAll.value ? state.value?.files ?? [] : (state.value?.files ?? []).slice(0, PAGE)))
@@ -298,28 +299,45 @@ onMounted(load)
   grid-template-columns: repeat(auto-fill, minmax(7.2rem, 1fr));
   gap: 0.45rem;
 }
+/* Each count in its own colour (--c): a tinted tile, the icon in a badge of that colour, the label in a darker
+   shade of it (--ct) so it stays readable (4.5:1) on the light page. */
 .bk-count {
+  --c: var(--p-primary-color);
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: auto auto;
-  column-gap: 0.55rem;
+  column-gap: 0.6rem;
   align-items: center;
   padding: 0.6rem 0.7rem;
   border-radius: 13px;
-  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.06));
+  border: 1px solid color-mix(in srgb, var(--c) 18%, transparent);
+  background: color-mix(in srgb, var(--c) 7%, var(--p-content-hover-background, rgba(127, 127, 127, 0.06)));
 }
-.bk-count i {
+.bk-count__icon {
   grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+  color: var(--c);
+}
+.bk-count__icon i {
   font-size: 1rem;
-  color: var(--p-primary-color);
 }
 .bk-count b {
   font-size: 1.1rem;
   font-variant-numeric: tabular-nums;
 }
-.bk-count span {
+.bk-count > span:last-child {
   font-size: 0.74rem;
-  color: var(--p-text-muted-color);
+  font-weight: 500;
+  color: var(--ct, var(--p-text-muted-color));
+}
+/* On the dark page the darker shade is too dark: the colour mixed with the (light) text colour */
+.app-dark .bk-count > span:last-child {
+  color: color-mix(in srgb, var(--c) 55%, var(--p-text-color));
 }
 .bk-secret {
   display: flex;
