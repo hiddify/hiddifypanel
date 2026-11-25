@@ -6,7 +6,7 @@ from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import AdminUser, Role
 
-from . import has_permission, validate_admin_write_payload
+from . import admin_schema_for_caller, has_permission, validate_admin_write_payload
 from .schema import AdminSchema, PatchAdminSchema, SuccessfulSchema
 
 
@@ -22,7 +22,7 @@ class AdminUserApi(MethodView):
     @app.output(AdminSchema)
     def get(self, uuid):
         """Admin: Get an admin"""
-        return self._scoped_admin(uuid).to_schema()
+        return admin_schema_for_caller(self._scoped_admin(uuid))
 
     @app.input(PatchAdminSchema, arg_name="data")
     @app.output(AdminSchema)
@@ -45,7 +45,7 @@ class AdminUserApi(MethodView):
             payload["parent_admin_uuid"] = requested["parent_admin_uuid"]
         admin = AdminUser.add_or_update(True, old_uuid=uuid, **payload) or abort(502, "Unknown issue: Admin is not patched")
         hutils.node.parent.notify_childs_users_changed()
-        return admin.to_schema()
+        return admin_schema_for_caller(admin)
 
     @app.output(SuccessfulSchema)
     def delete(self, uuid):
