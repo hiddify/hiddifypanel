@@ -237,7 +237,7 @@ import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import NoteButton from '@/shared/components/NoteButton.vue'
 import { useHashState } from '@/shared/composables/useHashState'
-import { computed, defineAsyncComponent, defineComponent, h, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, defineComponent, h, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
@@ -472,10 +472,24 @@ interface Guide {
  *  row; a sub-admin's own pulse leaves as the one from above reaches it, so the signal flows down like a nerve. */
 const PULSE_PERIOD = 15
 const PULSE_ROW = 0.4
+/** Up to 860px the usage box sits under each name and the rows are ~2.5 times taller: everything runs 2.5 times
+ *  slower there (the same speed on the screen), here and in the CSS (--pulse-period) at the same breakpoint. */
+const PULSE_SLOW_QUERY = '(max-width: 860px)'
+const PULSE_SLOW = 2.5
+const pulseSlow = ref(typeof window !== 'undefined' && window.matchMedia(PULSE_SLOW_QUERY).matches)
+let pulseMedia: MediaQueryList | null = null
+const onPulseMedia = (e: MediaQueryListEvent) => (pulseSlow.value = e.matches)
+onMounted(() => {
+  pulseMedia = window.matchMedia(PULSE_SLOW_QUERY)
+  pulseSlow.value = pulseMedia.matches
+  pulseMedia.addEventListener('change', onPulseMedia)
+})
+onBeforeUnmount(() => pulseMedia?.removeEventListener('change', onPulseMedia))
 /** The animation delay of the pulses in a row (negative, so they are already running when the page opens). */
 function pulseDelay(node: TreeNode): string {
   const row = Math.max(0, guideOf(node).row)
-  return `${(((row * PULSE_ROW) % PULSE_PERIOD) - PULSE_PERIOD).toFixed(2)}s`
+  const k = pulseSlow.value ? PULSE_SLOW : 1
+  return `${(((row * PULSE_ROW * k) % (PULSE_PERIOD * k)) - PULSE_PERIOD * k).toFixed(2)}s`
 }
 /** The tree lines of each shown row (after filtering): which lines run through it and where they end. */
 const guides = computed(() => {
@@ -1261,6 +1275,10 @@ button.admins-avatar:focus-visible {
 
 /* Wide columns step out as the screen narrows; their content moves into the name cell. */
 @media (max-width: 860px) {
+  /* Taller rows: the pulses run 2.5 times slower (PULSE_SLOW in the script) */
+  .admins-guide {
+    --pulse-period: 37.5s;
+  }
   .admins-table :deep(.admins-col--md) {
     display: none;
   }
