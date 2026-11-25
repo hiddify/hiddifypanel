@@ -27,7 +27,8 @@ class AdminServerStatusApi(MethodView):
     def get(self):
         """System: ServerStatus"""
         dto = ServerStatusOutputSchema()
-        dto.stats = {"system": hutils.system.system_stats(), "top5": hutils.system.top_processes()}
+        # The server's own stats: the super admin only (admins and agents get their users' usage below)
+        dto.stats = {"system": hutils.system.system_stats(), "top5": hutils.system.top_processes()} if g.account.role == Role.super_admin else {}
 
         raw_admin_id = request.args.get("admin_id")
         if raw_admin_id in (None, ""):

@@ -1,6 +1,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { dashboardApi, type DashboardNode, type DashboardNodeStats, type DashboardSnapshot } from '@/core/api/generated'
 import { liveWatch, type Subscription } from '@/core/live/live'
+import { isSuperAdmin } from '@/core/panelShell'
 import { useMetricHistory } from './useMetricHistory'
 import { API_DAYS, MAX_DAYS, QUICK_PRESETS, addDays, daysBetween, fromIso, iso, presetRange, today, type CustomRange } from '../utils/date-range'
 
@@ -147,6 +148,8 @@ export function useDashboard(locale = 'en') {
       onData: applyAnalytics,
       onError,
     })
+    // The servers' live metrics: super admins only (the API gives the others none)
+    if (!isSuperAdmin.value) return
     systemFeed = liveWatch<DashboardSnapshot>('dashboard/', {
       query: () => ({ ...query(), include: 'system', processes: 16 }),
       intervalMs: SYSTEM_REFRESH_MS,

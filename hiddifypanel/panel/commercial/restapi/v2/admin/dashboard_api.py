@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 
+from apiflask import abort
 from flask import request
 from flask.views import MethodView
 
@@ -46,6 +47,15 @@ def _debug_nodes() -> bool:
     return request.args.get("debug_node", "").lower() in ("1", "true", "yes")
 
 
+def _sees_server() -> bool:
+    """Server-wide stats (CPU, memory, processes, disk, nodes and their addresses): the super admin and peer nodes only.
+    Admins and agents see only their own users' usage."""
+    if g.get("node"):
+        return True
+    account = g.get("account")
+    return account is not None and account.role == Role.super_admin
+
+
 class AdminDashboardApi(MethodView):
     """Everything the Admin V2 dashboard renders, in a single snapshot.
 
@@ -67,19 +77,19 @@ class AdminDashboardApi(MethodView):
 
         debug_nodes = _debug_nodes()
 
-        live = node_system.collect_system_stats(child_id, process_limit=_process_limit(), debug_nodes=debug_nodes)
-        admin_base = hiddify.get_account_panel_link(g.account, request.host, prefere_path_only=True) + "admin/"
-        node_system.attach_panel_urls(live.node_stats, g.account.uuid, admin_base)
-        node_system.attach_countries(live.node_stats)
-
         dto = DashboardOutputSchema(
             generated_at=datetime.datetime.now(datetime.UTC).isoformat(),
             range_days=range_days,
             child_id=child_id,
-            processes=live.processes,
-            system=live.system,
-            node_stats=live.node_stats,
         )
+        if _sees_server():
+            live = node_system.collect_system_stats(child_id, process_limit=_process_limit(), debug_nodes=debug_nodes)
+            admin_base = hiddify.get_account_panel_link(g.account, request.host, prefere_path_only=True) + "admin/"
+            node_system.attach_panel_urls(live.node_stats, g.account.uuid, admin_base)
+            node_system.attach_countries(live.node_stats)
+            dto.processes = live.processes
+            dto.system = live.system
+            dto.node_stats = live.node_stats
 
         if system_only:
             return dto
@@ -106,5 +116,7 @@ class AdminDashboardDiskApi(MethodView):
         """System: Dashboard disk detail"""
         from hiddifypanel.hutils import node_system
 
+        if not _sees_server():
+            abort(403, "Only the super admin sees the server's disk")
         child_id = _int_arg("child_id")
         return node_system.fetch_disk_detail(child_id)
