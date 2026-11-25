@@ -844,7 +844,9 @@ onMounted(() => load())
   border-inline-start: 2px solid hsl(var(--line-h) 70% 55% / 0.55);
 }
 /* The pulse: a faint dot in the line's colour that runs down an admin's own line to its sub-admins, every
-   --pulse-period. Each segment runs during its row's slot (--pulse-delay), so the dots of one admin join up. */
+   --pulse-period. Each segment runs during its row's slot (--pulse-delay), so the dots of one admin join up. A dot
+   shows at once where its segment starts: with a slow fade-in it was already far down a tall row (on phones, where
+   the usage box makes the rows tall) before it could be seen. */
 .admins-guide {
   --pulse-period: 15s;
 }
@@ -873,7 +875,7 @@ onMounted(() => load())
 /* One row (2.667% of 15 s = 0.4 s) from the top of the row to its bottom */
 @keyframes admins-pulse-pass {
   0% { top: -3px; opacity: 0; }
-  0.333% { opacity: 0.7; }
+  0.05% { opacity: 0.7; }
   2.333% { opacity: 0.7; }
   2.667% { top: calc(100% - 3px); opacity: 0; }
   100% { top: calc(100% - 3px); opacity: 0; }
@@ -881,7 +883,7 @@ onMounted(() => load())
 /* Down to the turn in the first half of the row, then along into the avatar */
 @keyframes admins-pulse-elbow {
   0% { top: -3px; inset-inline-start: -4px; opacity: 0; }
-  0.333% { opacity: 0.7; }
+  0.05% { opacity: 0.7; }
   1.133% { top: calc(100% - 4px); inset-inline-start: -4px; }
   1.533% { top: calc(100% - 4px); inset-inline-start: calc(100% - 4px); opacity: 0.7; }
   1.733% { top: calc(100% - 4px); inset-inline-start: calc(100% - 4px); opacity: 0; }
@@ -890,7 +892,7 @@ onMounted(() => load())
 /* The admin's own pulse leaves from under its avatar in the second half of its row */
 @keyframes admins-pulse-down {
   0%, 1.333% { top: -3px; opacity: 0; }
-  1.533% { opacity: 0.7; }
+  1.383% { opacity: 0.7; }
   2.333% { opacity: 0.7; }
   2.667% { top: calc(100% - 3px); opacity: 0; }
   100% { top: calc(100% - 3px); opacity: 0; }
