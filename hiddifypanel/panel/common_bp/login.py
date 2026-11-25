@@ -101,7 +101,6 @@ def _render_admin_login(form: AdminLoginForm, *, error: str | None = None, statu
             lang=str(hconfig(ConfigEnum.admin_lang) or "en"),
             rtl=str(hconfig(ConfigEnum.admin_lang) or "en") in ("fa", "ar"),
             title=hconfig(ConfigEnum.branding_title) or texts.get("brand") or "Hiddify",
-            logo_url=hutils.flask.static_url_for(filename="images/WhiteLogo.png"),
             passkey=passkey,
             passkey_base=hurl_for("common_bp.LoginView:passkey_login"),
         ),
