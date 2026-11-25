@@ -1264,6 +1264,8 @@ button.admins-avatar:focus-visible {
   }
   .admins-who__meters {
     display: grid;
+    /* Lined up with the name, so the admin's own tree line runs beside the box, not through it */
+    margin-inline-start: calc(var(--avatar) + 0.7rem);
     padding: 0.6rem 0.75rem;
     border-radius: 12px;
     background: var(--p-content-hover-background, rgba(127, 127, 127, 0.06));
