@@ -168,6 +168,10 @@ def on_text(message: types.Message) -> None:
         _delete(chat_id, message.message_id)
         ctx.state.update(awaiting=None)
         return _open_key(ctx, kind, menukey.action_args(text, admin=ctx.admin is not None))
+    # After "Write a Message" the next text is for support, also from a chat that is an admin's too (it asked the
+    # free test itself): it must not become an admin command that is deleted and never reaches the inbox.
+    if ctx.admin and support.writing(ctx) and free.on_user_text(ctx, message):
+        return
     if ctx.admin and broadcast.take(ctx, message):  # a message to all users: it stays (it is what gets copied)
         return
     if ctx.admin:
@@ -250,6 +254,8 @@ def on_other(message: types.Message) -> None:
     usernames.remember(message.from_user)
     ctx = context(message.chat.id, telegram_lang=_tg_lang(message.from_user))
     # A photo, file or voice is a message for support (or, from an admin answering someone, the answer)
+    if ctx.admin and support.writing(ctx) and support.relay_media(ctx, message):  # after "Write a Message" (see on_text)
+        return
     if ctx.admin:
         if broadcast.take(ctx, message):
             return
