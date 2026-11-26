@@ -152,6 +152,36 @@ export interface IpDetails {
   }
   fetched_at: number
 }
+/** One line of the Server tab: its label is translated from `key` (disks and network cards carry their own `label`). */
+export interface ServerSpecRow {
+  key: string
+  value: string
+  mono?: boolean
+  label?: string
+}
+export interface ServerSpecs {
+  node_id: number
+  ok: boolean
+  error?: string
+  error_code?: string
+  summary?: {
+    name: string
+    vendor: string
+    microarch: string
+    generation: string
+    virtual: boolean
+    cores: number
+    threads: number
+    sockets: number
+    max_clock: string
+    ram: string
+    disk: string
+    uptime: string
+  }
+  features?: string[]
+  sections?: { key: string; rows: ServerSpecRow[] }[]
+  collected_at?: number
+}
 export interface NodeIpInfo {
   node_id: number
   ips: IpDetails[]
@@ -207,6 +237,11 @@ export const nodesApi = {
     throw registerFailure(state.result?.error ?? { code: 'rejected', message: '' })
   },
   /** What is known about the IP addresses of this server (0) or a node; the panel keeps it 72 hours */
+  /** The server's full specs (this server: 0, else a node, asked through this panel). */
+  async serverSpecs(id: number): Promise<ServerSpecs> {
+    const { data } = await getHttp().get<ServerSpecs>('dashboard/specs/', { params: id ? { child_id: id } : undefined, timeout: 45_000 })
+    return data
+  },
   async ipInfo(id: number, refresh = false): Promise<NodeIpInfo> {
     const { data } = await getHttp().get<NodeIpInfo>(`nodes/${id}/ip-info/`, { params: refresh ? { refresh: 1 } : undefined, timeout: 60_000 })
     return data

@@ -15,7 +15,7 @@ import IpLocationMap from './IpLocationMap.vue'
 import ServerLogo from './ServerLogo.vue'
 import { countryName } from '@/shared/utils/country'
 import { apiErrorMessage } from '@/core/api/client'
-import { nodesApi, type IpDetails, type NodeIpInfo } from '@/features/nodes/api'
+import { nodesApi, type IpDetails, type NodeIpInfo, type ServerSpecs } from '@/features/nodes/api'
 import { companyLogo, logoColor } from '../company-logos'
 
 const props = defineProps<{ node: { id: number; title: string } | null }>()
@@ -85,6 +85,7 @@ watch(
   ([open, id]) => {
     if (open && id != null) {
       selected.value = 0
+      tab.value = 'ip'
       // Complete IP Info starts closed each time the sheet opens
       completeOpen.value = false
       void load(id)
@@ -288,6 +289,165 @@ const FLAG_GROUPS: { key: string; color: string; flags: FlagDef[] }[] = [
   },
 ]
 const ICON_COLORS = ['#007aff', '#5856d6', '#af52de', '#ff9500', '#30b0c7', '#34c759', '#ff2d55', '#5ac8fa']
+
+// --- the Server tab: everything the server tells about itself (read when the tab opens, kept a minute) --------
+const tab = ref<'ip' | 'server'>('ip')
+const specs = ref<ServerSpecs | null>(null)
+const specsLoading = ref(false)
+const specsError = ref('')
+const specsKept = new Map<number, { at: number; data: ServerSpecs }>()
+
+function showIp(i: number) {
+  tab.value = 'ip'
+  selected.value = i
+}
+function showServer() {
+  tab.value = 'server'
+  if (props.node) void loadSpecs(props.node.id)
+}
+
+async function loadSpecs(id: number, refresh = false) {
+  const kept = specsKept.get(id)
+  if (!refresh && kept && Date.now() - kept.at < 60_000) {
+    specs.value = kept.data
+    specsError.value = ''
+    return
+  }
+  specsLoading.value = true
+  specsError.value = ''
+  try {
+    const data = await nodesApi.serverSpecs(id)
+    if (props.node?.id !== id) return
+    if (!data.ok) {
+      specs.value = null
+      specsError.value = data.error_code === 'not_found' ? t('dashboard.specs.needsUpdate') : data.error || data.error_code || ''
+      return
+    }
+    specs.value = data
+    specsKept.set(id, { at: Date.now(), data })
+  } catch (err) {
+    specsError.value = apiErrorMessage(err)
+  } finally {
+    specsLoading.value = false
+  }
+}
+
+/** The CPU's name without the trademark marks and the clock (the clock has its own tile) */
+const cpuName = computed(() =>
+  (specs.value?.summary?.name ?? '')
+    .replace(/\((R|TM|tm|r)\)/g, '')
+    .replace(/\s+(CPU\s+)?@\s*[\d.]+\s*GHz/i, '')
+    .replace(/\s+/g, ' ')
+    .trim(),
+)
+const vendorColor = computed(() => {
+  const v = `${specs.value?.summary?.vendor ?? ''} ${specs.value?.summary?.name ?? ''}`.toLowerCase()
+  if (v.includes('amd') || v.includes('epyc') || v.includes('ryzen')) return '#ed1c24'
+  if (v.includes('intel') || v.includes('xeon')) return '#0071c5'
+  if (v.includes('arm') || v.includes('ampere') || v.includes('neoverse')) return '#00a3e0'
+  return '#8e8e93'
+})
+const specTiles = computed(() => {
+  const s = specs.value?.summary
+  if (!s) return []
+  return [
+    { key: 'cores', icon: 'x-cpu', color: '#007aff', value: String(s.cores) },
+    { key: 'threads', icon: 'pi-th-large', color: '#5856d6', value: String(s.threads) },
+    { key: 'maxClock', icon: 'x-gauge', color: '#ff9500', value: s.max_clock || '—' },
+    { key: 'ram', icon: 'x-ram', color: '#34c759', value: s.ram || '—' },
+    { key: 'disk', icon: 'x-disk', color: '#30b0c7', value: s.disk || '—' },
+    { key: 'uptime', icon: 'x-power', color: '#ff2d55', value: s.uptime || '—' },
+  ]
+})
+const SECTION_COLORS: Record<string, string> = {
+  live: '#ff2d55',
+  cpu: '#007aff',
+  memory: '#34c759',
+  storage: '#30b0c7',
+  system: '#5856d6',
+  network: '#ff9500',
+}
+const CRYPTO = ['AES-NI', 'SHA-NI', 'PCLMUL', 'VAES', 'SHA2', 'PMULL']
+const VIRT = ['VT-x', 'AMD-V', 'Hypervisor']
+function featureColor(f: string): string {
+  if (CRYPTO.includes(f)) return '#34c759'
+  if (VIRT.includes(f)) return '#ff9500'
+  if (f.startsWith('RD')) return '#af52de'
+  if (f === 'NX') return '#30b0c7'
+  return '#007aff'
+}
+const ROW_ICONS: Record<string, string> = {
+  curClock: 'x-gauge',
+  cpuUse: 'x-cpu',
+  load: 'x-gauge',
+  ramUsed: 'x-ram',
+  swapUsed: 'pi-database',
+  processes: 'pi-th-large',
+  uptime: 'x-power',
+  bootTime: 'pi-calendar',
+  timezone: 'pi-clock',
+  model: 'x-cpu',
+  vendor: 'pi-building',
+  microarch: 'x-layers',
+  generation: 'pi-tag',
+  familyModel: 'pi-id-card',
+  architecture: 'pi-sitemap',
+  opModes: 'pi-arrows-h',
+  sockets: 'x-cpu',
+  cores: 'x-cpu',
+  threads: 'pi-th-large',
+  threadsPerCore: 'pi-th-large',
+  baseClock: 'x-gauge',
+  maxClock: 'x-gauge',
+  minClock: 'x-gauge',
+  bogomips: 'x-gauge',
+  l1d: 'x-layers',
+  l1i: 'x-layers',
+  l2: 'x-layers',
+  l3: 'x-layers',
+  numa: 'pi-sitemap',
+  addressSizes: 'pi-database',
+  byteOrder: 'pi-arrows-h',
+  microcode: 'x-terminal',
+  hypervisor: 'pi-server',
+  virtType: 'x-mask',
+  governor: 'x-gauge',
+  cpuDriver: 'x-terminal',
+  vulnerable: 'x-bug',
+  ramTotal: 'x-ram',
+  swapTotal: 'pi-database',
+  hugepage: 'x-layers',
+  swappiness: 'x-terminal',
+  overcommit: 'x-terminal',
+  disk: 'x-disk',
+  rootFs: 'x-folder',
+  rootSize: 'x-disk',
+  rootUsed: 'x-disk',
+  rootFree: 'x-disk',
+  os: 'pi-server',
+  kernel: 'x-terminal',
+  kernelBuild: 'x-terminal',
+  machine: 'x-cpu',
+  virtualization: 'x-mask',
+  container: 'x-mask',
+  maker: 'pi-building',
+  board: 'x-cpu',
+  bios: 'x-cert',
+  init: 'pi-sitemap',
+  python: 'x-terminal',
+  nic: 'x-nic',
+  congestion: 'x-gauge',
+  qdisc: 'x-layers',
+  availableCc: 'x-gauge',
+  tcpFastOpen: 'pi-link',
+  ipForward: 'pi-arrows-h',
+  ipv6Disabled: 'pi-globe',
+  somaxconn: 'pi-link',
+  rmemMax: 'pi-database',
+  wmemMax: 'pi-database',
+  conntrackMax: 'pi-sitemap',
+  fileMax: 'x-folder',
+}
 watch(selected, () => (completeOpen.value = completeOpen.value && !!current.value?.complete))
 
 /**
@@ -678,13 +838,96 @@ const sections = computed(() =>
           </div>
 
           <template v-else-if="current">
-            <!-- IPv4 / IPv6: a segmented control -->
-            <div v-if="info!.ips.length > 1" class="ips__segments" role="tablist">
-              <button v-for="(ip, i) in info!.ips" :key="ip.ip" type="button" role="tab" :aria-selected="i === selected" class="ips__segment" :class="{ 'ips__segment--on': i === selected }" @click="selected = i">
+            <!-- IPv4 / IPv6 / Server: a segmented control -->
+            <div class="ips__segments" role="tablist">
+              <button
+                v-for="(ip, i) in info!.ips"
+                :key="ip.ip"
+                type="button"
+                role="tab"
+                :aria-selected="tab === 'ip' && i === selected"
+                class="ips__segment"
+                :class="{ 'ips__segment--on': tab === 'ip' && i === selected }"
+                @click="showIp(i)"
+              >
                 IPv{{ ip.version }}<small v-if="info!.ips.filter((x) => x.version === ip.version).length > 1"> {{ i + 1 }}</small>
+              </button>
+              <button type="button" role="tab" :aria-selected="tab === 'server'" class="ips__segment ips__segment--server" :class="{ 'ips__segment--on': tab === 'server' }" @click="showServer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <rect x="6" y="6" width="12" height="12" rx="2" />
+                  <path d="M9.5 3v2.5M14.5 3v2.5M9.5 18.5V21M14.5 18.5V21M3 9.5h2.5M3 14.5h2.5M18.5 9.5H21M18.5 14.5H21" />
+                </svg>
+                {{ t('dashboard.specs.tab') }}
               </button>
             </div>
 
+            <!-- the server itself: processor, memory, disks, system, network -->
+            <template v-if="tab === 'server'">
+              <div v-if="specsLoading" class="ips__loading" aria-busy="true">
+                <p class="ips__muted"><i class="pi pi-spin pi-spinner" />{{ t('dashboard.specs.loading') }}</p>
+                <span v-for="n in 4" :key="n" class="ips__shimmer" />
+              </div>
+              <div v-else-if="specsError" class="ips__state">
+                <i class="pi pi-exclamation-circle" />
+                <p>{{ t('dashboard.specs.failed') }}</p>
+                <small>{{ specsError }}</small>
+                <button type="button" class="ips__pill" @click="node && loadSpecs(node.id, true)">{{ t('dashboard.ipInfo.retry') }}</button>
+              </div>
+              <template v-else-if="specs?.summary">
+                <section class="spx__hero" :style="{ '--v': vendorColor }">
+                  <span class="spx__hero-icon is-live"><LiveIcon name="x-cpu" /></span>
+                  <div class="spx__hero-text">
+                    <span class="spx__vendor">{{ specs.summary.vendor }}</span>
+                    <h3 class="spx__cpu" dir="ltr">{{ cpuName }}</h3>
+                    <div class="spx__tags">
+                      <span v-if="specs.summary.microarch" class="spx__tag" dir="ltr">{{ specs.summary.microarch }}</span>
+                      <span v-if="specs.summary.generation" class="spx__tag" dir="ltr">{{ specs.summary.generation }}</span>
+                      <span v-if="specs.summary.virtual" class="spx__tag spx__tag--virtual">{{ t('dashboard.specs.virtualCpu') }}</span>
+                    </div>
+                  </div>
+                </section>
+
+                <div class="ips__tiles spx__tiles">
+                  <div v-for="tile in specTiles" :key="tile.key" class="ips__tile ips__tile--on" :style="{ '--c': tile.color }">
+                    <span class="ips__tile-icon"><LiveIcon :name="tile.icon" /></span>
+                    <span class="ips__tile-label">{{ t(`dashboard.specs.tiles.${tile.key}`) }}</span>
+                    <span class="ips__tile-value" dir="ltr">{{ tile.value }}</span>
+                  </div>
+                </div>
+
+                <template v-if="specs.features?.length">
+                  <h3 class="ips__heading">{{ t('dashboard.specs.features') }}</h3>
+                  <div class="ips__group spx__features">
+                    <span v-for="f in specs.features" :key="f" class="spx__feature" :style="{ '--c': featureColor(f) }" dir="ltr">{{ f }}</span>
+                  </div>
+                </template>
+
+                <template v-for="(section, si) in specs.sections" :key="section.key">
+                  <template v-if="section.rows.length">
+                    <h3 class="ips__heading ips__heading--group">
+                      <span class="ips__group-dot" :style="{ background: SECTION_COLORS[section.key] ?? ICON_COLORS[si % ICON_COLORS.length] }" />
+                      {{ t(`dashboard.specs.sections.${section.key}`) }}
+                    </h3>
+                    <ul class="ips__group">
+                      <li v-for="(row, i) in section.rows" :key="`${row.key}-${row.label ?? ''}-${i}`" class="ips__row">
+                        <span class="ips__row-icon" :style="{ background: ICON_COLORS[(i + si) % ICON_COLORS.length], '--li-ink': ICON_COLORS[(i + si) % ICON_COLORS.length] }"
+                          ><LiveIcon :name="ROW_ICONS[row.key] ?? 'pi-info-circle'"
+                        /></span>
+                        <span class="ips__row-label"><bdi v-if="row.label" dir="ltr">{{ row.label }}</bdi><template v-else>{{ t(`dashboard.specs.rows.${row.key}`) }}</template></span>
+                        <span class="ips__row-value" :class="{ ips__mono: row.mono }"><bdi dir="ltr">{{ row.value }}</bdi></span>
+                      </li>
+                    </ul>
+                  </template>
+                </template>
+
+                <footer class="ips__footer">
+                  <span><i class="pi pi-refresh" />{{ t('dashboard.specs.readAgo', { when: ago(specs.collected_at ?? 0) }) }}</span>
+                  <button type="button" class="ips__pill" @click="node && loadSpecs(node.id, true)">{{ t('dashboard.specs.refresh') }}</button>
+                </footer>
+              </template>
+            </template>
+
+            <template v-else>
             <!-- the address itself -->
             <section class="ips__address">
               <div class="ips__address-main">
@@ -780,6 +1023,7 @@ const sections = computed(() =>
               >
               <small>{{ t('dashboard.ipInfo.sources') }}</small>
             </footer>
+            </template>
           </template>
         </div>
       </div>
@@ -1009,6 +1253,18 @@ html.app-dark .ips__company {
   box-shadow: 0 2px 8px -2px rgb(0 0 0 / 0.2);
 }
 
+/* the Server segment: its chip icon before the word */
+.ips__segment--server {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+.ips__segment--server svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
 /* the address card */
 .ips__address {
   padding: 0.85rem 0.9rem;
@@ -1125,6 +1381,89 @@ html.app-dark .ips__company {
   color: var(--ips-muted);
   font-size: 0.75rem;
   line-height: 1.4;
+}
+
+/* the Server tab: the processor's card, in its maker's colour (--v) */
+.spx__hero {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem;
+  margin-bottom: 0.6rem;
+  border-radius: 1.1rem;
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--v) 20%, transparent), transparent 60%),
+    var(--ips-group);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--v) 18%, transparent);
+}
+.spx__hero-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 1rem;
+  color: #fff;
+  font-size: 2rem;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--v) 75%, #fff), var(--v));
+  box-shadow: 0 10px 22px -10px var(--v);
+}
+.spx__hero-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.spx__vendor {
+  color: var(--v);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.spx__cpu {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+.spx__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+}
+.spx__tag {
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--v);
+  background: color-mix(in srgb, var(--v) 12%, transparent);
+}
+.spx__tag--virtual {
+  color: #ff9500;
+  background: color-mix(in srgb, #ff9500 13%, transparent);
+}
+.spx__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.7rem;
+}
+.spx__feature {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 22%, transparent);
+}
+.ips__footer .ips__pill {
+  align-self: center;
 }
 
 /* grouped list */
