@@ -84,21 +84,12 @@
       </section>
     </div>
 
-    <template #footer>
+    <!-- No Skip: another domain is a tap on its chip above, and ✕ closes (a lone domain has nothing to skip to) -->
+    <template v-if="finished || (step && !useTab)" #footer>
       <div v-if="!finished" class="pd__actions">
-        <a v-if="step && !useTab" :href="step.url" target="_blank" class="pd__tab" @click.prevent="openStep">
+        <a v-if="step" :href="step.url" target="_blank" class="pd__tab" @click.prevent="openStep">
           <i class="pi pi-external-link" aria-hidden="true" /> {{ t('account.passkeys.domains.openTab') }}
         </a>
-        <span class="flex-1" />
-        <Button
-          :label="t('account.passkeys.domains.skip')"
-          :icon="isRtl ? 'pi pi-angle-left' : 'pi pi-angle-right'"
-          icon-pos="right"
-          severity="secondary"
-          outlined
-          :disabled="results[index] === 'added'"
-          @click="next('skipped')"
-        />
       </div>
       <Button v-else :label="t('account.passkeys.domains.doneButton')" icon="pi pi-check" autofocus @click="finish" />
     </template>
@@ -126,7 +117,7 @@ type FrameStatus = 'ready' | 'busy' | 'added' | 'cancelled' | 'failed' | 'expire
 /** This page's own: the step's tab is open, or the browser did not open it. */
 type StepStatus = FrameStatus | 'tab' | 'blocked'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const index = ref(0)
 const results = ref<(Result | undefined)[]>([])
 const loaded = ref(false)
@@ -135,7 +126,6 @@ const finished = ref(false)
 const dark = ref(false)
 const step = computed<PasskeyStep | undefined>(() => props.steps[index.value])
 const added = computed(() => results.value.filter((r) => r === 'added').length)
-const isRtl = computed(() => ['fa', 'ar'].includes(locale.value))
 
 /** WebKit (Safari, and every browser on an iPhone or iPad) does not make passkeys in another domain's frame. */
 function framesBlocked(): boolean {
