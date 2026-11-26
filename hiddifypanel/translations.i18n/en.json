@@ -375,6 +375,7 @@
         "cancelled": "The passkey was not made. Try again when you are ready.",
         "domains": {
           "added": "Added",
+          "all": "The panel's domains",
           "cancelled": "The prompt was closed. Tap the button to try again, or skip this domain.",
           "create": "Create Passkey",
           "doneButton": "Done",
