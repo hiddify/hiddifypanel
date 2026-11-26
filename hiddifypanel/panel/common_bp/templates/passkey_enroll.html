@@ -105,11 +105,18 @@
         'expired': texts.get('enrollExpired', 'Open My account in the panel and add the passkey again.'),
         'failed': texts.get('enrollFailed', 'The passkey could not be added here. Try again, or skip this domain.'),
         'done': texts.get('enrollDoneFramed', 'Passkey added.'),
-        'closeTab': texts.get('enrollDoneTab', 'Passkey added. You can close this tab.')
+        'closeTab': texts.get('enrollDoneTab', 'Passkey added. You can close this tab.'),
+        'back': texts.get('enrollDoneBack', 'Passkey added. Taking you back to the panel…')
       }|tojson }};
       function say(key, cls) { msg.textContent = texts[key] || texts.failed; msg.className = 'msg ' + (cls || 'err'); }
       // My account (only the page that asked for this step) moves on to the next domain.
-      function tell(status) { if (framed) { try { window.parent.postMessage({ type: 'hiddify-passkey', status: status }, parentOrigin); } catch (e) {} } }
+      // Or the tab My account opened for this step (Safari makes passkeys only on the domain's own page).
+      var opener = null;
+      try { if (!framed && window.opener && window.opener !== window) opener = window.opener; } catch (e) {}
+      function tell(status) {
+        var to = framed ? window.parent : opener;
+        if (to) { try { to.postMessage({ type: 'hiddify-passkey', status: status }, parentOrigin); } catch (e) {} }
+      }
       function b64(buf) {
         var bytes = new Uint8Array(buf), s = '';
         for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
@@ -129,8 +136,10 @@
         try { localStorage.setItem('hiddify_passkey', '1'); } catch (e) {}
         main.classList.add('done');
         btn.disabled = true;
-        say(framed ? 'done' : 'closeTab', 'ok');
+        say(framed ? 'done' : opener ? 'back' : 'closeTab', 'ok');
         tell('added');
+        // Opened by My account: back to it (a browser that keeps the tab shows "You can close this tab").
+        if (opener) setTimeout(function () { window.close(); setTimeout(function () { say('closeTab', 'ok'); }, 400); }, 900);
       }
       if (!window.PublicKeyCredential || !navigator.credentials || !window.isSecureContext) { btn.disabled = true; say('unsupported'); tell('unsupported'); return; }
       var busy = false, attempt = 0, pending = null;

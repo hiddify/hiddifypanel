@@ -22,10 +22,21 @@
         <small v-if="steps.length > 1" class="pd__count">{{ t('account.passkeys.domains.step', { step: index + 1, total: steps.length }) }}</small>
         <p class="pd__heading">{{ t('account.passkeys.domains.heading') }}</p>
         <bdi dir="ltr" class="pd__domain">{{ step.domain }}</bdi>
-        <p class="pd__hint">{{ t('account.passkeys.domains.hint') }}</p>
+        <p class="pd__hint">{{ useTab ? t('account.passkeys.domains.tabHint') : t('account.passkeys.domains.hint') }}</p>
 
+        <!-- Safari makes passkeys only on the domain's own page: a short tab of it, which closes itself when done -->
+        <Button
+          v-if="useTab"
+          class="pd__create"
+          :label="t('account.passkeys.domains.create')"
+          icon="pi pi-key"
+          rounded
+          :loading="status === 'tab' || status === 'busy'"
+          :disabled="results[index] === 'added'"
+          @click="openStep"
+        />
         <!-- The other domain's own button (the passkey is made there); it takes this page's colours and mode -->
-        <div class="pd__frame">
+        <div v-else class="pd__frame">
           <iframe
             :key="step.url"
             :src="frameSrc(step)"
@@ -59,7 +70,7 @@
 
     <template #footer>
       <div v-if="!finished" class="pd__actions">
-        <a v-if="step" :href="step.url" target="_blank" rel="noopener noreferrer" class="pd__tab" :class="{ 'pd__tab--strong': status === 'frame' }">
+        <a v-if="step && !useTab" :href="step.url" target="_blank" class="pd__tab" @click.prevent="openStep">
           <i class="pi pi-external-link" aria-hidden="true" /> {{ t('account.passkeys.domains.openTab') }}
         </a>
         <span class="flex-1" />
@@ -94,19 +105,33 @@ const emit = defineEmits<{ 'update:visible': [value: boolean]; done: [added: num
 type Result = 'added' | 'skipped'
 /** What the step page reports (passkey_enroll.html). */
 type FrameStatus = 'ready' | 'busy' | 'added' | 'cancelled' | 'failed' | 'expired' | 'frame' | 'unsupported'
+/** This page's own: the step's tab is open, or the browser did not open it. */
+type StepStatus = FrameStatus | 'tab' | 'blocked'
 
 const { t, locale } = useI18n()
 const index = ref(0)
 const results = ref<(Result | undefined)[]>([])
 const loaded = ref(false)
-const status = ref<FrameStatus | null>(null)
+const status = ref<StepStatus | null>(null)
 const finished = ref(false)
 const dark = ref(false)
 const step = computed<PasskeyStep | undefined>(() => props.steps[index.value])
 const added = computed(() => results.value.filter((r) => r === 'added').length)
 const isRtl = computed(() => ['fa', 'ar'].includes(locale.value))
 
-const STATUS_TEXT: Partial<Record<FrameStatus, string>> = {
+/** WebKit (Safari, and every browser on an iPhone or iPad) does not make passkeys in another domain's frame. */
+function framesBlocked(): boolean {
+  const ua = navigator.userAgent
+  const ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
+  const safari = /Safari\//.test(ua) && !/Chrome\/|Chromium\/|Edg\/|OPR\/|Firefox\//.test(ua)
+  return ios || safari
+}
+/** Each step in its own short tab instead of a frame (also once a frame said the browser refuses it there). */
+const useTab = ref(framesBlocked())
+
+const STATUS_TEXT: Partial<Record<StepStatus, string>> = {
+  tab: 'account.passkeys.domains.inTab',
+  blocked: 'account.passkeys.domains.tabBlocked',
   busy: 'account.passkeys.domains.waiting',
   added: 'account.passkeys.domains.added',
   cancelled: 'account.passkeys.domains.cancelled',
@@ -118,8 +143,8 @@ const STATUS_TEXT: Partial<Record<FrameStatus, string>> = {
 const statusText = computed(() => (status.value && STATUS_TEXT[status.value] ? t(STATUS_TEXT[status.value]!) : ''))
 const statusTone = computed(() => {
   if (status.value === 'added') return 'ok'
-  if (status.value === 'busy') return 'muted'
-  return status.value === 'cancelled' || status.value === 'frame' || status.value === 'unsupported' ? 'warn' : 'error'
+  if (status.value === 'busy' || status.value === 'tab') return 'muted'
+  return status.value === 'cancelled' || status.value === 'frame' || status.value === 'unsupported' || status.value === 'blocked' ? 'warn' : 'error'
 })
 
 function chipState(i: number): string {
@@ -177,8 +202,37 @@ watch(
   { immediate: true },
 )
 
+/** The step's page in a tab of its own (opened by my tap, so not blocked). It tells this page how it went and
+ * closes itself once the passkey is made, which brings the admin back here. */
+let popup: Window | null = null
+let popupWatch: number | undefined
+function stopWatching() {
+  window.clearInterval(popupWatch)
+  popupWatch = undefined
+}
+function openStep() {
+  const s = step.value
+  if (!s || results.value[index.value] === 'added') return
+  // Not noopener: the page answers through window.opener (only to this page's origin, see passkey_enroll.html).
+  popup = window.open(frameSrc(s), 'hiddify-passkey')
+  if (!popup) {
+    status.value = 'blocked'
+    return
+  }
+  status.value = 'tab'
+  stopWatching()
+  // Closed by the admin before the passkey was made: the button is ready again.
+  popupWatch = window.setInterval(() => {
+    if (popup && !popup.closed) return
+    stopWatching()
+    popup = null
+    if (status.value === 'tab' || status.value === 'busy') status.value = null
+  }, 600)
+}
+
 function finish() {
   if (!props.visible) return
+  stopWatching()
   emit('update:visible', false)
   emit('done', added.value)
 }
@@ -186,6 +240,8 @@ function finish() {
 let advance: number | undefined
 function next(result: Result) {
   window.clearTimeout(advance)
+  stopWatching()
+  popup = null
   results.value[index.value] = result
   loaded.value = false
   status.value = null
@@ -200,6 +256,14 @@ function onMessage(event: MessageEvent) {
   const data = event.data as { type?: string; status?: FrameStatus } | null
   if (!data || data.type !== 'hiddify-passkey' || !data.status) return
   loaded.value = true
+  // The tab's own first try is no news while it is open.
+  if (data.status === 'ready' && popup && !popup.closed) return
+  // A frame the browser refuses: this step and the next ones go through a tab instead.
+  if (data.status === 'frame' && !useTab.value) {
+    useTab.value = true
+    status.value = null
+    return
+  }
   status.value = data.status === 'ready' ? null : data.status
   if (data.status === 'added') {
     results.value[index.value] = 'added'
@@ -212,6 +276,7 @@ onMounted(() => window.addEventListener('message', onMessage))
 onBeforeUnmount(() => {
   window.removeEventListener('message', onMessage)
   window.clearTimeout(advance)
+  stopWatching()
 })
 </script>
 
@@ -327,6 +392,11 @@ onBeforeUnmount(() => {
   line-height: 1.5;
   color: var(--p-text-muted-color);
 }
+.pd__create {
+  align-self: stretch;
+  min-height: 2.9rem;
+  font-weight: 600;
+}
 .pd__frame {
   position: relative;
   width: 100%;
@@ -385,11 +455,7 @@ onBeforeUnmount(() => {
   color: var(--p-text-muted-color);
   text-decoration: none;
 }
-.pd__tab:hover,
-.pd__tab--strong {
+.pd__tab:hover {
   color: var(--p-primary-color);
-}
-.pd__tab--strong {
-  font-weight: 600;
 }
 </style>
