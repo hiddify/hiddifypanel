@@ -418,6 +418,8 @@
           "domains": "The panel has {count} domains: you confirm once on each, right here.",
           "later": "Not Now",
           "never": "Don't Ask on This Device",
+          "stepAdd": "Add it once",
+          "stepSignIn": "Then sign in with a glance",
           "title": "Sign in without a password?"
         },
         "title": "Passkeys",
