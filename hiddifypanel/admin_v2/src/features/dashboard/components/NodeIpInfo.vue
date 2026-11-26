@@ -11,6 +11,7 @@ import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
 import LiveIcon from './LiveIcon.vue'
+import CpuChipIcon from './CpuChipIcon.vue'
 import { siAmd, siApple, siArm, siIntel, siNvidia, siQualcomm, type SimpleIcon } from 'simple-icons'
 import IpLocationMap from './IpLocationMap.vue'
 import ServerLogo from './ServerLogo.vue'
@@ -880,11 +881,8 @@ const sections = computed(() =>
               </div>
               <template v-else-if="specs?.summary">
                 <section class="spx__hero" :style="{ '--v': cpuBrand.color }">
-                  <!-- the maker's own logo (vector, Simple Icons); a CPU of another maker keeps the live chip -->
-                  <span class="spx__hero-icon" :class="{ 'is-live': !cpuBrand.logo }">
-                    <svg v-if="cpuBrand.logo" class="spx__brand" viewBox="0 0 24 24" role="img" :aria-label="cpuBrand.logo.title"><path :d="cpuBrand.logo.path" /></svg>
-                    <LiveIcon v-else name="x-cpu" />
-                  </span>
+                  <!-- a processor with its maker's logo on the metal (vector, logos from Simple Icons) -->
+                  <span class="spx__hero-icon"><CpuChipIcon :logo="cpuBrand.logo" /></span>
                   <div class="spx__hero-text">
                     <span class="spx__vendor">{{ specs.summary.vendor }}</span>
                     <h3 class="spx__cpu" dir="ltr">{{ cpuName }}</h3>
@@ -1407,50 +1405,8 @@ html.app-dark .ips__company {
 }
 .spx__hero-icon {
   flex: none;
-  display: grid;
-  place-items: center;
-  width: 3.4rem;
-  height: 3.4rem;
-  border-radius: 1rem;
-  color: #fff;
-  font-size: 2rem;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--v) 75%, #fff), var(--v));
-  box-shadow: 0 10px 22px -10px var(--v);
-}
-.spx__hero-icon {
-  position: relative;
-  overflow: hidden;
-}
-/* the logo, white on its maker's colour, with a gleam passing over it now and then */
-.spx__brand {
-  width: 2.3rem;
-  height: 2.3rem;
-  fill: currentColor;
-}
-.spx__hero-icon::after {
-  content: '';
-  position: absolute;
-  inset: -20%;
-  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.45) 50%, transparent 65%);
-  transform: translateX(-120%);
-  animation: spx-gleam 4.5s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes spx-gleam {
-  0%,
-  60% {
-    transform: translateX(-120%);
-  }
-  85%,
-  100% {
-    transform: translateX(120%);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .spx__hero-icon::after {
-    animation: none;
-    opacity: 0;
-  }
+  width: 4rem;
+  height: 4rem;
 }
 .spx__hero-text {
   min-width: 0;
