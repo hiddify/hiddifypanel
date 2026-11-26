@@ -11,6 +11,7 @@ import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
 import LiveIcon from './LiveIcon.vue'
+import { siAmd, siApple, siArm, siIntel, siNvidia, siQualcomm, type SimpleIcon } from 'simple-icons'
 import IpLocationMap from './IpLocationMap.vue'
 import ServerLogo from './ServerLogo.vue'
 import { countryName } from '@/shared/utils/country'
@@ -340,12 +341,16 @@ const cpuName = computed(() =>
     .replace(/\s+/g, ' ')
     .trim(),
 )
-const vendorColor = computed(() => {
+/** The processor's maker: its logo and the card's colour (AMD green, Intel's logo blue, Arm red) */
+const cpuBrand = computed<{ logo: SimpleIcon | null; color: string }>(() => {
   const v = `${specs.value?.summary?.vendor ?? ''} ${specs.value?.summary?.name ?? ''}`.toLowerCase()
-  if (v.includes('amd') || v.includes('epyc') || v.includes('ryzen')) return '#ed1c24'
-  if (v.includes('intel') || v.includes('xeon')) return '#0071c5'
-  if (v.includes('arm') || v.includes('ampere') || v.includes('neoverse')) return '#00a3e0'
-  return '#8e8e93'
+  if (/\bamd\b|epyc|ryzen|opteron|threadripper/.test(v)) return { logo: siAmd, color: '#00a651' }
+  if (/intel|xeon|pentium|celeron|\bcore\b/.test(v)) return { logo: siIntel, color: '#0068b5' }
+  if (/qualcomm|snapdragon/.test(v)) return { logo: siQualcomm, color: '#3253dc' }
+  if (/nvidia|grace/.test(v)) return { logo: siNvidia, color: '#76b900' }
+  if (/apple/.test(v)) return { logo: siApple, color: '#1d1d1f' }
+  if (/\barm\b|ampere|neoverse|graviton|cortex|aarch64/.test(v)) return { logo: siArm, color: '#e5202e' }
+  return { logo: null, color: '#8e8e93' }
 })
 const specTiles = computed(() => {
   const s = specs.value?.summary
@@ -874,8 +879,12 @@ const sections = computed(() =>
                 <button type="button" class="ips__pill" @click="node && loadSpecs(node.id, true)">{{ t('dashboard.ipInfo.retry') }}</button>
               </div>
               <template v-else-if="specs?.summary">
-                <section class="spx__hero" :style="{ '--v': vendorColor }">
-                  <span class="spx__hero-icon is-live"><LiveIcon name="x-cpu" /></span>
+                <section class="spx__hero" :style="{ '--v': cpuBrand.color }">
+                  <!-- the maker's own logo (vector, Simple Icons); a CPU of another maker keeps the live chip -->
+                  <span class="spx__hero-icon" :class="{ 'is-live': !cpuBrand.logo }">
+                    <svg v-if="cpuBrand.logo" class="spx__brand" viewBox="0 0 24 24" role="img" :aria-label="cpuBrand.logo.title"><path :d="cpuBrand.logo.path" /></svg>
+                    <LiveIcon v-else name="x-cpu" />
+                  </span>
                   <div class="spx__hero-text">
                     <span class="spx__vendor">{{ specs.summary.vendor }}</span>
                     <h3 class="spx__cpu" dir="ltr">{{ cpuName }}</h3>
@@ -1407,6 +1416,41 @@ html.app-dark .ips__company {
   font-size: 2rem;
   background: linear-gradient(145deg, color-mix(in srgb, var(--v) 75%, #fff), var(--v));
   box-shadow: 0 10px 22px -10px var(--v);
+}
+.spx__hero-icon {
+  position: relative;
+  overflow: hidden;
+}
+/* the logo, white on its maker's colour, with a gleam passing over it now and then */
+.spx__brand {
+  width: 2.3rem;
+  height: 2.3rem;
+  fill: currentColor;
+}
+.spx__hero-icon::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.45) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: spx-gleam 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes spx-gleam {
+  0%,
+  60% {
+    transform: translateX(-120%);
+  }
+  85%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spx__hero-icon::after {
+    animation: none;
+    opacity: 0;
+  }
 }
 .spx__hero-text {
   min-width: 0;
