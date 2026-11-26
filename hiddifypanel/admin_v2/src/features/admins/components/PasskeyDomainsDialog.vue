@@ -33,7 +33,8 @@
         :class="{ 'pd__card--added': results[index] === 'added' }"
         :style="{ '--hue': currentHue }"
       >
-        <span class="pd__icon" aria-hidden="true"><i :class="results[index] === 'added' ? 'pi pi-check' : 'pi pi-key'" /></span>
+        <span v-if="results[index] === 'added'" class="pd__icon" aria-hidden="true"><i class="pi pi-check" /></span>
+        <span v-else class="pd__scan"><FaceScanIcon /></span>
         <small v-if="steps.length > 1" class="pd__count">{{ t('account.passkeys.domains.step', { step: index + 1, total: steps.length }) }}</small>
         <p class="pd__heading">{{ t('account.passkeys.domains.heading') }}</p>
         <bdi dir="ltr" class="pd__domain">{{ step.domain }}</bdi>
@@ -110,6 +111,7 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Skeleton from 'primevue/skeleton'
+import FaceScanIcon from '@/shared/components/FaceScanIcon.vue'
 import { adminsApi, type PasskeyStep } from '@/features/admins/api'
 import { addPasskeyHere, passkeysVersion } from '@/features/admins/passkey-add'
 
@@ -474,6 +476,60 @@ onBeforeUnmount(() => {
   background: var(--p-primary-color);
   box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--p-primary-color) 70%, transparent);
   transition: background-color 0.3s ease;
+}
+/* The face being scanned, in the domain's colour, on a very light tile with a soft pulse around it */
+.pd__scan {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.75rem;
+  height: 4.75rem;
+  margin-bottom: 0.45rem;
+  border-radius: 1.45rem;
+  font-size: 3.1rem;
+  color: var(--hue, var(--p-primary-color));
+  background: color-mix(in srgb, var(--hue, var(--p-primary-color)) 9%, var(--p-content-background));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--hue, var(--p-primary-color)) 16%, transparent),
+    0 10px 26px -14px var(--hue, var(--p-primary-color));
+  transition:
+    color 0.35s ease,
+    background-color 0.35s ease;
+}
+.pd__scan::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid color-mix(in srgb, var(--hue, var(--p-primary-color)) 35%, transparent);
+  animation: pd-pulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes pd-pulse {
+  0% {
+    opacity: 0.8;
+    scale: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    scale: 1.22;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pd__scan::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+.pd__card--added .pd__icon {
+  animation: pd-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pd-pop {
+  from {
+    scale: 0.5;
+    opacity: 0;
+  }
 }
 .pd__card--added .pd__icon,
 .pd__card--done .pd__icon {
