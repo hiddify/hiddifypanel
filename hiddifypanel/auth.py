@@ -152,6 +152,9 @@ def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
                     if denied := _deny_non_super_admin_on_node():
                         return denied
                     return fn(*args, **kwargs)
+                if current_account and hutils.flask.is_api_call(request.path):
+                    # Signed in, but this role may not use it: a 401 would make the admin page sign in again
+                    json_abort(403, "Your role cannot use this")
                 return redirect_to_login()
 
             if node_auth:

@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useInboxCounts } from '@/features/inbox/useInboxCounts'
-import { hasCapability, isAgent, isChildPanel, isSuperAdmin, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
+import { hasCapability, isChildPanel, isSuperAdmin, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
 
 export type { AdminMenuGroup, AdminMenuItem }
 
@@ -52,7 +52,7 @@ export function useAdminMenu() {
     icon: 'pi pi-fw pi-wrench',
     items: [
       ...(isSuperAdmin.value ? [{ label: t('menu.configTester'), icon: 'pi pi-fw pi-bolt', to: '/config-tester' }] : []),
-      { label: t('menu.cleanIp'), icon: 'pi pi-fw pi-wifi', to: '/scanner' },
+      ...(hasCapability('modify_domains') ? [{ label: t('menu.cleanIp'), icon: 'pi pi-fw pi-wifi', to: '/scanner' }] : []),
       { label: t('menu.textDecoders'), icon: 'pi pi-fw pi-code', to: '/utils' },
       { label: t('menu.qrCode'), icon: 'pi pi-fw pi-qrcode', to: '/qr' },
       ...(isSuperAdmin.value ? [{ label: t('menu.ssh'), icon: 'pi pi-fw pi-desktop', to: '/ssh' }] : []),
@@ -80,18 +80,19 @@ export function useAdminMenu() {
             tools.value,
           ],
       // Domains, protocols, outbounds, settings, the proxy editor, then the rest (backup, apply, ...).
-      // The proxy editor lives in Settings in every panel mode; agents don't get it.
+      // The proxy editor lives in Settings in every panel mode; only super admins get it.
       settings: (() => {
         const all = serverItems('settings')
         const first = (to: string) => all.find((item) => item.to === to)
         const lead = [
           first('/domains'),
-          ...(isAgent.value ? [] : [protocols.value]),
+          // Server-wide settings: only super admins (the server refuses the others)
+          ...(isSuperAdmin.value ? [protocols.value] : []),
           ...(hasCapability('modify_outbounds') ? [outbounds.value] : []),
           first('/settings'),
           // The bot is the whole server's (its token): the owner's, and the parent panel's
           ...(isSuperAdmin.value && !isChildPanel.value ? [telegramBot.value] : []),
-          ...(isAgent.value ? [] : [proxyEditor.value]),
+          ...(isSuperAdmin.value ? [proxyEditor.value] : []),
         ]
         const placed = new Set(lead)
         return [...lead.filter((item): item is AdminMenuItem => !!item), ...all.filter((item) => !placed.has(item))]
