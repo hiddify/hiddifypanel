@@ -180,6 +180,6 @@ def run() -> None:
         if len(users) > ADMIN_LIST_MAX:
             lines.append(t(T.notify_admin_more, lang, n=len(users) - ADMIN_LIST_MAX))
         try:
-            bot.send_message(admin.telegram_id, "\n".join(lines), reply_markup=keyboard([btn(t(T.f_expiring, lang), Cb.users, Filter.expiring.value, 0)]))
+            bot.send_message(admin.telegram_id, "\n".join(lines), reply_markup=keyboard([btn(f"⏳ {t(T.f_expiring, lang)}", Cb.users, Filter.expiring.value, 0)]))
         except Exception as e:
             logger.debug(f"tgbot: notify admin {admin.id}: {e}")

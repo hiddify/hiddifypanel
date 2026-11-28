@@ -4,6 +4,7 @@ or many users, and backups. Everything happens in one message that the buttons e
 from __future__ import annotations
 
 import datetime
+import re
 import io
 from collections.abc import Sequence
 
@@ -16,7 +17,7 @@ from hiddifypanel.models import AdminMode, AdminUser, User
 from . import accounts, bot
 from .accounts import Filter, Sort
 from .texts import T
-from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, with_retry
+from .ui import RULE, SELECTED, ago, ago_html, background, bar, btn, Cb, Ctx, fmt_gb, h, keyboard, off_btn, route, Screen, send_card, Style, tg_time, url_btn, with_retry
 from .user import account_card, links_screen, share_screen
 
 PAGE_SIZE = 8
@@ -52,7 +53,10 @@ def home_screen(ctx: Ctx) -> Screen:
     )
     # Every action is a key of the keyboard by the message box (menukey.ADMIN_ROWS); the panel app is the menu button
     rows: list[Sequence[types.InlineKeyboardButton]] = [[btn(ctx.tr(T.refresh), Cb.home)]]
-    return Screen(text, keyboard(*rows))
+    from .openbutton import home_notice
+
+    more, keys = home_notice(ctx)  # the owner: the bot's "Open" button is not set up yet
+    return Screen("\n".join([text, *more]), keyboard(*keys, *rows))
 
 
 @route(Cb.home, admin=True)
@@ -178,9 +182,24 @@ def users_screen(ctx: Ctx, f: Filter, page: int, sort: Sort = Sort.new) -> Scree
             *_user_grid(ctx, found.users),
             _pager(Cb.users, [f.value], page, found.pages, [sort.value]),
             [btn(ctx.tr(T.search), Cb.search_ask), btn(ctx.tr(T.sort_by, by=ctx.tr(_SORT_TEXT[after])), Cb.users, f.value, 0, after.value)],
+            _advanced_row(ctx),
             [btn(ctx.tr(T.back), Cb.back)],
         ),
     )
+
+
+def _advanced_row(ctx: Ctx) -> list:
+    """Bulk actions and the admins (Advanced)."""
+    from . import admins, bulk
+
+    from .miniapp import scan_button
+
+    row = bulk.list_row(ctx)
+    if admins.allowed(ctx):
+        row.append(btn(f"🧑‍💼 {ctx.tr(T.am_title)}", Cb.admins))
+    if scan := scan_button(ctx):
+        row.append(scan)
+    return row
 
 
 @route(Cb.users, admin=True)
@@ -343,6 +362,10 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             ctx.show(Screen(head + ctx.tr(T.delete_confirm), keyboard([btn(ctx.tr(T.delete), Cb.act, user.id, "del", 1, style=Style.danger), btn(ctx.tr(T.cancel), Cb.card, user.id)])))
             return ctx.toast()
         case "del", _:
+            from .miniapp import needs_unlock
+
+            if needs_unlock(ctx, "del", ":".join([Cb.act.value, str(user.id), "del", str(value)])):
+                return
             if User.query.filter(User.deleted.is_(False)).count() <= 1:
                 return ctx.toast(ctx.tr(T.last_user), alert=True)
             name = user.name
@@ -363,6 +386,10 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             accounts.renew(user)
             note = ctx.tr(T.renewed)
         case "reset", _:
+            # A user out of data is turned on again by it: the same active-user limit as "on"
+            assert ctx.admin
+            if accounts.status(user) is accounts.Status.no_data and not ctx.admin.can_activate_more_users():
+                return ctx.toast(ctx.tr(T.limit_reached), alert=True)
             user.reset_usage()
             note = ctx.tr(T.usage_reset)
         case "on", _:
@@ -435,7 +462,7 @@ def new_screen(ctx: Ctx, gb: int, days: int, count: int) -> Screen:
         # Many users: their name comes first (typed), each gets its number after it
         ctx.state.update(awaiting="new_name", new_args=[gb, days, count])
         text += f"✏️ {ctx.tr(T.new_many_name, example=h(names_preview('Hiddify', count)))}"
-        rows += [[btn(ctx.tr(T.new_use_name, name=name[:30]), Cb.new_name, gb, days, count, "d")], [btn(ctx.tr(T.back), Cb.new, gb, 0, count)]]
+        rows += [[btn("✅ " + ctx.tr(T.new_use_name, name=name[:30]), Cb.new_name, gb, days, count, "d")], [btn(ctx.tr(T.back), Cb.new, gb, 0, count)]]
     else:
         rows += [
             [btn(ctx.tr(T.new_create_n, n=count) if count > 1 else ctx.tr(T.new_create), Cb.new_go, gb, days, count, style=Style.success)],
@@ -543,6 +570,10 @@ def on_text(ctx: Ctx, text: str) -> None:
             return ask_count(ctx, [], error=True)
         ctx.show(new_screen(ctx, 0, 0, n))
         return
+    if awaiting == "agent_name":
+        from . import admins
+
+        return admins.on_name(ctx, text)
     if awaiting == "new_name":
         ctx.state.update(new_name=text.strip()[:60])
         args = ctx.state.get("new_args") or [0, 0, 0]
@@ -554,12 +585,134 @@ def on_text(ctx: Ctx, text: str) -> None:
 # --------------------------------------------------------------------------- backup
 
 
+#: The newest backups listed (a message holds about 4000 characters), from this many days back
+MAX_BACKUPS_LISTED = 20  # each takes 3 of the 100 formatted parts a message may hold (a link, two dates)
+HISTORY_DAYS = 30
+#: A backup's download link: a random key for that one file (api/v1/tgbot/backup/<key>/), used once, this long
+DOWNLOAD_TTL = 15 * 60
+_DOWNLOAD_KEY = "tgbot:bkdl:{}"
+_STEM = re.compile(r"^\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}$")
+
+
+def _recent_backups() -> list[dict]:
+    from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import list_files
+
+    from . import backup_msg
+
+    since = datetime.datetime.now() - datetime.timedelta(days=HISTORY_DAYS)
+    return [f for f in list_files() if backup_msg.when_of(f["name"]) >= since]
+
+
+def backup_file_screen(ctx: Ctx, stem: str) -> Screen | None:
+    """One backup: where to download it from, a key per domain or IP (green with a valid certificate, red without),
+    each a link that works for an hour and gives that one file only."""
+    import secrets
+
+    from hiddifypanel.cache import redis_client
+    from hiddifypanel.models import ConfigEnum, hconfig
+
+    from . import backup_msg
+
+    found = next((f for f in _recent_backups() if f["name"] == f"{stem}.json"), None) if _STEM.match(stem or "") else None
+    if found is None:
+        return None
+    key = secrets.token_urlsafe(18)
+    redis_client.set(_DOWNLOAD_KEY.format(key), found["name"], ex=DOWNLOAD_TTL)
+    when = backup_msg.when_of(found["name"])
+    path = hconfig(ConfigEnum.proxy_path_admin)
+    rows = []
+    for kind, address, _url in backup_msg.links(ctx.admin)[:20]:
+        host = f"[{address}]" if ":" in address else address
+        url = f"https://{host}/{path}/api/v1/tgbot/backup/{key}/"
+        rows.append([url_btn(backup_msg.button_label(kind, address), url, style=Style.danger if kind == "insecure" else Style.success)])
+    rows.append([btn(ctx.tr(T.back), Cb.backup, "hist")])
+    lines = [
+        f"💾 <b>{h(backup_msg.file_name(when).removesuffix('.json'))}</b>",
+        RULE,
+        f"📅 {tg_time(when.date(), 'D', f'{when:%Y-%m-%d}')} · 🕒 {tg_time(when, 't', f'{when:%H:%M}')} · 📦 {backup_msg._kb(int(found['size']))}",
+        "",
+        f"🔗 <i>{ctx.tr(T.bk_file_hint)}</i>",
+    ]
+    return Screen("\n".join(lines), keyboard(*rows))
+
+
+def show_backup_file(ctx: Ctx, stem: str) -> None:
+    from .miniapp import needs_unlock
+
+    if needs_unlock(ctx, "backup", f"{Cb.backup.value}:f:{stem}"):
+        return
+    screen = backup_file_screen(ctx, stem)
+    if screen is None:
+        return ctx.toast(ctx.tr(T.gone), alert=True) if ctx.call_id else ctx.show(Screen(ctx.tr(T.gone), keyboard([btn(ctx.tr(T.back), Cb.backup, "hist")])))
+    ctx.toast()
+    ctx.show(screen)
+
+
+def backup_menu(ctx: Ctx) -> Screen:
+    return Screen(
+        f"💾 <b>{ctx.tr(T.bk_title)}</b>\n{RULE}\n{ctx.tr(T.bk_menu_hint)}",
+        keyboard([btn(ctx.tr(T.bk_now), Cb.backup, "now", style=Style.success)], [btn(ctx.tr(T.bk_history), Cb.backup, "hist")], [btn(ctx.tr(T.back), Cb.back)]),
+    )
+
+
+def backup_history(ctx: Ctx, page: int = 0) -> Screen:
+    """The backups kept on the server, newest first, in a box that opens: closed, it shows the newest one only (each
+    backup takes two lines and a blank one, the lines a closed box shows)."""
+    from . import backup_msg
+
+    files = _recent_backups()
+    pages = max((len(files) + MAX_BACKUPS_LISTED - 1) // MAX_BACKUPS_LISTED, 1)
+    page = min(max(page, 0), pages - 1)
+    lines = [f"🗂 <b>{ctx.tr(T.bk_history_title)}</b>", RULE]
+    if not files:
+        lines.append(ctx.tr(T.bk_history_none_month))
+    else:
+        lines.append(ctx.tr(T.bk_history_month, n=len(files)))
+        entries = []
+        start = page * MAX_BACKUPS_LISTED
+        for i, f in enumerate(files[start : start + MAX_BACKUPS_LISTED], start):
+            when = backup_msg.when_of(f["name"])
+            mark = "🆕" if i == 0 else "💾"
+            name = backup_msg.file_name(when).removesuffix(".json")
+            day = tg_time(when.date(), "D", f"{when:%Y-%m-%d}")
+            hour = tg_time(when, "t", f"{when:%H:%M}")
+            stem = f["name"].removesuffix(".json")
+            # A tap on the name opens that backup in the bot (a /start link: a quote's text cannot hold the bot's keys)
+            title = f'<a href="https://t.me/{bot.username}?start=bk_{stem}">{h(name)}</a>' if bot.username and _STEM.match(stem) else h(name)
+            entries.append(f"{mark} {title}\n📅 {day} · 🕒 {hour} · 📦 {backup_msg._kb(int(f['size']))}")
+        body = "\n\n".join(entries)
+        lines.append(f"<blockquote expandable>{body}</blockquote>")
+    # Older backups of the month on further pages (a message holds about 40 of them)
+    pager = []
+    if pages > 1:
+        pager = [
+            btn("«", Cb.backup, "hist", max(page - 1, 0)),
+            btn(f"{page + 1}/{pages}", Cb.backup, "hist", page),
+            btn("»", Cb.backup, "hist", min(page + 1, pages - 1)),
+        ]
+    return Screen("\n".join(lines), keyboard(pager, [btn(ctx.tr(T.bk_now), Cb.backup, "now", style=Style.success)], [btn(ctx.tr(T.back), Cb.back)]))
+
+
 @route(Cb.backup, admin=True)
-def send_backup(ctx: Ctx, _args: list[str]) -> None:
+def send_backup(ctx: Ctx, args: list[str]) -> None:
+    """bk → Backup Now / Backup History · bk:now → a backup now · bk:hist → the backups kept."""
     admin = ctx.admin
     assert admin
     if admin.mode != AdminMode.super_admin:
         return ctx.toast(ctx.tr(T.not_allowed), alert=True)
+    step = args[0] if args else ""
+    if step == "f" and len(args) > 1:
+        return show_backup_file(ctx, args[1])
+    if step == "hist":
+        ctx.toast()
+        return ctx.show(backup_history(ctx, _int(args, 1)))
+    if step != "now":
+        ctx.toast()
+        return ctx.show(backup_menu(ctx))
+    from .miniapp import needs_unlock
+
+    if needs_unlock(ctx, "backup", f"{Cb.backup.value}:now"):
+        return
     ctx.toast(ctx.tr(T.backup_working))
     try:
         from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import write_backup_file

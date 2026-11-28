@@ -1,7 +1,7 @@
 """The backup message, the same wherever it comes from (the daily backup, the panel's "send to Telegram", the bot's
 Backup key): the file named by its date and time (2026.11.17_18.00.json), a tidy card (the panel, its version, the
-date, the time, the size, the users) and the panel's links as buttons: green the secure ones, 🟠 those through a CDN,
-red the not secure one (only if the others do not open)."""
+date, the time, the size, the users) and the panel's links as buttons: green the secure ones (🔒 a valid certificate, 🔐 through a CDN),
+red the not secure ones (no valid certificate; only if the others do not open). The keys never show the address."""
 
 from __future__ import annotations
 
@@ -41,26 +41,37 @@ def _panel_name() -> str:
 
 
 def links(owner) -> list[tuple[str, str, str]]:
-    """(kind, address, url) of every way into the panel: "secure" (the server's own address or domain), "cdn", and
-    last "insecure" (plain http to the IPv4). IPv6 is left out: it does not open from most networks."""
-    from hiddifypanel import hutils
+    """(kind, address, url) of every way into the panel, by the panel's own view of each domain's certificate:
+    "secure" (a valid certificate), "cdn" (through a CDN, which brings its own), and last "insecure" (no valid
+    certificate: missing, self-signed, expired). Always https: the admin link holds the sign-in key, never sent in
+    cleartext. IPv6 is left out: it does not open from most networks."""
     from hiddifypanel.models import Domain, DomainType
     from hiddifypanel.panel import hiddify
 
-    out = []
+    secure, cdn, insecure = [], [], []
     for d in Domain.get_domains():
+        address = d.domain.strip()
+        if not address or "*" in address:
+            continue
         try:
-            if ipaddress.ip_address(d.domain.strip("[]")).version == 6:
+            if ipaddress.ip_address(address.strip("[]")).version == 6:
                 continue
         except ValueError:
             pass
-        kind = "cdn" if d.mode == DomainType.cdn else "secure"
-        out.append((kind, d.domain, hiddify.get_account_panel_link(owner, d.domain)))
-    out.sort(key=lambda x: x[0] == "cdn")  # the server's own first, then the CDNs
+        if d.mode == DomainType.cdn:
+            cdn.append(("cdn", address, hiddify.get_account_panel_link(owner, address)))
+        elif getattr(d, "tls_status", "") == "valid":
+            secure.append(("secure", address, hiddify.get_account_panel_link(owner, address)))
+        else:  # no certificate a browser trusts: still https (the browser warns); the panel is never offered over http
+            insecure.append(("insecure", address, hiddify.get_account_panel_link(owner, address)))
+    # The server's IPv4 too when no domain is it (a way in when the names are blocked), over https: no certificate
+    # names a bare IP, so it is a red one
+    from hiddifypanel import hutils
+
     ip = hutils.network.get_ip_str(4)
-    if ip:
-        out.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip, is_https=False)))
-    return out
+    if ip and ip not in {a for _k, a, _u in secure + insecure}:
+        insecure.append(("insecure", ip, hiddify.get_account_panel_link(owner, ip)))
+    return secure + cdn + insecure
 
 
 def caption(lang: str, when: datetime.datetime, size: int | None) -> str:
@@ -89,16 +100,30 @@ def _kb(size: int) -> str:
     return f"{size / 1024**2:.1f} MB" if size >= 1024**2 else f"{size / 1024:.0f} KB"
 
 
-def markup(lang: str, owner, *, plain_http: bool = True, tail: list | None = None) -> types.InlineKeyboardMarkup:
+def _is_ip(address: str) -> bool:
+    try:
+        ipaddress.ip_address(address.strip("[]"))
+        return True
+    except ValueError:
+        return False
+
+
+def button_label(kind: str, address: str) -> str:
+    """A link's key says how it opens, never the address itself (the message may be forwarded or shown): a valid
+    certificate 🔒, through a CDN 🔐 (both green), no valid certificate ⚠️ (red)."""
+    if kind == "insecure":
+        return "⚠️ Not Secure IPv4" if _is_ip(address) else "⚠️ Not Secure"
+    if kind == "cdn":
+        return "🔐 Secure"
+    return "🔒 Secure IPv4" if _is_ip(address) else "🔒 Secure"
+
+
+def markup(lang: str, owner, *, no_ip: bool = False, tail: list | None = None) -> types.InlineKeyboardMarkup:
     rows = []
-    for kind, address, url in links(owner)[:12]:
-        if kind == "insecure":
-            if plain_http:
-                rows.append([url_btn(f"⚠️ {t(T.bk_insecure, lang)} · {address}", url, style=Style.danger)])
-        elif kind == "cdn":
-            rows.append([url_btn(f"🟠 CDN · {address}", url)])
-        else:
-            rows.append([url_btn(f"🔒 {address}", url, style=Style.success)])
+    for kind, address, url in links(owner)[:20]:
+        if no_ip and _is_ip(address):  # the retry without the IP keys (Telegram may refuse a link to an address)
+            continue
+        rows.append([url_btn(button_label(kind, address), url, style=Style.danger if kind == "insecure" else Style.success)])
     if tail:
         rows.append(tail)
     return keyboard(*rows)
@@ -115,7 +140,7 @@ def send(chat_id: int, document: IO[bytes], disk_name: str, account, *, size: in
     owner = AdminUser.get_super_admin()
     when = when_of(disk_name)
     text = caption(lang, when, size)
-    tries = [lambda: markup(lang, owner, tail=tail), lambda: markup(lang, owner, plain_http=False, tail=tail), lambda: keyboard(tail) if tail else None]
+    tries = [lambda: markup(lang, owner, tail=tail), lambda: markup(lang, owner, no_ip=True, tail=tail), lambda: keyboard(tail) if tail else None]
     from . import rich
 
     error: Exception | None = None

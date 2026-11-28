@@ -75,6 +75,17 @@ class Cb(StrEnum):
     nodes = "nd"  # the panel's servers (Advanced)
     domains = "dm"  # the panel's domains: DNS and certificates (Advanced)
     morning = "mr"  # mr:<1|0>  the admin's morning report on or off (Advanced)
+    bulk = "bu"  # bu[:<filter>[:<action>:<value>[:1]]]  one action on many users (Advanced)
+    admins = "ad"  # ad[:<page>]  the admin's sub-admins and agents (Advanced)
+    admin_card = "ac"  # ac:<admin id>[:<action>:<value>]  one of them (Advanced)
+    agent_new = "an"  # ask the name of a new agent (Advanced)
+    apply = "ap"  # ap[:ask|go]  apply the configs (Advanced, super admins)
+    cfgtest = "ct"  # ct[:go]  the config test: the last result, or a new one (Advanced, super admins)
+    lock = "lk"  # lk[:<action>:<1|0>]  which actions need the admin's biometrics (Advanced)
+    cfgfile = "cf"  # cf[:<format>]  the user's configs as a file (Advanced)
+    reseller_bot = "rb"  # the agent's own bot (Advanced, its own switch)
+    open_help = "oh"  # oh[:check]  how to set the bot's "Open" button in @BotFather (the owner)
+    update = "up"  # up[:<server id>[:go]]  update the panel of this server or of a node (Advanced, super admins)
     support_later = "rl"  # rl:<conversation id>  the admin reads it later: the notice goes, the message stays unread
 
 
@@ -212,7 +223,9 @@ class ChatState:
     TTL = 3600
 
     def __init__(self, chat_id: int):
-        self._key = f"tgbot:state:{chat_id}"
+        from .resellers import state_prefix
+
+        self._key = f"tgbot:state:{state_prefix()}{chat_id}"
 
     def load(self) -> dict[str, Any]:
         raw = redis_client.get(self._key)
@@ -398,11 +411,11 @@ class Ctx:
         self.message_id = self.state.get("upanel")
         self.on_photo = bool(self.state.get("upanel_photo"))
 
-    def toast(self, text: str = "", alert: bool = False) -> None:
+    def toast(self, text: str | None = "", alert: bool = False) -> None:
         if self.call_id and not self._answered:
             self._answered = True
             try:
-                bot.answer_callback_query(self.call_id, text=text[:200] or None, show_alert=alert, cache_time=0)
+                bot.answer_callback_query(self.call_id, text=(text or "")[:200] or None, show_alert=alert, cache_time=0)
             except ApiTelegramException:
                 pass
 
@@ -415,6 +428,10 @@ def background(fn: Callable[[], None]) -> None:
 
     app = current_app._get_current_object()  # ty: ignore[unresolved-attribute]
 
+    import contextvars
+
+    context = contextvars.copy_context()  # an agent's bot stays the sender in the thread (resellers.current)
+
     def run() -> None:
         with app.app_context():
             try:
@@ -422,7 +439,7 @@ def background(fn: Callable[[], None]) -> None:
             except Exception:
                 logger.exception("tgbot: background job failed")
 
-    threading.Thread(target=run, daemon=True, name="tgbot-send").start()
+    threading.Thread(target=lambda: context.run(run), daemon=True, name="tgbot-send").start()
 
 
 def with_retry(call: Callable[[], Any], attempts: int = 5) -> Any:
@@ -533,3 +550,16 @@ def duration(seconds: int, lang: str) -> str:
 
 
 RULE = "┄┄┄┄┄┄┄┄┄┄┄┄┄┄"
+
+
+def redis_take(key: str, client=None):
+    """The value at ``key``, read and deleted in one step (a MULTI/EXEC: two presses at once cannot both get it;
+    GETDEL needs Redis 6.2, Ubuntu 22.04 has 6.0)."""
+    if client is None:
+        from hiddifypanel.cache import redis_client as client
+
+    pipe = client.pipeline()
+    pipe.get(key)
+    pipe.delete(key)
+    raw, _ = pipe.execute()
+    return raw

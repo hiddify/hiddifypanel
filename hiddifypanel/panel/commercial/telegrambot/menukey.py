@@ -19,8 +19,16 @@ from .ui import Cb
 
 PREF = "menu_key"
 HINT_PREF = "menu_key_msg"
+
+
+def _prefs() -> tuple[str, str]:
+    """This bot's keys (an agent's own bot keeps its keyboard apart from the panel's bot in the same chat)."""
+    from .resellers import state_prefix
+
+    prefix = state_prefix()
+    return prefix + PREF, prefix + HINT_PREF
 #: Raise it to send the keyboard again to every chat (a new look).
-VERSION = "12"  # 12: the Menu key is blue
+VERSION = "13"  # 13: Server Status is now Action & Status
 #: The line that carries the keyboard (the same in every language: Hiddify's tagline)
 TAGLINE = "🎉 Hiddify, Internet Freedom Solution"
 
@@ -59,8 +67,19 @@ def _admin_rows(mode: str | None) -> list[list[tuple[T, Cb, tuple]]]:
 
 
 def _key(label: T, lang: str) -> types.KeyboardButton:
-    """A key by the message box; Menu is blue (white text: a keyboard here draws blue well)."""
-    return types.KeyboardButton(t(label, lang), style="primary" if label is T.menu_key else None)
+    """A key by the message box (its emoji animated when the icons are on); Menu is blue (white text: a keyboard
+    here draws blue well)."""
+    from .ui import Style, _decorated
+
+    return types.KeyboardButton(**_decorated(t(label, lang), Style.primary if label is T.menu_key else None))
+
+
+def _bare(text: str) -> str:
+    """A key's text without its leading emoji: what Telegram sends back for a key whose emoji is an animated icon."""
+    from .icons import _LEADING_EMOJI
+
+    m = _LEADING_EMOJI.match(text)
+    return m.group(2).strip() if m else text
 
 
 def keyboard_for(lang: str, person: bool = False, admin_mode: str | None = None) -> types.ReplyKeyboardMarkup:
@@ -77,6 +96,8 @@ def keyboard_for(lang: str, person: bool = False, admin_mode: str | None = None)
 
 #: Keys renamed since: their old text still opens their screen
 _OLD_LABELS = {"💬 Chats": Cb.chats, "💬 گفتگوها": Cb.chats, "📣 Message All": Cb.broadcast, "📣 پیام به همه": Cb.broadcast}
+#: "Server Status" in every language before it became "Action & Status" (2026-11)
+_OLD_LABELS.update(dict.fromkeys(("📊 Estado del servidor", "📊 Server Status", "📊 Server holati", "📊 Server vəziyyəti", "📊 Serverstatus", "📊 Servidor", "📊 Serwer ýagdaýy", "📊 Stato del server", "📊 Sunucu durumu", "📊 État du serveur", "📊 Сервер", "📊 Сервер күйі", "📊 Сервердин абалы", "📊 Стан сервера", "📊 Ҳолати сервер", "📊 Սերվերի կարգավիճակ", "📊 حالة الخادم", "📊 د سرور حالت", "📊 سرور کی اسٹیٹس", "📊 وضعیت سرور", "📊 सर्वर की स्थिति", "📊 সার্ভারের অবস্থা", "📊 ဆာဗာအခြေအနေ", "📊 የሰርቨር ሁኔታ", "📊 服务器状态", "📊 서버 상태"), Cb.status))
 
 
 @cache
@@ -91,6 +112,8 @@ def _actions(admin: bool) -> dict[str, tuple[Cb, tuple]]:
         for row in rows:
             for label, kind, args in row:
                 found.setdefault(t(label, code), (kind, args))  # the first key with a text keeps it
+    for text, value in list(found.items()):  # the same key with an animated icon: its text without the emoji
+        found.setdefault(_bare(text), value)
     return found
 
 
@@ -118,20 +141,24 @@ def ensure(chat_id: int, lang: str, person: bool = False, force: bool = False, a
     """The right keyboard is in this chat, in this language. ``force``: send it even if the chat had it (a cleared
     chat loses it with its message, and the bot cannot tell). Never raises."""
     try:
-        want = f"{VERSION}:{lang}:{'p' if person else 'a-' + admin_mode if admin_mode else 'm'}"
-        if not force and BotPref.get(chat_id, PREF) == want:
+        from .icons import enabled as icons_on
+
+        # The animated icons turned on or off (or off by themselves): the keyboard is sent again to match
+        want = f"{VERSION}:{lang}:{'p' if person else 'a-' + admin_mode if admin_mode else 'm'}{':i' if icons_on() else ''}"
+        pref, hint = _prefs()
+        if not force and BotPref.get(chat_id, pref) == want:
             return
         sent = bot.send_message(chat_id, TAGLINE, reply_markup=keyboard_for(lang, person, admin_mode))
         # One such line in the chat: the one before goes (the keyboard stays with the new one)
-        old = BotPref.get(chat_id, HINT_PREF)
+        old = BotPref.get(chat_id, hint)
         if old.isdigit() and int(old) != sent.message_id:
             try:
                 bot.delete_message(chat_id, int(old))
             except Exception:
                 pass
         _forget_cancel(chat_id)
-        BotPref.put(chat_id, PREF, want)
-        BotPref.put(chat_id, HINT_PREF, str(sent.message_id))
+        BotPref.put(chat_id, pref, want)
+        BotPref.put(chat_id, hint, str(sent.message_id))
         db.session.commit()
     except Exception as e:
         # No rollback: it would undo the caller's own changes in this session too

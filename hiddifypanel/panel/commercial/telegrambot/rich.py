@@ -63,6 +63,10 @@ def _style(button: dict[str, Any]) -> str | None:
 def button_html(button: dict[str, Any]) -> str | None:
     """One inline keyboard button as a rich <tg-button>, or None for a kind rich buttons do not take."""
     label = html.escape(str(button.get("text") or ""), quote=False)
+    if custom_id := button.get("icon_custom_emoji_id"):  # its animated icon, inside the pill (the emoji itself in it)
+        from .icons import _emoji_for
+
+        label = f'<tg-emoji emoji-id="{html.escape(str(custom_id), quote=True)}">{_emoji_for(custom_id) or "⭐"}</tg-emoji> {label}'
     attrs: list[tuple[str, str]]
     if "disabled" in button:  # greyed out, does nothing
         attrs = [("type", "disabled")]
@@ -90,7 +94,9 @@ def rich_html(text: str, markup: dict[str, Any]) -> str | None:
         if not buttons or any(b is None for b in buttons) or len(buttons) > 8:
             return None
         rows.append("<tg-button-row>" + "".join(buttons) + "</tg-button-row>")
-    return body_html(text) + "".join(rows)
+    from .icons import animate_html
+
+    return animate_html(body_html(text)) + "".join(rows)
 
 
 def _markup(params: dict[str, Any]) -> dict[str, Any] | None:

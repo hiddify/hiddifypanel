@@ -85,6 +85,29 @@ def init_app(app):
         run_in_app_context, args=(run_once, "once-tgbot-morning", 3600, telegram_servers, "morning_report"), trigger=CronTrigger(hour="8", minute="0"), id="tgbot_morning", name="telegram morning report"
     )
 
+    def telegram_updates():
+        from hiddifypanel.models import ConfigEnum, hconfig
+
+        if hconfig(ConfigEnum.telegram_bot_token):
+            from hiddifypanel.panel.commercial.telegrambot import updates
+
+            updates.watch_updates()
+
+    # Telegram: the panel updates started from the bot, watched until each one is over (also after the panel's own
+    # restart during an update); nothing to do while none is waiting.
+    scheduler.add_job(run_in_app_context, args=(run_once, "once-tgbot-updates", 50, telegram_updates), trigger=IntervalTrigger(minutes=1), id="tgbot_updates", name="telegram panel updates")
+
+    def telegram_guard():
+        from hiddifypanel.models import ConfigEnum, hconfig
+
+        if hconfig(ConfigEnum.telegram_bot_token):
+            from hiddifypanel.panel.commercial.telegrambot import guard
+
+            guard.sweep()
+
+    # Telegram, Advanced mode and its own switch: users whose package ended leave the subscribers group (daily).
+    scheduler.add_job(run_in_app_context, args=(run_once, "once-tgbot-guard", 3600, telegram_guard), trigger=CronTrigger(hour="4", minute="30"), id="tgbot_guard", name="telegram subscribers group")
+
     from hiddifypanel.proxy_v3 import config_health
 
     # Config health: every config of the subscription tested from the server, a few minutes after a start and every

@@ -10,11 +10,11 @@ from telebot import types
 from telebot.apihelper import ApiTelegramException
 
 from hiddifypanel.database import db
-from hiddifypanel.models import AdminUser, User
+from hiddifypanel.models import AdminMode, AdminUser, User
 
 from hiddifypanel import free_test
 
-from . import accounts, admin, admin_settings, bandwidth, bot, broadcast, chart, chats, doctor, free, groups, guide, menukey, nav, servers, settings, status, support, user, usernames, widget  # noqa: F401  (they register their routes)
+from . import accounts, admin, admin_settings, admins, bulk, cfgfile, miniapp, openbutton, ops, resellers, updates, bandwidth, bot, broadcast, chart, chats, doctor, free, groups, guide, menukey, nav, servers, settings, status, support, user, usernames, widget  # noqa: F401  (they register their routes)
 from .texts import T, t
 from .ui import BRAND, ROUTES, Cb, Ctx, Screen, btn, keyboard, lang_of
 
@@ -24,9 +24,14 @@ _UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 def context(chat_id: int, message_id: int | None = None, call_id: str | None = None, telegram_lang: str | None = None) -> Ctx:
     """The admin linked to this chat, else the user, else a stranger. ``telegram_lang`` is the person's Telegram
     language (their ``language_code``): spoken when no language was chosen for them."""
-    if found_admin := AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.deleted.is_(False)).first():
+    from .resellers import admin_in_scope, user_in_scope
+
+    found_admin = AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.deleted.is_(False)).first()
+    if found_admin and admin_in_scope(found_admin):
         return Ctx(chat_id, lang_of(found_admin, admin=True, telegram=telegram_lang), admin=found_admin, message_id=message_id, call_id=call_id)
     found_user = User.query.filter(User.telegram_id == chat_id, User.deleted.is_(False)).first()
+    if found_user is not None and not user_in_scope(found_user):  # an agent's bot: not one of theirs
+        found_user = None
     if found_user is None:
         settings.remember_telegram_lang(chat_id, telegram_lang)
         telegram_lang = settings.chat_lang(chat_id) or telegram_lang
@@ -40,8 +45,15 @@ def _tg_lang(person: types.User | None) -> str | None:
 def _link_admin(chat_id: int, uuid: str) -> AdminUser | None:
     """One chat is one admin: linking here unlinks it from any other admin (the bot would otherwise keep answering
     as whichever admin it found first)."""
+    from .resellers import admin_in_scope
+
     found = AdminUser.by_uuid(uuid)
+    if found and not admin_in_scope(found):
+        return None
     if found:
+        from .miniapp import reset_lock_key
+
+        reset_lock_key(chat_id)  # the panel link opened again (a new phone): the next lock keeps a new phone key
         AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.id != found.id).update({AdminUser.telegram_id: None})
         found.telegram_id = chat_id
         db.session.commit()
@@ -50,7 +62,11 @@ def _link_admin(chat_id: int, uuid: str) -> AdminUser | None:
 
 def _link_user(chat_id: int, uuid: str) -> User | None:
     """One chat is one user account, the same way."""
+    from .resellers import user_in_scope
+
     found = User.by_uuid(uuid)
+    if found and not user_in_scope(found):
+        return None
     if found:
         User.query.filter(User.telegram_id == chat_id, User.id != found.id).update({User.telegram_id: None})
         found.telegram_id = chat_id
@@ -141,6 +157,13 @@ def on_start(message: types.Message) -> None:
         host, package_id = free_test.resolve_payload(payload.removeprefix("free_"))
         if host:
             return free.open_offer(context(chat_id, telegram_lang=_tg_lang(message.from_user)), host, message.from_user, package_id)
+    if payload.startswith("bk_"):
+        # A backup in the owner's Backup History (its name is a link here): that backup's download keys
+        ctx = context(chat_id, telegram_lang=_tg_lang(message.from_user))
+        if ctx.admin and ctx.admin.mode == AdminMode.super_admin:
+            return admin.show_backup_file(ctx, payload.removeprefix("bk_"))
+        bot.send_message(chat_id, f"⛔️ {ctx.tr(T.not_allowed)}")
+        return open_home(ctx, keys=True)
     if payload.startswith("admin_") and (match := _UUID.search(payload)):
         _link_admin(chat_id, match.group(0).lower())
     elif match := _UUID.search(payload):
@@ -224,7 +247,7 @@ def on_button(call: types.CallbackQuery) -> None:
         ctx.on_photo = message.content_type == "photo"
     # A button while writing (a message, a name): the writing stops and the menu keyboard comes back, unless the
     # button is the next step of that same writing (picking the user to write to)
-    if not (kind is Cb.broadcast and args[:1] in (["to"], ["one"], ["all"])) and menukey.restore(ctx):
+    if not (kind is Cb.broadcast and args[:1] in (["to"], ["one"], ["all"], ["ato"], ["aone"], ["aall"])) and menukey.restore(ctx):
         # The menu came back with a line under the screen: the screen comes again under it (the old one goes)
         ctx.message_id, ctx.on_photo = None, False
     if ctx.person:  # a person's path, for Back
@@ -267,3 +290,47 @@ def on_other(message: types.Message) -> None:
     else:
         return _how_to_write(ctx, message.message_id)
     bot.send_message(message.chat.id, t(T.unknown, ctx.lang), reply_markup=keyboard([btn(ctx.tr(T.menu), Cb.home if ctx.admin else Cb.me)]))
+
+
+# --------------------------------------------------------------------------- agents' own bots (resellers.py)
+
+
+class _Made:
+    """Who made which bot (the update and the service message say it the same way)."""
+
+    def __init__(self, user, made):
+        self.user, self.bot = user, made
+
+
+@bot.managed_bot_handler()
+def on_managed_bot(update) -> None:
+    from . import resellers
+
+    resellers.on_managed_bot(update)
+
+
+@bot.message_handler(content_types=["managed_bot_created"], chat_types=["private"])
+def on_managed_bot_created(message) -> None:
+    """The service message in the agent's chat (it comes even when the update above is not sent)."""
+    from . import resellers
+
+    created = getattr(message, "managed_bot_created", None)
+    if created is not None and resellers.find(created.bot.id) is None:
+        resellers.on_managed_bot(_Made(message.from_user, created.bot))
+
+
+# --------------------------------------------------------------------------- the subscribers group (guard.py)
+
+
+@bot.message_handler(commands=["guard"], chat_types=["group", "supergroup"])
+def on_guard(message) -> None:
+    from . import guard
+
+    guard.connect(message)
+
+
+@bot.chat_join_request_handler()
+def on_join_request(request) -> None:
+    from . import guard
+
+    guard.on_join_request(request)

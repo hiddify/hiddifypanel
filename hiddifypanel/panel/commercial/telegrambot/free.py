@@ -4,6 +4,8 @@ replies, and its own link."""
 
 from __future__ import annotations
 
+from urllib.parse import urlencode
+
 from loguru import logger
 from telebot import types
 
@@ -17,7 +19,7 @@ from hiddifypanel.models.message import Conversation, FreeStatus, Sender
 from . import bot
 from . import user as user_screens
 from .texts import T, t
-from .ui import BRAND, RULE, btn, Cb, Ctx, fmt_data, h, keyboard, lang_of, off_btn, route, Screen, send_card, Style
+from .ui import BRAND, RULE, btn, Cb, copy_btn, Ctx, fmt_data, h, keyboard, lang_of, off_btn, route, Screen, send_card, Style, url_btn
 
 #: Messages a chat may send to an admin per minute.
 RATE_PER_MINUTE = 10
@@ -61,7 +63,7 @@ def offer_screen(conv: Conversation, lang: str) -> Screen:
     if not free_test.is_first_time(conv):
         rows = [[btn(t(T.free_again, lang), Cb.free_ask, conv.id, style=Style.primary)], [write]]
         if free_test.has_account(conv.telegram_id):
-            rows.insert(0, [btn(t(T.account_title, lang), Cb.me, style=Style.primary)])
+            rows.insert(0, [btn(f"👤 {t(T.account_title, lang)}", Cb.me, style=Style.primary)])
         return Screen("\n".join([*head, f"<i>{t(T.free_hint_used, lang)}</i>"]), keyboard(*rows))
     if package.approval == "auto":
         return Screen("\n".join([*head, f"<i>{t(T.free_hint_auto, lang)}</i>"]), keyboard([btn(t(T.free_get, lang), Cb.free_ask, conv.id, style=Style.success)], [write]))
@@ -358,22 +360,76 @@ def link_of(admin: AdminUser) -> str | None:
     return f"https://t.me/{bot.username}?start={free_test.start_payload(admin)}" if bot.username else None
 
 
+def stats_of(admin: AdminUser) -> dict[str, int]:
+    """The people this admin's free test went to, by where their test account stands now."""
+    from . import accounts
+
+    convs = Conversation.query.filter(Conversation.admin_id == admin.id, Conversation.free_grants > 0).all()
+    uuids = [c.user_uuid for c in convs if c.user_uuid]
+    users = {u.uuid: u for u in User.query.filter(User.uuid.in_(uuids)).all()} if uuids else {}
+    out = {"received": len(convs), "using": 0, "online": 0, "waiting": 0, "ended": 0}
+    for conv in convs:
+        user = users.get(conv.user_uuid or "")
+        if user is None or getattr(user, "deleted", False) or accounts.status(user) is not accounts.Status.active:
+            out["ended"] += 1  # time or data used up, turned off, or deleted
+        elif user.start_date is None and not (user.current_usage or 0):
+            out["waiting"] += 1  # never connected yet
+        else:
+            out["using"] += 1
+            out["online"] += accounts.is_online(user)
+    return out
+
+
+def stats_screen(ctx: Ctx) -> Screen:
+    assert ctx.admin
+    n = stats_of(ctx.admin)
+    lines = [
+        f"📊 <b>{ctx.tr(T.free_stats_title)}</b>",
+        RULE,
+        f"🎁 {ctx.tr(T.free_stats_received)}: <b>{n['received']}</b>",
+        "<blockquote>"
+        + "\n".join(
+            [
+                f"🟢 {ctx.tr(T.free_stats_using)}: <b>{n['using']}</b>" + (f"  ·  ⚡️ {ctx.tr(T.free_stats_online)}: <b>{n['online']}</b>" if n["online"] else ""),
+                f"⏳ {ctx.tr(T.free_stats_waiting)}: <b>{n['waiting']}</b>",
+                f"⛔️ {ctx.tr(T.free_stats_ended)}: <b>{n['ended']}</b>",
+            ]
+        )
+        + "</blockquote>",
+        f"<i>{ctx.tr(T.free_stats_hint)}</i>",
+    ]
+    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.free_link, "stats"), btn(ctx.tr(T.back), Cb.back)]))
+
+
 @route(Cb.free_link, admin=True)
-def show_link(ctx: Ctx, _args: list[str]) -> None:
+def show_link(ctx: Ctx, args: list[str]) -> None:
+    """fl → the free test and its invite link · fl:stats → who got it and where they stand."""
     admin = ctx.admin
     assert admin
+    if args[:1] == ["stats"]:
+        ctx.toast()
+        return ctx.show(stats_screen(ctx))
     package = free_test.package_of(admin)
-    lines = [f"🎁 <b>{ctx.tr(T.free_link_title)}</b>  ·  🏷 <b>{ctx.tr(T.free_tag)}</b>", RULE]
-    if not package.enabled:
-        lines.append(f"⚪️ {ctx.tr(T.free_link_off)}")
+    on = package.enabled
+    state = f"🟢 {ctx.tr(T.on)}" if on else f"⚪️ {ctx.tr(T.off)}"
+    lines = [f"🎁 <b>{ctx.tr(T.free_link_title)}</b>  ·  {state}", RULE]
+    rows: list = []
+    if not on:
+        lines.append(ctx.tr(T.free_link_off))
     else:
-        lines += [_package_lines(package, ctx.lang), ctx.tr(T.free_link_auto if package.approval == "auto" else T.free_link_manual)]
+        # What the person gets, how it is given, then the link to hand out (a tap on it, or the key, copies it)
+        lines += [f"📦 <b>{ctx.tr(T.free_link_what)}</b>", _package_lines(package, ctx.lang)]
+        lines += [f"⚙️ <b>{ctx.tr(T.free_link_how)}</b>", ctx.tr(T.free_link_auto if package.approval == "auto" else T.free_link_manual)]
         if package.owner is not None and package.owner.id != admin.id:
-            lines.append(ctx.tr(T.free_link_inherited, name=h(package.owner.name)))
+            lines.append(f"<i>{ctx.tr(T.free_link_inherited, name=h(package.owner.name))}</i>")
         if link := link_of(admin):
-            lines += ["", f"🔗 <code>{h(link)}</code>", f"<i>{ctx.tr(T.free_link_share)}</i>"]
+            lines += ["", f"🔗 <b>{ctx.tr(T.free_link_invite)}</b>", f"<i>{ctx.tr(T.free_link_invite_hint)}</i>", f"<code>{h(link)}</code>"]
+            share = "https://t.me/share/url?" + urlencode({"url": link, "text": ctx.tr(T.free_share_text)})
+            rows.append([copy_btn(ctx.tr(T.free_copy), link, Style.primary), url_btn(ctx.tr(T.free_share), share, Style.success)])
     waiting = free_test.counts(admin)["pending"]
     if waiting:
         lines += ["", f"📨 {ctx.tr(T.free_link_waiting, n=waiting)}"]
-    ctx.show(Screen("\n".join(lines), keyboard([btn(ctx.tr(T.back), Cb.back)])))
+    rows.append([btn(ctx.tr(T.free_stats), Cb.free_link, "stats")])
+    rows.append([btn(ctx.tr(T.back), Cb.back)])
+    ctx.show(Screen("\n".join(lines), keyboard(*rows)))
     ctx.toast()

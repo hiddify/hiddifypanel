@@ -102,16 +102,24 @@ def _sql_page(query, page: int, size: int) -> Page:
     return Page(query.order_by(User.id.desc()).offset(page * size).limit(size).all(), total, page, pages)
 
 
+def narrowed(admin: AdminUser, f: Filter):
+    """The database part of a filter (the rest is ``matches``): all of them, online by the last connection, and for the
+    others only the switched-on accounts (the only ones they can keep). The list and bulk actions use the same rule."""
+    query = admin.recursive_users_query()
+    if f is Filter.all:
+        return query
+    if f is Filter.online:
+        return query.filter(User.last_online >= datetime.datetime.now() - ONLINE_WINDOW)
+    return query.filter(User.enable.is_(True))
+
+
 def users_page(admin: AdminUser, f: Filter, page: int, size: int) -> Page:
     """The users under ``admin`` that ``f`` keeps, one page of them. "All" and "online" are counted and cut in the
     database; the others depend on the package (days left, data used), the same rule as ``status``, so only the
     switched-on accounts (the only ones they can keep) are read and checked here."""
-    query = admin.recursive_users_query()
-    if f is Filter.all:
-        return _sql_page(query, page, size)
-    if f is Filter.online:
-        return _sql_page(query.filter(User.last_online >= datetime.datetime.now() - ONLINE_WINDOW), page, size)
-    kept = [u for u in query.filter(User.enable.is_(True)).order_by(User.id.desc()).all() if matches(u, f)]
+    if f in (Filter.all, Filter.online):
+        return _sql_page(narrowed(admin, f), page, size)
+    kept = [u for u in narrowed(admin, f).order_by(User.id.desc()).all() if matches(u, f)]
     page, pages = _pages(len(kept), page, size)
     return Page(kept[page * size : (page + 1) * size], len(kept), page, pages)
 

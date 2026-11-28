@@ -189,8 +189,9 @@ class BroadcastTests(Base):
         from hiddifypanel.panel.commercial.telegrambot.ui import Cb
 
         nav.reset(self.ctx, Cb.broadcast, [])  # the Send Message key
+        nav.push(self.ctx, Cb.broadcast, ["u"])  # to users
         nav.push(self.ctx, Cb.broadcast, ["all"])
-        self.assertEqual(self.state.get("nav"), [["bc", []], ["bc", ["all"]]])
+        self.assertEqual(self.state.get("nav"), [["bc", []], ["bc", ["u"]], ["bc", ["all"]]])
         fake_bot = mock.MagicMock()
         fake_bot.send_message.side_effect = [SimpleNamespace(message_id=90), SimpleNamespace(message_id=91)]
         with mock.patch.object(menukey, "bot", fake_bot):
@@ -292,13 +293,20 @@ class MainAppTests(Base):
     def test_the_owner_sees_the_link_for_botfather(self):
         from hiddifypanel.panel.commercial.telegrambot import accounts, admin_settings
 
-        with mock.patch.object(admin_settings.silence, "is_silent", lambda chat: False), mock.patch.object(accounts, "panel_app_url", lambda: "https://panel.example.com/p/api/v1/tgbot/app/"):
+        from hiddifypanel.panel.commercial.telegrambot import openbutton
+
+        with mock.patch.object(admin_settings.silence, "is_silent", lambda chat: False), mock.patch.object(accounts, "panel_app_url", lambda: "https://panel.example.com/p/api/v1/tgbot/app/"), mock.patch.object(
+            openbutton, "has_open_button", lambda fresh=False: False
+        ):
             self.ctx.admin = SimpleNamespace(id=1, mode="super_admin")
-            owner = admin_settings.settings_screen(self.ctx).text
+            owner = admin_settings.settings_screen(self.ctx)
             self.ctx.admin = SimpleNamespace(id=2, mode="agent")
-            agent = admin_settings.settings_screen(self.ctx).text
-        self.assertIn("<code>https://panel.example.com/p/api/v1/tgbot/app/</code>", owner)
-        self.assertNotIn("tgbot/app", agent)
+            agent = admin_settings.settings_screen(self.ctx)
+            steps = openbutton.help_screen(ui.Ctx(5, "en", admin=SimpleNamespace(id=1, mode="super_admin"))).text
+        self.assertIn(t(T.oa_missing, "en"), owner.text)  # the state, and a key to the steps
+        self.assertIn("oh", self.data(owner))
+        self.assertNotIn("oh", self.data(agent))
+        self.assertIn("<code>https://panel.example.com/p/api/v1/tgbot/app/</code>", steps)
 
 
 class AdvancedTests(Base):
@@ -358,11 +366,57 @@ class BackupMessageTests(unittest.TestCase):
         found = [("secure", "panel.example.com", "https://panel.example.com/p/"), ("cdn", "cdn.example.com", "https://cdn.example.com/p/"), ("insecure", "192.0.2.1", "http://192.0.2.1/p/")]
         with mock.patch.object(backup_msg, "links", lambda owner: found), mock.patch("hiddifypanel.panel.commercial.telegrambot.icons.enabled", lambda: False):
             rows = json.loads(backup_msg.markup("en", None).to_json())["inline_keyboard"]
-            plain = json.loads(backup_msg.markup("en", None, plain_http=False).to_json())["inline_keyboard"]
+            plain = json.loads(backup_msg.markup("en", None, no_ip=True).to_json())["inline_keyboard"]
         styles = [r[0].get("style") for r in rows]
-        self.assertEqual(styles, ["success", None, "danger"])
-        self.assertTrue(rows[1][0]["text"].startswith("🟠"))
-        self.assertEqual(len(plain), 2)  # without the plain http one
+        self.assertEqual(styles, ["success", "success", "danger"])  # secure and CDN green, not secure red
+        self.assertEqual([r[0]["text"] for r in rows], ["🔒 Secure", "🔐 Secure", "⚠️ Not Secure IPv4"])
+        self.assertFalse(any("example.com" in r[0]["text"] for r in rows))  # never the address itself
+        self.assertEqual(len(plain), 2)  # without the IP one
+
+    def test_secure_means_a_valid_certificate(self):
+        from hiddifypanel.models import DomainType
+        from hiddifypanel.panel.commercial.telegrambot import backup_msg
+
+        ip = ".".join(["198", "51", "100", "7"])
+        domains = [
+            SimpleNamespace(domain="old.example.com", mode=DomainType.direct, tls_status="expired"),
+            SimpleNamespace(domain="panel.example.com", mode=DomainType.direct, tls_status="valid"),
+            SimpleNamespace(domain="cdn.example.com", mode=DomainType.cdn, tls_status="missing"),
+            SimpleNamespace(domain="self.example.com", mode=DomainType.relay, tls_status="self_signed"),
+            SimpleNamespace(domain=ip, mode=DomainType.direct, tls_status="valid"),
+        ]
+        with mock.patch("hiddifypanel.models.Domain.get_domains", lambda: domains), mock.patch(
+            "hiddifypanel.panel.hiddify.get_account_panel_link", lambda owner, host, is_https=True: ("https" if is_https else "http") + f"://{host}/p/"
+        ), mock.patch("hiddifypanel.hutils.network.get_ip_str", lambda v: ip):
+            found = backup_msg.links(None)
+        self.assertEqual(
+            [(k, a) for k, a, _u in found],
+            [("secure", "panel.example.com"), ("secure", ip), ("cdn", "cdn.example.com"), ("insecure", "old.example.com"), ("insecure", "self.example.com")],
+        )
+        self.assertEqual([backup_msg.button_label(k, a) for k, a, _u in found], ["🔒 Secure", "🔒 Secure IPv4", "🔐 Secure", "⚠️ Not Secure", "⚠️ Not Secure"])
+        self.assertTrue(all(u.startswith("https://") for _k, _a, u in found))  # never over plain http
+
+    def test_the_ip_too_when_no_domain_is_it(self):
+        from hiddifypanel.models import DomainType
+        from hiddifypanel.panel.commercial.telegrambot import backup_msg
+
+        ip = ".".join(["198", "51", "100", "9"])
+        domains = [SimpleNamespace(domain="panel.example.com", mode=DomainType.direct, tls_status="valid")]
+        with mock.patch("hiddifypanel.models.Domain.get_domains", lambda: domains), mock.patch(
+            "hiddifypanel.panel.hiddify.get_account_panel_link", lambda owner, host, is_https=True: ("https" if is_https else "http") + f"://{host}/p/"
+        ), mock.patch("hiddifypanel.hutils.network.get_ip_str", lambda v: ip):
+            found = backup_msg.links(None)
+        self.assertEqual(found[-1], ("insecure", ip, f"https://{ip}/p/"))  # red, over https (no http link)
+
+    def test_the_labels_by_kind(self):
+        from hiddifypanel.panel.commercial.telegrambot import backup_msg
+
+        ip = ".".join(["198", "51", "100", "7"])
+        self.assertEqual(backup_msg.button_label("secure", ip), "🔒 Secure IPv4")
+        self.assertEqual(backup_msg.button_label("secure", "panel.example.com"), "🔒 Secure")
+        self.assertEqual(backup_msg.button_label("cdn", "cdn.example.com"), "🔐 Secure")
+        self.assertEqual(backup_msg.button_label("insecure", ip), "⚠️ Not Secure IPv4")
+        self.assertEqual(backup_msg.button_label("insecure", "panel.example.com"), "⚠️ Not Secure")
 
 
 if __name__ == "__main__":

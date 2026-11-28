@@ -27,6 +27,13 @@ DATA_MAX = 1024
 #: A card is refreshed at most this often per user (each edit counts as a message sent).
 REFRESH_EVERY = 5 * 60
 PREF = "widget"
+
+
+def _pref() -> str:
+    """This bot's key: an agent's own bot keeps its live card apart (the scheduled refresh is the panel bot's)."""
+    from .resellers import state_prefix
+
+    return state_prefix() + PREF
 _THROTTLE = "tgbot:widget:sent:{}"
 _LAST = "tgbot:widget:last:{}"
 RTL = {"fa", "ar", "ur", "ps"}
@@ -166,7 +173,7 @@ def text_card(user: User, lang: str, now: datetime.datetime | None = None) -> st
 
 def _kept(chat_id: int) -> tuple[str, int] | None:
     """("w" widget | "t" pinned message, its id) of the chat's live card."""
-    raw = BotPref.get(chat_id, PREF)
+    raw = BotPref.get(chat_id, _pref())
     mode, _, value = raw.partition(":") if ":" in raw else ("w", "", raw)
     return (mode, int(value)) if value.isdigit() else None
 
@@ -174,7 +181,7 @@ def _kept(chat_id: int) -> tuple[str, int] | None:
 def _keep(user: User, mode: str, message_id: int | None, data: str) -> None:
     from hiddifypanel.database import db
 
-    BotPref.put(user.telegram_id, PREF, f"{mode}:{message_id}" if message_id else "")
+    BotPref.put(user.telegram_id, _pref(), f"{mode}:{message_id}" if message_id else "")
     db.session.commit()
     redis_client.set(_LAST.format(user.id), data, ex=30 * 24 * 3600)
 

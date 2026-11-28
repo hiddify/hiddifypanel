@@ -111,9 +111,16 @@ def home(ctx: Ctx, note: str | None = None) -> Screen:
         keyboard(
             [btn(ctx.tr(T.refresh), Cb.me), btn(ctx.tr(T.links), Cb.me_links)],
             [btn(ctx.tr(T.wg_button), Cb.widget)],
+            *_advanced_rows(ctx),
         ),
         qr=links.sub,
     )
+
+
+def _advanced_rows(ctx: Ctx) -> list[list]:
+    from .cfgfile import home_rows
+
+    return home_rows(ctx)
 
 
 @route(Cb.me, admin=False)

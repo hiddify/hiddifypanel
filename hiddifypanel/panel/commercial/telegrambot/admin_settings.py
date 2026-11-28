@@ -30,14 +30,20 @@ def settings_screen(ctx: Ctx) -> Screen:
     if more := settings_lines(ctx):  # the morning report (Advanced)
         lines += ["", *more]
         rows += settings_rows(ctx)
+    from . import resellers
+
+    if more := resellers.settings_lines(ctx):  # an agent's own bot (Advanced, its own switch)
+        lines += ["", *more]
+        rows += resellers.settings_rows(ctx)
     if admin.mode == AdminMode.super_admin:
         rows.append([btn(ctx.tr(T.btn_backup), Cb.backup)])
         lines += ["", *_advanced_lines(ctx)]
         rows += _advanced_rows(ctx)
-        from .accounts import panel_app_url
+        from .openbutton import settings_line
 
-        if url := panel_app_url():  # the bot's "Open" button (BotFather only: Telegram has no API for it)
-            lines += ["", f"🚀 <b>{ctx.tr(T.as_main_app)}</b>", f"<i>{ctx.tr(T.as_main_app_how)}</i>", f"<code>{h(url)}</code>"]
+        if more := settings_line(ctx):  # the bot's "Open" button (BotFather only: Telegram has no API for it)
+            lines += more
+            rows.append([btn(f"🚀 {ctx.tr(T.as_main_app)}", Cb.open_help)])
     rows.append([btn(ctx.tr(T.back), Cb.back)])
     return Screen("\n".join(lines), keyboard(*rows))
 
@@ -57,6 +63,7 @@ def _advanced_lines(ctx: Ctx) -> list[str]:
             f"<i>{ctx.tr(T.adv_resellers_hint)}</i>",
             f"🚪 {ctx.tr(T.adv_guard)}: <b>{_state(ctx, advanced.feature(advanced.SUBSCRIBERS_GROUP))}</b>",
             f"<i>{ctx.tr(T.adv_guard_hint)}</i>",
+            *([f"<i>{ctx.tr(T.gd_how)}</i>"] if advanced.feature(advanced.SUBSCRIBERS_GROUP) else []),
         ]
     return lines
 

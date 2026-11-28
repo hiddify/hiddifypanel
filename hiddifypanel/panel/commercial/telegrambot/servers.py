@@ -92,7 +92,7 @@ def nodes_screen(ctx: Ctx) -> Screen:
     lines = [f"🖥 <b>{ctx.tr(T.nd_title)}</b>", RULE, ctx.tr(T.nd_summary, up=up, n=len(nodes)), "", *node_lines(ctx, nodes)]
     now = datetime.datetime.now()
     lines.append(f"<i>{ctx.tr(T.updated_at, time=tg_time(now, 'T', now.strftime('%H:%M:%S')))}</i>")
-    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.nodes), btn(ctx.tr(T.nd_domains), Cb.domains)], [btn(ctx.tr(T.back), Cb.back)]))
+    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.nodes), btn(f"🌐 {ctx.tr(T.nd_domains)}", Cb.domains)], [btn(ctx.tr(T.back), Cb.back)]))
 
 
 @route(Cb.nodes, admin=True)
@@ -177,7 +177,7 @@ def domains_screen(ctx: Ctx) -> Screen:
     if not rows:
         lines.append(ctx.tr(T.dm_none))
     lines += ["", f"<i>{ctx.tr(T.dm_legend)}</i>"]
-    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.domains), btn(ctx.tr(T.nd_title), Cb.nodes)], [btn(ctx.tr(T.back), Cb.back)]))
+    return Screen("\n".join(lines), keyboard([btn(ctx.tr(T.refresh), Cb.domains), btn(f"🖥 {ctx.tr(T.nd_title)}", Cb.nodes)], [btn(ctx.tr(T.back), Cb.back)]))
 
 
 @route(Cb.domains, admin=True)
@@ -192,7 +192,9 @@ def status_rows(ctx: Ctx) -> list[list]:
     """The status screen's keys to these screens (Advanced, operators)."""
     if not advanced.is_on() or not _operator(ctx.admin):
         return []
-    return [[btn(ctx.tr(T.nd_title), Cb.nodes), btn(ctx.tr(T.nd_domains), Cb.domains)]]
+    from .ops import status_rows as ops_rows
+
+    return [[btn(f"🖥 {ctx.tr(T.nd_title)}", Cb.nodes), btn(f"🌐 {ctx.tr(T.nd_domains)}", Cb.domains)], *ops_rows(ctx)]
 
 
 # --------------------------------------------------------------------------- node alerts
@@ -251,7 +253,7 @@ def watch_nodes() -> None:
     for admin in _operators():
         lang = lang_of(admin, admin=True)
         for n in went:
-            _tell(admin.telegram_id, f"🚨 {t(T.nd_down, lang, name=h(n.name), reason=h(n.error_code or n.error or '?')[:80])}", keyboard([btn(t(T.nd_title, lang), Cb.nodes, style=Style.primary)]))
+            _tell(admin.telegram_id, f"🚨 {t(T.nd_down, lang, name=h(n.name), reason=h(n.error_code or n.error or '?')[:80])}", keyboard([btn(f"🖥 {t(T.nd_title, lang)}", Cb.nodes, style=Style.primary)]))
         for n, since in back:
             _tell(admin.telegram_id, f"✅ {t(T.nd_back, lang, name=h(n.name), minutes=max(round((now - since) / 60), 1))}", None)
     logger.info(f"tgbot nodes: down {[n.name for n in went]}, back {[n.name for n, _ in back]}")
@@ -330,7 +332,7 @@ def morning_report() -> None:
         except Exception as e:
             logger.warning(f"tgbot: morning report of admin {admin.id} failed: {e}")
             continue
-        rows = [[btn(t(T.f_expiring, lang), Cb.users, "s", 0), btn(t(T.status_title, lang), Cb.status)]]
+        rows = [[btn(f"⏳ {t(T.f_expiring, lang)}", Cb.users, "s", 0), btn(f"📊 {t(T.status_title, lang)}", Cb.status)]]
         _tell(admin.telegram_id, text, keyboard(*rows))
         sent += 1
     logger.info(f"tgbot: morning report to {sent} admins")
@@ -339,15 +341,21 @@ def morning_report() -> None:
 def settings_lines(ctx: Ctx) -> list[str]:
     if not advanced.is_on() or ctx.admin is None:
         return []
+    from .miniapp import locked
+
     on = morning_on(ctx.admin)
-    return [f"☀️ {ctx.tr(T.mr_title)}: <b>{ctx.tr(T.on if on else T.off)}</b>", f"<i>{ctx.tr(T.mr_hint, hour=f'{MORNING_HOUR:02d}:00')}</i>"]
+    return [
+        f"☀️ {ctx.tr(T.mr_title)}: <b>{ctx.tr(T.on if on else T.off)}</b>",
+        f"<i>{ctx.tr(T.mr_hint, hour=f'{MORNING_HOUR:02d}:00')}</i>",
+        f"🔐 {ctx.tr(T.bl_title)}: <b>{len(locked(ctx.chat_id))}</b>",
+    ]
 
 
 def settings_rows(ctx: Ctx) -> list[list]:
     if not advanced.is_on() or ctx.admin is None:
         return []
     on = morning_on(ctx.admin)
-    return [[btn(f"{ctx.tr(T.mr_title)}: {ctx.tr(T.turn_off if on else T.turn_on)}", Cb.morning, 0 if on else 1, style=None if on else Style.success)]]
+    return [[btn(f"☀️ {ctx.tr(T.mr_title)}: {ctx.tr(T.turn_off if on else T.turn_on)}", Cb.morning, 0 if on else 1, style=None if on else Style.success)], [btn(f"🔐 {ctx.tr(T.bl_title)}", Cb.lock)]]
 
 
 @route(Cb.morning, admin=True)

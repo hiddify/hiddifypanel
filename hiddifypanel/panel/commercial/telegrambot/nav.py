@@ -10,8 +10,11 @@ from .ui import ROUTES, Cb, Ctx, route
 #: The screens a person moves between (actions, like a setting or sending a card, are not steps).
 SCREENS = {Cb.me_links, Cb.guide, Cb.doctor, Cb.chart, Cb.support, Cb.history, Cb.settings, Cb.lang}
 #: An admin's screens (the user list with its filters, a user, the status, the chats…)
-ADMIN_SCREENS = {Cb.users, Cb.search, Cb.card, Cb.links, Cb.status, Cb.bandwidth, Cb.chats, Cb.chat, Cb.admin_settings, Cb.lang, Cb.free_link, Cb.new, Cb.new_count, Cb.broadcast, Cb.nodes, Cb.domains}
+ADMIN_SCREENS = {Cb.users, Cb.search, Cb.card, Cb.links, Cb.status, Cb.bandwidth, Cb.chats, Cb.chat, Cb.admin_settings, Cb.lang, Cb.free_link, Cb.new, Cb.new_count, Cb.broadcast, Cb.nodes, Cb.domains, Cb.bulk, Cb.admins, Cb.admin_card, Cb.apply, Cb.cfgtest, Cb.lock, Cb.reseller_bot, Cb.open_help, Cb.update}
 DEPTH = 12
+#: Screens whose first argument is the step itself (Send Message: users / admins / all / one; Backup: history / one
+#: backup): another first argument is a step further, the same one with other arguments (a page) takes its place
+BY_FIRST_ARG = {Cb.broadcast, Cb.backup}
 #: Screens whose arguments only choose what they show (a filter, a page, an order): any of them is the same step
 VIEWS = {Cb.users, Cb.search, Cb.chats, Cb.history}
 
@@ -31,6 +34,19 @@ def is_admin_screen(kind: Cb, args: list[str]) -> bool:
         return bool(args) and args[-1:] != ["r"]  # a period's chart; another period in place is not a step
     if kind is Cb.broadcast:
         return args[:1] not in (["go"], ["x"])  # sending or dropping the message is not a step
+    if kind is Cb.backup:
+        return args[:1] != ["now"]  # the menu and the history are steps; taking a backup is not
+    if kind is Cb.update:
+        return args[1:2] != ["go"]  # the servers and the question are steps; starting the update is not
+    # Doing something is never a step: Back after it shows the screen it was done from, never its confirm again
+    if kind is Cb.bulk:
+        return args[3:4] != ["1"]
+    if kind is Cb.admin_card:
+        return len(args) < 3  # the card, not a change on it
+    if kind in (Cb.apply, Cb.cfgtest):
+        return args[:1] != ["go"]
+    if kind is Cb.lock:
+        return len(args) < 2  # the locks, not turning one on or off
     return kind in ADMIN_SCREENS
 
 
@@ -52,7 +68,7 @@ def push(ctx: Ctx, kind: Cb, args: list[str]) -> None:
     entry = [kind.value, [str(a) for a in args]]
     if entry in path:
         path = path[: path.index(entry) + 1]
-    elif path and path[-1][0] == kind.value and (len(path[-1][1]) == len(args) or kind in VIEWS):
+    elif path and path[-1][0] == kind.value and (path[-1][1][:1] == entry[1][:1] if kind in BY_FIRST_ARG else (len(path[-1][1]) == len(args) or kind in VIEWS)):
         path[-1] = entry
     else:
         path.append(entry)
