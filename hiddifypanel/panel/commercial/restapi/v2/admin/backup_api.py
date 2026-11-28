@@ -48,10 +48,14 @@ def summarize(data: dict) -> dict[str, Any]:
     root = childs[0].get("unique_id") if childs and isinstance(childs[0], dict) else None
     configs = {c.get("key"): c.get("value") for c in data.get("hconfigs") or [] if isinstance(c, dict) and (root is None or c.get("child_unique_id") in (root, None))}
     admin_path = configs.get("proxy_path_admin")
+    # Deleted users are in the file (their UUIDs stay taken) but are not counted; the nodes' domains neither
+    # (each node has its own): the same numbers as the panel shows.
+    users = [u for u in data.get("users") or [] if isinstance(u, dict) and not u.get("deleted")]
+    domains = [d for d in data.get("domains") or [] if isinstance(d, dict) and (root is None or d.get("child_unique_id") in (root, None, ""))]
     return {
-        "users": len(data.get("users") or []),
+        "users": len(users),
         "admins": len(data.get("admin_users") or []),
-        "domains": len(data.get("domains") or []),
+        "domains": len(domains),
         "custom_proxies": len(data.get("custom_proxies") or []),
         "tags": len(data.get("tags") or []),
         "settings": len(data.get("hconfigs") or []),
@@ -64,10 +68,12 @@ def summarize(data: dict) -> dict[str, Any]:
 
 def current_summary() -> dict[str, Any]:
     return {
-        "users": User.query.count(),
+        # The same parts the backup file counts (summarize): users not deleted, this panel's own domains (the nodes'
+        # are counted with the nodes), and the custom proxies the file holds (yours, and built-ins you changed).
+        "users": User.query.filter(User.deleted.is_(False)).count(),
         "admins": AdminUser.query.count(),
-        "domains": Domain.query.count(),
-        "custom_proxies": CustomProxy.query.count(),
+        "domains": Domain.query.filter(Domain.child_id == 0).count(),
+        "custom_proxies": len(hiddify._custom_proxies_for_backup(CustomProxy)),
         "nodes": max(0, Child.query.count() - 1),
     }
 
