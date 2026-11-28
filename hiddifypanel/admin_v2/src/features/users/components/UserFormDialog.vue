@@ -556,7 +556,9 @@ async function submit() {
   gap: 0.5rem;
   margin-inline-start: auto;
   margin-inline-end: 0.5rem;
-  padding: 0.25rem 0.35rem 0.25rem 0.75rem;
+  /* the switch end hugs the switch (as tight as top and bottom), the label end has more room: in both directions */
+  padding-block: 0.25rem;
+  padding-inline: 0.75rem 0.35rem;
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 600;
