@@ -5,9 +5,11 @@ from hiddifypanel import current_app as app
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import Role, User
+from hiddifypanel.models import AdminUser, Role, User
+from hiddifypanel.models.user import ONE_GIG
 
 from . import has_permission, resolve_added_by_uuid
+from .users_page_api import require_given_traffic
 from .schema import PatchUserSchema, SuccessfulSchema, UserSchema
 
 
@@ -37,6 +39,14 @@ class UserApi(MethodView):
             abort(400, "Active user limit reached: disable another user or raise max active users")
         if "added_by_uuid" in payload:
             payload["added_by_uuid"] = resolve_added_by_uuid(payload.get("added_by_uuid"))
+        # More data given out (a higher limit, usage wiped, a move to another sub-admin): within the admins' traffic
+        old_limit, old_usage, old_owner_id = user.usage_limit or 0, user.current_usage or 0, user.added_by
+        new_owner = AdminUser.by_uuid(payload["added_by_uuid"]) if payload.get("added_by_uuid") else None
+        new_limit = int(payload["usage_limit_GB"] * ONE_GIG) if payload.get("usage_limit_GB") is not None else old_limit
+        new_usage = int(payload["current_usage_GB"] * ONE_GIG) if payload.get("current_usage_GB") is not None else old_usage
+        wiped = max(0, old_usage - new_usage)
+        require_given_traffic(old_owner_id, new_owner.id if new_owner else old_owner_id, old_limit, new_limit, wiped)
+        AdminUser.spend_traffic(old_owner_id, wiped)
         user_driver.remove_client(user)
         dbuser = User.add_or_update(old_uuid=uuid, **payload) or abort(502, "Unknown issue! User is not patched")
         if dbuser.is_active:

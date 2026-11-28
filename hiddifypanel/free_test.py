@@ -319,10 +319,10 @@ def grant(conv: Conversation) -> User:
         raise FreeTestError("disabled")
     if hutils.node.is_child():
         raise FreeTestError("read_only")
-    if not admin.can_have_more_users():
-        raise FreeTestError("no_room")
     # The package that was asked for, while the admin still has it; else the one offered now.
     package = package_of(admin, conv.free_package_id)
+    if not admin.can_have_more_users(package.usage_gb):
+        raise FreeTestError("no_room")
     comment = "Free test · Telegram " + (f"@{conv.username}" if conv.username else str(conv.telegram_id))
     user = User(uuid=str(uuid_lib.uuid4()), name=(conv.name or str(conv.telegram_id))[:100], package_days=package.days, added_by=admin.id, enable=True, comment=comment)
     user.usage_limit_GB = package.usage_gb

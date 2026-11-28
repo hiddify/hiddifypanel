@@ -262,14 +262,20 @@ def apply(users: list[User]) -> None:
 
 
 def renew(user: User) -> None:
-    """A fresh package: days count again from the next connection and usage is zero."""
+    """A fresh package: days count again from the next connection and usage is zero (what it used stays given out by
+    its admin: max_total_usage_GB)."""
     user.start_date = None
-    user.reset_usage()
+    user.reset_usage_by_admin()
     user.enable = True
 
 
 def add_days(user: User, days: int) -> None:
     user.package_days = min((user.package_days or 0) + days, MAX_PACKAGE_DAYS)
+
+
+def traffic_fits(user: User, gb: float) -> bool:
+    """Whether its admins may give this user ``gb`` GB more (max_total_usage_GB: the traffic an admin gives out)."""
+    return AdminUser.traffic_fits({user.added_by: gb}) if user.added_by else True
 
 
 def add_gb(user: User, gb: int) -> None:

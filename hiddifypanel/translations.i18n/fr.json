@@ -589,7 +589,7 @@
         "total": "Total",
         "totalHint": "Tous les utilisateurs, sur le nombre autorisé",
         "traffic": "Trafic",
-        "trafficHint": "Trafic utilisé par tous ces utilisateurs depuis la dernière réinitialisation, sur le total autorisé"
+        "trafficHint": "Trafic donné à tous ces utilisateurs (leurs limites de données, plus ce qu'ils ont utilisé avant une remise à zéro, un renouvellement ou une suppression), sur le total autorisé"
       },
       "mode": {
         "admin": "Administrateur",

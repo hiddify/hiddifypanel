@@ -162,10 +162,11 @@ def _usage(admin: AdminUser) -> dict:
 
 
 def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
-    """Users of each admin and all its sub-admins: total, active, online; traffic: the admin's own counter (since its reset)."""
+    """Users of each admin and all its sub-admins: total, active, online; traffic: what the admin gave out (its users'
+    limits plus what was used before its resets and deletes: what max_total_usage_GB limits)."""
     ids = [a.id for a in admins]
     since = datetime.datetime.now() - ONLINE_WINDOW
-    direct = {i: {"total": 0, "active": 0, "online": 0} for i in ids}
+    direct = {a.id: {"total": 0, "active": 0, "online": 0, "given": a.spent_traffic or 0} for a in admins}
     for user in User.query.filter(User.added_by.in_(ids), User.deleted.is_(False)).all():
         row = direct.get(user.added_by)
         if row is None:
@@ -173,6 +174,7 @@ def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
         row["total"] += 1
         row["active"] += 1 if user.is_active else 0
         row["online"] += 1 if user.last_online and user.last_online >= since else 0
+        row["given"] += user.usage_limit or 0
 
     children: dict[int, list[int]] = {}
     for a in admins:
@@ -198,7 +200,7 @@ def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
     for admin_id in ids:
         walk(admin_id, set())
     for admin in admins:
-        totals[admin.id]["usage_GB"] = round(admin.current_usage_GB, 3)
+        totals[admin.id]["usage_GB"] = round(totals[admin.id].pop("given") / 1024**3, 3)
     return totals
 
 

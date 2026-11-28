@@ -151,6 +151,14 @@ class User(BaseAccount):
     def user_should_reset(self) -> bool:
         return should_reset(self.mode, self.start_date, self.last_reset_time)
 
+    def reset_usage_by_admin(self) -> None:
+        """An admin resets this user's usage (a reset or a renew): what it used stays given out by its admin
+        (max_total_usage_GB), so the admin gives that traffic again. The periodic resets do not come here."""
+        from .admin import AdminUser
+
+        AdminUser.spend_traffic(self.added_by, self.current_usage or 0)
+        self.reset_usage()
+
     def reset_usage(self, commit: bool = False):
         """Resets the user usages"""
         self.last_reset_time = datetime.date.today()
@@ -188,8 +196,14 @@ class User(BaseAccount):
     def remove(self, commit: bool = True, *, drivers: bool = True) -> None:
         """Soft-delete the user (keep the row; hide from admin/API lists).
         ``drivers=False``: the caller takes it out of the cores itself (a bulk delete does it in one batch)."""
+        from hiddifypanel import hutils
         from hiddifypanel.drivers import user_driver
 
+        # What it used stays given out by its admin (max_total_usage_GB): deleting a user frees only the unused rest.
+        if not self.deleted and not hutils.node.is_child():
+            from .admin import AdminUser
+
+            AdminUser.spend_traffic(self.added_by, self.current_usage or 0)
         if drivers:
             user_driver.remove_client(self)
         super().remove(commit=commit)

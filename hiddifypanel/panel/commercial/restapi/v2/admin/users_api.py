@@ -5,10 +5,12 @@ from hiddifypanel import current_app as app
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import User
+from hiddifypanel.models import AdminUser, User
+from hiddifypanel.models.user import ONE_GIG
 from hiddifypanel.models.role import Role
 
 from . import resolve_added_by_uuid
+from .users_page_api import require_given_traffic
 from .schema import PostUserSchema, UserSchema
 
 
@@ -45,6 +47,9 @@ class UsersApi(MethodView):
                 existing.purge(commit=False)
 
         payload["added_by_uuid"] = resolve_added_by_uuid(payload.get("added_by_uuid"))
+        # Its data is given out by its owner and the admins above (max_total_usage_GB)
+        owner = AdminUser.by_uuid(payload["added_by_uuid"]) if payload.get("added_by_uuid") else g.account
+        require_given_traffic(None, owner.id, 0, int((payload.get("usage_limit_GB") or 0) * ONE_GIG), 0)
 
         dbuser = User.add_or_update(**payload) or abort(502, "Unknown issue: User is not added")
         user_driver.add_client(dbuser)
