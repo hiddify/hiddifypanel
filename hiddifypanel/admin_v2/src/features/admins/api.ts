@@ -154,6 +154,8 @@ export interface AdminPayload {
   default_outbound?: number | null
   /** "" clears it. */
   alias?: string
+  /** Role: never above the signed-in admin's own (agent when left out on create). */
+  mode?: AdminMode
 }
 
 export interface AdminCredentials {

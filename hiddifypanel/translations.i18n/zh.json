@@ -491,7 +491,7 @@
         "configsCount": "{n} 个配置 | {n} 个配置",
         "configsHint": "添加到该管理员及其子管理员所有用户的订阅中。",
         "create": "创建管理员",
-        "createSubtitle": "创建一个代理。将为其生成安全密码。",
+        "createSubtitle": "将为其生成安全密码。",
         "createTitle": "新建管理员",
         "editSubtitle": "更改立即生效。",
         "editTitle": "编辑 {name}",
@@ -559,6 +559,14 @@
       "myConfigs": "我的用户的配置",
       "myConfigsHint": "我的用户的配置：添加到您所有用户及子管理员用户的订阅中",
       "noMatch": "没有管理员符合这些筛选条件",
+      "role": {
+        "hint": {
+          "admin": "可以拥有自己的子管理员；其他可执行的操作由权限决定。",
+          "agent": "在您设定的限制内管理自己的用户；不能添加子管理员。",
+          "super_admin": "整个面板，没有任何限制。"
+        },
+        "label": "角色"
+      },
       "outbound": {
         "auto": "自动",
         "inherit": "与上级相同：{name}"

@@ -21,7 +21,7 @@ class AdminCapabilitiesTests(unittest.TestCase):
 
     def test_defaults_agents_cannot_override_outbound(self):
         d = caps.defaults_for_mode(AdminMode.agent, can_add_admin=True)
-        self.assertTrue(d[caps.ADD_SUB_ADMINS])
+        self.assertFalse(d[caps.ADD_SUB_ADMINS])  # agents never add sub-admins
         self.assertFalse(d[caps.OVERRIDE_PREFERRED_OUTBOUND])
         self.assertTrue(d[caps.ADD_EXTRA_SUBLINKS])
         self.assertFalse(d[caps.MODIFY_DOMAINS])
@@ -35,7 +35,7 @@ class AdminCapabilitiesTests(unittest.TestCase):
         self.assertFalse(d[caps.ADD_SUB_ADMINS])
 
     def test_merge_cannot_grant_what_actor_lacks(self):
-        actor = admin(capabilities={**caps.empty(), caps.ADD_SUB_ADMINS: True, caps.OVERRIDE_PREFERRED_OUTBOUND: True})
+        actor = admin(mode=AdminMode.admin, capabilities={**caps.empty(), caps.ADD_SUB_ADMINS: True, caps.OVERRIDE_PREFERRED_OUTBOUND: True})
         target = caps.merge_for_actor(
             actor,
             {
@@ -54,7 +54,7 @@ class AdminCapabilitiesTests(unittest.TestCase):
         self.assertFalse(caps.merge_for_actor(actor, {caps.ADD_SUB_ADMINS: True}, creating=True)[caps.ADD_EXTRA_SUBLINKS])
 
     def test_merge_leaves_keys_actor_lacks_unchanged(self):
-        actor = admin(capabilities={**caps.empty(), caps.ADD_SUB_ADMINS: True})
+        actor = admin(mode=AdminMode.admin, capabilities={**caps.empty(), caps.ADD_SUB_ADMINS: True})
         existing = {**caps.empty(), caps.MODIFY_DOMAINS: True, caps.ADD_SUB_ADMINS: False}
         merged = caps.merge_for_actor(actor, {caps.ADD_SUB_ADMINS: True, caps.MODIFY_DOMAINS: False}, existing=existing)
         self.assertTrue(merged[caps.ADD_SUB_ADMINS])
@@ -64,6 +64,14 @@ class AdminCapabilitiesTests(unittest.TestCase):
     def test_of_falls_back_when_capabilities_missing(self):
         a = admin(mode=AdminMode.agent, capabilities=None, can_add_admin=True)
         self.assertEqual(caps.of(a), caps.defaults_for_mode(AdminMode.agent, can_add_admin=True))
+
+    def test_agent_never_adds_sub_admins(self):
+        stored = {**caps.empty(), caps.ADD_SUB_ADMINS: True, caps.MODIFY_DOMAINS: True}
+        agent = admin(mode=AdminMode.agent, capabilities=stored, can_add_admin=True)
+        self.assertFalse(caps.has(agent, caps.ADD_SUB_ADMINS))
+        self.assertTrue(caps.has(agent, caps.MODIFY_DOMAINS))
+        self.assertTrue(caps.has(admin(mode=AdminMode.admin, capabilities=stored), caps.ADD_SUB_ADMINS))
+        self.assertEqual(caps.for_mode(AdminMode.admin, stored), stored)
 
 
 if __name__ == "__main__":

@@ -28,6 +28,7 @@ import {
   type AdminCapabilities,
   type AdminCredentials,
   type AdminLimits,
+  type AdminMode,
   type AdminPayload,
   type AdminRow,
   type AdminsTree,
@@ -36,7 +37,7 @@ import {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const DEFAULT_LIMIT = 100
 
-/** `admin`: the one being edited; null creates a new agent. */
+/** `admin`: the one being edited; null creates a new sub-admin. */
 const props = defineProps<{ admin: AdminRow | null; tree: AdminsTree | null }>()
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{
@@ -82,11 +83,24 @@ const CAP_ICON = CAPABILITY_ICON
 const CAP_COLOR = CAPABILITY_COLOR
 
 const editing = computed(() => props.admin !== null)
-const targetIsSuper = computed(() => props.admin?.mode === 'super_admin')
+/** The role: agent, admin or super admin, up to the signed-in admin's own. */
+const role = ref<AdminMode>('agent')
+const ROLES: { value: AdminMode; icon: string }[] = [
+  { value: 'agent', icon: 'pi pi-user' },
+  { value: 'admin', icon: 'pi pi-shield' },
+  { value: 'super_admin', icon: 'pi pi-crown' },
+]
+const myRole = computed<AdminMode>(() => props.tree?.admins.find((row) => row.is_me)?.mode ?? 'agent')
+const roleOptions = computed(() => ROLES.slice(0, ROLES.findIndex((r) => r.value === myRole.value) + 1))
+/** Super admins have every permission and no limits: the form leaves those out for them. */
+const targetIsSuper = computed(() => role.value === 'super_admin')
 /** The signed-in admin's own limits cap what it can give (null: super admin, no cap). */
 const myLimits = computed<AdminLimits | null>(() => props.tree?.my_limits ?? null)
 const myCapabilities = computed<AdminCapabilities>(() => props.tree?.my_capabilities ?? emptyCapabilities())
-const grantableCapabilities = computed(() => ADMIN_CAPABILITIES.filter((key) => myCapabilities.value[key]))
+/** What the signed-in admin can give; an agent never adds sub-admins (that is for admins and super admins). */
+const grantableCapabilities = computed(() =>
+  ADMIN_CAPABILITIES.filter((key) => myCapabilities.value[key] && !(key === 'add_sub_admins' && role.value === 'agent')),
+)
 const enabledCapabilities = computed(() => grantableCapabilities.value.filter((key) => capabilities.value[key]))
 const canSetOutbound = computed(() => Boolean(myCapabilities.value.override_preferred_outbound))
 const canSetConfigs = computed(() => Boolean(myCapabilities.value.add_extra_sublinks))
@@ -152,6 +166,7 @@ watch(visible, (open) => {
   usageMode.value = admin?.usage_mode ?? 'no_reset'
   resetUsage.value = false
   name.value = admin?.name ?? ''
+  role.value = admin?.mode ?? 'agent'
   alias.value = admin?.alias ?? ''
   comment.value = admin?.comment ?? ''
   telegramId.value = admin?.telegram_id ?? null
@@ -210,10 +225,11 @@ async function submit() {
     name: name.value.trim(),
     comment: comment.value.trim(),
     telegram_id: telegramId.value || null,
-    can_add_admin: capabilities.value.add_sub_admins,
-    capabilities: { ...capabilities.value },
+    can_add_admin: role.value !== 'agent' && capabilities.value.add_sub_admins,
+    capabilities: { ...capabilities.value, ...(role.value === 'agent' ? { add_sub_admins: false } : {}) },
     parent_uuid: Object.keys(parent.value)[0] || undefined,
   }
+  if (roleOptions.value.length > 1) payload.mode = role.value
   if (canSetConfigs.value) payload.additional_configs = cleanConfigRows(configs.value)
   if (canSetOutbound.value) payload.default_outbound = defaultOutbound.value
   if (!targetIsSuper.value) payload.alias = alias.value.trim().toLowerCase()
@@ -269,6 +285,26 @@ async function submit() {
           <InputText id="admin-name" v-model="name" autofocus maxlength="512" :invalid="nameError" :disabled="busy" :placeholder="t('admins.form.namePlaceholder')" />
           <small v-if="nameError" class="admin-form__error">{{ t('admins.form.nameRequired') }}</small>
         </div>
+        <!-- Role: only when the signed-in admin can give more than one -->
+        <div v-if="roleOptions.length > 1" class="admin-form__field">
+          <span id="admin-role-label" class="font-medium">{{ t('admins.role.label') }}</span>
+          <div class="admin-role" :style="{ '--roles': roleOptions.length }" role="radiogroup" aria-labelledby="admin-role-label">
+            <button
+              v-for="r in roleOptions"
+              :key="r.value"
+              type="button"
+              role="radio"
+              class="admin-role__option"
+              :class="[`admin-role__option--${r.value}`, { 'admin-role__option--on': role === r.value }]"
+              :aria-checked="role === r.value"
+              :disabled="busy"
+              @click="role = r.value"
+            >
+              <i :class="r.icon" /><span>{{ t(`admins.mode.${r.value}`) }}</span>
+            </button>
+          </div>
+          <small class="text-muted-color">{{ t(`admins.role.hint.${role}`) }}</small>
+        </div>
         <!-- Optional sign-in username (never for super admins) -->
         <div v-if="!targetIsSuper" class="admin-form__field">
           <label for="admin-alias" class="font-medium">
@@ -297,7 +333,7 @@ async function submit() {
       </section>
 
       <!-- Permissions: collapsed summary; expand to edit (only what the signed-in admin may grant) -->
-      <section v-if="grantableCapabilities.length" class="admin-form__section">
+      <section v-if="grantableCapabilities.length && !targetIsSuper" class="admin-form__section">
         <div class="admin-caps" :class="{ 'admin-caps--open': showCapabilities }">
           <button
             type="button"
@@ -476,6 +512,52 @@ async function submit() {
 </template>
 
 <style scoped>
+/* Role: equal segments like the reset period picker; the chosen one lifted, in the role's colour */
+.admin-role {
+  display: grid;
+  grid-template-columns: repeat(var(--roles), minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.25rem;
+  border-radius: 12px;
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.07));
+}
+.admin-role__option {
+  --role-color: var(--p-primary-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.45rem 0.4rem;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--p-text-muted-color);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.admin-role__option span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-role__option:hover:not(:disabled):not(.admin-role__option--on) {
+  color: var(--p-text-color);
+}
+.admin-role__option--super_admin {
+  --role-color: #d97706;
+}
+.admin-role__option--on {
+  color: var(--role-color);
+  font-weight: 600;
+  background: var(--p-content-background);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
 .admin-form__title {
   display: flex;
   align-items: center;

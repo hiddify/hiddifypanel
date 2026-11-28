@@ -602,7 +602,7 @@
         "configsCount": "{n} config | {n} configs",
         "configsHint": "Added to the subscription of every user of this admin and of its sub-admins.",
         "create": "Create Admin",
-        "createSubtitle": "Creates an agent. A secure password is generated for them.",
+        "createSubtitle": "A secure password is generated for them.",
         "createTitle": "New Admin",
         "editSubtitle": "Changes apply right away.",
         "editTitle": "Edit {name}",
@@ -670,6 +670,14 @@
       "myConfigs": "Configs for My Users",
       "myConfigsHint": "Configs for my users: added to the subscription of all your users and your sub-admins' users",
       "noMatch": "No admin matches these filters",
+      "role": {
+        "hint": {
+          "admin": "Can have their own sub-admins; what else they may do is set by the permissions.",
+          "agent": "Manages their own users within the limits you set; can't add sub-admins.",
+          "super_admin": "The whole panel, with no limits."
+        },
+        "label": "Role"
+      },
       "outbound": {
         "auto": "Automatic",
         "inherit": "Same as above: {name}"
