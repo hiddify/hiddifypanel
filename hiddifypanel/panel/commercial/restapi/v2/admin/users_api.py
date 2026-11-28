@@ -2,6 +2,7 @@ from apiflask import abort
 from flask.views import MethodView
 
 from hiddifypanel import current_app as app
+from hiddifypanel import admin_capabilities as caps
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
@@ -30,6 +31,8 @@ class UsersApi(MethodView):
     def post(self, data: PostUserSchema):
         """User: Create a user"""
         payload = data.model_dump(exclude_none=True)
+        if payload.get("preferred_outbound_slug"):
+            caps.require(caps.OVERRIDE_PREFERRED_OUTBOUND)
 
         if not g.account.can_have_more_users():
             abort(

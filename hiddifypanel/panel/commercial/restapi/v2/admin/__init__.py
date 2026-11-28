@@ -330,6 +330,22 @@ def assert_actor_can_create_admin() -> None:
     abort(403, "You don't have permission to create admins")
 
 
+#: An admin's own limits and usage: never changed by the admin itself.
+_ADMIN_LIMIT_FIELDS = ("max_users", "max_active_users", "max_online_users", "max_total_usage_GB", "usage_mode", "current_usage_GB")
+#: Limits a parent gives a sub-admin: at most its own.
+_ADMIN_CAPPED_LIMITS = ("max_users", "max_active_users", "max_online_users", "max_total_usage_GB")
+
+
+def admin_schema_for_caller(admin: AdminUser):
+    """``admin.to_schema()`` as the signed-in admin may see it: an admin's UUID is its API key, so a parent outside
+    the caller's own subtree (e.g. the caller's own parent) is never shown."""
+    schema = admin.to_schema()
+    actor = g.account
+    if _as_admin_mode(actor.mode) != AdminMode.super_admin and admin.parent_admin_id not in actor.recursive_sub_admins_ids():
+        schema.parent_admin_uuid = None
+    return schema
+
+
 def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = None) -> dict:
     """Reject privilege escalation on admin create/update payloads.
 
@@ -359,6 +375,18 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
         if "capabilities" in out and out["capabilities"] is not None:
             abort(403, "Cannot change your own capabilities")
         out.pop("parent_admin_uuid", None)
+        if actor_mode != AdminMode.super_admin and any(out.get(key) is not None for key in _ADMIN_LIMIT_FIELDS):
+            abort(403, "Cannot change your own limits or usage")
+
+    if "default_outbound_slug" in out and out["default_outbound_slug"] is not None:
+        caps.require(caps.OVERRIDE_PREFERRED_OUTBOUND)
+
+    if actor_mode != AdminMode.super_admin and not self_target:
+        # A sub-admin's limits stay within the caller's own (0 = no limit)
+        for key in _ADMIN_CAPPED_LIMITS:
+            value, mine = out.get(key), getattr(actor, key, None)
+            if value is not None and mine and (value == 0 or value > mine):
+                abort(400, f"{key} can be at most {mine:g} (your own limit)")
 
     if "mode" in out and out["mode"] is not None:
         requested = _as_admin_mode(out["mode"])

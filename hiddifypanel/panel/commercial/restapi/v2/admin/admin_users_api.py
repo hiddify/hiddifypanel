@@ -7,7 +7,7 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.models import AdminUser
 from hiddifypanel.models.role import Role
 
-from . import assert_actor_can_create_admin, validate_admin_write_payload
+from . import admin_schema_for_caller, assert_actor_can_create_admin, validate_admin_write_payload
 from .schema import AdminSchema
 
 
@@ -18,7 +18,7 @@ class AdminUsersApi(MethodView):
     def get(self):
         """Admin: Get all admins"""
         admins = AdminUser.query.filter(AdminUser.id.in_(g.account.recursive_sub_admins_ids())).all() or abort(404, "You have no admin")
-        return [admin.to_schema() for admin in admins]
+        return [admin_schema_for_caller(admin) for admin in admins]
 
     @app.input(AdminSchema, arg_name="data")
     @app.output(AdminSchema)
@@ -34,4 +34,4 @@ class AdminUsersApi(MethodView):
 
         admin = AdminUser.add_or_update(**payload) or abort(502, "Unknown issue: Admin is not added")
         hutils.node.parent.notify_childs_users_changed()
-        return admin.to_schema()
+        return admin_schema_for_caller(admin)
