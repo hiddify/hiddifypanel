@@ -1,24 +1,35 @@
 <template>
-  <Dialog v-model:visible="visible" modal :draggable="false" :header="t('account.passkeys.suggest.title')" :style="{ width: 'min(27rem, calc(100vw - 1.5rem))' }">
+  <Dialog
+    v-model:visible="visible"
+    modal
+    :show-header="false"
+    :dismissable-mask="true"
+    :draggable="false"
+    :style="{ width: 'min(25.5rem, calc(100vw - 1.5rem))' }"
+    :pt="{ root: { class: 'ps-dialog' }, content: { class: 'ps-dialog__content' } }"
+  >
     <div class="ps">
-      <span class="ps__icon" aria-hidden="true"><i class="pi pi-shield" /></span>
-      <p class="ps__text">{{ t('account.passkeys.suggest.body') }}</p>
-      <p v-if="suggestion && suggestion.missing.length > 1" class="ps__domains">
-        {{ t('account.passkeys.suggest.domains', { count: suggestion.missing.length }) }}
-      </p>
-      <small v-if="suggestion && !suggestion.domain && suggestion.missing.length" class="ps__domains">
-        {{ t('account.passkeys.onIp', { host: hostname, domain: suggestion.missing[0] }) }}
-      </small>
-      <small v-if="error" class="ps__error" role="alert">{{ error }}</small>
-    </div>
-    <template #footer>
-      <div class="ps__actions">
-        <Button :label="t('account.passkeys.suggest.never')" severity="secondary" text size="small" @click="never" />
-        <span class="flex-1" />
-        <Button :label="t('account.passkeys.suggest.later')" severity="secondary" outlined @click="visible = false" />
-        <Button :label="t('account.passkeys.add')" icon="pi pi-plus" autofocus :loading="adding" @click="add" />
+      <button type="button" class="ps__close" :aria-label="t('account.passkeys.suggest.later')" @click="visible = false">
+        <i class="pi pi-times" />
+      </button>
+      <PasskeyHowAnimation />
+      <div class="ps__head">
+        <h2 class="ps__title">{{ t('account.passkeys.suggest.title') }}</h2>
+        <p class="ps__text">{{ t('account.passkeys.suggest.body') }}</p>
+        <p v-if="suggestion && suggestion.missing.length > 1" class="ps__domains">
+          {{ t('account.passkeys.suggest.domains', { count: suggestion.missing.length }) }}
+        </p>
+        <small v-if="suggestion && !suggestion.domain && suggestion.missing.length" class="ps__domains">
+          {{ t('account.passkeys.onIp', { host: hostname, domain: suggestion.missing[0] }) }}
+        </small>
+        <small v-if="error" class="ps__error" role="alert">{{ error }}</small>
       </div>
-    </template>
+      <div class="ps__actions">
+        <Button :label="t('account.passkeys.add')" icon="pi pi-key" autofocus rounded :loading="adding" class="ps__add" @click="add" />
+        <Button :label="t('account.passkeys.suggest.later')" severity="secondary" text rounded class="ps__later" @click="visible = false" />
+        <button type="button" class="ps__never" @click="never">{{ t('account.passkeys.suggest.never') }}</button>
+      </div>
+    </div>
   </Dialog>
   <PasskeyDomainsDialog v-model:visible="domainsOpen" :steps="steps" @done="domainsDone" />
 </template>
@@ -34,6 +45,7 @@ import { apiErrorMessage } from '@/core/api/client'
 import { passkeySuggestion } from '@/core/panelShell'
 import { addPasskeyHere, passkeyErrorKey, passkeysVersion } from '@/features/admins/passkey-add'
 import PasskeyDomainsDialog from '@/features/admins/components/PasskeyDomainsDialog.vue'
+import PasskeyHowAnimation from '@/features/admins/components/PasskeyHowAnimation.vue'
 import type { PasskeyStep } from '@/features/admins/api'
 import { passkeysSupported } from '@/shared/utils/webauthn'
 
@@ -117,29 +129,63 @@ function domainsDone(added: number) {
 
 <style scoped>
 .ps {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 0.75rem 0.75rem 1rem;
+}
+.ps__close {
+  position: absolute;
+  top: 1.25rem;
+  inset-inline-end: 1.25rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 0;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+  background: color-mix(in srgb, var(--p-content-background) 65%, transparent);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--p-text-color) 8%, transparent);
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
+.ps__close:hover,
+.ps__close:focus-visible {
+  color: var(--p-text-color);
+  transform: scale(1.06);
+  outline: none;
+}
+.ps__head {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.6rem;
   text-align: center;
-  gap: 0.75rem;
 }
-.ps__icon {
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  font-size: 1.5rem;
-  color: var(--p-emerald-600, #059669);
-  background: color-mix(in srgb, var(--p-emerald-500, #10b981) 14%, transparent);
+.ps__title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 .ps__text {
   margin: 0;
-  line-height: 1.55;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--p-text-color) 78%, transparent);
 }
 .ps__domains {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
   color: var(--p-text-muted-color);
 }
 .ps__error {
@@ -147,9 +193,58 @@ function domainsDone(added: number) {
 }
 .ps__actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  padding: 0 0.35rem;
+}
+.ps__add {
+  min-height: 3.1rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+  box-shadow: 0 10px 22px -12px var(--p-primary-color);
+}
+.ps__later {
+  min-height: 2.75rem;
+  font-weight: 600;
+}
+.ps__never {
+  align-self: center;
+  padding: 0.3rem 0.6rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+}
+.ps__never:hover,
+.ps__never:focus-visible {
+  color: var(--p-text-color);
+  text-decoration: underline;
+  outline: none;
+}
+</style>
+
+<style>
+/* The dialog itself (not scoped: PrimeVue renders it outside this component): a rounded, frosted card */
+.ps-dialog {
+  max-height: calc(100dvh - 2rem);
+  border-radius: 32px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--p-text-color) 8%, transparent);
+  background: color-mix(in srgb, var(--p-content-background) 86%, transparent);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.ps-dialog .ps-dialog__content {
+  padding: 0;
+  overflow-y: auto;
+  background: transparent;
+  border-radius: inherit;
 }
 </style>
