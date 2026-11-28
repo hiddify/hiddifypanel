@@ -34,56 +34,195 @@
     })();
   </script>
   <style>
-    :root { --primary: #4f6df5; --primary-2: #8b5cf6; --on-primary: #fff; --radius: 14px; --bg: #eef2fb; --card: #ffffff; --text: #1e2333; --muted: #6b7280; --line: #d9deea; --danger: #e5484d; --ok: #16a34a; }
-    .dark { --bg: #0f1221; --card: #181c2e; --text: #e8eaf3; --muted: #9aa3b8; --line: #2b3250; --ok: #4ade80; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 1rem;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Vazirmatn, Tahoma, sans-serif; color: var(--text); background: var(--bg);
+    :root {
+      --primary: #0a84ff; --primary-2: #5e5ce6; --on-primary: #fff; --radius: 999px;
+      --bg: #f2f2f7; --card: rgba(255, 255, 255, 0.82); --text: #1d1d1f; --muted: #6e6e73; --line: rgba(60, 60, 67, 0.12);
+      --soft: rgba(60, 60, 67, 0.1); --screen: #ffffff; --sheet: rgba(242, 242, 247, 0.94);
+      --blue: #0a84ff; --danger: #e5484d; --ok: #30b350; --green: #30d158;
     }
-    main { width: min(100%, 24rem); padding: 1.75rem 1.5rem 1.4rem; border-radius: 22px; background: var(--card); border: 1px solid var(--line); text-align: center; }
+    .dark {
+      --bg: #000; --card: rgba(28, 28, 30, 0.82); --text: #f5f5f7; --muted: #98989d; --line: rgba(235, 235, 245, 0.12);
+      --soft: rgba(235, 235, 245, 0.14); --screen: #1c1c1e; --sheet: rgba(44, 44, 46, 0.94); --ok: #30d158;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    /* The card is centred with auto margins: when it is taller than the screen it scrolls instead of being cut. */
+    body {
+      margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; overflow-x: hidden;
+      padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, Vazirmatn, Tahoma, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(80% 50% at 15% 0%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 70%),
+        radial-gradient(70% 50% at 100% 100%, rgba(191, 90, 242, 0.13), transparent 70%),
+        var(--bg);
+      background-attachment: fixed;
+    }
+    main {
+      width: 100%; max-width: 25rem; min-width: 0; margin: auto; padding: 1.25rem 1.25rem 1.35rem;
+      border-radius: 30px; background: var(--card); border: 1px solid var(--line); text-align: center;
+      -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+      box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.3);
+    }
     /* Framed: only the button, filling the frame (the dashboard shows the rest around it). */
     .framed, .framed body { background: transparent; }
     .framed body { display: block; min-height: 0; padding: 3px; overflow: hidden; }
-    .framed main { width: 100%; padding: 0; border: 0; background: transparent; }
-    .framed .icon, .framed h1, .framed p.sub, .framed .msg { display: none; }
-    .framed button { height: calc(100vh - 6px); border-radius: var(--radius); font-size: 0.95rem; font-weight: 600; }
+    .framed main { width: 100%; max-width: none; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .framed .icon, .framed h1, .framed p.sub, .framed .msg, .framed .stage, .framed .steps, .framed .scope { display: none; }
+    .framed button { height: calc(100vh - 6px); margin: 0; border-radius: var(--radius); font-size: 0.95rem; font-weight: 600; }
     .framed .done button { display: flex; background: var(--ok); }
-    .icon { width: 3.25rem; height: 3.25rem; margin: 0 auto 0.85rem; border-radius: 18px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
-    .icon svg { width: 1.6rem; height: 1.6rem; }
-    .done .icon { background: var(--ok); }
-    h1 { margin: 0 0 0.5rem; font-size: 1.15rem; line-height: 1.35; overflow-wrap: anywhere; }
-    h1 bdi { color: var(--primary); }
-    p.sub { margin: 0 0 1.2rem; font-size: 0.9rem; line-height: 1.5; color: var(--muted); }
+
+    .icon { width: 3.5rem; height: 3.5rem; margin: 0.25rem auto 0.9rem; border-radius: 18px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    .icon svg { width: 1.7rem; height: 1.7rem; }
+    .icon.done-icon { display: none; width: 4.5rem; height: 4.5rem; border-radius: 50%; background: var(--green); box-shadow: 0 12px 30px -10px var(--green); }
+    .icon.done-icon svg { width: 2.2rem; height: 2.2rem; }
+    .done .done-icon { display: grid; animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .done .stage, .done .steps { display: none; }
+    h1 { margin: 0 0 0.45rem; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.3; overflow-wrap: anywhere; }
+    h1 bdi { display: inline-block; max-width: 100%; color: var(--blue); }
+    p.sub { margin: 0 0 1rem; font-size: 0.92rem; line-height: 1.5; color: var(--muted); }
     button {
-      width: 100%; height: 3rem; border-radius: var(--radius); border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      font: inherit; font-size: 1rem; font-weight: 650; color: var(--on-primary); background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      width: 100%; min-height: 3.2rem; margin-top: 0.25rem; padding: 0.6rem 1rem; border-radius: var(--radius); border: 0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      font: inherit; font-size: 1.05rem; font-weight: 600; color: var(--on-primary); background: var(--primary);
+      box-shadow: 0 10px 24px -12px var(--primary); transition: transform 0.15s, opacity 0.2s;
     }
+    button:active { transform: scale(0.97); }
     button[disabled] { opacity: 0.7; cursor: default; }
     button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
     .framed button:focus-visible { outline-offset: -4px; outline-color: var(--on-primary); }
     .ok-mark { display: none; }
     .done .ok-mark { display: inline; }
     .done .label { display: none; }
-    .msg { min-height: 1.2rem; margin: 0.75rem 0 0; font-size: 0.85rem; line-height: 1.45; }
+    .msg { min-height: 1.2rem; margin: 0.7rem 0 0; font-size: 0.88rem; line-height: 1.45; overflow-wrap: anywhere; }
+    .msg:empty { min-height: 0; margin: 0; }
     .msg.err { color: var(--danger); }
-    .msg.ok { color: var(--ok); }
+    .msg.ok { color: var(--ok); font-weight: 600; }
     .spin { display: none; width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.45); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
     .busy .spin { display: inline-block; }
     .done button { display: none; }
+
+    /* Only this domain: what the passkey is good for */
+    .scope {
+      display: flex; gap: 0.6rem; align-items: flex-start; margin-top: 1rem; padding: 0.7rem 0.8rem;
+      border-radius: 16px; text-align: start; font-size: 0.82rem; line-height: 1.45; color: var(--muted);
+      background: var(--soft);
+    }
+    .scope svg { flex: none; width: 1.1rem; height: 1.1rem; margin-top: 0.05rem; color: var(--blue); }
+    .scope span { min-width: 0; overflow-wrap: anywhere; }
+    .scope bdi { color: var(--text); font-weight: 600; }
+
+    /* How it goes, as a 7 s loop: tap the button, confirm on the device, the key is kept for this domain */
+    .stage { --d: 7s; --ease: cubic-bezier(0.32, 0.72, 0, 1); position: relative; height: 10rem; margin: 0 0 1rem; border-radius: 22px; overflow: hidden; direction: ltr;
+      background: radial-gradient(90% 90% at 30% 10%, color-mix(in srgb, var(--blue) 18%, transparent), transparent 70%), var(--soft); }
+    .phone { position: absolute; left: calc(50% - 2.4rem); top: 50%; width: 5.6rem; height: 8.6rem; translate: -50% -50%; padding: 0.22rem; border-radius: 1.3rem;
+      background: linear-gradient(145deg, #3a3a3c, #0b0b0c 45%, #2c2c2e); box-shadow: 0 14px 28px -12px rgba(0, 0, 0, 0.5); }
+    .screen { position: relative; height: 100%; border-radius: 1.1rem; overflow: hidden; background: var(--screen); display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 1.1rem 0.5rem 0.5rem; }
+    .screen::before { content: ''; position: absolute; top: 0.4rem; left: 50%; width: 1.4rem; height: 0.38rem; translate: -50% 0; border-radius: 999px; background: #000; }
+    .ln { display: block; height: 0.26rem; border-radius: 999px; background: var(--soft); }
+    .ln.a { width: 1.4rem; height: 1.4rem; border-radius: 0.45rem; margin: 0.25rem 0 0.15rem; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    .ln.b { width: 70%; }
+    .ln.c { width: 50%; }
+    .mock { width: 100%; height: 1.1rem; margin-top: auto; border-radius: 999px; background: var(--primary); animation: press var(--d) ease-in-out infinite; }
+    .tap { position: absolute; z-index: 3; left: 50%; bottom: 0.52rem; width: 1.3rem; height: 1.3rem; translate: -50% 0; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6); box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.75), 0 0 0 3px rgba(0, 0, 0, 0.08); opacity: 0; animation: tap var(--d) ease-out infinite; }
+    .sheet { position: absolute; z-index: 2; left: 0.22rem; right: 0.22rem; bottom: 0.22rem; height: 58%; display: grid; place-items: center; border-radius: 0.9rem;
+      background: var(--sheet); box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.12); translate: 0 115%; animation: sheet var(--d) var(--ease) infinite; }
+    .face, .check, .scan { grid-area: 1 / 1; }
+    .face { width: 2.1rem; height: 2.1rem; color: var(--blue); opacity: 0; animation: face var(--d) ease-in-out infinite; }
+    .scan { width: 2.3rem; height: 0.15rem; border-radius: 999px; background: linear-gradient(90deg, transparent, var(--blue), transparent); box-shadow: 0 0 8px var(--blue); opacity: 0; animation: scan var(--d) linear infinite; }
+    .check { width: 2.2rem; height: 2.2rem; opacity: 0; animation: chk var(--d) var(--ease) infinite; }
+    .check circle { fill: var(--green); }
+    .check path { stroke: #fff; stroke-width: 3.4; stroke-dasharray: 30; stroke-dashoffset: 30; animation: draw var(--d) ease-out infinite; }
+    .key { position: absolute; z-index: 4; left: calc(50% - 2.4rem); top: 50%; width: 1.7rem; height: 1.7rem; margin: -0.85rem 0 0 -0.85rem; display: grid; place-items: center; border-radius: 50%;
+      color: #fff; background: linear-gradient(145deg, #ffd60a, #ff9f0a); box-shadow: 0 6px 14px -4px rgba(255, 159, 10, 0.7); opacity: 0; animation: key var(--d) var(--ease) infinite; }
+    .key svg, .vault svg { width: 55%; height: 55%; }
+    .vault { position: absolute; left: calc(50% + 3.4rem); top: 50%; width: 2.6rem; height: 2.6rem; margin: -1.3rem 0 0 -1.3rem; display: grid; place-items: center; border-radius: 0.75rem;
+      color: #fff; background: linear-gradient(145deg, #64d2ff, var(--blue) 55%, #5e5ce6); box-shadow: 0 10px 20px -10px var(--blue), inset 0 1px 0 rgba(255, 255, 255, 0.35); animation: vault var(--d) var(--ease) infinite; }
+    .vault i { position: absolute; top: -0.3rem; right: -0.3rem; width: 1rem; height: 1rem; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px var(--bg); opacity: 0; animation: ok var(--d) var(--ease) infinite; }
+    .vault i::after { content: ''; position: absolute; left: 0.33rem; top: 0.2rem; width: 0.25rem; height: 0.45rem; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+    .steps li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-width: 0; padding: 0.5rem 0.3rem 0.55rem; border-radius: 14px;
+      font-size: 0.72rem; font-weight: 600; line-height: 1.25; color: var(--muted); overflow-wrap: anywhere; overflow: hidden; }
+    .steps li::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: color-mix(in srgb, var(--blue) 13%, transparent); opacity: 0; }
+    .steps b { position: relative; display: grid; place-items: center; width: 1.35rem; height: 1.35rem; border-radius: 50%; font-size: 0.72rem; color: #fff; background: color-mix(in srgb, var(--muted) 55%, transparent); }
+    .steps span { position: relative; }
+    .steps .s1::before { animation: on1 var(--d, 7s) ease infinite; }
+    .steps .s2::before { animation: on2 var(--d, 7s) ease infinite; }
+    .steps .s3::before { animation: on3 var(--d, 7s) ease infinite; }
+    .steps .s1 b { animation: n1 7s ease infinite; }
+    .steps .s2 b { animation: n2 7s ease infinite; }
+    .steps .s3 b { animation: n3 7s ease infinite; }
+
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pop { from { transform: scale(0.4); opacity: 0; } }
+    @keyframes press { 0%, 9%, 13%, 100% { scale: 1; } 11% { scale: 0.92; } }
+    @keyframes tap { 0%, 8% { opacity: 0; scale: 0.3; } 10% { opacity: 0.95; scale: 0.6; } 16%, 100% { opacity: 0; scale: 1.7; } }
+    @keyframes sheet { 0%, 15% { translate: 0 115%; } 20%, 74% { translate: 0 0; } 80%, 100% { translate: 0 115%; } }
+    @keyframes face { 0%, 18% { opacity: 0; scale: 0.8; } 22% { opacity: 1; scale: 1; } 28%, 38% { scale: 0.9; } 33% { scale: 1; } 46% { opacity: 1; scale: 1; } 50%, 100% { opacity: 0; scale: 1.12; } }
+    @keyframes scan { 0%, 23% { opacity: 0; translate: 0 -0.9rem; } 25%, 43% { opacity: 1; } 45%, 100% { opacity: 0; translate: 0 0.9rem; } }
+    @keyframes chk { 0%, 48% { opacity: 0; scale: 0.5; } 53%, 72% { opacity: 1; scale: 1; } 76%, 100% { opacity: 0; scale: 0.5; } }
+    @keyframes draw { 0%, 50% { stroke-dashoffset: 30; } 57%, 74% { stroke-dashoffset: 0; } 76%, 100% { stroke-dashoffset: 30; } }
+    @keyframes key { 0%, 56% { opacity: 0; scale: 0.4; translate: 0 1.3rem; } 59% { opacity: 1; scale: 1.1; translate: 0 0.5rem; } 64% { translate: 2.9rem -2.1rem; } 69% { opacity: 1; scale: 0.8; translate: 5.8rem 0; } 72%, 100% { opacity: 0; scale: 0.4; translate: 5.8rem 0; } }
+    @keyframes vault { 0%, 68%, 76%, 100% { scale: 1; } 71% { scale: 1.15; } }
+    @keyframes ok { 0%, 70% { opacity: 0; scale: 0.3; } 74%, 95% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: 0.3; } }
+    @keyframes on1 { 0%, 15%, 99%, 100% { opacity: 1; } 18%, 96% { opacity: 0; } }
+    @keyframes on2 { 0%, 15%, 52%, 100% { opacity: 0; } 18%, 49% { opacity: 1; } }
+    @keyframes on3 { 0%, 49%, 99%, 100% { opacity: 0; } 52%, 96% { opacity: 1; } }
+    @keyframes n1 { 0%, 15%, 99%, 100% { background-color: var(--blue); } 18%, 96% { background-color: color-mix(in srgb, var(--muted) 55%, transparent); } }
+    @keyframes n2 { 0%, 15%, 52%, 100% { background-color: color-mix(in srgb, var(--muted) 55%, transparent); } 18%, 49% { background-color: var(--blue); } }
+    @keyframes n3 { 0%, 49%, 99%, 100% { background-color: color-mix(in srgb, var(--muted) 55%, transparent); } 52%, 96% { background-color: var(--green); } }
+    /* still: the device asking, the first step lit */
+    @media (prefers-reduced-motion: reduce) {
+      .stage *, .stage *::before, .stage *::after, .steps *, .steps *::before { animation: none !important; }
+      .sheet { translate: 0 0; }
+      .face { opacity: 1; }
+      .steps .s1::before { opacity: 1; }
+      .steps .s1 b { background: var(--blue); }
+    }
+    @media (max-width: 340px) {
+      main { padding: 1rem 0.9rem 1.1rem; border-radius: 24px; }
+      .steps li { font-size: 0.68rem; }
+    }
   </style>
 </head>
 <body>
   <main id="main">
-    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4M18 5l2 2M15 8l2 2"/></svg></div>
     {% if step %}
     {% set dom %}<bdi dir="ltr">{{ domain }}</bdi>{% endset %}
+    <div class="stage" aria-hidden="true">
+      <div class="phone">
+        <div class="screen">
+          <span class="ln a"></span><span class="ln b"></span><span class="ln c"></span>
+          <span class="mock"></span>
+          <div class="sheet">
+            <svg class="face" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14V9a5 5 0 0 1 5-5h5M34 4h5a5 5 0 0 1 5 5v5M44 34v5a5 5 0 0 1-5 5h-5M14 44H9a5 5 0 0 1-5-5v-5"/><path d="M17 17v4M31 17v4M24 17v9h-2M17 32c4 3 10 3 14 0"/></svg>
+            <span class="scan"></span>
+            <svg class="check" viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="21"/><path d="M14.5 24.5l6.5 6.5 12.5-13"/></svg>
+          </div>
+        </div>
+        <span class="tap"></span>
+      </div>
+      <span class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4M18 5l2 2M15 8l2 2"/></svg></span>
+      <span class="vault"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><i></i></span>
+    </div>
+    <div class="icon done-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <h1>{{ (texts.get('enrollTitle', 'Add your passkey for {domain}')|e).replace('{domain}', dom) }}</h1>
     <p class="sub">{{ texts.get('enrollHint', 'Confirm with your fingerprint, face or screen lock. Then you can sign in on this domain without a password too.') }}</p>
+    <ol class="steps">
+      <li class="s1"><b>1</b><span>{{ texts.get('enrollStepTap', 'Tap the button') }}</span></li>
+      <li class="s2"><b>2</b><span>{{ texts.get('enrollStepConfirm', 'Confirm with your face, finger or screen lock') }}</span></li>
+      <li class="s3"><b>3</b><span>{{ texts.get('enrollStepDone', 'Done: sign in here without a password') }}</span></li>
+    </ol>
     <button type="button" id="create"><span class="spin" aria-hidden="true"></span><span class="label">{{ texts.get('enrollButton', 'Create passkey') }}</span><span class="ok-mark">✓ {{ texts.get('enrollDoneFramed', 'Passkey added.') }}</span></button>
     <p class="msg" id="msg" role="status"></p>
+    <p class="scope">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5M12 7.6v.1"/></svg>
+      <span>{{ (texts.get('enrollScope', 'This passkey works only on {domain}. It does not sign you in on the panel’s other domains: each one gets its own passkey.')|e).replace('{domain}', dom) }}</span>
+    </p>
     {% else %}
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4M18 5l2 2M15 8l2 2"/></svg></div>
     <h1>{{ texts.get('enrollExpiredTitle', 'This link has expired') }}</h1>
     <p class="sub">{{ texts.get('enrollExpired', 'Open My account in the panel and add the passkey again.') }}</p>
     {% endif %}
@@ -105,11 +244,18 @@
         'expired': texts.get('enrollExpired', 'Open My account in the panel and add the passkey again.'),
         'failed': texts.get('enrollFailed', 'The passkey could not be added here. Try again, or skip this domain.'),
         'done': texts.get('enrollDoneFramed', 'Passkey added.'),
-        'closeTab': texts.get('enrollDoneTab', 'Passkey added. You can close this tab.')
+        'closeTab': texts.get('enrollDoneTab', 'Passkey added. You can close this tab.'),
+        'back': texts.get('enrollDoneBack', 'Passkey added. Taking you back to the panel…')
       }|tojson }};
       function say(key, cls) { msg.textContent = texts[key] || texts.failed; msg.className = 'msg ' + (cls || 'err'); }
       // My account (only the page that asked for this step) moves on to the next domain.
-      function tell(status) { if (framed) { try { window.parent.postMessage({ type: 'hiddify-passkey', status: status }, parentOrigin); } catch (e) {} } }
+      // Or the tab My account opened for this step (Safari makes passkeys only on the domain's own page).
+      var opener = null;
+      try { if (!framed && window.opener && window.opener !== window) opener = window.opener; } catch (e) {}
+      function tell(status) {
+        var to = framed ? window.parent : opener;
+        if (to) { try { to.postMessage({ type: 'hiddify-passkey', status: status }, parentOrigin); } catch (e) {} }
+      }
       function b64(buf) {
         var bytes = new Uint8Array(buf), s = '';
         for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
@@ -129,8 +275,10 @@
         try { localStorage.setItem('hiddify_passkey', '1'); } catch (e) {}
         main.classList.add('done');
         btn.disabled = true;
-        say(framed ? 'done' : 'closeTab', 'ok');
+        say(framed ? 'done' : opener ? 'back' : 'closeTab', 'ok');
         tell('added');
+        // Opened by My account: back to it (a browser that keeps the tab shows "You can close this tab").
+        if (opener) setTimeout(function () { window.close(); setTimeout(function () { say('closeTab', 'ok'); }, 400); }, 900);
       }
       if (!window.PublicKeyCredential || !navigator.credentials || !window.isSecureContext) { btn.disabled = true; say('unsupported'); tell('unsupported'); return; }
       var busy = false, attempt = 0, pending = null;

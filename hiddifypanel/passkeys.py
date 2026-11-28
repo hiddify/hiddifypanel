@@ -383,6 +383,11 @@ def missing_domains(admin: AdminUser, here: str | None) -> list[str]:
     return [d for d in domains if d not in have]
 
 
+def all_domains(here: str | None) -> list[str]:
+    """The panel's domains, ``here`` (the page's domain) first."""
+    return ([here] if here else []) + [d for d in panel_domains() if d != here]
+
+
 def _enroll_key(token: str) -> str:
     return _ENROLL_KEY + hashlib.sha256(token.encode()).hexdigest()
 

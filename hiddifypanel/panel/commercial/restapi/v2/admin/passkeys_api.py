@@ -58,6 +58,8 @@ class MyPasskeysApi(MethodView):
             "domain": _domain(),
             # The panel's domains (this one first) where I have no passkey yet: "Add passkey" goes through them.
             "missing": passkeys.missing_domains(actor, _domain()),
+            # All of the panel's domains (this one first): the domain list on top of the other domains' steps.
+            "domains": passkeys.all_domains(_domain()),
         }
 
     def post(self):

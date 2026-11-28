@@ -9,23 +9,50 @@
     @update:visible="(v: boolean) => !v && finish()"
   >
     <div class="pd">
-      <!-- Where I am: one chip per domain (added, skipped, this one, still to do) -->
-      <ol v-if="steps.length > 1" class="pd__steps">
-        <li v-for="(s, i) in steps" :key="s.url" class="pd__chip" :class="`pd__chip--${chipState(i)}`">
-          <i :class="chipIcon(i)" aria-hidden="true" />
-          <bdi dir="ltr">{{ s.domain }}</bdi>
+      <!-- Every domain of the panel, each in its own colour: a tap adds the passkey for that one -->
+      <ul v-if="chips.length > 1" class="pd__domains" :aria-label="t('account.passkeys.domains.all')">
+        <li v-for="c in chips" :key="c.domain">
+          <button
+            type="button"
+            class="pd__chip"
+            :class="`pd__chip--${c.state}`"
+            :style="{ '--hue': c.hue }"
+            :disabled="c.state === 'added' || c.state === 'busy'"
+            :aria-current="c.state === 'current' ? 'step' : undefined"
+            @click="pick(c)"
+          >
+            <i :class="CHIP_ICON[c.state]" aria-hidden="true" />
+            <bdi dir="ltr">{{ c.domain }}</bdi>
+          </button>
         </li>
-      </ol>
+      </ul>
 
-      <section v-if="step && !finished" class="pd__card" :class="{ 'pd__card--added': results[index] === 'added' }">
-        <span class="pd__icon" aria-hidden="true"><i :class="results[index] === 'added' ? 'pi pi-check' : 'pi pi-key'" /></span>
+      <section
+        v-if="step && !finished"
+        class="pd__card"
+        :class="{ 'pd__card--added': results[index] === 'added' }"
+        :style="{ '--hue': currentHue }"
+      >
+        <span v-if="results[index] === 'added'" class="pd__icon" aria-hidden="true"><i class="pi pi-check" /></span>
+        <span v-else class="pd__scan"><FaceScanIcon /></span>
         <small v-if="steps.length > 1" class="pd__count">{{ t('account.passkeys.domains.step', { step: index + 1, total: steps.length }) }}</small>
         <p class="pd__heading">{{ t('account.passkeys.domains.heading') }}</p>
         <bdi dir="ltr" class="pd__domain">{{ step.domain }}</bdi>
-        <p class="pd__hint">{{ t('account.passkeys.domains.hint') }}</p>
+        <p class="pd__hint">{{ useTab ? t('account.passkeys.domains.tabHint') : t('account.passkeys.domains.hint') }}</p>
 
+        <!-- Safari makes passkeys only on the domain's own page: a short tab of it, which closes itself when done -->
+        <Button
+          v-if="useTab"
+          class="pd__create"
+          :label="t('account.passkeys.domains.create')"
+          icon="pi pi-key"
+          rounded
+          :loading="status === 'tab' || status === 'busy'"
+          :disabled="results[index] === 'added'"
+          @click="openStep"
+        />
         <!-- The other domain's own button (the passkey is made there); it takes this page's colours and mode -->
-        <div class="pd__frame">
+        <div v-else class="pd__frame">
           <iframe
             :key="step.url"
             :src="frameSrc(step)"
@@ -57,21 +84,12 @@
       </section>
     </div>
 
-    <template #footer>
+    <!-- No Skip: another domain is a tap on its chip above, and ✕ closes (a lone domain has nothing to skip to) -->
+    <template v-if="finished || (step && !useTab)" #footer>
       <div v-if="!finished" class="pd__actions">
-        <a v-if="step" :href="step.url" target="_blank" rel="noopener noreferrer" class="pd__tab" :class="{ 'pd__tab--strong': status === 'frame' }">
+        <a v-if="step" :href="step.url" target="_blank" class="pd__tab" @click.prevent="openStep">
           <i class="pi pi-external-link" aria-hidden="true" /> {{ t('account.passkeys.domains.openTab') }}
         </a>
-        <span class="flex-1" />
-        <Button
-          :label="t('account.passkeys.domains.skip')"
-          :icon="isRtl ? 'pi pi-angle-left' : 'pi pi-angle-right'"
-          icon-pos="right"
-          severity="secondary"
-          outlined
-          :disabled="results[index] === 'added'"
-          @click="next('skipped')"
-        />
       </div>
       <Button v-else :label="t('account.passkeys.domains.doneButton')" icon="pi pi-check" autofocus @click="finish" />
     </template>
@@ -84,7 +102,9 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Skeleton from 'primevue/skeleton'
-import type { PasskeyStep } from '@/features/admins/api'
+import FaceScanIcon from '@/shared/components/FaceScanIcon.vue'
+import { adminsApi, type PasskeyStep } from '@/features/admins/api'
+import { addPasskeyHere, passkeysVersion } from '@/features/admins/passkey-add'
 
 /** Adds my passkey on the panel's other domains: each one's button in a frame, one domain after the other, with a
  * summary at the end (see passkeys.py). A domain can be skipped. */
@@ -94,19 +114,32 @@ const emit = defineEmits<{ 'update:visible': [value: boolean]; done: [added: num
 type Result = 'added' | 'skipped'
 /** What the step page reports (passkey_enroll.html). */
 type FrameStatus = 'ready' | 'busy' | 'added' | 'cancelled' | 'failed' | 'expired' | 'frame' | 'unsupported'
+/** This page's own: the step's tab is open, or the browser did not open it. */
+type StepStatus = FrameStatus | 'tab' | 'blocked'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const index = ref(0)
 const results = ref<(Result | undefined)[]>([])
 const loaded = ref(false)
-const status = ref<FrameStatus | null>(null)
+const status = ref<StepStatus | null>(null)
 const finished = ref(false)
 const dark = ref(false)
 const step = computed<PasskeyStep | undefined>(() => props.steps[index.value])
 const added = computed(() => results.value.filter((r) => r === 'added').length)
-const isRtl = computed(() => ['fa', 'ar'].includes(locale.value))
 
-const STATUS_TEXT: Partial<Record<FrameStatus, string>> = {
+/** WebKit (Safari, and every browser on an iPhone or iPad) does not make passkeys in another domain's frame. */
+function framesBlocked(): boolean {
+  const ua = navigator.userAgent
+  const ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
+  const safari = /Safari\//.test(ua) && !/Chrome\/|Chromium\/|Edg\/|OPR\/|Firefox\//.test(ua)
+  return ios || safari
+}
+/** Each step in its own short tab instead of a frame (also once a frame said the browser refuses it there). */
+const useTab = ref(framesBlocked())
+
+const STATUS_TEXT: Partial<Record<StepStatus, string>> = {
+  tab: 'account.passkeys.domains.inTab',
+  blocked: 'account.passkeys.domains.tabBlocked',
   busy: 'account.passkeys.domains.waiting',
   added: 'account.passkeys.domains.added',
   cancelled: 'account.passkeys.domains.cancelled',
@@ -118,18 +151,84 @@ const STATUS_TEXT: Partial<Record<FrameStatus, string>> = {
 const statusText = computed(() => (status.value && STATUS_TEXT[status.value] ? t(STATUS_TEXT[status.value]!) : ''))
 const statusTone = computed(() => {
   if (status.value === 'added') return 'ok'
-  if (status.value === 'busy') return 'muted'
-  return status.value === 'cancelled' || status.value === 'frame' || status.value === 'unsupported' ? 'warn' : 'error'
+  if (status.value === 'busy' || status.value === 'tab') return 'muted'
+  return status.value === 'cancelled' || status.value === 'frame' || status.value === 'unsupported' || status.value === 'blocked' ? 'warn' : 'error'
 })
 
-function chipState(i: number): string {
-  return results.value[i] ?? (i === index.value && !finished.value ? 'current' : 'todo')
+/** Apple's system colours, one per domain (in the panel's order, so a domain keeps its colour). */
+const HUES = ['#0a84ff', '#bf5af2', '#ff9f0a', '#30d158', '#ff375f', '#40c8e0', '#5e5ce6', '#ffd60a', '#ac8e68', '#63e6be']
+type ChipState = 'added' | 'skipped' | 'current' | 'todo' | 'busy'
+const CHIP_ICON: Record<ChipState, string> = {
+  added: 'pi pi-check-circle',
+  skipped: 'pi pi-minus-circle',
+  current: 'pi pi-key',
+  todo: 'pi pi-plus-circle',
+  busy: 'pi pi-spin pi-spinner',
 }
-function chipIcon(i: number): string {
-  const state = chipState(i)
-  if (state === 'added') return 'pi pi-check-circle'
-  if (state === 'skipped') return 'pi pi-minus-circle'
-  return state === 'current' ? 'pi pi-key' : 'pi pi-circle'
+interface DomainChip {
+  domain: string
+  hue: string
+  /** Its step here (-1: this page's own domain, or none to add). */
+  step: number
+  state: ChipState
+}
+
+/** All of the panel's domains, and those where I have a passkey already (read when the window opens). */
+const allDomains = ref<string[]>([])
+const have = ref<Set<string>>(new Set())
+const addingHere = ref(false)
+const here = window.location.hostname
+
+const chips = computed<DomainChip[]>(() => {
+  const list = [...allDomains.value]
+  for (const s of props.steps) if (!list.includes(s.domain)) list.push(s.domain)
+  return list.map((domain, i) => {
+    const stepAt = props.steps.findIndex((s) => s.domain === domain)
+    let state: ChipState
+    if (stepAt >= 0) state = results.value[stepAt] ?? (stepAt === index.value && !finished.value ? 'current' : 'todo')
+    else if (domain === here && addingHere.value) state = 'busy'
+    else state = have.value.has(domain) ? 'added' : 'todo'
+    return { domain, hue: HUES[i % HUES.length], step: stepAt, state }
+  })
+})
+const currentHue = computed(() => chips.value.find((c) => c.step === index.value)?.hue ?? HUES[0])
+
+/** A tap on a domain: its step now (on Safari straight to its tab: the tap lets it open). */
+async function pick(c: DomainChip) {
+  if (c.state === 'added' || c.state === 'busy') return
+  if (c.step >= 0) {
+    window.clearTimeout(advance)
+    stopWatching()
+    popup = null
+    results.value[c.step] = undefined
+    index.value = c.step
+    finished.value = false
+    loaded.value = false
+    status.value = null
+    if (useTab.value) openStep()
+    return
+  }
+  // This page's own domain (skipped or closed before): the device's prompt right here.
+  if (c.domain !== here) return
+  addingHere.value = true
+  try {
+    const { added: made } = await addPasskeyHere(here, [here])
+    if (made) have.value = new Set([...have.value, here])
+  } catch {
+    // closed or refused: the chip stays to try again
+  } finally {
+    addingHere.value = false
+  }
+}
+
+async function loadDomains() {
+  try {
+    const mine = await adminsApi.myPasskeys()
+    allDomains.value = mine.domains ?? []
+    have.value = new Set(mine.passkeys.map((p) => p.domain))
+  } catch {
+    allDomains.value = []
+  }
 }
 
 /** `#rrggbb` (alpha dropped) of a computed `rgb()`/`rgba()` colour, or '' when it is not one. */
@@ -170,6 +269,7 @@ watch(
     look = measureLook()
     index.value = 0
     results.value = []
+    void loadDomains()
     loaded.value = false
     status.value = null
     finished.value = false
@@ -177,8 +277,37 @@ watch(
   { immediate: true },
 )
 
+/** The step's page in a tab of its own (opened by my tap, so not blocked). It tells this page how it went and
+ * closes itself once the passkey is made, which brings the admin back here. */
+let popup: Window | null = null
+let popupWatch: number | undefined
+function stopWatching() {
+  window.clearInterval(popupWatch)
+  popupWatch = undefined
+}
+function openStep() {
+  const s = step.value
+  if (!s || results.value[index.value] === 'added') return
+  // Not noopener: the page answers through window.opener (only to this page's origin, see passkey_enroll.html).
+  popup = window.open(frameSrc(s), 'hiddify-passkey')
+  if (!popup) {
+    status.value = 'blocked'
+    return
+  }
+  status.value = 'tab'
+  stopWatching()
+  // Closed by the admin before the passkey was made: the button is ready again.
+  popupWatch = window.setInterval(() => {
+    if (popup && !popup.closed) return
+    stopWatching()
+    popup = null
+    if (status.value === 'tab' || status.value === 'busy') status.value = null
+  }, 600)
+}
+
 function finish() {
   if (!props.visible) return
+  stopWatching()
   emit('update:visible', false)
   emit('done', added.value)
 }
@@ -186,11 +315,18 @@ function finish() {
 let advance: number | undefined
 function next(result: Result) {
   window.clearTimeout(advance)
+  stopWatching()
+  popup = null
   results.value[index.value] = result
+  if (result === 'added') passkeysVersion.value++
   loaded.value = false
   status.value = null
-  if (index.value + 1 >= props.steps.length) finished.value = true
-  else index.value++
+  // The next domain still to do (after this one, then from the start: a tap may have jumped ahead).
+  const n = props.steps.length
+  const order = Array.from({ length: n }, (_, k) => (index.value + 1 + k) % n)
+  const todo = order.find((i) => !results.value[i])
+  if (todo === undefined) finished.value = true
+  else index.value = todo
 }
 
 /** Only the frame's own domain may say how it went (another page can not move this on). */
@@ -200,6 +336,14 @@ function onMessage(event: MessageEvent) {
   const data = event.data as { type?: string; status?: FrameStatus } | null
   if (!data || data.type !== 'hiddify-passkey' || !data.status) return
   loaded.value = true
+  // The tab's own first try is no news while it is open.
+  if (data.status === 'ready' && popup && !popup.closed) return
+  // A frame the browser refuses: this step and the next ones go through a tab instead.
+  if (data.status === 'frame' && !useTab.value) {
+    useTab.value = true
+    status.value = null
+    return
+  }
   status.value = data.status === 'ready' ? null : data.status
   if (data.status === 'added') {
     results.value[index.value] = 'added'
@@ -212,6 +356,7 @@ onMounted(() => window.addEventListener('message', onMessage))
 onBeforeUnmount(() => {
   window.removeEventListener('message', onMessage)
   window.clearTimeout(advance)
+  stopWatching()
 })
 </script>
 
@@ -221,51 +366,79 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 1rem;
 }
-.pd__steps {
+.pd__domains {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0.1rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  max-height: 7.6rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
+.pd__domains li {
+  min-width: 0;
+  max-width: 100%;
+}
+/* Very light, each in its domain's own colour (--hue) */
 .pd__chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   max-width: 100%;
-  padding: 0.2rem 0.6rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.75rem;
   border-radius: 999px;
-  font-size: 0.75rem;
-  border: 1px solid var(--p-content-border-color);
-  color: var(--p-text-muted-color);
+  border: 1px solid color-mix(in srgb, var(--hue) 20%, transparent);
+  background: color-mix(in srgb, var(--hue) 7%, transparent);
+  color: color-mix(in srgb, var(--hue) 62%, var(--p-text-color));
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition:
     background-color 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease;
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease,
+    opacity 0.25s ease;
+}
+.pd__chip:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--hue) 12%, transparent);
+}
+.pd__chip:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.pd__chip:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--hue) 60%, transparent);
+  outline-offset: 2px;
 }
 .pd__chip bdi {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .pd__chip i {
-  font-size: 0.75rem;
+  flex: none;
+  font-size: 0.8rem;
+  color: var(--hue);
 }
 .pd__chip--current {
-  color: var(--p-primary-color);
-  border-color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  font-weight: 600;
+  border-color: color-mix(in srgb, var(--hue) 45%, transparent);
+  background: color-mix(in srgb, var(--hue) 13%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--hue) 12%, transparent);
 }
 .pd__chip--added {
-  color: var(--p-green-600, #16a34a);
-  border-color: color-mix(in srgb, var(--p-green-500, #22c55e) 45%, transparent);
-  background: color-mix(in srgb, var(--p-green-500, #22c55e) 10%, transparent);
+  cursor: default;
+}
+.pd__chip--added i {
+  color: #30d158;
 }
 .pd__chip--skipped {
-  opacity: 0.65;
-  text-decoration: line-through;
+  opacity: 0.6;
 }
 .pd__card {
   display: flex;
@@ -275,8 +448,11 @@ onBeforeUnmount(() => {
   gap: 0.35rem;
   padding: 1.4rem 1.1rem 1.1rem;
   border-radius: 16px;
-  border: 1px solid var(--p-content-border-color);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--p-primary-color) 7%, transparent), transparent 70%);
+  border: 1px solid color-mix(in srgb, var(--hue, var(--p-primary-color)) 18%, var(--p-content-border-color));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--hue, var(--p-primary-color)) 8%, transparent), transparent 70%);
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease;
 }
 .pd__icon {
   width: 3.1rem;
@@ -290,6 +466,60 @@ onBeforeUnmount(() => {
   background: var(--p-primary-color);
   box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--p-primary-color) 70%, transparent);
   transition: background-color 0.3s ease;
+}
+/* The face being scanned, in the domain's colour, on a very light tile with a soft pulse around it */
+.pd__scan {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.75rem;
+  height: 4.75rem;
+  margin-bottom: 0.45rem;
+  border-radius: 1.45rem;
+  font-size: 3.1rem;
+  color: var(--hue, var(--p-primary-color));
+  background: color-mix(in srgb, var(--hue, var(--p-primary-color)) 9%, var(--p-content-background));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--hue, var(--p-primary-color)) 16%, transparent),
+    0 10px 26px -14px var(--hue, var(--p-primary-color));
+  transition:
+    color 0.35s ease,
+    background-color 0.35s ease;
+}
+.pd__scan::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid color-mix(in srgb, var(--hue, var(--p-primary-color)) 35%, transparent);
+  animation: pd-pulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes pd-pulse {
+  0% {
+    opacity: 0.8;
+    scale: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    scale: 1.22;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pd__scan::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+.pd__card--added .pd__icon {
+  animation: pd-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pd-pop {
+  from {
+    scale: 0.5;
+    opacity: 0;
+  }
 }
 .pd__card--added .pd__icon,
 .pd__card--done .pd__icon {
@@ -326,6 +556,11 @@ onBeforeUnmount(() => {
   font-size: 0.85rem;
   line-height: 1.5;
   color: var(--p-text-muted-color);
+}
+.pd__create {
+  align-self: stretch;
+  min-height: 2.9rem;
+  font-weight: 600;
 }
 .pd__frame {
   position: relative;
@@ -385,11 +620,7 @@ onBeforeUnmount(() => {
   color: var(--p-text-muted-color);
   text-decoration: none;
 }
-.pd__tab:hover,
-.pd__tab--strong {
+.pd__tab:hover {
   color: var(--p-primary-color);
-}
-.pd__tab--strong {
-  font-weight: 600;
 }
 </style>

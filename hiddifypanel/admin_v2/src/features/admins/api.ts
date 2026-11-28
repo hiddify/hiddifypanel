@@ -299,6 +299,8 @@ export interface MyPasskeys {
   domain: string | null
   /** The panel's domains (this one first) where I have no passkey yet. */
   missing: string[]
+  /** All of the panel's domains (this one first). */
+  domains?: string[]
 }
 
 export type MeterTone = 'ok' | 'warn' | 'danger' | 'none'
