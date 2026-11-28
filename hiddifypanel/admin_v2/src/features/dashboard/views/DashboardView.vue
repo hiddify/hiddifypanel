@@ -70,7 +70,8 @@ const periodLabel = computed(() => {
     <!-- Every config tested from the server every 6 hours (super admins: it runs cores on the server) -->
     <ConfigHealthCard v-if="isSuperAdmin" />
 
-    <NodeHealthCard :nodes="nodeStats" :history="nodeSamples" :child-id="childId" @renamed="refresh" />
+    <!-- The servers' own health (CPU, memory, processes, disk, node addresses): super admins only, as the API -->
+    <NodeHealthCard v-if="isSuperAdmin" :nodes="nodeStats" :history="nodeSamples" :child-id="childId" @renamed="refresh" />
   </div>
 </template>
 

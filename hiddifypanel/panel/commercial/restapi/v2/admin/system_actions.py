@@ -65,7 +65,7 @@ class ResetCacheApi(MethodView):
 
 
 class AllPublicPortsApi(MethodView):
-    decorators = [login_required({Role.super_admin, Role.admin})]
+    decorators = [login_required({Role.super_admin})]
 
     def get(self):
         """Public Ports"""
