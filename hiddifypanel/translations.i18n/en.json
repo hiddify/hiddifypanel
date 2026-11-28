@@ -518,6 +518,7 @@
     },
     "admins": {
       "add": "Add Admin",
+      "owner": "Owner",
       "canAddHint": "This admin can create its own sub-admins",
       "canAddShort": "Adds Sub-admins",
       "capability": {
@@ -544,13 +545,13 @@
         "mode": "Mode",
         "name": "Name",
         "note": "Note",
-        "subAdmins": "Sub-admins",
+        "subAdmins": "Sub-Admins",
         "users": "Users"
       },
       "collapse": "Hide Sub-admins of {name}",
       "copyLink": "Copy Link",
       "credentials": {
-        "copyMessage": "Copy message",
+        "copyMessage": "Copy Message",
         "copyMessageHint": "Copies the message together with the QR code image",
         "createdTitle": "{name} is ready",
         "done": "Done",
@@ -573,17 +574,17 @@
         "cta": "Add Your First Admin",
         "text": "Add agents to share the work. Each one gets their own link, password and limits.",
         "textNoPermission": "You don't have permission to add admins. Ask the admin above you if you need it.",
-        "title": "No sub-admins yet"
+        "title": "No Sub-Admins Yet"
       },
       "expand": "Show Sub-admins of {name}",
       "filter": {
         "anyMode": "Any Mode",
-        "anySub": "Any permission",
+        "anySub": "Any Permission",
         "canAdd": "Can Add Sub-admins",
         "cannotAdd": "Can't Add Sub-admins",
         "clear": "Clear Filters",
         "mode": "Filter by Mode",
-        "sub": "Filter by sub-admin permission"
+        "sub": "Filter by Sub-Admin Permission"
       },
       "form": {
         "advanced": "Advanced",
@@ -593,13 +594,13 @@
         "canAddAdmin": "Can Add Sub-admins",
         "canAddAdminHint": "Lets this admin create agents of its own, within its limits.",
         "capabilities": "Permissions",
-        "capabilitiesCount": "{n} permission | {n} permissions",
+        "capabilitiesCount": "{n} Permission | {n} Permissions",
         "capabilitiesDone": "Done",
         "capabilitiesEdit": "Edit Permissions",
         "capabilitiesHint": "Tap to change what this admin is allowed to do. You can only grant permissions you have.",
-        "capabilitiesNone": "No special permissions",
-        "configs": "Configs for this admin's users",
-        "configsCount": "{n} config | {n} configs",
+        "capabilitiesNone": "No Special Permissions",
+        "configs": "Configs for This Admin's Users",
+        "configsCount": "{n} Config | {n} Configs",
         "configsHint": "Added to the subscription of every user of this admin and of its sub-admins.",
         "create": "Create Admin",
         "createSubtitle": "Creates an agent. A secure password is generated for them.",
@@ -613,7 +614,7 @@
         "namePlaceholder": "e.g. Sales team",
         "nameRequired": "A name is required",
         "newUuid": "New UUID",
-        "noLimit": "No limit",
+        "noLimit": "No Limit",
         "note": "Note",
         "notePlaceholder": "Only visible to admins above them",
         "optional": "optional",
@@ -678,16 +679,16 @@
       "refresh": "Refresh",
       "resetMessage": "A new password is generated and the old one stops working right away.",
       "resetPassword": "Reset Password",
-      "resetTitle": "Reset the password of {name}?",
+      "resetTitle": "Reset the Password of {name}?",
       "saved": "{name} saved",
       "search": "Search Name or UUID",
       "showLink": "Admin Link",
-      "subCount": "{n} sub-admin | {n} sub-admins",
+      "subCount": "{n} Sub-Admin | {n} Sub-Admins",
       "subtitle": "Your admin team as a tree. Each admin's limits cover their own users and everyone below them.",
       "summary": {
-        "admins": "admin | admins",
-        "online": "online",
-        "users": "user | users"
+        "admins": "Admin | Admins",
+        "online": "Online",
+        "users": "User | Users"
       },
       "telegramMessage": "Send a Telegram message to this admin",
       "title": "Admins",

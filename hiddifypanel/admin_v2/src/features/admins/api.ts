@@ -95,6 +95,8 @@ export interface AdminRow extends AdminUsagePeriod {
   parent_uuid: string | null
   parent_name: string | null
   is_me: boolean
+  /** The panel's owner (the first admin). */
+  is_owner?: boolean
   has_password: boolean
   /** Sign-in username instead of the UUID ("" when not set). */
   alias: string

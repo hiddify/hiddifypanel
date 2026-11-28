@@ -454,6 +454,7 @@
     },
     "admins": {
       "add": "Ajouter un administrateur",
+      "owner": "Propriétaire",
       "canAddHint": "Cet administrateur peut créer ses propres sous-administrateurs",
       "canAddShort": "Ajoute des sous-administrateurs",
       "capability": {

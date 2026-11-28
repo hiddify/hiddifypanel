@@ -431,6 +431,7 @@
     },
     "admins": {
       "add": "添加管理员",
+      "owner": "所有者",
       "canAddHint": "该管理员可以创建自己的子管理员",
       "canAddShort": "添加子管理员",
       "clearSearch": "清除搜索",

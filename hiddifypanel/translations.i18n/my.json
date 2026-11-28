@@ -433,6 +433,7 @@
     },
     "admins": {
       "add": "အက်ဒမင် ထည့်ရန်",
+      "owner": "ပိုင်ရှင်",
       "canAddHint": "ဤအက်ဒမင်သည် ကိုယ်ပိုင် sub-admin များ ဖန်တီးနိုင်သည်",
       "canAddShort": "Sub-admin ထည့်နိုင်",
       "clearSearch": "ရှာဖွေမှု ရှင်းရန်",
