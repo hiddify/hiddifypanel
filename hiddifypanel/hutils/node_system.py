@@ -121,6 +121,30 @@ def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
     return res
 
 
+def fetch_specs(child_id: int | None) -> dict:
+    """The server's full specs for the IP sheet's Server tab: this server's own, or asked of a remote node."""
+    from hiddifypanel.hutils import server_specs
+
+    if child_id in (None, 0) or is_debug_node(child_id):
+        return {**server_specs.collect(), "node_id": child_id or 0}
+
+    child = Child.by_id(child_id)
+    if not child or child.mode != ChildMode.remote:
+        return {"node_id": child_id, "ok": False, "error": "", "error_code": "unknown"}
+    base = (child.node_base_url or "").strip()
+    if not base:
+        return {"node_id": child_id, "ok": False, "error": "", "error_code": "no_url"}
+
+    try:
+        res = NodeApiClient(base, timeout=_DISK_DETAIL_TIMEOUT, max_retry=1).get("/api/v2/admin/dashboard/specs/", dict)
+    except BaseException as exc:  # noqa: BLE001 - the tab shows why
+        res = str(exc)
+    if isinstance(res, NodeApiErrorSchema) or not isinstance(res, dict):
+        code, detail = contact_error(res if isinstance(res, (NodeApiErrorSchema, str)) else "invalid answer")
+        return {"node_id": child_id, "ok": False, "error": detail, "error_code": code}
+    return {**res, "node_id": child_id}
+
+
 def attach_panel_urls(node_stats: list[DashboardNodeStats], account_uuid: str, admin_base: str) -> None:
     """Link each remote node (online or offline) to its panel, same link as the legacy Node admin.
 

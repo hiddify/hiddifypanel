@@ -108,3 +108,15 @@ class AdminDashboardDiskApi(MethodView):
 
         child_id = _int_arg("child_id")
         return node_system.fetch_disk_detail(child_id)
+
+
+class AdminDashboardSpecsApi(MethodView):
+    """The server's full specs (CPU, memory, disks, system, network), for the IP sheet's Server tab."""
+
+    decorators = [login_required(roles={Role.super_admin}, node_auth=True)]
+
+    def get(self) -> dict:
+        """System: Server specs"""
+        from hiddifypanel.hutils import node_system
+
+        return node_system.fetch_specs(_int_arg("child_id"))

@@ -61,9 +61,17 @@ const DRAWN = new Set([
   'x-exit',
   'x-folder',
   'x-cert',
+  'x-cpu',
+  'x-ram',
+  'x-disk',
+  'x-gauge',
+  'x-terminal',
+  'x-nic',
+  'x-layers',
+  'x-power',
 ])
 /** These take 2.6 s for one round, so a tap plays them once; the others take 1.3 s and play twice */
-const SLOW = new Set(['x-radar', 'pi-globe', 'pi-history', 'pi-clock', 'pi-compass', 'pi-language', 'pi-envelope'])
+const SLOW = new Set(['x-gauge', 'x-radar', 'pi-globe', 'pi-history', 'pi-clock', 'pi-compass', 'pi-language', 'pi-envelope'])
 
 const drawn = computed(() => DRAWN.has(props.name))
 const taps = computed(() => (SLOW.has(props.name) ? 1 : 2))
@@ -495,6 +503,73 @@ const uid = `li-${useId()}`
       <path d="M3 18V6.5A1.5 1.5 0 0 1 4.5 5h4.6l2 2.5h8.4A1.5 1.5 0 0 1 21 9v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z" />
       <rect class="p-paper" x="7" y="9.5" width="10" height="6.5" rx="0.8" fill="currentColor" stroke="none" />
       <path class="p-front" d="M3.2 11.2h17.6l-1.2 6.9a1.5 1.5 0 0 1-1.5 1.4H5.9a1.5 1.5 0 0 1-1.5-1.4z" fill="var(--li-ink, #007aff)" />
+    </template>
+
+    <!-- the processor: its pins light up one side after another and a gleam crosses the die -->
+    <template v-else-if="name === 'x-cpu'">
+      <clipPath :id="`${uid}-c`"><rect x="6" y="6" width="12" height="12" rx="2" /></clipPath>
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+      <rect x="9.5" y="9.5" width="5" height="5" rx="0.8" fill="currentColor" fill-opacity="0.22" />
+      <path class="p-led" d="M9.5 2.8v2.2M14.5 2.8v2.2" />
+      <path class="p-led p-d2" d="M19 9.5h2.2M19 14.5h2.2" />
+      <path class="p-led p-d3" d="M9.5 19v2.2M14.5 19v2.2M2.8 9.5H5M2.8 14.5H5" />
+      <g :clip-path="`url(#${uid}-c)`"><path class="p-shine" d="M6 23L13 1" stroke-width="3.2" /></g>
+    </template>
+
+    <!-- the memory: its chips light up one after another -->
+    <template v-else-if="name === 'x-ram'">
+      <path d="M2.5 7.5h19v7.5h-8.2l-1.3 1.3-1.3-1.3H2.5z" />
+      <path d="M5 15v3.5M8 15v3.5M16 15v3.5M19 15v3.5" opacity="0.55" />
+      <rect class="p-led" x="5" y="9.5" width="3" height="3.5" rx="0.5" fill="currentColor" stroke="none" />
+      <rect class="p-led p-d2" x="10.5" y="9.5" width="3" height="3.5" rx="0.5" fill="currentColor" stroke="none" />
+      <rect class="p-led p-d3" x="16" y="9.5" width="3" height="3.5" rx="0.5" fill="currentColor" stroke="none" />
+    </template>
+
+    <!-- the disk: its light flickers while a read line passes over it -->
+    <template v-else-if="name === 'x-disk'">
+      <clipPath :id="`${uid}-c`"><rect x="3" y="5" width="18" height="14" rx="2.2" /></clipPath>
+      <rect x="3" y="5" width="18" height="14" rx="2.2" />
+      <path d="M3 14.5h18" />
+      <path d="M6.5 16.8h5" opacity="0.55" />
+      <circle class="p-led" cx="17.3" cy="16.8" r="1" fill="currentColor" stroke="none" />
+      <g :clip-path="`url(#${uid}-c)`"><path class="p-scan" d="M3 5.6h18" stroke-width="1.3" /></g>
+    </template>
+
+    <!-- the gauge: the needle swings up to speed and settles -->
+    <template v-else-if="name === 'x-gauge'">
+      <path d="M4.2 17.5a8.8 8.8 0 1 1 15.6 0" />
+      <path d="M12 5.2v1.6M6.5 8l1.1 1.1M17.5 8l-1.1 1.1M4.2 13H6M18 13h1.8" opacity="0.55" />
+      <g class="p-needle"><path d="M12 12L8.6 8.6" stroke-width="2" /></g>
+      <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
+    </template>
+
+    <!-- the terminal: the prompt is typed again and the cursor blinks -->
+    <template v-else-if="name === 'x-terminal'">
+      <rect x="3" y="4.5" width="18" height="15" rx="2.2" />
+      <path class="p-draw" pathLength="1" d="M7 10l3 2.5L7 15" />
+      <path class="p-led" d="M12.5 15h4.5" />
+    </template>
+
+    <!-- the network card: its port lights blink in turn -->
+    <template v-else-if="name === 'x-nic'">
+      <path d="M3 7.5h18v8H3zM6 15.5v3M18 15.5v3" />
+      <path d="M8.5 11.5h7v4h-7z" />
+      <circle class="p-led" cx="5.6" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle class="p-led p-d2" cx="18.4" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <path class="p-led p-d3" d="M10.5 13.5h3" />
+    </template>
+
+    <!-- the cache: the layers are laid one on another -->
+    <template v-else-if="name === 'x-layers'">
+      <path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z" />
+      <path class="p-draw" pathLength="1" d="M3.5 12l8.5 4.5 8.5-4.5" />
+      <path class="p-draw-2" pathLength="1" d="M3.5 16l8.5 4.5 8.5-4.5" />
+    </template>
+
+    <!-- the power: the ring is drawn round again -->
+    <template v-else-if="name === 'x-power'">
+      <path class="p-draw" pathLength="1" d="M7.2 6.8a7.5 7.5 0 1 0 9.6 0" />
+      <path class="p-led" d="M12 3v8" />
     </template>
 
     <!-- certificate: its lines are written again and the seal swings on its ribbons -->
